@@ -1052,3 +1052,112 @@ footer {
     font-size: 2rem;
   }
 }
+
+/* ==========================================================
+   FINAL HERO SIZE + ALWAYS-VISIBLE LABEL OVERRIDES
+   ========================================================== */
+
+/* Bigger main CTA buttons */
+.hero-cta {
+  gap: 24px;
+}
+
+.hero-cta .btn {
+  min-width: 210px;
+  min-height: 60px;
+  padding: 16px 34px;
+  font-size: 1.08rem;
+  font-weight: 800;
+  border-radius: 14px;
+}
+
+/* Keep CTA text visible and centered cleanly */
+.hero-cta .btn span {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Bigger floating bubble buttons */
+.bubble {
+  width: 92px;
+  height: 92px;
+  gap: 6px;
+}
+
+.bubble-profile {
+  width: 100px;
+  height: 100px;
+}
+
+#bubble-education,
+#bubble-experience,
+#bubble-projects,
+#bubble-contact {
+  width: 88px;
+  height: 88px;
+}
+
+.bubble i {
+  font-size: 1.55rem;
+}
+
+/* Always show bubble labels */
+.bubble-label {
+  opacity: 0.92 !important;
+  transform: translateY(0) !important;
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+}
+
+/* Keep hover from changing label visibility */
+.bubble:hover .bubble-label {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Make labels easier to read */
+.bubble,
+.bubble-label {
+  color: rgba(255,255,255,0.95);
+}
+
+/* Mobile tuning */
+@media (max-width: 768px) {
+  .hero-cta {
+    gap: 16px;
+  }
+
+  .hero-cta .btn {
+    min-width: 190px;
+    min-height: 56px;
+    padding: 14px 26px;
+    font-size: 1rem;
+  }
+
+  .bubble {
+    width: 72px;
+    height: 72px;
+  }
+
+  .bubble-profile {
+    width: 80px;
+    height: 80px;
+  }
+
+  #bubble-education,
+  #bubble-experience,
+  #bubble-projects,
+  #bubble-contact {
+    width: 70px;
+    height: 70px;
+  }
+
+  .bubble i {
+    font-size: 1.2rem;
+  }
+
+  .bubble-label {
+    display: block !important;
+    font-size: 0.5rem;
+  }
+}
