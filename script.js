@@ -446,7 +446,7 @@
 })();
 
 
-// ───────── FLOATING HERO BUBBLES — FREEZE WHILE HOVERED ─────────
+// ───────── FLOATING HERO BUBBLES — MORE CENTRAL + MORE ACTIVE ─────────
 (function () {
   var hero = document.getElementById("hero");
   var bubbles = Array.prototype.slice.call(document.querySelectorAll(".bubble"));
@@ -454,11 +454,11 @@
   if (!hero || bubbles.length === 0) return;
 
   var placements = [
-    { x: 0.08, y: 0.18 }, // profile
-    { x: 0.86, y: 0.18 }, // education
-    { x: 0.92, y: 0.46 }, // experience
-    { x: 0.10, y: 0.54 }, // projects
-    { x: 0.78, y: 0.72 }  // contact
+    { x: 0.12, y: 0.18 }, // profile
+    { x: 0.84, y: 0.17 }, // education
+    { x: 0.89, y: 0.44 }, // experience
+    { x: 0.15, y: 0.55 }, // ramblings
+    { x: 0.76, y: 0.74 }  // contact
   ];
 
   var states = bubbles.map(function (el, i) {
@@ -473,7 +473,7 @@
       vx: 0,
       vy: 0,
       phase: Math.random() * Math.PI * 2,
-      scale: el.classList.contains("bubble-profile") ? 1.04 : 1,
+      scale: el.classList.contains("bubble-profile") ? 1.05 : 1,
       frozen: false
     };
 
@@ -506,23 +506,23 @@
 
     states.forEach(function (b) {
       if (!b.frozen) {
-        var bobX = Math.sin(now * 0.00045 + b.phase) * 0.006;
-        var bobY = Math.cos(now * 0.00058 + b.phase) * 0.008;
+        var bobX = Math.sin(now * 0.00072 + b.phase) * 0.012;
+        var bobY = Math.cos(now * 0.00095 + b.phase) * 0.016;
 
         var targetX = b.baseX + bobX;
         var targetY = b.baseY + bobY;
 
-        b.vx += (targetX - b.x) * 0.010;
-        b.vy += (targetY - b.y) * 0.010;
+        b.vx += (targetX - b.x) * 0.018;
+        b.vy += (targetY - b.y) * 0.018;
 
-        b.vx *= 0.90;
-        b.vy *= 0.90;
+        b.vx *= 0.925;
+        b.vy *= 0.925;
 
         b.x += b.vx;
         b.y += b.vy;
 
-        b.x = Math.max(0.05, Math.min(0.95, b.x));
-        b.y = Math.max(0.16, Math.min(0.80, b.y));
+        b.x = Math.max(0.06, Math.min(0.94, b.x));
+        b.y = Math.max(0.15, Math.min(0.82, b.y));
       }
 
       b.el.style.left = (b.x * rect.width) + "px";
@@ -534,74 +534,4 @@
   }
 
   animate();
-})();
-
-
-// ───────── NAV / SCROLL / REVEAL ─────────
-(function () {
-  var navbar = document.getElementById("navbar");
-  var sections = document.querySelectorAll(".section, #hero");
-  var navLinks = document.querySelectorAll(".nav-links a");
-
-  window.addEventListener("scroll", function () {
-    if (navbar) {
-      navbar.classList.toggle("scrolled", window.scrollY > 50);
-    }
-
-    var current = "";
-
-    sections.forEach(function (s) {
-      if (window.scrollY >= s.offsetTop - 120) {
-        current = s.id;
-      }
-    });
-
-    navLinks.forEach(function (a) {
-      a.classList.toggle("active", a.getAttribute("href") === "#" + current);
-    });
-  });
-
-  var toggle = document.querySelector(".nav-toggle");
-  var linksList = document.querySelector(".nav-links");
-
-  if (toggle && linksList) {
-    toggle.addEventListener("click", function () {
-      linksList.classList.toggle("open");
-    });
-
-    navLinks.forEach(function (a) {
-      a.addEventListener("click", function () {
-        linksList.classList.remove("open");
-      });
-    });
-  }
-
-  var reveals = document.querySelectorAll(".reveal");
-
-  var observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) {
-        e.target.classList.add("visible");
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px"
-  });
-
-  reveals.forEach(function (el) {
-    observer.observe(el);
-  });
-
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener("click", function (e) {
-      var targetSelector = this.getAttribute("href");
-      var t = document.querySelector(targetSelector);
-
-      if (t) {
-        e.preventDefault();
-        t.scrollIntoView({ behavior: "smooth" });
-      }
-    });
-  });
 })();
