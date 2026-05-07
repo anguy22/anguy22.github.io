@@ -1300,3 +1300,104 @@ footer {
   line-height: 1.65;
   font-size: 0.94rem;
 }
+
+/* ==========================================================
+   EMERGENCY HERO TEXT VISIBILITY FIX
+   ========================================================== */
+
+/* Keep the hero section as the positioning parent */
+#hero {
+  position: relative !important;
+  min-height: 100vh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Canvas stays behind all clickable/text elements */
+#cityscape {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+/* Floating bubbles stay above canvas but below main text */
+.bubbles-layer {
+  z-index: 3 !important;
+}
+
+/* Force title/text/button block back into view */
+.hero-content {
+  position: absolute !important;
+  top: 12vh !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 10 !important;
+  width: min(92vw, 980px) !important;
+  text-align: center !important;
+  pointer-events: auto !important;
+}
+
+/* Force name visible */
+#hero h1 {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #ffffff !important;
+  font-size: clamp(3rem, 6.4vw, 6.2rem) !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  margin: 0 0 10px !important;
+  text-shadow: 0 12px 42px rgba(0,0,0,0.55) !important;
+}
+
+/* Force divider visible */
+.hero-rule {
+  display: block !important;
+  width: 58px !important;
+  height: 2px !important;
+  margin: 20px auto 18px !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent) !important;
+}
+
+/* Force decrypt text visible */
+.decrypt-wrap {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 2.6rem !important;
+  margin-bottom: 30px !important;
+}
+
+.decrypt-text {
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: rgba(255,255,255,0.96) !important;
+  font-size: clamp(1rem, 1.55vw, 1.3rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.09em !important;
+  white-space: nowrap !important;
+}
+
+.decrypt-text .glyph.done {
+  color: rgba(255,255,255,0.97) !important;
+}
+
+.decrypt-text .glyph.scramble {
+  color: rgba(255,255,255,0.62) !important;
+}
+
+/* Force hero button visible */
+.hero-cta {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 11 !important;
+}
+
+.hero-cta .btn {
+  display: inline-flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
