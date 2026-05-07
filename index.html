@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Andrew Nguyen — Industrial Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -20,8 +22,6 @@
         <li><a href="#education">Education</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Projects</a></li>
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#hobbies">Hobbies</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </div>
@@ -31,21 +31,26 @@
     <canvas id="cityscape"></canvas>
 
     <div class="bubbles-layer" id="bubbles-layer">
-      <div class="bubble" id="bubble-profile">
+      <a href="#about" class="bubble" id="bubble-profile">
         <img src="IMG_6641.jpg" alt="Andrew Nguyen">
-      </div>
-      <div class="bubble" id="bubble-chess">
+        <span class="bubble-label">About</span>
+      </a>
+      <a href="#projects" class="bubble" id="bubble-chess">
         <i class="fas fa-chess-knight"></i>
-      </div>
-      <div class="bubble" id="bubble-trading">
+        <span class="bubble-label">Projects</span>
+      </a>
+      <a href="#experience" class="bubble" id="bubble-trading">
         <i class="fas fa-chart-line"></i>
-      </div>
-      <div class="bubble" id="bubble-wafer">
+        <span class="bubble-label">Experience</span>
+      </a>
+      <a href="#education" class="bubble" id="bubble-wafer">
         <i class="fas fa-microchip"></i>
-      </div>
-      <div class="bubble" id="bubble-piano">
+        <span class="bubble-label">Education</span>
+      </a>
+      <a href="#contact" class="bubble" id="bubble-piano">
         <i class="fas fa-music"></i>
-      </div>
+        <span class="bubble-label">Contact</span>
+      </a>
     </div>
 
     <div class="hero-content">
@@ -180,74 +185,6 @@
             <p>Designed interactive dashboards tracking equipment utilization, cycle time, yield, and throughput KPIs for R&amp;D fabrication environments. Enabled data-driven capital allocation decisions.</p>
             <div class="project-tags"><span>Dashboarding</span><span>KPIs</span><span>Semiconductors</span><span>Analytics</span></div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="gallery" class="section">
-    <div class="container reveal">
-      <h2 class="section-title">Gallery</h2>
-      <p class="gallery-subtitle">A few snapshots from life, work, and everything in between.</p>
-      <div class="gallery-grid">
-        <!-- Replace src with your own images. Add/remove items as needed. -->
-        <div class="gallery-item">
-          <div class="gallery-placeholder"><i class="fas fa-image"></i><span>Photo 1</span></div>
-          <!-- <img src="your-image-1.jpg" alt="Caption here"> -->
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-placeholder"><i class="fas fa-image"></i><span>Photo 2</span></div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-placeholder"><i class="fas fa-image"></i><span>Photo 3</span></div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-placeholder"><i class="fas fa-image"></i><span>Photo 4</span></div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-placeholder"><i class="fas fa-image"></i><span>Photo 5</span></div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-placeholder"><i class="fas fa-image"></i><span>Photo 6</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="hobbies" class="section section-alt">
-    <div class="container reveal">
-      <h2 class="section-title">Hobbies &amp; Interests</h2>
-      <div class="hobbies-grid">
-        <!-- Edit these cards to match your actual hobbies -->
-        <div class="hobby-card">
-          <div class="hobby-icon"><i class="fas fa-chess"></i></div>
-          <h3>Chess</h3>
-          <p>Competitive player. Add your rating, favorite openings, or tournament highlights here.</p>
-        </div>
-        <div class="hobby-card">
-          <div class="hobby-icon"><i class="fas fa-music"></i></div>
-          <h3>Classical Piano</h3>
-          <p>Rachmaninoff, Chopin, Liszt — add your favorite pieces or performance links here.</p>
-        </div>
-        <div class="hobby-card">
-          <div class="hobby-icon"><i class="fas fa-city"></i></div>
-          <h3>Cities: Skylines II</h3>
-          <p>Share your city build, population stats, or screenshots here.</p>
-        </div>
-        <div class="hobby-card">
-          <div class="hobby-icon"><i class="fas fa-futbol"></i></div>
-          <h3>Soccer</h3>
-          <p>Lifelong player. Add teams, leagues, or memorable moments here.</p>
-        </div>
-        <div class="hobby-card">
-          <div class="hobby-icon"><i class="fas fa-chart-pie"></i></div>
-          <h3>Investing</h3>
-          <p>Semiconductor thesis, portfolio strategy, or market interests — fill in here.</p>
-        </div>
-        <div class="hobby-card">
-          <div class="hobby-icon"><i class="fas fa-pen-fancy"></i></div>
-          <h3>Your Hobby</h3>
-          <p>Add another hobby or interest here. Duplicate this card as many times as you like.</p>
         </div>
       </div>
     </div>
