@@ -59,59 +59,79 @@
 })();
 
 
-// ───────── CARTOON CITYSCAPE (Canvas) ─────────
+// ───────── HISTOGRAM CITYSCAPE (Canvas) ─────────
 (function () {
   var canvas = document.getElementById("cityscape");
   var ctx = canvas.getContext("2d");
   var W, H;
 
-  // palette (green / grey theme)
-  var SKY_TOP    = "#f7f7f7";
-  var SKY_BOT    = "#e6f5ed";
-  var BLDG_DARK  = "#1e4d35";
-  var BLDG_MID   = "#245e40";
-  var BLDG_LIGHT = "#2d7a53";
-  var BLDG_PALE  = "#7fcca6";
+  var COLORS     = ["#1a3a2a","#1e4d35","#245e40","#2d7a53","#38956a"];
   var WIN_ON     = "#e6f5ed";
   var WIN_OFF    = "#1a3a2a";
-  var GROUND     = "#b8e4cc";
+  var GROUND_CLR = "#b8e4cc";
+  var CURVE_CLR  = "rgba(77,176,127,0.55)";
+  var AXIS_CLR   = "rgba(36,94,64,0.18)";
+  var TICK_CLR   = "rgba(36,94,64,0.25)";
 
-  var buildings = [];
+  var bars = [];   // each bar = one building
   var stars = [];
+
+  // normal PDF helper (mu=0, sigma=1)
+  function normalPDF(x) {
+    return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+  }
 
   function resize() {
     W = canvas.width  = canvas.offsetWidth;
     H = canvas.height = canvas.offsetHeight;
-    generateCity();
+    generate();
   }
 
-  function generateCity() {
-    buildings = [];
+  function generate() {
+    bars = [];
     stars = [];
-    var x = -20;
-    while (x < W + 40) {
-      var w = 30 + Math.random() * 70;
-      var h = 60 + Math.random() * (H * 0.38);
-      var color = [BLDG_DARK, BLDG_MID, BLDG_LIGHT, BLDG_PALE][Math.floor(Math.random() * 4)];
+    var numBars   = Math.round(W / 48);       // responsive bar count
+    var gap       = 3;
+    var barW      = (W - gap * (numBars - 1)) / numBars;
+    var margin    = 30;                        // ground margin
+    var maxH      = H * 0.52;                  // tallest bar height
+    var sigma     = numBars * 0.28;            // spread
+    var mu        = numBars / 2;               // center
+
+    for (var i = 0; i < numBars; i++) {
+      // height follows bell curve + small random jitter for organic look
+      var z = (i - mu) / sigma;
+      var bell = normalPDF(z) / normalPDF(0);  // normalized 0..1
+      var jitter = 0.92 + Math.random() * 0.16;
+      var h = maxH * bell * jitter;
+      if (h < 20) h = 15 + Math.random() * 15; // floor so edge bars are still mini buildings
+
+      var x = i * (barW + gap);
+      var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+      // windows
       var windows = [];
-      var cols = Math.floor(w / 16);
-      var rows = Math.floor(h / 22);
+      var cols = Math.max(1, Math.floor(barW / 16));
+      var rows = Math.max(1, Math.floor(h / 22));
       for (var r = 1; r < rows; r++) {
         for (var c = 0; c < cols; c++) {
           windows.push({
-            rx: 6 + c * (w / cols),
-            ry: 10 + r * 20,
-            lit: Math.random() > 0.45,
-            blink: Math.random()
+            rx: 4 + c * ((barW - 8) / cols),
+            ry: 8 + r * 20,
+            lit: Math.random() > 0.4
           });
         }
       }
-      buildings.push({ x: x, w: w, h: h, color: color, windows: windows });
-      x += w + 2 + Math.random() * 12;
+
+      // rooftop detail (antenna/spire on tallest bars)
+      var hasAntenna = bell > 0.65 && Math.random() > 0.4;
+
+      bars.push({ x: x, w: barW, h: h, color: color, windows: windows, bell: bell, hasAntenna: hasAntenna });
     }
-    // decorative "stars" (small dots in upper portion)
-    for (var i = 0; i < 40; i++) {
-      stars.push({ x: Math.random() * W, y: Math.random() * H * 0.35, r: 0.5 + Math.random() * 1.2, phase: Math.random() * Math.PI * 2 });
+
+    // floating dots
+    for (var s = 0; s < 50; s++) {
+      stars.push({ x: Math.random() * W, y: Math.random() * H * 0.4, r: 0.4 + Math.random(), phase: Math.random() * Math.PI * 2 });
     }
   }
 
@@ -122,46 +142,125 @@
 
     // sky gradient
     var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, SKY_TOP);
-    grad.addColorStop(1, SKY_BOT);
+    grad.addColorStop(0, "#f7f7f7");
+    grad.addColorStop(0.7, "#eef8f2");
+    grad.addColorStop(1, "#e0f0e8");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // stars twinkle
+    // twinkling dots
     for (var s = 0; s < stars.length; s++) {
       var st = stars[s];
-      var alpha = 0.25 + 0.25 * Math.sin(frame * 0.03 + st.phase);
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = BLDG_PALE;
+      ctx.globalAlpha = 0.15 + 0.2 * Math.sin(frame * 0.025 + st.phase);
+      ctx.fillStyle = "#7fcca6";
       ctx.beginPath();
       ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
 
-    // ground
-    ctx.fillStyle = GROUND;
-    ctx.fillRect(0, H - 20, W, 20);
+    var baseY  = H - 28;
+    var margin = 28;
 
-    // buildings
-    for (var i = 0; i < buildings.length; i++) {
-      var b = buildings[i];
-      var baseY = H - 20;
-      // building body
+    // x-axis line
+    ctx.strokeStyle = AXIS_CLR;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, baseY);
+    ctx.lineTo(W, baseY);
+    ctx.stroke();
+
+    // tick marks along axis
+    var numTicks = Math.round(W / 80);
+    for (var t = 0; t <= numTicks; t++) {
+      var tx = (t / numTicks) * W;
+      ctx.strokeStyle = TICK_CLR;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(tx, baseY);
+      ctx.lineTo(tx, baseY + 6);
+      ctx.stroke();
+    }
+
+    // ground fill
+    ctx.fillStyle = GROUND_CLR;
+    ctx.fillRect(0, baseY, W, H - baseY);
+
+    // draw buildings (histogram bars)
+    for (var i = 0; i < bars.length; i++) {
+      var b = bars[i];
       ctx.fillStyle = b.color;
-      ctx.fillRect(b.x, baseY - b.h, b.w, b.h);
+
+      // slight rounded top
+      var r = Math.min(4, b.w / 4);
+      var bx = b.x, by = baseY - b.h, bw = b.w, bh = b.h;
+      ctx.beginPath();
+      ctx.moveTo(bx, baseY);
+      ctx.lineTo(bx, by + r);
+      ctx.quadraticCurveTo(bx, by, bx + r, by);
+      ctx.lineTo(bx + bw - r, by);
+      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+      ctx.lineTo(bx + bw, baseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // antenna
+      if (b.hasAntenna) {
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2;
+        var ax = bx + bw / 2;
+        ctx.beginPath();
+        ctx.moveTo(ax, by);
+        ctx.lineTo(ax, by - 14);
+        ctx.stroke();
+        ctx.fillStyle = "#4db07f";
+        ctx.beginPath();
+        ctx.arc(ax, by - 16, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // windows
       for (var j = 0; j < b.windows.length; j++) {
         var wi = b.windows[j];
-        // random blink
-        if (Math.random() < 0.002) wi.lit = !wi.lit;
+        if (Math.random() < 0.003) wi.lit = !wi.lit;
         ctx.fillStyle = wi.lit ? WIN_ON : WIN_OFF;
-        ctx.globalAlpha = wi.lit ? 0.9 : 0.3;
-        ctx.fillRect(b.x + wi.rx, baseY - b.h + wi.ry, 8, 10);
+        ctx.globalAlpha = wi.lit ? 0.85 : 0.25;
+        ctx.fillRect(bx + wi.rx, by + wi.ry, 8, 10);
       }
       ctx.globalAlpha = 1;
     }
+
+    // bell curve overlay
+    ctx.strokeStyle = CURVE_CLR;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    var numBars = bars.length;
+    var sigma = numBars * 0.28;
+    var mu = numBars / 2;
+    var maxH = H * 0.52;
+    for (var px = 0; px <= W; px += 2) {
+      var barIdx = (px / W) * numBars;
+      var z = (barIdx - mu) / sigma;
+      var bell = normalPDF(z) / normalPDF(0);
+      var curveY = baseY - maxH * bell - 12;
+      if (px === 0) ctx.moveTo(px, curveY);
+      else ctx.lineTo(px, curveY);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // subtle "mu" label at center
+    ctx.fillStyle = "rgba(36,94,64,0.20)";
+    ctx.font = "italic 14px serif";
+    ctx.textAlign = "center";
+    ctx.fillText("μ", W / 2, baseY + 20);
+
+    // sigma markers
+    var barW = W / numBars;
+    ctx.font = "italic 12px serif";
+    ctx.fillText("-1σ", W / 2 - sigma * barW, baseY + 20);
+    ctx.fillText("+1σ", W / 2 + sigma * barW, baseY + 20);
 
     requestAnimationFrame(draw);
   }

@@ -30,7 +30,7 @@
   --accent-dark: var(--green-900);
   --accent-light: var(--green-100);
   --border: var(--grey-200);
-  --font-sans: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
@@ -112,20 +112,20 @@ a:hover { color: var(--accent-dark); }
   box-shadow: 0 8px 32px rgba(26,58,42,0.22);
   border-color: var(--green-400);
 }
-.bubble i { font-size: 1.6rem; color: var(--green-700); }
+.bubble i { font-size: 2.4rem; color: var(--green-700); }
 
 /* profile bubble */
-#bubble-profile { width: 90px; height: 90px; }
+#bubble-profile { width: 130px; height: 130px; }
 #bubble-profile img {
   width: 100%; height: 100%; border-radius: 50%;
   object-fit: cover; object-position: center top;
 }
 
 /* icon bubbles */
-#bubble-chess   { width: 70px; height: 70px; }
-#bubble-trading { width: 74px; height: 74px; }
-#bubble-wafer   { width: 66px; height: 66px; }
-#bubble-piano   { width: 68px; height: 68px; }
+#bubble-chess   { width: 105px; height: 105px; }
+#bubble-trading { width: 110px; height: 110px; }
+#bubble-wafer   { width: 100px; height: 100px; }
+#bubble-piano   { width: 102px; height: 102px; }
 
 .hero-content { position: relative; z-index: 2; max-width: 800px; }
 
@@ -247,15 +247,42 @@ a:hover { color: var(--accent-dark); }
 .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .project-tags span { font-size: 0.75rem; padding: 4px 10px; background: var(--green-100); color: var(--green-800); border-radius: 20px; font-weight: 500; }
 
-/* ========== SKILLS ========== */
-.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-.skill-category { padding: 24px; background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-lg); transition: all var(--transition); }
-.skill-category:hover { border-color: var(--green-300); box-shadow: var(--shadow-sm); }
-.skill-category h3 { font-size: 0.9rem; font-weight: 700; color: var(--accent-dark); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.skill-category h3 i { color: var(--accent); }
-.skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.skill-tags span { font-size: 0.8rem; padding: 5px 12px; background: var(--green-100); color: var(--green-800); border-radius: 20px; font-weight: 500; transition: all var(--transition); }
-.skill-tags span:hover { background: var(--green-200); transform: translateY(-1px); }
+/* ========== GALLERY ========== */
+.gallery-subtitle { color: var(--text-muted); margin-bottom: 28px; font-size: 0.95rem; }
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.gallery-item { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4/3; }
+.gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.gallery-item:hover img { transform: scale(1.06); }
+.gallery-placeholder {
+  width: 100%; height: 100%;
+  background: var(--green-100); border: 2px dashed var(--green-300);
+  border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--green-600); gap: 8px; transition: all var(--transition);
+}
+.gallery-placeholder i { font-size: 2rem; }
+.gallery-placeholder span { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+.gallery-placeholder:hover { background: var(--green-200); border-color: var(--green-400); }
+
+/* ========== HOBBIES ========== */
+.hobbies-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.hobby-card {
+  padding: 28px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); transition: all var(--transition);
+}
+.section-alt .hobby-card { background: var(--bg-alt); }
+.hobby-card:hover { border-color: var(--green-300); box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.hobby-icon {
+  width: 52px; height: 52px; border-radius: var(--radius);
+  background: var(--green-100); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; font-size: 1.4rem; color: var(--accent); transition: all var(--transition);
+}
+.hobby-card:hover .hobby-icon { background: var(--green-200); }
+.hobby-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--accent-dark); margin-bottom: 8px; }
+.hobby-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
 
 /* ========== CONTACT ========== */
 .contact-text { color: var(--grey-700); margin-bottom: 32px; max-width: 600px; }
@@ -289,13 +316,15 @@ footer { padding: 32px 0; text-align: center; border-top: 1px solid var(--border
   .edu-header { flex-direction: column; }
   .timeline-header { flex-direction: column; align-items: flex-start; }
   .projects-grid { grid-template-columns: 1fr; }
-  .skills-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .hobbies-grid { grid-template-columns: 1fr 1fr; }
   .contact-links { grid-template-columns: 1fr; }
-  .bubble { transform: scale(0.7) !important; }
+  .bubble { transform: scale(0.65) !important; }
 }
 @media (max-width: 480px) {
   .section { padding: 56px 0; }
-  .skills-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .hobbies-grid { grid-template-columns: 1fr; }
   .hero-cta { flex-direction: column; align-items: center; }
   #hero h1 { font-size: 1.85rem; }
 }
