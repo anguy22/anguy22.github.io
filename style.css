@@ -1,6 +1,3 @@
-/* ==============================
-   THEME: Dark Grey / Green
-   ============================== */
 :root {
   --green-900: #10261b;
   --green-800: #173624;
@@ -13,19 +10,10 @@
   --green-100: #e6f5ed;
 
   --grey-950: #071012;
-  --grey-925: #091012;
   --grey-900: #0b1114;
   --grey-850: #0d1517;
-  --grey-800: #121c20;
-  --grey-700: #263238;
-  --grey-600: #4d5b61;
-  --grey-500: #77858b;
-  --grey-400: #a3adb1;
-  --grey-300: #ccd3d5;
-  --grey-200: #e2e7e4;
-  --grey-100: #f2f5f1;
-  --white: #ffffff;
 
+  --white: #ffffff;
   --bg: #0b1114;
   --bg-alt: #0f171a;
   --card: rgba(255,255,255,0.045);
@@ -93,9 +81,11 @@ a:hover {
   left: 0;
   right: 0;
   z-index: 1000;
+
   background: rgba(204, 204, 204, 0.84);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+
   border-bottom: 1px solid transparent;
   transition: all var(--transition);
 }
@@ -195,12 +185,15 @@ a:hover {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+
   text-align: center;
-  padding: 17vh 24px 60px;
+  padding: 14vh 24px 60px;
+
   color: var(--green-100);
   background:
     radial-gradient(circle at 50% 34%, rgba(77,176,127,0.14), transparent 34%),
@@ -214,9 +207,11 @@ a:hover {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+
   background:
-    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+
   background-size: 84px 84px;
   mask-image: linear-gradient(to bottom, transparent 0%, black 26%, black 84%, transparent 100%);
 }
@@ -232,42 +227,50 @@ a:hover {
 
 .hero-content {
   position: relative;
-  z-index: 4;
-  max-width: 920px;
+  z-index: 10;
+  max-width: 980px;
+  width: min(92vw, 980px);
+  text-align: center;
 }
 
 #hero h1 {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  color: #ffffff;
   font-size: clamp(3rem, 6.4vw, 6.2rem);
   font-weight: 800;
-  color: #f8fbf8;
-  margin-bottom: 6px;
+  line-height: 1;
+  margin: 0 0 10px;
   letter-spacing: -0.055em;
-  line-height: 0.98;
-  text-shadow: 0 10px 38px rgba(0,0,0,0.42);
+  text-shadow: 0 12px 42px rgba(0,0,0,0.55);
 }
 
 .hero-rule {
+  display: block;
   width: 58px;
   height: 2px;
-  margin: 22px auto 18px;
+  margin: 20px auto 18px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent);
-  opacity: 0.85;
 }
 
 /* ========== DECRYPT TEXT ========== */
 .decrypt-wrap {
-  min-height: 2.6rem;
-  margin-bottom: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 2.6rem;
+  margin-bottom: 30px;
 }
 
 .decrypt-text {
-  font-size: clamp(1rem, 1.55vw, 1.3rem);
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  display: inline-block;
+  opacity: 1;
+  visibility: visible;
   color: rgba(255,255,255,0.96);
+  font-size: clamp(1rem, 1.55vw, 1.3rem);
+  font-weight: 800;
+  letter-spacing: 0.09em;
   white-space: nowrap;
 }
 
@@ -294,9 +297,8 @@ a:hover {
 /* ========== HERO CTA ========== */
 .hero-cta {
   display: flex;
-  gap: 18px;
   justify-content: center;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
 .btn {
@@ -304,40 +306,32 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  min-width: 178px;
-  padding: 13px 28px;
-  border-radius: var(--radius);
-  font-size: 0.98rem;
+  min-width: 250px;
+  min-height: 68px;
+  padding: 18px 40px;
+
+  border-radius: 16px;
+  font-size: 1.14rem;
   font-weight: 800;
   letter-spacing: 0.01em;
   cursor: pointer;
+
   border: 1px solid transparent;
-  transition: all var(--transition);
+  transition: box-shadow var(--transition), background var(--transition), color var(--transition);
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, var(--green-700), var(--green-500));
-  color: var(--white);
-  border-color: rgba(127,204,166,0.24);
-  box-shadow: 0 16px 40px rgba(45,122,83,0.22);
+.btn-primary,
+.btn-ponderance {
+  background: linear-gradient(135deg, #2d7a53, #46a371);
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 18px 44px rgba(45,122,83,0.24);
 }
 
-.btn-primary:hover {
-  color: var(--white);
-  transform: translateY(-2px);
-  box-shadow: 0 20px 50px rgba(45,122,83,0.30);
-}
-
-.btn-outline {
-  background: rgba(7,12,14,0.36);
-  color: var(--green-100);
-  border-color: rgba(255,255,255,0.32);
-}
-
-.btn-outline:hover {
-  background: rgba(255,255,255,0.08);
-  color: var(--white);
-  transform: translateY(-2px);
+.btn-primary:hover,
+.btn-ponderance:hover {
+  color: #ffffff;
+  box-shadow: 0 22px 56px rgba(45,122,83,0.30);
 }
 
 /* ========== FLOATING HERO BUBBLES ========== */
@@ -351,27 +345,34 @@ a:hover {
 
 .bubble {
   position: absolute;
-  width: 76px;
-  height: 76px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
+
   pointer-events: auto;
   cursor: pointer;
   text-decoration: none;
-  color: rgba(255,255,255,0.92);
+  color: rgba(255,255,255,0.95);
+
   background:
     radial-gradient(circle at 30% 24%, rgba(255,255,255,0.18), transparent 32%),
-    rgba(12, 22, 24, 0.72);
-  border: 1px solid rgba(255,255,255,0.34);
+    rgba(12,22,24,0.72);
+
+  border: 1px solid rgba(255,255,255,0.38);
+
   box-shadow:
-    0 14px 42px rgba(0,0,0,0.34),
-    0 0 24px rgba(255,255,255,0.06);
+    0 16px 44px rgba(0,0,0,0.34),
+    0 0 26px rgba(255,255,255,0.08);
+
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+
   transition:
     box-shadow 0.28s ease,
     border-color 0.28s ease,
@@ -382,42 +383,43 @@ a:hover {
 .bubble:hover {
   color: #ffffff;
   border-color: rgba(255,255,255,0.75);
+
   background:
     radial-gradient(circle at 30% 24%, rgba(255,255,255,0.24), transparent 34%),
     rgba(18,35,34,0.82);
+
   box-shadow:
     0 18px 52px rgba(0,0,0,0.42),
     0 0 34px rgba(255,255,255,0.10);
 }
 
 .bubble i {
-  font-size: 1.45rem;
+  font-size: 1.6rem;
   color: currentColor;
   pointer-events: none;
 }
 
 .bubble-label {
   font-family: var(--font-sans);
-  font-size: 0.56rem;
+  font-size: 0.64rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: currentColor;
-  opacity: 0;
-  transform: translateY(3px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  opacity: 0.96;
+  transform: translateY(0);
   pointer-events: none;
   white-space: nowrap;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.35);
 }
 
 .bubble:hover .bubble-label {
-  opacity: 0.9;
-  transform: translateY(0);
+  opacity: 1;
 }
 
 .bubble-profile {
-  width: 84px;
-  height: 84px;
+  width: 104px;
+  height: 104px;
 }
 
 .bubble-profile img {
@@ -434,8 +436,8 @@ a:hover {
 #bubble-experience,
 #bubble-projects,
 #bubble-contact {
-  width: 74px;
-  height: 74px;
+  width: 92px;
+  height: 92px;
 }
 
 /* ========== HERO SIDE LINKS ========== */
@@ -523,6 +525,7 @@ a:hover {
   letter-spacing: 0.15em;
   color: var(--green-300);
   margin-bottom: 40px;
+
   display: flex;
   align-items: center;
   gap: 12px;
@@ -565,21 +568,30 @@ a:hover {
   gap: 16px;
 }
 
+.detail-card,
+.edu-block,
+.timeline-content,
+.project-card,
+.contact-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
 .detail-card {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: var(--card);
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  transition: all var(--transition);
 }
 
-.detail-card:hover {
+.detail-card:hover,
+.timeline-item:hover .timeline-content,
+.project-card:hover,
+.contact-card:hover {
   border-color: rgba(255,255,255,0.20);
   box-shadow: var(--shadow-sm);
-  transform: translateX(4px);
 }
 
 .detail-card i {
@@ -604,10 +616,8 @@ a:hover {
 
 /* ========== EDUCATION ========== */
 .edu-block {
-  background: var(--card);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
 }
 
 .edu-header {
@@ -619,10 +629,15 @@ a:hover {
   gap: 8px;
 }
 
+.edu-header h3,
+.timeline-header h3,
+.project-card h3 {
+  color: var(--green-100);
+  font-weight: 800;
+}
+
 .edu-header h3 {
   font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--green-100);
 }
 
 .edu-degree {
@@ -631,7 +646,8 @@ a:hover {
   margin-top: 4px;
 }
 
-.edu-date {
+.edu-date,
+.timeline-date {
   font-size: 0.85rem;
   font-weight: 800;
   color: var(--green-200);
@@ -650,25 +666,21 @@ a:hover {
   font-weight: 800;
 }
 
-.coursework-grid {
+.coursework-grid,
+.project-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.course-tag {
+.course-tag,
+.project-tags span {
   font-size: 0.85rem;
   padding: 6px 14px;
   background: rgba(127,204,166,0.10);
   color: var(--green-200);
   border-radius: 20px;
   font-weight: 700;
-  transition: all var(--transition);
-}
-
-.course-tag:hover {
-  background: rgba(127,204,166,0.18);
-  transform: translateY(-1px);
 }
 
 /* ========== EXPERIENCE ========== */
@@ -692,10 +704,6 @@ a:hover {
   margin-bottom: 40px;
 }
 
-.timeline-item:last-child {
-  margin-bottom: 0;
-}
-
 .timeline-marker {
   position: absolute;
   left: -32px;
@@ -705,25 +713,11 @@ a:hover {
   border-radius: 50%;
   background: var(--bg);
   border: 3px solid var(--green-400);
-  transition: all var(--transition);
-}
-
-.timeline-item:hover .timeline-marker {
-  background: var(--green-400);
-  box-shadow: 0 0 0 4px rgba(127,204,166,0.12);
 }
 
 .timeline-content {
-  background: var(--card);
   padding: 24px;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  transition: all var(--transition);
-}
-
-.timeline-item:hover .timeline-content {
-  border-color: rgba(255,255,255,0.20);
-  box-shadow: var(--shadow-sm);
 }
 
 .timeline-header {
@@ -737,17 +731,11 @@ a:hover {
 
 .timeline-header h3 {
   font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--green-100);
 }
 
 .timeline-date {
   font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--green-200);
-  background: rgba(127,204,166,0.10);
   padding: 2px 10px;
-  border-radius: 20px;
 }
 
 .timeline-role {
@@ -762,7 +750,7 @@ a:hover {
   font-size: 0.95rem;
 }
 
-/* ========== PROJECTS ========== */
+/* ========== PROJECTS / RAMBLINGS ========== */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -770,17 +758,12 @@ a:hover {
 }
 
 .project-card {
-  background: var(--card);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: pointer;
-  transition: all var(--transition);
 }
 
 .project-card:hover {
-  border-color: rgba(255,255,255,0.20);
-  box-shadow: var(--shadow-md);
   transform: translateY(-4px);
 }
 
@@ -793,23 +776,18 @@ a:hover {
   height: 48px;
   border-radius: var(--radius);
   background: rgba(127,204,166,0.10);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   margin-bottom: 16px;
   font-size: 1.25rem;
   color: var(--green-300);
-  transition: all var(--transition);
-}
-
-.project-card:hover .project-icon {
-  background: rgba(127,204,166,0.18);
 }
 
 .project-card h3 {
   font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--green-100);
   margin-bottom: 8px;
 }
 
@@ -825,6 +803,7 @@ a:hover {
   letter-spacing: 0.1em;
   color: var(--green-300);
   font-weight: 800;
+
   display: flex;
   align-items: center;
   gap: 6px;
@@ -841,34 +820,22 @@ a:hover {
 .project-card-details {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease, padding 0.4s ease;
+  opacity: 0;
   padding: 0 28px;
+  transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
 }
 
 .project-card.expanded .project-card-details {
-  max-height: 300px;
+  max-height: 900px;
+  opacity: 1;
   padding: 0 28px 28px;
 }
 
 .project-card-details p {
-  color: var(--text-muted);
-  font-size: 0.9rem;
+  color: rgba(238,245,241,0.78);
+  line-height: 1.65;
+  font-size: 0.94rem;
   margin-bottom: 16px;
-}
-
-.project-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.project-tags span {
-  font-size: 0.75rem;
-  padding: 4px 10px;
-  background: rgba(127,204,166,0.10);
-  color: var(--green-200);
-  border-radius: 20px;
-  font-weight: 700;
 }
 
 /* ========== CONTACT ========== */
@@ -889,17 +856,13 @@ a:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
+
   padding: 28px;
-  background: var(--card);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  transition: all var(--transition);
   color: var(--text);
 }
 
 .contact-card:hover {
-  border-color: rgba(255,255,255,0.24);
-  box-shadow: var(--shadow-md);
   transform: translateY(-4px);
   color: var(--text);
 }
@@ -941,15 +904,19 @@ footer {
     top: 64px;
     left: 0;
     right: 0;
+
     background: rgba(9,16,18,0.97);
     backdrop-filter: blur(12px);
+
     flex-direction: column;
     align-items: center;
     gap: 0;
     padding: 0;
+
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
+
     border-bottom: 1px solid var(--border);
   }
 
@@ -970,11 +937,11 @@ footer {
   }
 
   #hero {
-    padding: 16vh 20px 56px;
+    padding: 14vh 18px 48px;
   }
 
   #hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.4rem;
   }
 
   .decrypt-text {
@@ -988,262 +955,7 @@ footer {
     display: none;
   }
 
-  .bubble {
-    width: 58px;
-    height: 58px;
-  }
-
-  .bubble-profile {
-    width: 64px;
-    height: 64px;
-  }
-
-  .bubble i {
-    font-size: 1.1rem;
-  }
-
-  .bubble-label {
-    display: none;
-  }
-
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .edu-header {
-    flex-direction: column;
-  }
-
-  .timeline-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .contact-links {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .section {
-    padding: 56px 0;
-  }
-
-  #hero {
-    padding: 14vh 18px 48px;
-  }
-
-  .hero-cta {
-    flex-direction: column;
-    align-items: center;
-  }
-
   .btn {
-    min-width: 160px;
-    padding: 11px 20px;
-  }
-
-  #hero h1 {
-    font-size: 2rem;
-  }
-}
-
-/* ==========================================================
-   FINAL HERO SIZE + ALWAYS-VISIBLE LABEL OVERRIDES
-   ========================================================== */
-
-/* Bigger main CTA buttons */
-.hero-cta {
-  gap: 24px;
-}
-
-.hero-cta .btn {
-  min-width: 210px;
-  min-height: 60px;
-  padding: 16px 34px;
-  font-size: 1.08rem;
-  font-weight: 800;
-  border-radius: 14px;
-}
-
-/* Keep CTA text visible and centered cleanly */
-.hero-cta .btn span {
-  display: inline-flex;
-  align-items: center;
-}
-
-/* Bigger floating bubble buttons */
-.bubble {
-  width: 92px;
-  height: 92px;
-  gap: 6px;
-}
-
-.bubble-profile {
-  width: 100px;
-  height: 100px;
-}
-
-#bubble-education,
-#bubble-experience,
-#bubble-projects,
-#bubble-contact {
-  width: 88px;
-  height: 88px;
-}
-
-.bubble i {
-  font-size: 1.55rem;
-}
-
-/* Always show bubble labels */
-.bubble-label {
-  opacity: 0.92 !important;
-  transform: translateY(0) !important;
-  font-size: 0.62rem;
-  letter-spacing: 0.09em;
-}
-
-/* Keep hover from changing label visibility */
-.bubble:hover .bubble-label {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-}
-
-/* Make labels easier to read */
-.bubble,
-.bubble-label {
-  color: rgba(255,255,255,0.95);
-}
-
-/* Mobile tuning */
-@media (max-width: 768px) {
-  .hero-cta {
-    gap: 16px;
-  }
-
-  .hero-cta .btn {
-    min-width: 190px;
-    min-height: 56px;
-    padding: 14px 26px;
-    font-size: 1rem;
-  }
-
-  .bubble {
-    width: 72px;
-    height: 72px;
-  }
-
-  .bubble-profile {
-    width: 80px;
-    height: 80px;
-  }
-
-  #bubble-education,
-  #bubble-experience,
-  #bubble-projects,
-  #bubble-contact {
-    width: 70px;
-    height: 70px;
-  }
-
-  .bubble i {
-    font-size: 1.2rem;
-  }
-
-  .bubble-label {
-    display: block !important;
-    font-size: 0.5rem;
-  }
-}
-
-/* ==========================================================
-   FINAL HERO + FLOATING BUTTON OVERRIDES
-   ========================================================== */
-
-/* Single hero CTA */
-.hero-cta {
-  gap: 0;
-  justify-content: center;
-}
-
-.hero-cta .btn {
-  min-width: 250px;
-  min-height: 68px;
-  padding: 18px 40px;
-  font-size: 1.14rem;
-  font-weight: 800;
-  border-radius: 16px;
-  letter-spacing: 0.01em;
-}
-
-.btn-ponderance {
-  background: linear-gradient(135deg, #2d7a53, #46a371);
-  color: #ffffff;
-  border-color: rgba(255,255,255,0.14);
-  box-shadow: 0 18px 44px rgba(45,122,83,0.24);
-}
-
-.btn-ponderance:hover {
-  color: #ffffff;
-  box-shadow: 0 22px 56px rgba(45,122,83,0.30);
-}
-
-/* Floating bubbles slightly larger and clearer */
-.bubble {
-  width: 96px;
-  height: 96px;
-  gap: 6px;
-  border-color: rgba(255,255,255,0.38);
-  box-shadow:
-    0 16px 44px rgba(0,0,0,0.34),
-    0 0 26px rgba(255,255,255,0.08);
-}
-
-.bubble-profile {
-  width: 104px;
-  height: 104px;
-}
-
-#bubble-education,
-#bubble-experience,
-#bubble-projects,
-#bubble-contact {
-  width: 92px;
-  height: 92px;
-}
-
-.bubble i {
-  font-size: 1.6rem;
-}
-
-.bubble-label {
-  opacity: 0.96 !important;
-  transform: translateY(0) !important;
-  font-size: 0.64rem;
-  letter-spacing: 0.1em;
-  font-weight: 800;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.35);
-}
-
-.bubble:hover .bubble-label {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-}
-
-/* Optional: slightly cleaner hero spacing */
-.hero-content {
-  max-width: 980px;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .hero-cta .btn {
     min-width: 210px;
     min-height: 58px;
     padding: 15px 28px;
@@ -1275,129 +987,20 @@ footer {
   .bubble-label {
     font-size: 0.5rem;
   }
-}
 
-/* ==========================================================
-   FIX RAMBLINGS CARD TEXT DISPLAY
-   ========================================================== */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
 
-.project-card-details {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  padding: 0 28px;
-  transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
-}
+  .edu-header,
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.project-card.expanded .project-card-details {
-  max-height: 900px;
-  opacity: 1;
-  padding: 0 28px 28px;
-}
-
-.project-card-details p {
-  color: rgba(238, 245, 241, 0.78);
-  line-height: 1.65;
-  font-size: 0.94rem;
-}
-
-/* ==========================================================
-   EMERGENCY HERO TEXT VISIBILITY FIX
-   ========================================================== */
-
-/* Keep the hero section as the positioning parent */
-#hero {
-  position: relative !important;
-  min-height: 100vh !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-}
-
-/* Canvas stays behind all clickable/text elements */
-#cityscape {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 1 !important;
-  pointer-events: none !important;
-}
-
-/* Floating bubbles stay above canvas but below main text */
-.bubbles-layer {
-  z-index: 3 !important;
-}
-
-/* Force title/text/button block back into view */
-.hero-content {
-  position: absolute !important;
-  top: 12vh !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 10 !important;
-  width: min(92vw, 980px) !important;
-  text-align: center !important;
-  pointer-events: auto !important;
-}
-
-/* Force name visible */
-#hero h1 {
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  color: #ffffff !important;
-  font-size: clamp(3rem, 6.4vw, 6.2rem) !important;
-  font-weight: 800 !important;
-  line-height: 1 !important;
-  margin: 0 0 10px !important;
-  text-shadow: 0 12px 42px rgba(0,0,0,0.55) !important;
-}
-
-/* Force divider visible */
-.hero-rule {
-  display: block !important;
-  width: 58px !important;
-  height: 2px !important;
-  margin: 20px auto 18px !important;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent) !important;
-}
-
-/* Force decrypt text visible */
-.decrypt-wrap {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  min-height: 2.6rem !important;
-  margin-bottom: 30px !important;
-}
-
-.decrypt-text {
-  display: inline-block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  color: rgba(255,255,255,0.96) !important;
-  font-size: clamp(1rem, 1.55vw, 1.3rem) !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.09em !important;
-  white-space: nowrap !important;
-}
-
-.decrypt-text .glyph.done {
-  color: rgba(255,255,255,0.97) !important;
-}
-
-.decrypt-text .glyph.scramble {
-  color: rgba(255,255,255,0.62) !important;
-}
-
-/* Force hero button visible */
-.hero-cta {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 11 !important;
-}
-
-.hero-cta .btn {
-  display: inline-flex !important;
-  opacity: 1 !important;
-  visibility: visible !important;
+  .projects-grid,
+  .contact-links {
+    grid-template-columns: 1fr;
+  }
 }
