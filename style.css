@@ -30,11 +30,8 @@
   --bg-alt: #0f171a;
   --card: rgba(255,255,255,0.045);
   --text: #eef5f1;
-  --text-dark: #16211d;
-  --text-muted: rgba(238,245,241,0.70);
+  --text-muted: rgba(238,245,241,0.72);
   --accent: var(--green-400);
-  --accent-dark: var(--green-700);
-  --accent-light: rgba(127,204,166,0.14);
   --border: rgba(184,228,204,0.13);
 
   --font-sans: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -96,18 +93,16 @@ a:hover {
   left: 0;
   right: 0;
   z-index: 1000;
-
-  background: rgba(204, 204, 204, 0.82);
+  background: rgba(204, 204, 204, 0.84);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
   border-bottom: 1px solid transparent;
   transition: all var(--transition);
 }
 
 #navbar.scrolled {
-  background: rgba(9, 16, 18, 0.86);
-  border-bottom-color: rgba(184,228,204,0.12);
+  background: rgba(9, 16, 18, 0.88);
+  border-bottom-color: rgba(255,255,255,0.08);
   box-shadow: var(--shadow-sm);
 }
 
@@ -148,7 +143,7 @@ a:hover {
 }
 
 #navbar.scrolled .nav-links a {
-  color: rgba(238,245,241,0.75);
+  color: rgba(238,245,241,0.78);
 }
 
 .nav-links a::after {
@@ -200,19 +195,16 @@ a:hover {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-
   text-align: center;
-  padding: 15vh 24px 60px;
-
+  padding: 17vh 24px 60px;
   color: var(--green-100);
   background:
-    radial-gradient(circle at 50% 34%, rgba(77,176,127,0.16), transparent 34%),
-    radial-gradient(circle at 50% 92%, rgba(77,176,127,0.20), transparent 35%),
+    radial-gradient(circle at 50% 34%, rgba(77,176,127,0.14), transparent 34%),
+    radial-gradient(circle at 50% 92%, rgba(77,176,127,0.16), transparent 35%),
     linear-gradient(180deg, #091012 0%, #0b1114 46%, #071012 100%);
 }
 
@@ -222,11 +214,9 @@ a:hover {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-
   background:
-    linear-gradient(rgba(127,204,166,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(127,204,166,0.018) 1px, transparent 1px);
-
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
   background-size: 84px 84px;
   mask-image: linear-gradient(to bottom, transparent 0%, black 26%, black 84%, transparent 100%);
 }
@@ -243,13 +233,13 @@ a:hover {
 .hero-content {
   position: relative;
   z-index: 4;
-  max-width: 900px;
+  max-width: 920px;
 }
 
 #hero h1 {
   font-size: clamp(3rem, 6.4vw, 6.2rem);
   font-weight: 800;
-  color: #f5f7f2;
+  color: #f8fbf8;
   margin-bottom: 6px;
   letter-spacing: -0.055em;
   line-height: 0.98;
@@ -260,13 +250,13 @@ a:hover {
   width: 58px;
   height: 2px;
   margin: 22px auto 18px;
-  background: linear-gradient(90deg, transparent, var(--green-400), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent);
   opacity: 0.85;
 }
 
 /* ========== DECRYPT TEXT ========== */
 .decrypt-wrap {
-  min-height: 2.4rem;
+  min-height: 2.6rem;
   margin-bottom: 30px;
   display: flex;
   justify-content: center;
@@ -274,10 +264,10 @@ a:hover {
 }
 
 .decrypt-text {
-  font-size: clamp(1rem, 1.55vw, 1.32rem);
+  font-size: clamp(1rem, 1.55vw, 1.3rem);
   font-weight: 700;
-  letter-spacing: 0.11em;
-  color: rgba(245,247,242,0.92);
+  letter-spacing: 0.09em;
+  color: rgba(255,255,255,0.96);
   white-space: nowrap;
 }
 
@@ -289,12 +279,12 @@ a:hover {
 }
 
 .decrypt-text .glyph.scramble {
-  color: var(--green-300);
+  color: rgba(255,255,255,0.62);
   opacity: 0.92;
 }
 
 .decrypt-text .glyph.done {
-  color: rgba(245,247,242,0.94);
+  color: rgba(255,255,255,0.97);
 }
 
 .decrypt-text .glyph.space {
@@ -316,13 +306,11 @@ a:hover {
   gap: 14px;
   min-width: 178px;
   padding: 13px 28px;
-
   border-radius: var(--radius);
   font-size: 0.98rem;
   font-weight: 800;
   letter-spacing: 0.01em;
   cursor: pointer;
-
   border: 1px solid transparent;
   transition: all var(--transition);
 }
@@ -343,11 +331,11 @@ a:hover {
 .btn-outline {
   background: rgba(7,12,14,0.36);
   color: var(--green-100);
-  border-color: rgba(127,204,166,0.64);
+  border-color: rgba(255,255,255,0.32);
 }
 
 .btn-outline:hover {
-  background: rgba(77,176,127,0.13);
+  background: rgba(255,255,255,0.08);
   color: var(--white);
   transform: translateY(-2px);
 }
@@ -363,35 +351,27 @@ a:hover {
 
 .bubble {
   position: absolute;
-
-  width: 78px;
-  height: 78px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 5px;
-
   pointer-events: auto;
   cursor: pointer;
   text-decoration: none;
-  color: var(--green-100);
-
+  color: rgba(255,255,255,0.92);
   background:
-    radial-gradient(circle at 30% 24%, rgba(230,245,237,0.18), transparent 32%),
-    rgba(9,18,18,0.62);
-
-  border: 1px solid rgba(127,204,166,0.58);
-
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.18), transparent 32%),
+    rgba(12, 22, 24, 0.72);
+  border: 1px solid rgba(255,255,255,0.34);
   box-shadow:
     0 14px 42px rgba(0,0,0,0.34),
-    0 0 24px rgba(77,176,127,0.13);
-
+    0 0 24px rgba(255,255,255,0.06);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
   transition:
     box-shadow 0.28s ease,
     border-color 0.28s ease,
@@ -401,35 +381,31 @@ a:hover {
 
 .bubble:hover {
   color: #ffffff;
-  border-color: rgba(184,228,204,0.92);
-
+  border-color: rgba(255,255,255,0.75);
   background:
-    radial-gradient(circle at 30% 24%, rgba(230,245,237,0.24), transparent 34%),
-    rgba(15,35,27,0.74);
-
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.24), transparent 34%),
+    rgba(18,35,34,0.82);
   box-shadow:
     0 18px 52px rgba(0,0,0,0.42),
-    0 0 34px rgba(77,176,127,0.22);
+    0 0 34px rgba(255,255,255,0.10);
 }
 
 .bubble i {
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   color: currentColor;
   pointer-events: none;
 }
 
 .bubble-label {
   font-family: var(--font-sans);
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: currentColor;
-
   opacity: 0;
   transform: translateY(3px);
   transition: opacity 0.25s ease, transform 0.25s ease;
-
   pointer-events: none;
   white-space: nowrap;
 }
@@ -439,27 +415,27 @@ a:hover {
   transform: translateY(0);
 }
 
-#bubble-profile {
-  width: 86px;
-  height: 86px;
+.bubble-profile {
+  width: 84px;
+  height: 84px;
 }
 
-#bubble-profile img {
+.bubble-profile img {
   width: 62%;
   height: 62%;
   border-radius: 50%;
   object-fit: cover;
   object-position: center top;
   pointer-events: none;
-  border: 1px solid rgba(184,228,204,0.45);
+  border: 1px solid rgba(255,255,255,0.34);
 }
 
 #bubble-education,
 #bubble-experience,
 #bubble-projects,
 #bubble-contact {
-  width: 76px;
-  height: 76px;
+  width: 74px;
+  height: 74px;
 }
 
 /* ========== HERO SIDE LINKS ========== */
@@ -474,13 +450,13 @@ a:hover {
 }
 
 .hero-side-links a {
-  color: rgba(184,228,204,0.76);
-  font-size: 1.55rem;
+  color: rgba(255,255,255,0.72);
+  font-size: 1.5rem;
   transition: 0.3s ease;
 }
 
 .hero-side-links a:hover {
-  color: var(--green-300);
+  color: rgba(255,255,255,0.92);
   transform: translateX(4px);
 }
 
@@ -499,15 +475,15 @@ a:hover {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(184,228,204,0.62);
+  background: rgba(255,255,255,0.48);
   display: block;
 }
 
 .hero-dots .active {
   width: 18px;
   height: 18px;
-  border: 2px solid var(--green-300);
-  background: radial-gradient(circle, var(--green-400) 0 34%, transparent 38%);
+  border: 2px solid rgba(255,255,255,0.80);
+  background: radial-gradient(circle, rgba(255,255,255,0.92) 0 34%, transparent 38%);
 }
 
 /* ========== SCROLL INDICATOR ========== */
@@ -516,7 +492,7 @@ a:hover {
   bottom: 32px;
   z-index: 4;
   animation: bounce 2s infinite;
-  color: rgba(184,228,204,0.55);
+  color: rgba(255,255,255,0.45);
   font-size: 1.25rem;
 }
 
@@ -547,7 +523,6 @@ a:hover {
   letter-spacing: 0.15em;
   color: var(--green-300);
   margin-bottom: 40px;
-
   display: flex;
   align-items: center;
   gap: 12px;
@@ -595,16 +570,14 @@ a:hover {
   align-items: center;
   gap: 16px;
   padding: 16px;
-
   background: var(--card);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-
   transition: all var(--transition);
 }
 
 .detail-card:hover {
-  border-color: rgba(127,204,166,0.38);
+  border-color: rgba(255,255,255,0.20);
   box-shadow: var(--shadow-sm);
   transform: translateX(4px);
 }
@@ -730,10 +703,8 @@ a:hover {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-
   background: var(--bg);
   border: 3px solid var(--green-400);
-
   transition: all var(--transition);
 }
 
@@ -751,7 +722,7 @@ a:hover {
 }
 
 .timeline-item:hover .timeline-content {
-  border-color: rgba(127,204,166,0.38);
+  border-color: rgba(255,255,255,0.20);
   box-shadow: var(--shadow-sm);
 }
 
@@ -808,7 +779,7 @@ a:hover {
 }
 
 .project-card:hover {
-  border-color: rgba(127,204,166,0.38);
+  border-color: rgba(255,255,255,0.20);
   box-shadow: var(--shadow-md);
   transform: translateY(-4px);
 }
@@ -822,15 +793,12 @@ a:hover {
   height: 48px;
   border-radius: var(--radius);
   background: rgba(127,204,166,0.10);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin-bottom: 16px;
   font-size: 1.25rem;
   color: var(--green-300);
-
   transition: all var(--transition);
 }
 
@@ -857,7 +825,6 @@ a:hover {
   letter-spacing: 0.1em;
   color: var(--green-300);
   font-weight: 800;
-
   display: flex;
   align-items: center;
   gap: 6px;
@@ -922,18 +889,16 @@ a:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
-
   padding: 28px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-
   transition: all var(--transition);
   color: var(--text);
 }
 
 .contact-card:hover {
-  border-color: rgba(127,204,166,0.48);
+  border-color: rgba(255,255,255,0.24);
   box-shadow: var(--shadow-md);
   transform: translateY(-4px);
   color: var(--text);
@@ -976,19 +941,15 @@ footer {
     top: 64px;
     left: 0;
     right: 0;
-
     background: rgba(9,16,18,0.97);
     backdrop-filter: blur(12px);
-
     flex-direction: column;
     align-items: center;
     gap: 0;
     padding: 0;
-
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
-
     border-bottom: 1px solid var(--border);
   }
 
@@ -1009,16 +970,16 @@ footer {
   }
 
   #hero {
-    padding: 15vh 20px 56px;
+    padding: 16vh 20px 56px;
   }
 
   #hero h1 {
-    font-size: 2.6rem;
+    font-size: 2.5rem;
   }
 
   .decrypt-text {
     white-space: normal;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     font-size: 1rem;
   }
 
@@ -1032,13 +993,13 @@ footer {
     height: 58px;
   }
 
-  #bubble-profile {
+  .bubble-profile {
     width: 64px;
     height: 64px;
   }
 
   .bubble i {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
   }
 
   .bubble-label {
@@ -1088,6 +1049,6 @@ footer {
   }
 
   #hero h1 {
-    font-size: 2.1rem;
+    font-size: 2rem;
   }
 }

@@ -29,7 +29,6 @@
   function reset() {
     pointer = 0;
     tick = 0;
-
     for (var j = 0; j < spans.length; j++) {
       resolved[j] = false;
       spans[j].className = "glyph" + (phrase[j] === " " ? " space" : " scramble");
@@ -82,9 +81,9 @@
 
   var colors = ["#10261b", "#173624", "#1f5a3b", "#2d7a53", "#38956a"];
   var sideShade = "rgba(3, 10, 8, 0.26)";
-  var highlight = "rgba(184, 228, 204, 0.16)";
-  var windowLit = "rgba(230, 245, 237, 0.92)";
-  var windowDim = "rgba(127, 204, 166, 0.26)";
+  var highlight = "rgba(255, 255, 255, 0.10)";
+  var windowLit = "rgba(240, 245, 243, 0.92)";
+  var windowDim = "rgba(255, 255, 255, 0.18)";
 
   function normalPDF(x) {
     return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
@@ -110,7 +109,6 @@
 
   function resize() {
     dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-
     W = canvas.offsetWidth;
     H = canvas.offsetHeight;
 
@@ -178,7 +176,6 @@
         color: c,
         depth: depth,
         roof: roof,
-        bell: bell,
         windows: windows
       });
     }
@@ -194,7 +191,6 @@
     }
 
     var treeCount = Math.max(58, Math.round(W / 18));
-
     for (var t = 0; t < treeCount; t++) {
       treeLine.push({
         x: startX + (t / (treeCount - 1)) * skylineW + rand(-5, 5),
@@ -215,8 +211,8 @@
     ctx.fillRect(0, 0, W, H);
 
     var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
-    glow.addColorStop(0, "rgba(77,176,127,0.20)");
-    glow.addColorStop(0.42, "rgba(77,176,127,0.075)");
+    glow.addColorStop(0, "rgba(77,176,127,0.12)");
+    glow.addColorStop(0.42, "rgba(77,176,127,0.05)");
     glow.addColorStop(1, "rgba(77,176,127,0)");
 
     ctx.fillStyle = glow;
@@ -225,8 +221,7 @@
 
   function drawSubtleGrid(baseY) {
     ctx.save();
-
-    ctx.strokeStyle = "rgba(184,228,204,0.055)";
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 10]);
 
@@ -261,12 +256,9 @@
     var curveLift = 18;
 
     ctx.save();
-
-    ctx.strokeStyle = "rgba(77,176,127,0.68)";
+    ctx.strokeStyle = "rgba(255,255,255,0.22)";
     ctx.lineWidth = 2;
-    ctx.setLineDash([2, 7]);
-    ctx.shadowColor = "rgba(77,176,127,0.35)";
-    ctx.shadowBlur = 8;
+    ctx.setLineDash([2, 8]);
 
     ctx.beginPath();
 
@@ -321,11 +313,11 @@
     ctx.fill();
 
     if (b.roof === "cap") {
-      ctx.fillStyle = "rgba(184,228,204,0.18)";
+      ctx.fillStyle = "rgba(255,255,255,0.12)";
       ctx.fillRect(x + w * 0.18, y - 5, w * 0.64, 5);
     } else if (b.roof === "spire") {
-      ctx.strokeStyle = "rgba(127,204,166,0.72)";
-      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = "rgba(255,255,255,0.42)";
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.moveTo(x + w / 2, y);
       ctx.lineTo(x + w / 2, y - 18);
@@ -340,11 +332,10 @@
       }
 
       ctx.fillStyle = win.lit ? windowLit : windowDim;
-      ctx.globalAlpha = win.lit ? 0.78 : 0.34;
+      ctx.globalAlpha = win.lit ? 0.8 : 0.34;
 
       var ww = Math.max(2.4, w * 0.11);
       var wh = Math.max(3.8, Math.min(8, h * 0.032));
-
       ctx.fillRect(x + win.x - ww / 2, y + win.y, ww, wh);
     }
 
@@ -362,7 +353,7 @@
       ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = "rgba(184,228,204,0.35)";
+      ctx.fillStyle = "rgba(255,255,255,0.18)";
       ctx.beginPath();
       ctx.arc(t.x - t.r * 0.35, t.y - t.r * 0.35, t.r * 0.35, 0, Math.PI * 2);
       ctx.fill();
@@ -375,14 +366,14 @@
     ctx.save();
 
     var refl = ctx.createLinearGradient(0, baseY, 0, H);
-    refl.addColorStop(0, "rgba(77,176,127,0.22)");
-    refl.addColorStop(0.4, "rgba(77,176,127,0.07)");
-    refl.addColorStop(1, "rgba(77,176,127,0)");
+    refl.addColorStop(0, "rgba(255,255,255,0.08)");
+    refl.addColorStop(0.4, "rgba(255,255,255,0.03)");
+    refl.addColorStop(1, "rgba(255,255,255,0)");
 
     ctx.fillStyle = refl;
     ctx.fillRect(W * 0.08, baseY, W * 0.84, H - baseY);
 
-    ctx.strokeStyle = "rgba(184,228,204,0.20)";
+    ctx.strokeStyle = "rgba(255,255,255,0.12)";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(W * 0.08, baseY + 4);
@@ -396,7 +387,6 @@
 
   function draw() {
     frame++;
-
     var baseY = H * 0.84;
 
     drawBackground();
@@ -404,9 +394,8 @@
 
     for (var p = 0; p < particles.length; p++) {
       var st = particles[p];
-
-      ctx.globalAlpha = 0.05 + 0.11 * Math.sin(frame * st.speed + st.phase);
-      ctx.fillStyle = "#7fcca6";
+      ctx.globalAlpha = 0.03 + 0.08 * Math.sin(frame * st.speed + st.phase);
+      ctx.fillStyle = "#ffffff";
       ctx.beginPath();
       ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
       ctx.fill();
@@ -427,7 +416,6 @@
   }
 
   window.addEventListener("resize", resize);
-
   resize();
   draw();
 })();
@@ -437,20 +425,18 @@
 (function () {
   var hero = document.getElementById("hero");
   var bubbles = Array.prototype.slice.call(document.querySelectorAll(".bubble"));
-
   if (!hero || bubbles.length === 0) return;
 
   var placements = [
-    { x: 0.13, y: 0.24 }, // About / profile
-    { x: 0.84, y: 0.23 }, // Education
-    { x: 0.90, y: 0.47 }, // Experience
-    { x: 0.10, y: 0.55 }, // Projects
-    { x: 0.78, y: 0.70 }  // Contact
+    { x: 0.08, y: 0.18 }, // profile
+    { x: 0.86, y: 0.18 }, // education
+    { x: 0.92, y: 0.46 }, // experience
+    { x: 0.10, y: 0.54 }, // projects
+    { x: 0.78, y: 0.72 }  // contact
   ];
 
   var states = bubbles.map(function (el, i) {
     var p = placements[i] || { x: 0.5, y: 0.5 };
-
     return {
       el: el,
       baseX: p.x,
@@ -459,19 +445,15 @@
       y: p.y,
       vx: (Math.random() - 0.5) * 0.002,
       vy: (Math.random() - 0.5) * 0.002,
-      phase: Math.random() * Math.PI * 2
+      phase: Math.random() * Math.PI * 2,
+      scale: el.classList.contains("bubble-profile") ? 1.04 : 1
     };
   });
 
-  var mouse = {
-    x: -10,
-    y: -10,
-    active: false
-  };
+  var mouse = { x: -10, y: -10, active: false };
 
   hero.addEventListener("mousemove", function (e) {
     var rect = hero.getBoundingClientRect();
-
     mouse.x = (e.clientX - rect.left) / rect.width;
     mouse.y = (e.clientY - rect.top) / rect.height;
     mouse.active = true;
@@ -485,8 +467,8 @@
     var rect = hero.getBoundingClientRect();
 
     states.forEach(function (b) {
-      var bobX = Math.sin(Date.now() * 0.00055 + b.phase) * 0.012;
-      var bobY = Math.cos(Date.now() * 0.0007 + b.phase) * 0.018;
+      var bobX = Math.sin(Date.now() * 0.00055 + b.phase) * 0.010;
+      var bobY = Math.cos(Date.now() * 0.00070 + b.phase) * 0.015;
 
       var targetX = b.baseX + bobX;
       var targetY = b.baseY + bobY;
@@ -499,8 +481,8 @@
         var dy = b.y - mouse.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 0.16 && dist > 0.001) {
-          var force = (0.16 - dist) * 0.012;
+        if (dist < 0.14 && dist > 0.001) {
+          var force = (0.14 - dist) * 0.014;
           b.vx += (dx / dist) * force;
           b.vy += (dy / dist) * force;
         }
@@ -512,12 +494,12 @@
       b.x += b.vx;
       b.y += b.vy;
 
-      b.x = Math.max(0.055, Math.min(0.945, b.x));
-      b.y = Math.max(0.14, Math.min(0.78, b.y));
+      b.x = Math.max(0.05, Math.min(0.95, b.x));
+      b.y = Math.max(0.16, Math.min(0.80, b.y));
 
       b.el.style.left = (b.x * rect.width) + "px";
       b.el.style.top = (b.y * rect.height) + "px";
-      b.el.style.transform = "translate(-50%, -50%)";
+      b.el.style.transform = "translate(-50%, -50%) scale(" + b.scale + ")";
     });
 
     requestAnimationFrame(animate);
@@ -539,7 +521,6 @@
     }
 
     var current = "";
-
     sections.forEach(function (s) {
       if (window.scrollY >= s.offsetTop - 120) {
         current = s.id;
