@@ -80,9 +80,15 @@ a:hover { color: var(--accent-dark); }
 /* ========== HERO ========== */
 #hero {
   min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 100px 24px 60px;
-  position: relative; background: var(--grey-50); overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 25vh 24px 60px;
+  position: relative;
+  background: var(--grey-50);
+  overflow: hidden;
 }
 
 #cityscape {
@@ -149,7 +155,6 @@ a:hover { color: var(--accent-dark); }
   position: relative; 
   z-index: 2; 
   max-width: 800px;
-  transform: translateY(-120px);
 }
 
 #hero h1 {
@@ -296,6 +301,11 @@ footer { padding: 32px 0; text-align: center; border-top: 1px solid var(--border
   .nav-links.open { max-height: 400px; padding: 16px 0; }
   .nav-links li { width: 100%; text-align: center; }
   .nav-links a { display: block; padding: 12px 24px; }
+
+  #hero {
+    padding: 24vh 24px 56px;
+  }
+
   #hero h1 { font-size: 2.25rem; }
   .decrypt-text { font-size: 1.1rem !important; }
   .about-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -305,8 +315,14 @@ footer { padding: 32px 0; text-align: center; border-top: 1px solid var(--border
   .contact-links { grid-template-columns: 1fr; }
   .bubble { transform: scale(0.55) !important; }
 }
+
 @media (max-width: 480px) {
   .section { padding: 56px 0; }
+
+  #hero {
+    padding: 22vh 20px 48px;
+  }
+
   .hero-cta { flex-direction: column; align-items: center; }
   #hero h1 { font-size: 1.85rem; }
 }
