@@ -221,9 +221,9 @@
 
   function drawSubtleGrid(baseY) {
     ctx.save();
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 10]);
+    ctx.strokeStyle = "rgba(255,255,255,0.11)";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 9]);
 
     var left = W * 0.12;
     var right = W * 0.88;
@@ -257,8 +257,8 @@
 
     ctx.save();
     ctx.strokeStyle = "rgba(255,255,255,0.22)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([2, 8]);
+    ctx.lineWidth = 2.1;
+    ctx.setLineDash([3, 8]);
 
     ctx.beginPath();
 
@@ -450,18 +450,6 @@
     };
   });
 
-  var mouse = { x: -10, y: -10, active: false };
-
-  hero.addEventListener("mousemove", function (e) {
-    var rect = hero.getBoundingClientRect();
-    mouse.x = (e.clientX - rect.left) / rect.width;
-    mouse.y = (e.clientY - rect.top) / rect.height;
-    mouse.active = true;
-  });
-
-  hero.addEventListener("mouseleave", function () {
-    mouse.active = false;
-  });
 
   function animate() {
     var rect = hero.getBoundingClientRect();
@@ -475,18 +463,6 @@
 
       b.vx += (targetX - b.x) * 0.018;
       b.vy += (targetY - b.y) * 0.018;
-
-      if (mouse.active) {
-        var dx = b.x - mouse.x;
-        var dy = b.y - mouse.y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 0.14 && dist > 0.001) {
-          var force = (0.14 - dist) * 0.014;
-          b.vx += (dx / dist) * force;
-          b.vy += (dy / dist) * force;
-        }
-      }
 
       b.vx *= 0.92;
       b.vy *= 0.92;
