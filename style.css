@@ -1276,3 +1276,27 @@ footer {
     font-size: 0.5rem;
   }
 }
+
+/* ==========================================================
+   FIX RAMBLINGS CARD TEXT DISPLAY
+   ========================================================== */
+
+.project-card-details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  padding: 0 28px;
+  transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
+}
+
+.project-card.expanded .project-card-details {
+  max-height: 900px;
+  opacity: 1;
+  padding: 0 28px 28px;
+}
+
+.project-card-details p {
+  color: rgba(238, 245, 241, 0.78);
+  line-height: 1.65;
+  font-size: 0.94rem;
+}
