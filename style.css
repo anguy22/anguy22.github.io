@@ -145,7 +145,12 @@ a:hover { color: var(--accent-dark); }
 #bubble-wafer   { width: 135px; height: 135px; }
 #bubble-piano   { width: 138px; height: 138px; }
 
-.hero-content { position: relative; z-index: 2; max-width: 800px; }
+.hero-content { 
+  position: relative; 
+  z-index: 2; 
+  max-width: 800px;
+  transform: translateY(-120px);
+}
 
 #hero h1 {
   font-size: 3.2rem; font-weight: 700; color: var(--accent-dark);
