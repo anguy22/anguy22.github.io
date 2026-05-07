@@ -1,5 +1,5 @@
 /* ==========================================================
-   script.js  –  Dark Distribution Skyline · Stable Floating Bubbles
+   script.js — Dark Distribution Skyline · Stable Floating Bubbles
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
@@ -260,7 +260,6 @@
 
     ctx.save();
 
-    /* back glow for visibility */
     ctx.strokeStyle = "rgba(255,255,255,0.14)";
     ctx.lineWidth = 6;
     ctx.setLineDash([]);
@@ -280,7 +279,6 @@
 
     ctx.stroke();
 
-    /* main visible curve */
     ctx.strokeStyle = "rgba(255,255,255,0.58)";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
@@ -446,7 +444,7 @@
 })();
 
 
-// ───────── FLOATING HERO BUBBLES — MORE CENTRAL + MORE ACTIVE ─────────
+// ───────── FLOATING HERO BUBBLES ─────────
 (function () {
   var hero = document.getElementById("hero");
   var bubbles = Array.prototype.slice.call(document.querySelectorAll(".bubble"));
@@ -454,11 +452,11 @@
   if (!hero || bubbles.length === 0) return;
 
   var placements = [
-    { x: 0.12, y: 0.18 }, // profile
-    { x: 0.84, y: 0.17 }, // education
-    { x: 0.89, y: 0.44 }, // experience
-    { x: 0.15, y: 0.55 }, // ramblings
-    { x: 0.76, y: 0.74 }  // contact
+    { x: 0.12, y: 0.18 },
+    { x: 0.84, y: 0.17 },
+    { x: 0.89, y: 0.44 },
+    { x: 0.15, y: 0.55 },
+    { x: 0.76, y: 0.74 }
   ];
 
   var states = bubbles.map(function (el, i) {
@@ -534,4 +532,74 @@
   }
 
   animate();
+})();
+
+
+// ───────── NAV / SCROLL / REVEAL ─────────
+(function () {
+  var navbar = document.getElementById("navbar");
+  var sections = document.querySelectorAll(".section, #hero");
+  var navLinks = document.querySelectorAll(".nav-links a");
+
+  window.addEventListener("scroll", function () {
+    if (navbar) {
+      navbar.classList.toggle("scrolled", window.scrollY > 50);
+    }
+
+    var current = "";
+
+    sections.forEach(function (s) {
+      if (window.scrollY >= s.offsetTop - 120) {
+        current = s.id;
+      }
+    });
+
+    navLinks.forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + current);
+    });
+  });
+
+  var toggle = document.querySelector(".nav-toggle");
+  var linksList = document.querySelector(".nav-links");
+
+  if (toggle && linksList) {
+    toggle.addEventListener("click", function () {
+      linksList.classList.toggle("open");
+    });
+
+    navLinks.forEach(function (a) {
+      a.addEventListener("click", function () {
+        linksList.classList.remove("open");
+      });
+    });
+  }
+
+  var reveals = document.querySelectorAll(".reveal");
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add("visible");
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
+  });
+
+  reveals.forEach(function (el) {
+    observer.observe(el);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var targetSelector = this.getAttribute("href");
+      var t = document.querySelector(targetSelector);
+
+      if (t) {
+        e.preventDefault();
+        t.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
 })();
