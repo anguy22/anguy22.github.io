@@ -1,10 +1,10 @@
 /* ==========================================================
-   script.js  –  Subtle Distribution Skyline · Decrypt Text
+   script.js  –  Dark Distribution Skyline · Floating Bubbles
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
 (function () {
-  var phrase = "How you do anything is how you do everything";
+  var phrase = "The best way to predict the future is to create it!";
   var el = document.getElementById("decrypt-text");
   if (!el) return;
 
@@ -29,6 +29,7 @@
   function reset() {
     pointer = 0;
     tick = 0;
+
     for (var j = 0; j < spans.length; j++) {
       resolved[j] = false;
       spans[j].className = "glyph" + (phrase[j] === " " ? " space" : " scramble");
@@ -64,6 +65,7 @@
   setTimeout(step, 700);
 })();
 
+
 // ───────── DARK DISTRIBUTION CITYSCAPE CANVAS ─────────
 (function () {
   var canvas = document.getElementById("cityscape");
@@ -73,6 +75,7 @@
   var W = 0;
   var H = 0;
   var dpr = 1;
+
   var buildings = [];
   var particles = [];
   var treeLine = [];
@@ -93,6 +96,7 @@
 
   function roundedRect(x, y, w, h, r) {
     r = Math.min(r, w / 2, h / 2);
+
     ctx.beginPath();
     ctx.moveTo(x + r, y);
     ctx.lineTo(x + w - r, y);
@@ -106,11 +110,15 @@
 
   function resize() {
     dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
     W = canvas.offsetWidth;
     H = canvas.offsetHeight;
+
     canvas.width = Math.floor(W * dpr);
     canvas.height = Math.floor(H * dpr);
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     generate();
   }
 
@@ -122,9 +130,11 @@
     var skylineW = W * 0.84;
     var startX = (W - skylineW) / 2;
     var baseY = H * 0.84;
+
     var count = Math.max(38, Math.round(W / 34));
     var gap = Math.max(2, W * 0.0023);
     var bw = (skylineW - gap * (count - 1)) / count;
+
     var mu = (count - 1) / 2;
     var sigma = count * 0.19;
     var maxH = H * 0.43;
@@ -132,13 +142,17 @@
     for (var i = 0; i < count; i++) {
       var z = (i - mu) / sigma;
       var bell = normalPDF(z) / normalPDF(0);
+
       var edgeLift = rand(10, 24);
       var h = edgeLift + maxH * bell * rand(0.86, 1.12);
+
       var x = startX + i * (bw + gap);
       var y = baseY - h;
+
       var c = colors[Math.floor(rand(0, colors.length))];
       var depth = Math.max(4, bw * rand(0.18, 0.28));
       var roof = Math.random() > 0.72 ? "cap" : (Math.random() > 0.84 ? "spire" : "flat");
+
       var rows = Math.floor(h / rand(16, 20));
       var cols = Math.max(1, Math.floor(bw / rand(9, 13)));
       var windows = [];
@@ -156,14 +170,31 @@
         }
       }
 
-      buildings.push({ x: x, y: y, w: bw, h: h, color: c, depth: depth, roof: roof, bell: bell, windows: windows });
+      buildings.push({
+        x: x,
+        y: y,
+        w: bw,
+        h: h,
+        color: c,
+        depth: depth,
+        roof: roof,
+        bell: bell,
+        windows: windows
+      });
     }
 
     for (var p = 0; p < 80; p++) {
-      particles.push({ x: rand(0, W), y: rand(0, H * 0.48), r: rand(0.35, 1.2), phase: rand(0, Math.PI * 2), speed: rand(0.005, 0.018) });
+      particles.push({
+        x: rand(0, W),
+        y: rand(0, H * 0.48),
+        r: rand(0.35, 1.2),
+        phase: rand(0, Math.PI * 2),
+        speed: rand(0.005, 0.018)
+      });
     }
 
     var treeCount = Math.max(58, Math.round(W / 18));
+
     for (var t = 0; t < treeCount; t++) {
       treeLine.push({
         x: startX + (t / (treeCount - 1)) * skylineW + rand(-5, 5),
@@ -179,6 +210,7 @@
     grad.addColorStop(0, "#091012");
     grad.addColorStop(0.48, "#0d1517");
     grad.addColorStop(1, "#071012");
+
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
@@ -186,12 +218,14 @@
     glow.addColorStop(0, "rgba(77,176,127,0.20)");
     glow.addColorStop(0.42, "rgba(77,176,127,0.075)");
     glow.addColorStop(1, "rgba(77,176,127,0)");
+
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
   }
 
   function drawSubtleGrid(baseY) {
     ctx.save();
+
     ctx.strokeStyle = "rgba(184,228,204,0.055)";
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 10]);
@@ -215,30 +249,33 @@
       ctx.lineTo(x, baseY + 8);
       ctx.stroke();
     }
+
     ctx.restore();
   }
 
   function drawBellCurve(baseY) {
     var count = 160;
-    var mu = 0;
     var xStart = W * 0.08;
     var xEnd = W * 0.92;
     var curveMax = H * 0.44;
     var curveLift = 18;
 
     ctx.save();
+
     ctx.strokeStyle = "rgba(77,176,127,0.68)";
     ctx.lineWidth = 2;
     ctx.setLineDash([2, 7]);
     ctx.shadowColor = "rgba(77,176,127,0.35)";
     ctx.shadowBlur = 8;
+
     ctx.beginPath();
 
     for (var i = 0; i <= count; i++) {
       var pct = i / count;
       var x = xStart + pct * (xEnd - xStart);
       var z = -3.15 + pct * 6.3;
-      var y = baseY - curveLift - (normalPDF(z) / normalPDF(mu)) * curveMax;
+      var y = baseY - curveLift - (normalPDF(z) / normalPDF(0)) * curveMax;
+
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
@@ -260,6 +297,7 @@
     facade.addColorStop(0, b.color);
     facade.addColorStop(0.55, "#2d7a53");
     facade.addColorStop(1, "#10261b");
+
     ctx.fillStyle = facade;
     roundedRect(x, y, w, h, Math.min(7, w * 0.2));
     ctx.fill();
@@ -296,11 +334,17 @@
 
     for (var i = 0; i < b.windows.length; i++) {
       var win = b.windows[i];
-      if (win.flicker && frame % 90 === 0 && Math.random() > 0.6) win.lit = !win.lit;
+
+      if (win.flicker && frame % 90 === 0 && Math.random() > 0.6) {
+        win.lit = !win.lit;
+      }
+
       ctx.fillStyle = win.lit ? windowLit : windowDim;
       ctx.globalAlpha = win.lit ? 0.78 : 0.34;
+
       var ww = Math.max(2.4, w * 0.11);
       var wh = Math.max(3.8, Math.min(8, h * 0.032));
+
       ctx.fillRect(x + win.x - ww / 2, y + win.y, ww, wh);
     }
 
@@ -308,9 +352,10 @@
     ctx.restore();
   }
 
-  function drawTrees(baseY) {
+  function drawTrees() {
     for (var i = 0; i < treeLine.length; i++) {
       var t = treeLine[i];
+
       ctx.fillStyle = t.color;
       ctx.globalAlpha = 0.82;
       ctx.beginPath();
@@ -322,6 +367,7 @@
       ctx.arc(t.x - t.r * 0.35, t.y - t.r * 0.35, t.r * 0.35, 0, Math.PI * 2);
       ctx.fill();
     }
+
     ctx.globalAlpha = 1;
   }
 
@@ -332,6 +378,7 @@
     refl.addColorStop(0, "rgba(77,176,127,0.22)");
     refl.addColorStop(0.4, "rgba(77,176,127,0.07)");
     refl.addColorStop(1, "rgba(77,176,127,0)");
+
     ctx.fillStyle = refl;
     ctx.fillRect(W * 0.08, baseY, W * 0.84, H - baseY);
 
@@ -349,6 +396,7 @@
 
   function draw() {
     frame++;
+
     var baseY = H * 0.84;
 
     drawBackground();
@@ -356,28 +404,128 @@
 
     for (var p = 0; p < particles.length; p++) {
       var st = particles[p];
+
       ctx.globalAlpha = 0.05 + 0.11 * Math.sin(frame * st.speed + st.phase);
       ctx.fillStyle = "#7fcca6";
       ctx.beginPath();
       ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
       ctx.fill();
     }
+
     ctx.globalAlpha = 1;
 
     drawBellCurve(baseY);
 
-    for (var i = 0; i < buildings.length; i++) drawBuilding(buildings[i], frame);
+    for (var i = 0; i < buildings.length; i++) {
+      drawBuilding(buildings[i], frame);
+    }
 
-    drawTrees(baseY);
+    drawTrees();
     drawReflection(baseY);
 
     requestAnimationFrame(draw);
   }
 
   window.addEventListener("resize", resize);
+
   resize();
   draw();
 })();
+
+
+// ───────── FLOATING HERO BUBBLES ─────────
+(function () {
+  var hero = document.getElementById("hero");
+  var bubbles = Array.prototype.slice.call(document.querySelectorAll(".bubble"));
+
+  if (!hero || bubbles.length === 0) return;
+
+  var placements = [
+    { x: 0.13, y: 0.24 }, // About / profile
+    { x: 0.84, y: 0.23 }, // Education
+    { x: 0.90, y: 0.47 }, // Experience
+    { x: 0.10, y: 0.55 }, // Projects
+    { x: 0.78, y: 0.70 }  // Contact
+  ];
+
+  var states = bubbles.map(function (el, i) {
+    var p = placements[i] || { x: 0.5, y: 0.5 };
+
+    return {
+      el: el,
+      baseX: p.x,
+      baseY: p.y,
+      x: p.x,
+      y: p.y,
+      vx: (Math.random() - 0.5) * 0.002,
+      vy: (Math.random() - 0.5) * 0.002,
+      phase: Math.random() * Math.PI * 2
+    };
+  });
+
+  var mouse = {
+    x: -10,
+    y: -10,
+    active: false
+  };
+
+  hero.addEventListener("mousemove", function (e) {
+    var rect = hero.getBoundingClientRect();
+
+    mouse.x = (e.clientX - rect.left) / rect.width;
+    mouse.y = (e.clientY - rect.top) / rect.height;
+    mouse.active = true;
+  });
+
+  hero.addEventListener("mouseleave", function () {
+    mouse.active = false;
+  });
+
+  function animate() {
+    var rect = hero.getBoundingClientRect();
+
+    states.forEach(function (b) {
+      var bobX = Math.sin(Date.now() * 0.00055 + b.phase) * 0.012;
+      var bobY = Math.cos(Date.now() * 0.0007 + b.phase) * 0.018;
+
+      var targetX = b.baseX + bobX;
+      var targetY = b.baseY + bobY;
+
+      b.vx += (targetX - b.x) * 0.018;
+      b.vy += (targetY - b.y) * 0.018;
+
+      if (mouse.active) {
+        var dx = b.x - mouse.x;
+        var dy = b.y - mouse.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 0.16 && dist > 0.001) {
+          var force = (0.16 - dist) * 0.012;
+          b.vx += (dx / dist) * force;
+          b.vy += (dy / dist) * force;
+        }
+      }
+
+      b.vx *= 0.92;
+      b.vy *= 0.92;
+
+      b.x += b.vx;
+      b.y += b.vy;
+
+      b.x = Math.max(0.055, Math.min(0.945, b.x));
+      b.y = Math.max(0.14, Math.min(0.78, b.y));
+
+      b.el.style.left = (b.x * rect.width) + "px";
+      b.el.style.top = (b.y * rect.height) + "px";
+      b.el.style.transform = "translate(-50%, -50%)";
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+})();
+
 
 // ───────── NAV / SCROLL / REVEAL ─────────
 (function () {
@@ -386,11 +534,16 @@
   var navLinks = document.querySelectorAll(".nav-links a");
 
   window.addEventListener("scroll", function () {
-    navbar.classList.toggle("scrolled", window.scrollY > 50);
+    if (navbar) {
+      navbar.classList.toggle("scrolled", window.scrollY > 50);
+    }
 
     var current = "";
+
     sections.forEach(function (s) {
-      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      if (window.scrollY >= s.offsetTop - 120) {
+        current = s.id;
+      }
     });
 
     navLinks.forEach(function (a) {
@@ -414,11 +567,17 @@
   }
 
   var reveals = document.querySelectorAll(".reveal");
+
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (e.isIntersecting) e.target.classList.add("visible");
+      if (e.isIntersecting) {
+        e.target.classList.add("visible");
+      }
     });
-  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+  }, {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
+  });
 
   reveals.forEach(function (el) {
     observer.observe(el);
