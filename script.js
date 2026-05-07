@@ -1,157 +1,362 @@
 /* ==========================================================
-   script.js  –  Cityscape · Floating Bubbles · Decrypt Text
+   script.js  –  Subtle Distribution Skyline · Decrypt Text
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
 (function () {
   var phrase = "How you do anything is how you do everything";
   var el = document.getElementById("decrypt-text");
+  if (!el) return;
+
   var glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?<>{}[]~^";
   var resolved = [];
   var spans = [];
 
-  // build spans
   for (var i = 0; i < phrase.length; i++) {
     var s = document.createElement("span");
     s.className = "glyph" + (phrase[i] === " " ? " space" : " scramble");
-    s.textContent = phrase[i] === " " ? " " : glyphs[Math.floor(Math.random() * glyphs.length)];
+    s.textContent = phrase[i] === " " ? " " : glyphs[Math.floor(Math.random() * glyphs.length)];
     el.appendChild(s);
     spans.push(s);
     resolved.push(false);
   }
 
-  var pointer = 0;          // next char to lock
-  var tickInterval = 35;    // ms per scramble tick
-  var lockEvery = 2;        // lock one char every N ticks
+  var pointer = 0;
+  var tickInterval = 34;
+  var lockEvery = 2;
   var tick = 0;
+
+  function reset() {
+    pointer = 0;
+    tick = 0;
+    for (var j = 0; j < spans.length; j++) {
+      resolved[j] = false;
+      spans[j].className = "glyph" + (phrase[j] === " " ? " space" : " scramble");
+    }
+  }
 
   function step() {
     tick++;
-    // scramble all unresolved non-space chars
+
     for (var i = pointer; i < phrase.length; i++) {
       if (phrase[i] !== " " && !resolved[i]) {
         spans[i].textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
       }
     }
-    // lock next char
+
     if (tick % lockEvery === 0 && pointer < phrase.length) {
-      spans[pointer].textContent = phrase[pointer] === " " ? " " : phrase[pointer];
+      spans[pointer].textContent = phrase[pointer] === " " ? " " : phrase[pointer];
       spans[pointer].className = "glyph" + (phrase[pointer] === " " ? " space done" : " done");
       resolved[pointer] = true;
       pointer++;
     }
+
     if (pointer < phrase.length) {
       setTimeout(step, tickInterval);
     } else {
-      // pause then restart
       setTimeout(function () {
-        pointer = 0;
-        tick = 0;
-        for (var j = 0; j < spans.length; j++) {
-          resolved[j] = false;
-          spans[j].className = "glyph" + (phrase[j] === " " ? " space" : " scramble");
-        }
+        reset();
         step();
-      }, 4000);
+      }, 4200);
     }
   }
-  setTimeout(step, 800);
+
+  setTimeout(step, 700);
 })();
 
-
-// ───────── HISTOGRAM CITYSCAPE (Canvas) ─────────
+// ───────── DARK DISTRIBUTION CITYSCAPE CANVAS ─────────
 (function () {
   var canvas = document.getElementById("cityscape");
+  if (!canvas) return;
+
   var ctx = canvas.getContext("2d");
-  var W, H;
+  var W = 0;
+  var H = 0;
+  var dpr = 1;
+  var buildings = [];
+  var particles = [];
+  var treeLine = [];
 
-  var COLORS     = ["#1a3a2a","#1e4d35","#245e40","#2d7a53","#38956a"];
-  var WIN_ON     = "#e6f5ed";
-  var WIN_OFF    = "#1a3a2a";
-  var GROUND_CLR = "#b8e4cc";
-  var CURVE_CLR  = "rgba(77,176,127,0.55)";
-  var AXIS_CLR   = "rgba(36,94,64,0.18)";
-  var TICK_CLR   = "rgba(36,94,64,0.25)";
+  var colors = ["#10261b", "#173624", "#1f5a3b", "#2d7a53", "#38956a"];
+  var sideShade = "rgba(3, 10, 8, 0.26)";
+  var highlight = "rgba(184, 228, 204, 0.16)";
+  var windowLit = "rgba(230, 245, 237, 0.92)";
+  var windowDim = "rgba(127, 204, 166, 0.26)";
 
-  var bars = [];   // each bar = one building
-  var stars = [];
-
-  // normal PDF helper (mu=0, sigma=1)
   function normalPDF(x) {
     return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
   }
 
+  function rand(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function roundedRect(x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
   function resize() {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
+    dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     generate();
   }
 
   function generate() {
-    bars = [];
-    stars = [];
-    var numBars   = Math.round(W / 48);       // responsive bar count
-    var gap       = 3;
-    var barW      = (W - gap * (numBars - 1)) / numBars;
-    var margin    = 30;                        // ground margin
-    var maxH      = H * 0.52;                  // tallest bar height
-    var sigma     = numBars * 0.28;            // spread
-    var mu        = numBars / 2;               // center
+    buildings = [];
+    particles = [];
+    treeLine = [];
 
-    for (var i = 0; i < numBars; i++) {
-      // height follows bell curve + small random jitter for organic look
+    var skylineW = W * 0.84;
+    var startX = (W - skylineW) / 2;
+    var baseY = H * 0.84;
+    var count = Math.max(38, Math.round(W / 34));
+    var gap = Math.max(2, W * 0.0023);
+    var bw = (skylineW - gap * (count - 1)) / count;
+    var mu = (count - 1) / 2;
+    var sigma = count * 0.19;
+    var maxH = H * 0.43;
+
+    for (var i = 0; i < count; i++) {
       var z = (i - mu) / sigma;
-      var bell = normalPDF(z) / normalPDF(0);  // normalized 0..1
-      var jitter = 0.92 + Math.random() * 0.16;
-      var h = maxH * bell * jitter;
-      if (h < 20) h = 15 + Math.random() * 15; // floor so edge bars are still mini buildings
-
-      var x = i * (barW + gap);
-      var color = COLORS[Math.floor(Math.random() * COLORS.length)];
-
-      // windows
+      var bell = normalPDF(z) / normalPDF(0);
+      var edgeLift = rand(10, 24);
+      var h = edgeLift + maxH * bell * rand(0.86, 1.12);
+      var x = startX + i * (bw + gap);
+      var y = baseY - h;
+      var c = colors[Math.floor(rand(0, colors.length))];
+      var depth = Math.max(4, bw * rand(0.18, 0.28));
+      var roof = Math.random() > 0.72 ? "cap" : (Math.random() > 0.84 ? "spire" : "flat");
+      var rows = Math.floor(h / rand(16, 20));
+      var cols = Math.max(1, Math.floor(bw / rand(9, 13)));
       var windows = [];
-      var cols = Math.max(1, Math.floor(barW / 16));
-      var rows = Math.max(1, Math.floor(h / 22));
+
       for (var r = 1; r < rows; r++) {
-        for (var c = 0; c < cols; c++) {
-          windows.push({
-            rx: 4 + c * ((barW - 8) / cols),
-            ry: 8 + r * 20,
-            lit: Math.random() > 0.4
-          });
+        for (var col = 0; col < cols; col++) {
+          if (Math.random() > 0.12) {
+            windows.push({
+              x: (col + 0.5) * (bw / cols),
+              y: r * (h / rows),
+              lit: Math.random() > 0.38,
+              flicker: Math.random() > 0.965
+            });
+          }
         }
       }
 
-      // rooftop detail (antenna/spire on tallest bars)
-      var hasAntenna = bell > 0.65 && Math.random() > 0.4;
-
-      bars.push({ x: x, w: barW, h: h, color: color, windows: windows, bell: bell, hasAntenna: hasAntenna });
+      buildings.push({ x: x, y: y, w: bw, h: h, color: c, depth: depth, roof: roof, bell: bell, windows: windows });
     }
 
-    // floating dots
-    for (var s = 0; s < 50; s++) {
-      stars.push({ x: Math.random() * W, y: Math.random() * H * 0.4, r: 0.4 + Math.random(), phase: Math.random() * Math.PI * 2 });
+    for (var p = 0; p < 80; p++) {
+      particles.push({ x: rand(0, W), y: rand(0, H * 0.48), r: rand(0.35, 1.2), phase: rand(0, Math.PI * 2), speed: rand(0.005, 0.018) });
+    }
+
+    var treeCount = Math.max(58, Math.round(W / 18));
+    for (var t = 0; t < treeCount; t++) {
+      treeLine.push({
+        x: startX + (t / (treeCount - 1)) * skylineW + rand(-5, 5),
+        y: baseY + rand(-8, 3),
+        r: rand(4, 11),
+        color: Math.random() > 0.5 ? "#7fcca6" : "#4db07f"
+      });
     }
   }
 
-  var frame = 0;
-  function draw() {
-    frame++;
-    ctx.clearRect(0, 0, W, H);
-
-    // sky gradient
+  function drawBackground() {
     var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#f7f7f7");
-    grad.addColorStop(0.7, "#eef8f2");
-    grad.addColorStop(1, "#e0f0e8");
+    grad.addColorStop(0, "#091012");
+    grad.addColorStop(0.48, "#0d1517");
+    grad.addColorStop(1, "#071012");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // twinkling dots
-    for (var s = 0; s < stars.length; s++) {
-      var st = stars[s];
-      ctx.globalAlpha = 0.15 + 0.2 * Math.sin(frame * 0.025 + st.phase);
+    var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
+    glow.addColorStop(0, "rgba(77,176,127,0.20)");
+    glow.addColorStop(0.42, "rgba(77,176,127,0.075)");
+    glow.addColorStop(1, "rgba(77,176,127,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawSubtleGrid(baseY) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(184,228,204,0.055)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 10]);
+
+    var left = W * 0.12;
+    var right = W * 0.88;
+    var top = H * 0.48;
+
+    for (var i = 0; i < 5; i++) {
+      var y = top + i * ((baseY - top) / 4);
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(right, y);
+      ctx.stroke();
+    }
+
+    for (var j = 0; j < 7; j++) {
+      var x = left + j * ((right - left) / 6);
+      ctx.beginPath();
+      ctx.moveTo(x, top);
+      ctx.lineTo(x, baseY + 8);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawBellCurve(baseY) {
+    var count = 160;
+    var mu = 0;
+    var xStart = W * 0.08;
+    var xEnd = W * 0.92;
+    var curveMax = H * 0.44;
+    var curveLift = 18;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(77,176,127,0.68)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([2, 7]);
+    ctx.shadowColor = "rgba(77,176,127,0.35)";
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+
+    for (var i = 0; i <= count; i++) {
+      var pct = i / count;
+      var x = xStart + pct * (xEnd - xStart);
+      var z = -3.15 + pct * 6.3;
+      var y = baseY - curveLift - (normalPDF(z) / normalPDF(mu)) * curveMax;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawBuilding(b, frame) {
+    var x = b.x;
+    var y = b.y;
+    var w = b.w;
+    var h = b.h;
+    var d = b.depth;
+
+    ctx.save();
+
+    var facade = ctx.createLinearGradient(x, y, x + w, y + h);
+    facade.addColorStop(0, b.color);
+    facade.addColorStop(0.55, "#2d7a53");
+    facade.addColorStop(1, "#10261b");
+    ctx.fillStyle = facade;
+    roundedRect(x, y, w, h, Math.min(7, w * 0.2));
+    ctx.fill();
+
+    ctx.fillStyle = sideShade;
+    ctx.beginPath();
+    ctx.moveTo(x + w, y + d * 0.55);
+    ctx.lineTo(x + w + d, y + d);
+    ctx.lineTo(x + w + d, y + h);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = highlight;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w + d, y + d);
+    ctx.lineTo(x + d, y + d);
+    ctx.closePath();
+    ctx.fill();
+
+    if (b.roof === "cap") {
+      ctx.fillStyle = "rgba(184,228,204,0.18)";
+      ctx.fillRect(x + w * 0.18, y - 5, w * 0.64, 5);
+    } else if (b.roof === "spire") {
+      ctx.strokeStyle = "rgba(127,204,166,0.72)";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(x + w / 2, y);
+      ctx.lineTo(x + w / 2, y - 18);
+      ctx.stroke();
+    }
+
+    for (var i = 0; i < b.windows.length; i++) {
+      var win = b.windows[i];
+      if (win.flicker && frame % 90 === 0 && Math.random() > 0.6) win.lit = !win.lit;
+      ctx.fillStyle = win.lit ? windowLit : windowDim;
+      ctx.globalAlpha = win.lit ? 0.78 : 0.34;
+      var ww = Math.max(2.4, w * 0.11);
+      var wh = Math.max(3.8, Math.min(8, h * 0.032));
+      ctx.fillRect(x + win.x - ww / 2, y + win.y, ww, wh);
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  function drawTrees(baseY) {
+    for (var i = 0; i < treeLine.length; i++) {
+      var t = treeLine[i];
+      ctx.fillStyle = t.color;
+      ctx.globalAlpha = 0.82;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(184,228,204,0.35)";
+      ctx.beginPath();
+      ctx.arc(t.x - t.r * 0.35, t.y - t.r * 0.35, t.r * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawReflection(baseY) {
+    ctx.save();
+
+    var refl = ctx.createLinearGradient(0, baseY, 0, H);
+    refl.addColorStop(0, "rgba(77,176,127,0.22)");
+    refl.addColorStop(0.4, "rgba(77,176,127,0.07)");
+    refl.addColorStop(1, "rgba(77,176,127,0)");
+    ctx.fillStyle = refl;
+    ctx.fillRect(W * 0.08, baseY, W * 0.84, H - baseY);
+
+    ctx.strokeStyle = "rgba(184,228,204,0.20)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(W * 0.08, baseY + 4);
+    ctx.lineTo(W * 0.92, baseY + 4);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  var frame = 0;
+
+  function draw() {
+    frame++;
+    var baseY = H * 0.84;
+
+    drawBackground();
+    drawSubtleGrid(baseY);
+
+    for (var p = 0; p < particles.length; p++) {
+      var st = particles[p];
+      ctx.globalAlpha = 0.05 + 0.11 * Math.sin(frame * st.speed + st.phase);
       ctx.fillStyle = "#7fcca6";
       ctx.beginPath();
       ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
@@ -159,108 +364,12 @@
     }
     ctx.globalAlpha = 1;
 
-    var baseY  = H - 28;
-    var margin = 28;
+    drawBellCurve(baseY);
 
-    // x-axis line
-    ctx.strokeStyle = AXIS_CLR;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, baseY);
-    ctx.lineTo(W, baseY);
-    ctx.stroke();
+    for (var i = 0; i < buildings.length; i++) drawBuilding(buildings[i], frame);
 
-    // tick marks along axis
-    var numTicks = Math.round(W / 80);
-    for (var t = 0; t <= numTicks; t++) {
-      var tx = (t / numTicks) * W;
-      ctx.strokeStyle = TICK_CLR;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(tx, baseY);
-      ctx.lineTo(tx, baseY + 6);
-      ctx.stroke();
-    }
-
-    // ground fill
-    ctx.fillStyle = GROUND_CLR;
-    ctx.fillRect(0, baseY, W, H - baseY);
-
-    // draw buildings (histogram bars)
-    for (var i = 0; i < bars.length; i++) {
-      var b = bars[i];
-      ctx.fillStyle = b.color;
-
-      // slight rounded top
-      var r = Math.min(4, b.w / 4);
-      var bx = b.x, by = baseY - b.h, bw = b.w, bh = b.h;
-      ctx.beginPath();
-      ctx.moveTo(bx, baseY);
-      ctx.lineTo(bx, by + r);
-      ctx.quadraticCurveTo(bx, by, bx + r, by);
-      ctx.lineTo(bx + bw - r, by);
-      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
-      ctx.lineTo(bx + bw, baseY);
-      ctx.closePath();
-      ctx.fill();
-
-      // antenna
-      if (b.hasAntenna) {
-        ctx.strokeStyle = b.color;
-        ctx.lineWidth = 2;
-        var ax = bx + bw / 2;
-        ctx.beginPath();
-        ctx.moveTo(ax, by);
-        ctx.lineTo(ax, by - 14);
-        ctx.stroke();
-        ctx.fillStyle = "#4db07f";
-        ctx.beginPath();
-        ctx.arc(ax, by - 16, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // windows
-      for (var j = 0; j < b.windows.length; j++) {
-        var wi = b.windows[j];
-        if (Math.random() < 0.003) wi.lit = !wi.lit;
-        ctx.fillStyle = wi.lit ? WIN_ON : WIN_OFF;
-        ctx.globalAlpha = wi.lit ? 0.85 : 0.25;
-        ctx.fillRect(bx + wi.rx, by + wi.ry, 8, 10);
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    // bell curve overlay
-    ctx.strokeStyle = CURVE_CLR;
-    ctx.lineWidth = 3;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    var numBars = bars.length;
-    var sigma = numBars * 0.28;
-    var mu = numBars / 2;
-    var maxH = H * 0.52;
-    for (var px = 0; px <= W; px += 2) {
-      var barIdx = (px / W) * numBars;
-      var z = (barIdx - mu) / sigma;
-      var bell = normalPDF(z) / normalPDF(0);
-      var curveY = baseY - maxH * bell - 12;
-      if (px === 0) ctx.moveTo(px, curveY);
-      else ctx.lineTo(px, curveY);
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // subtle "mu" label at center
-    ctx.fillStyle = "rgba(36,94,64,0.20)";
-    ctx.font = "italic 14px serif";
-    ctx.textAlign = "center";
-    ctx.fillText("μ", W / 2, baseY + 20);
-
-    // sigma markers
-    var barW = W / numBars;
-    ctx.font = "italic 12px serif";
-    ctx.fillText("-1σ", W / 2 - sigma * barW, baseY + 20);
-    ctx.fillText("+1σ", W / 2 + sigma * barW, baseY + 20);
+    drawTrees(baseY);
+    drawReflection(baseY);
 
     requestAnimationFrame(draw);
   }
@@ -270,92 +379,6 @@
   draw();
 })();
 
-
-// ───────── FLOATING BUBBLES (physics) ─────────
-(function () {
-  var hero = document.getElementById("hero");
-  var bubbles = document.querySelectorAll(".bubble");
-  var positions = [];
-
-  // initial scattered positions (percentage-based, placed around edges so they don't cover center text)
-  var placements = [
-    { xPct: 0.12, yPct: 0.22 },  // profile
-    { xPct: 0.82, yPct: 0.18 },  // chess
-    { xPct: 0.88, yPct: 0.55 },  // trading
-    { xPct: 0.08, yPct: 0.60 },  // wafer
-    { xPct: 0.78, yPct: 0.78 },  // piano
-  ];
-
-  for (var i = 0; i < bubbles.length; i++) {
-    var p = placements[i];
-    positions.push({
-      el: bubbles[i],
-      xPct: p.xPct,
-      yPct: p.yPct,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.2,
-      baseX: p.xPct,
-      baseY: p.yPct
-    });
-  }
-
-  // mouse repel
-  var mouseX = -9999, mouseY = -9999;
-  hero.addEventListener("mousemove", function (e) {
-    var rect = hero.getBoundingClientRect();
-    mouseX = (e.clientX - rect.left) / rect.width;
-    mouseY = (e.clientY - rect.top) / rect.height;
-  });
-  hero.addEventListener("mouseleave", function () {
-    mouseX = -9999; mouseY = -9999;
-  });
-
-  function animate() {
-    var rect = hero.getBoundingClientRect();
-    for (var i = 0; i < positions.length; i++) {
-      var b = positions[i];
-      // gentle float
-      b.xPct += b.vx * 0.002;
-      b.yPct += b.vy * 0.002;
-
-      // spring back toward base
-      b.vx += (b.baseX - b.xPct) * 0.02;
-      b.vy += (b.baseY - b.yPct) * 0.02;
-
-      // damping
-      b.vx *= 0.98;
-      b.vy *= 0.98;
-
-      // gentle sine bob
-      var bob = Math.sin(Date.now() * 0.001 + i * 1.8) * 0.012;
-      var displayY = b.yPct + bob;
-
-      // mouse repel
-      var dx = b.xPct - mouseX;
-      var dy = displayY - mouseY;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 0.15 && dist > 0.001) {
-        var force = (0.15 - dist) * 0.6;
-        b.vx += (dx / dist) * force;
-        b.vy += (dy / dist) * force;
-      }
-
-      // clamp
-      b.xPct = Math.max(0.03, Math.min(0.97, b.xPct));
-      b.yPct = Math.max(0.05, Math.min(0.90, b.yPct));
-
-      var px = b.xPct * rect.width;
-      var py = displayY * rect.height;
-      b.el.style.left = px + "px";
-      b.el.style.top  = py + "px";
-      b.el.style.transform = "translate(-50%,-50%)";
-    }
-    requestAnimationFrame(animate);
-  }
-  animate();
-})();
-
-
 // ───────── NAV / SCROLL / REVEAL ─────────
 (function () {
   var navbar = document.getElementById("navbar");
@@ -364,37 +387,52 @@
 
   window.addEventListener("scroll", function () {
     navbar.classList.toggle("scrolled", window.scrollY > 50);
-    // active link
+
     var current = "";
     sections.forEach(function (s) {
       if (window.scrollY >= s.offsetTop - 120) current = s.id;
     });
+
     navLinks.forEach(function (a) {
       a.classList.toggle("active", a.getAttribute("href") === "#" + current);
     });
   });
 
-  // mobile toggle
   var toggle = document.querySelector(".nav-toggle");
   var linksList = document.querySelector(".nav-links");
-  toggle.addEventListener("click", function () { linksList.classList.toggle("open"); });
-  navLinks.forEach(function (a) {
-    a.addEventListener("click", function () { linksList.classList.remove("open"); });
-  });
 
-  // scroll reveal
+  if (toggle && linksList) {
+    toggle.addEventListener("click", function () {
+      linksList.classList.toggle("open");
+    });
+
+    navLinks.forEach(function (a) {
+      a.addEventListener("click", function () {
+        linksList.classList.remove("open");
+      });
+    });
+  }
+
   var reveals = document.querySelectorAll(".reveal");
   var observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("visible"); });
+    entries.forEach(function (e) {
+      if (e.isIntersecting) e.target.classList.add("visible");
+    });
   }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-  reveals.forEach(function (el) { observer.observe(el); });
 
-  // smooth scroll
+  reveals.forEach(function (el) {
+    observer.observe(el);
+  });
+
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     a.addEventListener("click", function (e) {
-      e.preventDefault();
-      var t = document.querySelector(this.getAttribute("href"));
-      if (t) t.scrollIntoView({ behavior: "smooth" });
+      var targetSelector = this.getAttribute("href");
+      var t = document.querySelector(targetSelector);
+
+      if (t) {
+        e.preventDefault();
+        t.scrollIntoView({ behavior: "smooth" });
+      }
     });
   });
 })();
