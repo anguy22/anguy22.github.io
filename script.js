@@ -4,7 +4,7 @@
 
 // ========== TYPING EFFECT ==========
 const phrases = [
-  "semiconductors",
+  "statistics and probability",
   "decision theory",
   "quantitative modeling",
   "industrial engineering"
