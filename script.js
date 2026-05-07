@@ -1,5 +1,5 @@
 /* ==========================================================
-   script.js  –  Dark Distribution Skyline · Floating Bubbles
+   script.js  –  Dark Distribution Skyline · Stable Floating Bubbles
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
@@ -29,6 +29,7 @@
   function reset() {
     pointer = 0;
     tick = 0;
+
     for (var j = 0; j < spans.length; j++) {
       resolved[j] = false;
       spans[j].className = "glyph" + (phrase[j] === " " ? " space" : " scramble");
@@ -109,6 +110,7 @@
 
   function resize() {
     dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
     W = canvas.offsetWidth;
     H = canvas.offsetHeight;
 
@@ -221,13 +223,14 @@
 
   function drawSubtleGrid(baseY) {
     ctx.save();
-    ctx.strokeStyle = "rgba(255,255,255,0.11)";
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([4, 9]);
 
-    var left = W * 0.12;
-    var right = W * 0.88;
-    var top = H * 0.48;
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.lineWidth = 1.35;
+    ctx.setLineDash([5, 8]);
+
+    var left = W * 0.08;
+    var right = W * 0.92;
+    var top = H * 0.34;
 
     for (var i = 0; i < 5; i++) {
       var y = top + i * ((baseY - top) / 4);
@@ -249,17 +252,20 @@
   }
 
   function drawBellCurve(baseY) {
-    var count = 160;
+    var count = 220;
     var xStart = W * 0.08;
     var xEnd = W * 0.92;
-    var curveMax = H * 0.44;
+    var curveMax = H * 0.50;
     var curveLift = 18;
 
     ctx.save();
-    ctx.strokeStyle = "rgba(255,255,255,0.22)";
-    ctx.lineWidth = 2.1;
-    ctx.setLineDash([3, 8]);
 
+    /* back glow for visibility */
+    ctx.strokeStyle = "rgba(255,255,255,0.14)";
+    ctx.lineWidth = 6;
+    ctx.setLineDash([]);
+    ctx.shadowColor = "rgba(255,255,255,0.14)";
+    ctx.shadowBlur = 14;
     ctx.beginPath();
 
     for (var i = 0; i <= count; i++) {
@@ -270,6 +276,25 @@
 
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+
+    /* main visible curve */
+    ctx.strokeStyle = "rgba(255,255,255,0.58)";
+    ctx.lineWidth = 2.9;
+    ctx.setLineDash([4, 6]);
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+
+    for (var j = 0; j <= count; j++) {
+      var pct2 = j / count;
+      var x2 = xStart + pct2 * (xEnd - xStart);
+      var z2 = -3.15 + pct2 * 6.3;
+      var y2 = baseY - curveLift - (normalPDF(z2) / normalPDF(0)) * curveMax;
+
+      if (j === 0) ctx.moveTo(x2, y2);
+      else ctx.lineTo(x2, y2);
     }
 
     ctx.stroke();
@@ -421,10 +446,11 @@
 })();
 
 
-// ───────── FLOATING HERO BUBBLES ─────────
+// ───────── FLOATING HERO BUBBLES — FREEZE WHILE HOVERED ─────────
 (function () {
   var hero = document.getElementById("hero");
   var bubbles = Array.prototype.slice.call(document.querySelectorAll(".bubble"));
+
   if (!hero || bubbles.length === 0) return;
 
   var placements = [
@@ -437,41 +463,67 @@
 
   var states = bubbles.map(function (el, i) {
     var p = placements[i] || { x: 0.5, y: 0.5 };
-    return {
+
+    var state = {
       el: el,
       baseX: p.x,
       baseY: p.y,
       x: p.x,
       y: p.y,
-      vx: (Math.random() - 0.5) * 0.002,
-      vy: (Math.random() - 0.5) * 0.002,
+      vx: 0,
+      vy: 0,
       phase: Math.random() * Math.PI * 2,
-      scale: el.classList.contains("bubble-profile") ? 1.04 : 1
+      scale: el.classList.contains("bubble-profile") ? 1.04 : 1,
+      frozen: false
     };
-  });
 
+    el.addEventListener("mouseenter", function () {
+      state.frozen = true;
+      state.vx = 0;
+      state.vy = 0;
+    });
+
+    el.addEventListener("mouseleave", function () {
+      state.frozen = false;
+    });
+
+    el.addEventListener("focus", function () {
+      state.frozen = true;
+      state.vx = 0;
+      state.vy = 0;
+    });
+
+    el.addEventListener("blur", function () {
+      state.frozen = false;
+    });
+
+    return state;
+  });
 
   function animate() {
     var rect = hero.getBoundingClientRect();
+    var now = Date.now();
 
     states.forEach(function (b) {
-      var bobX = Math.sin(Date.now() * 0.00055 + b.phase) * 0.010;
-      var bobY = Math.cos(Date.now() * 0.00070 + b.phase) * 0.015;
+      if (!b.frozen) {
+        var bobX = Math.sin(now * 0.00045 + b.phase) * 0.006;
+        var bobY = Math.cos(now * 0.00058 + b.phase) * 0.008;
 
-      var targetX = b.baseX + bobX;
-      var targetY = b.baseY + bobY;
+        var targetX = b.baseX + bobX;
+        var targetY = b.baseY + bobY;
 
-      b.vx += (targetX - b.x) * 0.018;
-      b.vy += (targetY - b.y) * 0.018;
+        b.vx += (targetX - b.x) * 0.010;
+        b.vy += (targetY - b.y) * 0.010;
 
-      b.vx *= 0.92;
-      b.vy *= 0.92;
+        b.vx *= 0.90;
+        b.vy *= 0.90;
 
-      b.x += b.vx;
-      b.y += b.vy;
+        b.x += b.vx;
+        b.y += b.vy;
 
-      b.x = Math.max(0.05, Math.min(0.95, b.x));
-      b.y = Math.max(0.16, Math.min(0.80, b.y));
+        b.x = Math.max(0.05, Math.min(0.95, b.x));
+        b.y = Math.max(0.16, Math.min(0.80, b.y));
+      }
 
       b.el.style.left = (b.x * rect.width) + "px";
       b.el.style.top = (b.y * rect.height) + "px";
@@ -497,6 +549,7 @@
     }
 
     var current = "";
+
     sections.forEach(function (s) {
       if (window.scrollY >= s.offsetTop - 120) {
         current = s.id;
