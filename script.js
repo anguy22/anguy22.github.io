@@ -4,10 +4,10 @@
 
 // ========== TYPING EFFECT ==========
 const phrases = [
-  "Industrial Engineering · Purdue '28",
-  "Semiconductors & Fab Operations",
-  "Data-Driven Decision Making",
-  "Building Things That Matter"
+  "semiconductors",
+  "decision theory",
+  "quantitative modeling",
+  "industrial engineering"
 ];
 
 let phraseIndex = 0;

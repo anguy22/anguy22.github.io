@@ -189,31 +189,15 @@ a:hover { color: var(--accent-dark); }
   margin-bottom: 32px;
 }
 
-.photo-placeholder {
+.profile-photo {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: var(--green-200);
+  object-fit: cover;
+  object-position: center top;
   border: 4px solid var(--white);
   box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   margin: 0 auto;
-  color: var(--green-700);
-  gap: 4px;
-}
-
-.photo-placeholder i {
-  font-size: 2rem;
-}
-
-.photo-placeholder span {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 600;
 }
 
 #hero h1 {
