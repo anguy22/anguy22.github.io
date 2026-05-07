@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Andrew Nguyen — Industrial Engineer</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -14,9 +17,11 @@
   <nav id="navbar">
     <div class="nav-container">
       <a href="#hero" class="nav-logo">AN</a>
+
       <button class="nav-toggle" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
+
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
         <li><a href="#education">Education</a></li>
@@ -31,36 +36,62 @@
     <canvas id="cityscape"></canvas>
 
     <div class="bubbles-layer" id="bubbles-layer">
-      <a href="#about" class="bubble" id="bubble-profile">
+      <a href="#about" class="bubble" id="bubble-profile" aria-label="About">
         <img src="IMG_6641.jpg" alt="Andrew Nguyen">
         <span class="bubble-label">About</span>
       </a>
-      <a href="#projects" class="bubble" id="bubble-chess">
-        <i class="fas fa-chess-knight"></i>
-        <span class="bubble-label">Projects</span>
-      </a>
-      <a href="#experience" class="bubble" id="bubble-trading">
-        <i class="fas fa-chart-line"></i>
-        <span class="bubble-label">Experience</span>
-      </a>
-      <a href="#education" class="bubble" id="bubble-wafer">
-        <i class="fas fa-microchip"></i>
+
+      <a href="#education" class="bubble" id="bubble-education" aria-label="Education">
+        <i class="fas fa-graduation-cap"></i>
         <span class="bubble-label">Education</span>
       </a>
-      <a href="#contact" class="bubble" id="bubble-piano">
-        <i class="fas fa-music"></i>
+
+      <a href="#experience" class="bubble" id="bubble-experience" aria-label="Experience">
+        <i class="fas fa-briefcase"></i>
+        <span class="bubble-label">Experience</span>
+      </a>
+
+      <a href="#projects" class="bubble" id="bubble-projects" aria-label="Projects">
+        <i class="fas fa-diagram-project"></i>
+        <span class="bubble-label">Projects</span>
+      </a>
+
+      <a href="#contact" class="bubble" id="bubble-contact" aria-label="Contact">
+        <i class="fas fa-envelope"></i>
         <span class="bubble-label">Contact</span>
       </a>
     </div>
 
+    <div class="hero-side-links">
+      <a href="https://github.com/anguy22" target="_blank" rel="noreferrer" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+      <a href="mailto:nguy1051@purdue.edu" aria-label="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </div>
+
+    <div class="hero-dots" aria-hidden="true">
+      <span class="active"></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
     <div class="hero-content">
       <h1>Andrew Nguyen</h1>
+      <div class="hero-rule"></div>
+
       <div class="decrypt-wrap">
         <span class="decrypt-text" id="decrypt-text"></span>
       </div>
+
       <div class="hero-cta">
-        <a href="#about" class="btn btn-primary">Learn More</a>
-        <a href="#contact" class="btn btn-outline">Get In Touch</a>
+        <a href="#about" class="btn btn-primary">Learn More <span>→</span></a>
+        <a href="#contact" class="btn btn-outline">Get In Touch <span>→</span></a>
       </div>
     </div>
 
@@ -70,19 +101,36 @@
   <section id="about" class="section">
     <div class="container reveal">
       <h2 class="section-title">About Me</h2>
+
       <div class="about-grid">
         <div class="about-text">
           <p>hello there.</p>
           <p>I'm Andrew, an undergraduate at Purdue University studying Industrial Engineering and Statistics. I am particularly interested in predictive analytics, probabilistic modeling, and engineering decision-making.</p>
           <p>This summer I am interning at Micron Technology, working on research and development of fab operations. I'm very interested in the semiconductor space and actively follow advancements in the space, research applications of AI hardware, and deploy capital against a chip investment thesis.</p>
           <p>I also work with Purdue Athletics as a Predictive Data Analyst focused on deriving insights from recruiting, training, and historical Big 10 data. I'm excited about this work as it allows me to bring quantitative methodology to soccer, a sport I have played all my life.</p>
-          <p>Beyond my work, I enjoy chess, hiking, architecture, and classical piano. </p>
+          <p>Beyond my work, I enjoy chess, hiking, architecture, and classical piano.</p>
         </div>
+
         <div class="about-details">
-          <div class="detail-card"><i class="fas fa-map-marker-alt"></i><div><strong>Location</strong><span>West Lafayette, IN</span></div></div>
-          <div class="detail-card"><i class="fas fa-graduation-cap"></i><div><strong>University</strong><span>Purdue University</span></div></div>
-          <div class="detail-card"><i class="fas fa-calendar"></i><div><strong>Graduation</strong><span>Class of 2028</span></div></div>
-          <div class="detail-card"><i class="fas fa-microchip"></i><div><strong>Focus</strong><span>Semiconductors &amp; Analytics</span></div></div>
+          <div class="detail-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <div><strong>Location</strong><span>West Lafayette, IN</span></div>
+          </div>
+
+          <div class="detail-card">
+            <i class="fas fa-graduation-cap"></i>
+            <div><strong>University</strong><span>Purdue University</span></div>
+          </div>
+
+          <div class="detail-card">
+            <i class="fas fa-calendar"></i>
+            <div><strong>Graduation</strong><span>Class of 2028</span></div>
+          </div>
+
+          <div class="detail-card">
+            <i class="fas fa-microchip"></i>
+            <div><strong>Focus</strong><span>Semiconductors &amp; Analytics</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -91,6 +139,7 @@
   <section id="education" class="section section-alt">
     <div class="container reveal">
       <h2 class="section-title">Education</h2>
+
       <div class="edu-block">
         <div class="edu-header">
           <div>
@@ -99,6 +148,7 @@
           </div>
           <span class="edu-date">Aug 2024 — May 2028</span>
         </div>
+
         <h4 class="coursework-heading">Relevant Coursework</h4>
         <div class="coursework-grid">
           <span class="course-tag">Probability &amp; Statistics</span>
@@ -117,27 +167,39 @@
   <section id="experience" class="section">
     <div class="container reveal">
       <h2 class="section-title">Experience</h2>
+
       <div class="timeline">
         <div class="timeline-item">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
-            <div class="timeline-header"><h3>Micron Technology</h3><span class="timeline-date">Summer 2026</span></div>
+            <div class="timeline-header">
+              <h3>Micron Technology</h3>
+              <span class="timeline-date">Summer 2026</span>
+            </div>
             <p class="timeline-role">Industrial Engineering Intern — TPG</p>
             <p>KPI development and dashboarding for R&amp;D fab performance. Working on quantitative models to improve capital equipment utilization and throughput metrics.</p>
           </div>
         </div>
+
         <div class="timeline-item">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
-            <div class="timeline-header"><h3>Purdue Athletics</h3><span class="timeline-date">2024 — Present</span></div>
+            <div class="timeline-header">
+              <h3>Purdue Athletics</h3>
+              <span class="timeline-date">2024 — Present</span>
+            </div>
             <p class="timeline-role">Predictive Data Analyst — Women's Soccer</p>
             <p>Built an end-to-end recruiting analytics pipeline parsing prospect emails, scoring achievements, and feeding Tableau dashboards for the coaching staff.</p>
           </div>
         </div>
+
         <div class="timeline-item">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
-            <div class="timeline-header"><h3>Sawtooth UAV</h3><span class="timeline-date">2022 — 2024</span></div>
+            <div class="timeline-header">
+              <h3>Sawtooth UAV</h3>
+              <span class="timeline-date">2022 — 2024</span>
+            </div>
             <p class="timeline-role">Founder</p>
             <p>Founded and operated a commercial drone business completing 56 missions across Idaho. Built SOPs and FAA Part 107 compliance framework from scratch.</p>
           </div>
@@ -149,6 +211,7 @@
   <section id="projects" class="section section-alt">
     <div class="container reveal">
       <h2 class="section-title">Projects</h2>
+
       <div class="projects-grid">
         <div class="project-card" onclick="this.classList.toggle('expanded')">
           <div class="project-card-front">
@@ -159,31 +222,39 @@
           </div>
           <div class="project-card-details">
             <p>Parses prospect emails, scores athletic and academic achievements with a weighted model, and feeds interactive Tableau dashboards used by the coaching staff to prioritize recruitment targets.</p>
-            <div class="project-tags"><span>Python</span><span>Tableau</span><span>Email Parsing</span><span>Data Modeling</span></div>
+            <div class="project-tags">
+              <span>Python</span><span>Tableau</span><span>Email Parsing</span><span>Data Modeling</span>
+            </div>
           </div>
         </div>
+
         <div class="project-card" onclick="this.classList.toggle('expanded')">
           <div class="project-card-front">
             <div class="project-icon"><i class="fas fa-helicopter"></i></div>
             <h3>Sawtooth UAV Operations</h3>
-            <p class="project-summary">Commercial drone operations</p>
+            <p class="project-summary">Commercial drone operations.</p>
             <span class="project-expand-hint">Click for details <i class="fas fa-chevron-down"></i></span>
           </div>
           <div class="project-card-details">
-            <p>Built drone automation utilities and client delivery platforms in Python and C for 56 FPV missions completed &amp; with 100% record. </p>
-            <div class="project-tags"><span>FAA Part 107</span><span>Operations</span><span>GIS</span><span>Photogrammetry</span></div>
+            <p>Built drone automation utilities and client delivery platforms in Python and C for 56 FPV missions completed with 100% record.</p>
+            <div class="project-tags">
+              <span>FAA Part 107</span><span>Operations</span><span>GIS</span><span>Photogrammetry</span>
+            </div>
           </div>
         </div>
+
         <div class="project-card" onclick="this.classList.toggle('expanded')">
           <div class="project-card-front">
             <div class="project-icon"><i class="fas fa-industry"></i></div>
             <h3>Solar PV Financial Modeling</h3>
-            <p class="project-summary">KPI tracking and visualization for Solar PV</p>
+            <p class="project-summary">KPI tracking and visualization for Solar PV.</p>
             <span class="project-expand-hint">Click for details <i class="fas fa-chevron-down"></i></span>
           </div>
           <div class="project-card-details">
-            <p>Applied NPV/IRR analysis on 6 DCF models, projecting 20-year financial returns of Solar Panels installed in &amp; different US locations</p>
-            <div class="project-tags"><span>Dashboarding</span><span>KPIs</span><span>Semiconductors</span><span>Analytics</span></div>
+            <p>Applied NPV/IRR analysis on 6 DCF models, projecting 20-year financial returns of solar panels installed in different U.S. locations.</p>
+            <div class="project-tags">
+              <span>DCF</span><span>NPV</span><span>IRR</span><span>Engineering Economics</span>
+            </div>
           </div>
         </div>
       </div>
@@ -193,16 +264,35 @@
   <section id="contact" class="section section-alt">
     <div class="container reveal">
       <h2 class="section-title">Contact</h2>
-      <p class="contact-text">Everyone has something to teach that I'd like to learn! Please reach me at: </p>
+      <p class="contact-text">Everyone has something to teach that I'd like to learn. Please reach me at:</p>
+
       <div class="contact-links">
-        <a href="mailto:nguy1051@purdue.edu" class="contact-card"><i class="fas fa-envelope"></i><strong>Email</strong><span>nguy1051@purdue.edu</span></a>
-        <a href="https://linkedin.com/in/yourhandle" target="_blank" rel="noreferrer" class="contact-card"><i class="fab fa-linkedin"></i><strong>LinkedIn</strong><span>Connect with me</span></a>
-        <a href="https://github.com/yourusername" target="_blank" rel="noreferrer" class="contact-card"><i class="fab fa-github"></i><strong>GitHub</strong><span>View my code</span></a>
+        <a href="mailto:nguy1051@purdue.edu" class="contact-card">
+          <i class="fas fa-envelope"></i>
+          <strong>Email</strong>
+          <span>nguy1051@purdue.edu</span>
+        </a>
+
+        <a href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noreferrer" class="contact-card">
+          <i class="fab fa-linkedin"></i>
+          <strong>LinkedIn</strong>
+          <span>Connect with me</span>
+        </a>
+
+        <a href="https://github.com/anguy22" target="_blank" rel="noreferrer" class="contact-card">
+          <i class="fab fa-github"></i>
+          <strong>GitHub</strong>
+          <span>View my code</span>
+        </a>
       </div>
     </div>
   </section>
 
-  <footer><div class="container"><p>&copy; 2026 Andrew Nguyen. Built with care.</p></div></footer>
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Andrew Nguyen. Built with care.</p>
+    </div>
+  </footer>
 
   <script src="script.js"></script>
 </body>
