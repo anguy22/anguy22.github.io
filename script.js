@@ -3,93 +3,98 @@
    ========================================================== */
 
 // ───────── REGRESSION FIT REVEAL ─────────
+// Letters start as a scattered cloud above/below the baseline,
+// faded and offset, then converge ("fit") to the clean line as
+// residuals shrink — like a model minimizing error.
 (function () {
   var phrase = "The best way to predict the future is to create it!";
   var el = document.getElementById("regression-text");
   if (!el) return;
 
   var spans = [];
-  var glyphStates = [];
+  var states = [];
 
-  // Build spans and randomized initial states (scattered above/below baseline)
   for (var i = 0; i < phrase.length; i++) {
     var s = document.createElement("span");
     s.className = "glyph" + (phrase[i] === " " ? " space" : "");
     s.textContent = phrase[i];
     el.appendChild(s);
     spans.push(s);
-    glyphStates.push(makeInitialState());
+    states.push(newScatter());
   }
 
-  function makeInitialState() {
+  function newScatter() {
     return {
-      // Vertical scatter (above/below final baseline)
-      offsetY: (Math.random() - 0.5) * 56,
-      // Horizontal jitter
-      offsetX: (Math.random() - 0.5) * 14,
-      // Some letters start faded
-      startOpacity: 0.18 + Math.random() * 0.42
+      offsetY: (Math.random() - 0.5) * 90,   // -45 → 45 px above/below baseline
+      offsetX: (Math.random() - 0.5) * 26,   // -13 → 13 px horizontal jitter
+      startOpacity: Math.random() * 0.45     // some letters near-invisible at start
     };
   }
 
-  // Easing — fast initial pull-in, gentle settle (like a model converging)
   function easeOutQuart(t) {
     return 1 - Math.pow(1 - t, 4);
   }
 
-  var fitDuration = 2600;   // ms for letters to converge
-  var holdDuration = 4200;  // ms to hold the fitted line before refitting
-  var animationStart = null;
-  var phase = "fitting";    // "fitting" | "holding"
+  function applyProgress(progress) {
+    var eased = easeOutQuart(progress);
+    var residual = 1 - eased;             // shrinks 1 → 0
+    var noiseAmp = 6 * residual;          // fading random jitter
 
-  function frame(now) {
-    if (animationStart === null) animationStart = now;
+    for (var i = 0; i < spans.length; i++) {
+      if (phrase[i] === " ") continue;
+      var st = states[i];
+
+      var noiseY = (Math.random() - 0.5) * noiseAmp;
+      var noiseX = (Math.random() - 0.5) * noiseAmp * 0.5;
+
+      var y = st.offsetY * residual + noiseY;
+      var x = st.offsetX * residual + noiseX;
+      var op = st.startOpacity + (1 - st.startOpacity) * eased;
+
+      spans[i].style.transform = "translate(" + x.toFixed(2) + "px, " + y.toFixed(2) + "px)";
+      spans[i].style.opacity = op.toFixed(3);
+    }
+  }
+
+  var FIT_MS = 2800;
+  var HOLD_MS = 4200;
+  var startedAt = null;
+  var phase = "fitting"; // "fitting" | "holding"
+
+  function loop(now) {
+    if (startedAt === null) startedAt = now;
+    var elapsed = now - startedAt;
 
     if (phase === "fitting") {
-      var elapsed = now - animationStart;
-      var t = Math.min(elapsed / fitDuration, 1);
-      var eased = easeOutQuart(t);
-      var residual = 1 - eased;          // shrinking residual noise
-      var noiseAmp = 3.2 * residual;     // small jitter that fades
-
-      for (var i = 0; i < spans.length; i++) {
-        if (phrase[i] === " ") continue;
-        var st = glyphStates[i];
-
-        var y = st.offsetY * residual + (Math.random() - 0.5) * noiseAmp;
-        var x = st.offsetX * residual + (Math.random() - 0.5) * noiseAmp * 0.6;
-        var opacity = st.startOpacity + (1 - st.startOpacity) * eased;
-
-        spans[i].style.transform = "translate(" + x.toFixed(2) + "px, " + y.toFixed(2) + "px)";
-        spans[i].style.opacity = opacity.toFixed(3);
-      }
-
+      var t = Math.min(elapsed / FIT_MS, 1);
+      applyProgress(t);
       if (t >= 1) {
-        // Snap perfectly into the fitted line
         for (var j = 0; j < spans.length; j++) {
           spans[j].style.transform = "translate(0, 0)";
           spans[j].style.opacity = "1";
         }
         phase = "holding";
-        animationStart = now;
+        startedAt = now;
       }
-    } else if (phase === "holding") {
-      if (now - animationStart >= holdDuration) {
-        // Re-scatter and start a new fit
-        for (var k = 0; k < glyphStates.length; k++) {
-          glyphStates[k] = makeInitialState();
+    } else {
+      if (elapsed >= HOLD_MS) {
+        for (var k = 0; k < states.length; k++) {
+          states[k] = newScatter();
         }
         phase = "fitting";
-        animationStart = now;
+        startedAt = now;
+        applyProgress(0); // jump to scattered cloud right away
       }
     }
 
-    requestAnimationFrame(frame);
+    requestAnimationFrame(loop);
   }
 
+  // Show the scattered cloud immediately, then start the fit shortly after.
+  applyProgress(0);
   setTimeout(function () {
-    requestAnimationFrame(frame);
-  }, 700);
+    requestAnimationFrame(loop);
+  }, 600);
 })();
 
 
@@ -107,8 +112,11 @@
   var particles = [];
   var treeLine = [];
 
-  var colors = ["#10261b", "#173624", "#1f5a3b", "#2d7a53", "#38956a"];
-  var sideShade = "rgba(3, 10, 8, 0.26)";
+  // Static, uniform building color — no per-building variation, no shifts.
+  var BUILDING_COLOR = "#1f5a3b";
+  var BUILDING_TOP = "#2d7a53";
+  var BUILDING_BASE = "#10261b";
+  var sideShade = "rgba(3, 10, 8, 0.32)";
   var highlight = "rgba(255, 255, 255, 0.10)";
   var windowLit = "rgba(240, 245, 243, 0.92)";
   var windowDim = "rgba(255, 255, 255, 0.18)";
@@ -176,7 +184,6 @@
       var x = startX + i * (bw + gap);
       var y = baseY - h;
 
-      var c = colors[Math.floor(rand(0, colors.length))];
       var depth = Math.max(4, bw * rand(0.18, 0.28));
       var roof = Math.random() > 0.72 ? "cap" : (Math.random() > 0.84 ? "spire" : "flat");
 
@@ -190,8 +197,7 @@
             windows.push({
               x: (col + 0.5) * (bw / cols),
               y: r * (h / rows),
-              lit: Math.random() > 0.38,
-              flicker: Math.random() > 0.965
+              lit: Math.random() > 0.38
             });
           }
         }
@@ -202,7 +208,6 @@
         y: y,
         w: bw,
         h: h,
-        color: c,
         depth: depth,
         roof: roof,
         windows: windows
@@ -287,11 +292,11 @@
 
     ctx.save();
 
-    ctx.strokeStyle = "rgba(255,255,255,0.14)";
-    ctx.lineWidth = 6;
-    ctx.setLineDash([]);
-    ctx.shadowColor = "rgba(255,255,255,0.14)";
-    ctx.shadowBlur = 14;
+    // Only the white dotted bell curve — no surrounding glow outline.
+    ctx.strokeStyle = "rgba(255,255,255,0.78)";
+    ctx.lineWidth = 2.9;
+    ctx.setLineDash([4, 6]);
+    ctx.shadowBlur = 0;
     ctx.beginPath();
 
     for (var i = 0; i <= count; i++) {
@@ -305,28 +310,10 @@
     }
 
     ctx.stroke();
-
-    ctx.strokeStyle = "rgba(255,255,255,0.58)";
-    ctx.lineWidth = 2.9;
-    ctx.setLineDash([4, 6]);
-    ctx.shadowBlur = 0;
-    ctx.beginPath();
-
-    for (var j = 0; j <= count; j++) {
-      var pct2 = j / count;
-      var x2 = xStart + pct2 * (xEnd - xStart);
-      var z2 = -3.15 + pct2 * 6.3;
-      var y2 = baseY - curveLift - (normalPDF(z2) / normalPDF(0)) * curveMax;
-
-      if (j === 0) ctx.moveTo(x2, y2);
-      else ctx.lineTo(x2, y2);
-    }
-
-    ctx.stroke();
     ctx.restore();
   }
 
-  function drawBuilding(b, frame) {
+  function drawBuilding(b) {
     var x = b.x;
     var y = b.y;
     var w = b.w;
@@ -335,15 +322,17 @@
 
     ctx.save();
 
+    // Front facade — single static gradient, identical for every building
     var facade = ctx.createLinearGradient(x, y, x + w, y + h);
-    facade.addColorStop(0, b.color);
-    facade.addColorStop(0.55, "#2d7a53");
-    facade.addColorStop(1, "#10261b");
+    facade.addColorStop(0, BUILDING_TOP);
+    facade.addColorStop(0.55, BUILDING_COLOR);
+    facade.addColorStop(1, BUILDING_BASE);
 
     ctx.fillStyle = facade;
     roundedRect(x, y, w, h, Math.min(7, w * 0.2));
     ctx.fill();
 
+    // Right side (3D depth)
     ctx.fillStyle = sideShade;
     ctx.beginPath();
     ctx.moveTo(x + w, y + d * 0.55);
@@ -353,6 +342,7 @@
     ctx.closePath();
     ctx.fill();
 
+    // Top (3D depth)
     ctx.fillStyle = highlight;
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -374,13 +364,9 @@
       ctx.stroke();
     }
 
+    // Windows — lit/dim states are fixed at generation, never flicker
     for (var i = 0; i < b.windows.length; i++) {
       var win = b.windows[i];
-
-      if (win.flicker && frame % 90 === 0 && Math.random() > 0.6) {
-        win.lit = !win.lit;
-      }
-
       ctx.fillStyle = win.lit ? windowLit : windowDim;
       ctx.globalAlpha = win.lit ? 0.8 : 0.34;
 
@@ -456,7 +442,7 @@
     drawBellCurve(baseY);
 
     for (var i = 0; i < buildings.length; i++) {
-      drawBuilding(buildings[i], frame);
+      drawBuilding(buildings[i]);
     }
 
     drawTrees();
