@@ -295,7 +295,28 @@
     ctx.restore();
   }
 
-  function drawBellCurve(baseY) {
+  // Returns 0..1: average per-building construction progress (eased
+  // with smoothstep so the curve fade matches building easing).
+  // Also stays at 1 once construction has finished.
+  function buildProgress() {
+    if (buildings.length === 0) return 0;
+    var now = nowMs();
+    var elapsed = now - buildStartedAt;
+    var sum = 0;
+    for (var i = 0; i < buildings.length; i++) {
+      var b = buildings[i];
+      var local = elapsed - b.startDelay;
+      var raw = local / b.buildDuration;
+      if (raw <= 0) raw = 0;
+      else if (raw >= 1) raw = 1;
+      sum += smoothstep(raw);
+    }
+    return sum / buildings.length;
+  }
+
+  function drawBellCurve(baseY, progress) {
+    if (progress <= 0.001) return;
+
     var count = 220;
     var xStart = W * 0.08;
     var xEnd = W * 0.92;
@@ -304,8 +325,11 @@
 
     ctx.save();
 
-    // Only the white dotted bell curve — no surrounding glow outline.
-    ctx.strokeStyle = "rgba(255,255,255,0.78)";
+    // Opacity ramps from 0 → 0.82 in step with construction progress,
+    // so the curve "comes to form" as the skyline settles into the
+    // normal distribution.
+    var alpha = 0.82 * progress;
+    ctx.strokeStyle = "rgba(255,255,255," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
@@ -656,7 +680,7 @@
 
     ctx.globalAlpha = 1;
 
-    drawBellCurve(baseY);
+    drawBellCurve(baseY, buildProgress());
 
     for (var i = 0; i < buildings.length; i++) {
       drawBuilding(buildings[i]);
