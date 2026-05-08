@@ -87,15 +87,29 @@
   var buildStartedAt = 0;
 
   // ── Architectural silhouette palette ──
-  var BODY_FILL    = "#0a1c14";                // dark silhouette body
-  var SIDE_FILL    = "#040d09";                // depth panel (right)
-  var TOP_FILL     = "#13301f";                // top depth panel
+  // Body color lerps from BODY_DARK → BODY_BRIGHT once construction
+  // finishes, slowly warming the skyline into a brighter green.
+  var BODY_DARK    = [10, 28, 20];             // #0a1c14 (under construction / just finished)
+  var BODY_BRIGHT  = [40, 110, 76];            // #286e4c (fully matured green)
+  var SIDE_DARK    = [4, 13, 9];               // #040d09
+  var SIDE_BRIGHT  = [18, 56, 38];             // brighter side panel
+  var TOP_DARK     = [19, 48, 31];             // #13301f
+  var TOP_BRIGHT   = [50, 130, 90];            // brighter top panel
   var TOP_EDGE     = "rgba(127,204,166,0.85)"; // bright top edge
   var TOP_GLOW     = "rgba(127,204,166,0.18)"; // soft glow under top edge
   var FLOOR_LINE   = "rgba(127,204,166,0.16)"; // horizontal floor stripes
   var ACCENT_LINE  = "rgba(127,204,166,0.55)"; // vertical accent stripe
   var WINDOW_LIT   = "rgba(240,245,243,0.85)";
   var WINDOW_DIM   = "rgba(127,204,166,0.20)";
+
+  var BRIGHTEN_MS = 5500; // duration of post-construction color ramp
+
+  function lerpRGB(a, b, t) {
+    var r = Math.round(a[0] + (b[0] - a[0]) * t);
+    var g = Math.round(a[1] + (b[1] - a[1]) * t);
+    var bl = Math.round(a[2] + (b[2] - a[2]) * t);
+    return "rgb(" + r + "," + g + "," + bl + ")";
+  }
 
   // ── Construction palette ──
   var CRANE_COLOR  = "rgba(255,184,92,0.92)";  // construction yellow
@@ -315,36 +329,52 @@
   }
 
   function drawBellCurve(baseY, progress) {
-    if (progress <= 0.001) return;
+    if (buildings.length < 2) return;
 
-    var count = 220;
-    var xStart = W * 0.08;
-    var xEnd = W * 0.92;
-    var curveMax = H * 0.50;
-    var curveLift = 18;
+    // Quick fade-in over the first ~15% of construction progress,
+    // then the curve stays at full brightness while it morphs.
+    var alpha = Math.min(0.82, progress * 5.5);
+    if (alpha <= 0.01) return;
+
+    var lift = 22; // pixels above building tops
+    var smoothWindow = 3; // moving-average radius across neighboring buildings
+
+    // Smoothed top-y per building. Initially the heights are random so
+    // this curve is jagged; as buildings settle into the bell, the
+    // smoothed trace becomes a clean normal-distribution curve.
+    var pts = [];
+    for (var i = 0; i < buildings.length; i++) {
+      var sumH = 0, cnt = 0;
+      for (var j = -smoothWindow; j <= smoothWindow; j++) {
+        var k = i + j;
+        if (k >= 0 && k < buildings.length) {
+          sumH += buildings[k].h;
+          cnt++;
+        }
+      }
+      var smoothedH = sumH / cnt;
+      pts.push({
+        x: buildings[i].x + buildings[i].w / 2,
+        y: baseY - smoothedH - lift
+      });
+    }
 
     ctx.save();
-
-    // Opacity ramps from 0 → 0.82 in step with construction progress,
-    // so the curve "comes to form" as the skyline settles into the
-    // normal distribution.
-    var alpha = 0.82 * progress;
     ctx.strokeStyle = "rgba(255,255,255," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
     ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
 
-    for (var i = 0; i <= count; i++) {
-      var pct = i / count;
-      var x = xStart + pct * (xEnd - xStart);
-      var z = -3.15 + pct * 6.3;
-      var y = baseY - curveLift - (normalPDF(z) / normalPDF(0)) * curveMax;
-
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    // Quadratic Bezier through midpoints — smooth curve that naturally
+    // flattens into a bell once the underlying heights line up.
+    for (var i = 1; i < pts.length - 1; i++) {
+      var midX = (pts[i].x + pts[i + 1].x) / 2;
+      var midY = (pts[i].y + pts[i + 1].y) / 2;
+      ctx.quadraticCurveTo(pts[i].x, pts[i].y, midX, midY);
     }
-
+    ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
     ctx.stroke();
     ctx.restore();
   }
@@ -358,10 +388,17 @@
     var groundY = y + h;
     var floorSpacing = b.floorSpacing;
 
+    // Brightness 0 → 1 after construction. Body / side / top all
+    // warm up together so the silhouette gains depth as it matures.
+    var bright = b.brightness || 0;
+    var bodyColor = lerpRGB(BODY_DARK, BODY_BRIGHT, bright);
+    var sideColor = lerpRGB(SIDE_DARK, SIDE_BRIGHT, bright);
+    var topColor  = lerpRGB(TOP_DARK,  TOP_BRIGHT,  bright);
+
     ctx.save();
 
     // Right depth panel (drawn first, behind body)
-    ctx.fillStyle = SIDE_FILL;
+    ctx.fillStyle = sideColor;
     ctx.beginPath();
     ctx.moveTo(x + w, y);
     ctx.lineTo(x + w + d, y + d);
@@ -371,7 +408,7 @@
     ctx.fill();
 
     // Top depth panel
-    ctx.fillStyle = TOP_FILL;
+    ctx.fillStyle = topColor;
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.lineTo(x + w, y);
@@ -380,8 +417,8 @@
     ctx.closePath();
     ctx.fill();
 
-    // Solid silhouette body — uniform dark fill, no gradient
-    ctx.fillStyle = BODY_FILL;
+    // Solid silhouette body — uniform fill, brightens after construction
+    ctx.fillStyle = bodyColor;
     ctx.fillRect(x, y, w, h);
 
     // Soft glow band just under the top edge
@@ -462,7 +499,7 @@
         ctx.lineTo(x + w / 2, y - 16);
         ctx.stroke();
       } else if (b.roof === "cap") {
-        ctx.fillStyle = BODY_FILL;
+        ctx.fillStyle = bodyColor;
         ctx.fillRect(x + w * 0.22, y - 4, w * 0.56, 4);
         ctx.strokeStyle = TOP_EDGE;
         ctx.lineWidth = 1;
@@ -647,23 +684,33 @@
 
     // Advance construction: each building lerps from its random start
     // height toward its bell-curve target height, on its own schedule.
-    // Once finished, it stops animating and stays put.
+    // Once finished, it stops animating and starts brightening.
     for (var i = 0; i < buildings.length; i++) {
       var b = buildings[i];
-      if (!b.underConstruction) continue;
 
-      var local = elapsed - b.startDelay;
-      if (local <= 0) {
-        b.h = b.startH;
-      } else if (local >= b.buildDuration) {
-        b.h = b.targetH;
-        b.underConstruction = false;
+      if (b.underConstruction) {
+        var local = elapsed - b.startDelay;
+        if (local <= 0) {
+          b.h = b.startH;
+        } else if (local >= b.buildDuration) {
+          b.h = b.targetH;
+          b.underConstruction = false;
+          b.finishedAt = now;
+        } else {
+          var t = local / b.buildDuration;
+          var eased = smoothstep(t);
+          b.h = b.startH + (b.targetH - b.startH) * eased;
+        }
+        b.y = baseY - b.h;
+        b.brightness = 0;
       } else {
-        var t = local / b.buildDuration;
-        var eased = smoothstep(t);
-        b.h = b.startH + (b.targetH - b.startH) * eased;
+        // Once construction is done, slowly ramp brightness 0 → 1.
+        var bAge = now - (b.finishedAt || now);
+        var bp = bAge / BRIGHTEN_MS;
+        if (bp < 0) bp = 0;
+        else if (bp > 1) bp = 1;
+        b.brightness = smoothstep(bp);
       }
-      b.y = baseY - b.h;
     }
 
     drawBackground();
