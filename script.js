@@ -2,67 +2,94 @@
    script.js — Dark Distribution Skyline · Stable Floating Bubbles
    ========================================================== */
 
-// ───────── DECRYPT ANIMATION ─────────
+// ───────── REGRESSION FIT REVEAL ─────────
 (function () {
   var phrase = "The best way to predict the future is to create it!";
-  var el = document.getElementById("decrypt-text");
+  var el = document.getElementById("regression-text");
   if (!el) return;
 
-  var glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?<>{}[]~^";
-  var resolved = [];
   var spans = [];
+  var glyphStates = [];
 
+  // Build spans and randomized initial states (scattered above/below baseline)
   for (var i = 0; i < phrase.length; i++) {
     var s = document.createElement("span");
-    s.className = "glyph" + (phrase[i] === " " ? " space" : " scramble");
-    s.textContent = phrase[i] === " " ? " " : glyphs[Math.floor(Math.random() * glyphs.length)];
+    s.className = "glyph" + (phrase[i] === " " ? " space" : "");
+    s.textContent = phrase[i];
     el.appendChild(s);
     spans.push(s);
-    resolved.push(false);
+    glyphStates.push(makeInitialState());
   }
 
-  var pointer = 0;
-  var tickInterval = 34;
-  var lockEvery = 2;
-  var tick = 0;
-
-  function reset() {
-    pointer = 0;
-    tick = 0;
-
-    for (var j = 0; j < spans.length; j++) {
-      resolved[j] = false;
-      spans[j].className = "glyph" + (phrase[j] === " " ? " space" : " scramble");
-    }
+  function makeInitialState() {
+    return {
+      // Vertical scatter (above/below final baseline)
+      offsetY: (Math.random() - 0.5) * 56,
+      // Horizontal jitter
+      offsetX: (Math.random() - 0.5) * 14,
+      // Some letters start faded
+      startOpacity: 0.18 + Math.random() * 0.42
+    };
   }
 
-  function step() {
-    tick++;
+  // Easing — fast initial pull-in, gentle settle (like a model converging)
+  function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
 
-    for (var i = pointer; i < phrase.length; i++) {
-      if (phrase[i] !== " " && !resolved[i]) {
-        spans[i].textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+  var fitDuration = 2600;   // ms for letters to converge
+  var holdDuration = 4200;  // ms to hold the fitted line before refitting
+  var animationStart = null;
+  var phase = "fitting";    // "fitting" | "holding"
+
+  function frame(now) {
+    if (animationStart === null) animationStart = now;
+
+    if (phase === "fitting") {
+      var elapsed = now - animationStart;
+      var t = Math.min(elapsed / fitDuration, 1);
+      var eased = easeOutQuart(t);
+      var residual = 1 - eased;          // shrinking residual noise
+      var noiseAmp = 3.2 * residual;     // small jitter that fades
+
+      for (var i = 0; i < spans.length; i++) {
+        if (phrase[i] === " ") continue;
+        var st = glyphStates[i];
+
+        var y = st.offsetY * residual + (Math.random() - 0.5) * noiseAmp;
+        var x = st.offsetX * residual + (Math.random() - 0.5) * noiseAmp * 0.6;
+        var opacity = st.startOpacity + (1 - st.startOpacity) * eased;
+
+        spans[i].style.transform = "translate(" + x.toFixed(2) + "px, " + y.toFixed(2) + "px)";
+        spans[i].style.opacity = opacity.toFixed(3);
+      }
+
+      if (t >= 1) {
+        // Snap perfectly into the fitted line
+        for (var j = 0; j < spans.length; j++) {
+          spans[j].style.transform = "translate(0, 0)";
+          spans[j].style.opacity = "1";
+        }
+        phase = "holding";
+        animationStart = now;
+      }
+    } else if (phase === "holding") {
+      if (now - animationStart >= holdDuration) {
+        // Re-scatter and start a new fit
+        for (var k = 0; k < glyphStates.length; k++) {
+          glyphStates[k] = makeInitialState();
+        }
+        phase = "fitting";
+        animationStart = now;
       }
     }
 
-    if (tick % lockEvery === 0 && pointer < phrase.length) {
-      spans[pointer].textContent = phrase[pointer] === " " ? " " : phrase[pointer];
-      spans[pointer].className = "glyph" + (phrase[pointer] === " " ? " space done" : " done");
-      resolved[pointer] = true;
-      pointer++;
-    }
-
-    if (pointer < phrase.length) {
-      setTimeout(step, tickInterval);
-    } else {
-      setTimeout(function () {
-        reset();
-        step();
-      }, 4200);
-    }
+    requestAnimationFrame(frame);
   }
 
-  setTimeout(step, 700);
+  setTimeout(function () {
+    requestAnimationFrame(frame);
+  }, 700);
 })();
 
 
@@ -535,45 +562,8 @@
 })();
 
 
-// ───────── NAV / SCROLL / REVEAL ─────────
+// ───────── SCROLL / REVEAL / SMOOTH ANCHORS ─────────
 (function () {
-  var navbar = document.getElementById("navbar");
-  var sections = document.querySelectorAll(".section, #hero");
-  var navLinks = document.querySelectorAll(".nav-links a");
-
-  window.addEventListener("scroll", function () {
-    if (navbar) {
-      navbar.classList.toggle("scrolled", window.scrollY > 50);
-    }
-
-    var current = "";
-
-    sections.forEach(function (s) {
-      if (window.scrollY >= s.offsetTop - 120) {
-        current = s.id;
-      }
-    });
-
-    navLinks.forEach(function (a) {
-      a.classList.toggle("active", a.getAttribute("href") === "#" + current);
-    });
-  });
-
-  var toggle = document.querySelector(".nav-toggle");
-  var linksList = document.querySelector(".nav-links");
-
-  if (toggle && linksList) {
-    toggle.addEventListener("click", function () {
-      linksList.classList.toggle("open");
-    });
-
-    navLinks.forEach(function (a) {
-      a.addEventListener("click", function () {
-        linksList.classList.remove("open");
-      });
-    });
-  }
-
   var reveals = document.querySelectorAll(".reveal");
 
   var observer = new IntersectionObserver(function (entries) {
