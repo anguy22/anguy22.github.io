@@ -279,14 +279,10 @@ a:hover {
   height: 104px;
 }
 
-.bubble-profile img {
-  width: 62%;
-  height: 62%;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center top;
+.bubble-profile i {
+  font-size: 1.9rem;
+  color: currentColor;
   pointer-events: none;
-  border: 1px solid rgba(255,255,255,0.34);
 }
 
 #bubble-education,
