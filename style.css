@@ -148,35 +148,46 @@ a:hover {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent);
 }
 
-/* ========== REGRESSION FIT TEXT ========== */
-.regression-wrap {
+/* ========== DECRYPT TEXT ========== */
+.decrypt-wrap {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 2.6rem;
   margin-bottom: 30px;
+  /* Single-line: never wrap, scale text down on narrow viewports */
+  width: 100%;
+  overflow: hidden;
 }
 
-.regression-text {
+.decrypt-text {
   display: inline-block;
   opacity: 1;
   visibility: visible;
   color: rgba(255,255,255,0.96);
-  font-size: clamp(1rem, 1.55vw, 1.3rem);
+  font-size: clamp(0.62rem, 1.55vw, 1.3rem);
   font-weight: 800;
   letter-spacing: 0.09em;
   white-space: nowrap;
 }
 
-.regression-text .glyph {
+.decrypt-text .glyph {
   display: inline-block;
   min-width: 0.58em;
   text-align: center;
-  color: rgba(255,255,255,0.97);
-  will-change: transform, opacity;
+  transition: color 0.12s, opacity 0.12s;
 }
 
-.regression-text .glyph.space {
+.decrypt-text .glyph.scramble {
+  color: rgba(255,255,255,0.62);
+  opacity: 0.92;
+}
+
+.decrypt-text .glyph.done {
+  color: rgba(255,255,255,0.97);
+}
+
+.decrypt-text .glyph.space {
   min-width: 0.33em;
 }
 
@@ -749,10 +760,11 @@ footer {
     font-size: 2.4rem;
   }
 
-  .regression-text {
-    white-space: normal;
-    letter-spacing: 0.04em;
-    font-size: 1rem;
+  .decrypt-text {
+    /* Stay single-line on mobile too — shrink instead of wrapping */
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    font-size: clamp(0.55rem, 2.6vw, 0.95rem);
   }
 
   .hero-side-links,
