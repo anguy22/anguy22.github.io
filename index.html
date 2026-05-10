@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=10">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -94,7 +94,15 @@
     </div>
   </section>
 
-  <section id="about" class="section">
+  <section id="about" class="section animated-about-section">
+    <div class="about-chess-bg" aria-hidden="true">
+      <div class="chess-board-3d"></div>
+      <span class="chess-piece piece-king">♔</span>
+      <span class="chess-piece piece-queen">♛</span>
+      <span class="chess-piece piece-knight">♞</span>
+      <span class="chess-piece piece-bishop">♗</span>
+      <span class="chess-piece piece-rook">♜</span>
+    </div>
     <div class="container reveal">
       <h2 class="section-title">About Me</h2>
 
@@ -148,7 +156,24 @@
     </div>
   </section>
 
-  <section id="education" class="section section-alt">
+  <section id="education" class="section section-alt animated-education-section">
+    <div class="train-track-bg" aria-hidden="true">
+      <div class="train-track-line"></div>
+      <div class="boilermaker-train">
+        <span class="steam steam-one"></span>
+        <span class="steam steam-two"></span>
+        <span class="steam steam-three"></span>
+        <div class="train-engine">
+          <div class="train-cab"></div>
+          <div class="train-boiler"></div>
+          <div class="train-smokestack"></div>
+          <div class="train-cowcatcher"></div>
+          <span class="train-wheel wheel-one"></span>
+          <span class="train-wheel wheel-two"></span>
+          <span class="train-wheel wheel-three"></span>
+        </div>
+      </div>
+    </div>
     <div class="container reveal">
       <h2 class="section-title">Education</h2>
 
@@ -310,6 +335,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=9"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>

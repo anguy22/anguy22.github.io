@@ -101,7 +101,10 @@
   var WINDOW_LIT   = "rgba(245,242,255,0.88)";   // near-white window
   var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
 
-  var BRIGHTEN_MS = 5500; // duration of post-construction color ramp
+  var BRIGHTEN_MS = 4600; // duration of post-transition color ramp
+  var MORPH_MIN_MS = 6200;
+  var MORPH_MAX_MS = 9200;
+  var MORPH_STAGGER_MS = 950;
 
   function lerpRGB(a, b, t) {
     var r = Math.round(a[0] + (b[0] - a[0]) * t);
@@ -179,6 +182,52 @@
     ctx.closePath();
   }
 
+
+  function getTargetHeightForIndex(i, count, maxH, distName, building) {
+    var distFn = distributions[distName] || distributions.normal;
+    var t = count > 1 ? i / (count - 1) : 0;
+    var shape = distFn(t);
+    var edgeLift = building && building.edgeLift != null ? building.edgeLift : rand(10, 24);
+    var shapeNoise = building && building.shapeNoise != null ? building.shapeNoise : rand(0.90, 1.08);
+    return edgeLift + maxH * shape * shapeNoise;
+  }
+
+  function markHeroMorphing(active) {
+    if (canvas && canvas.parentElement) {
+      canvas.parentElement.classList.toggle("hero-morphing", !!active);
+    }
+  }
+
+  function morphToDistribution(name) {
+    if (!buildings.length) {
+      generate();
+      return;
+    }
+
+    var baseY = H * 0.84;
+    var maxH = H * 0.43;
+    var now = nowMs();
+    buildStartedAt = now;
+    cycleSettleAt = null;
+    markHeroMorphing(true);
+
+    for (var i = 0; i < buildings.length; i++) {
+      var b = buildings[i];
+      var nextH = getTargetHeightForIndex(i, buildings.length, maxH, name, b);
+      b.startH = b.h;
+      b.targetH = nextH;
+      b.previousBrightness = b.brightness || 1;
+      b.startDelay = rand(0, MORPH_STAGGER_MS);
+      b.buildDuration = rand(MORPH_MIN_MS, MORPH_MAX_MS);
+      b.floorSpacing = Math.max(11, Math.min(18, nextH / 14));
+      b.underConstruction = true;
+      b.morphing = true;
+      b.finishedAt = null;
+      b.brightness = 0;
+      b.y = baseY - b.h;
+    }
+  }
+
   function resize() {
     dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
@@ -215,8 +264,9 @@
       var shape = distFn(t);
 
       var edgeLift = rand(10, 24);
+      var shapeNoise = rand(0.90, 1.08);
       // Final (target) height — sits on the chosen distribution.
-      var targetH = edgeLift + maxH * shape * rand(0.86, 1.12);
+      var targetH = edgeLift + maxH * shape * shapeNoise;
 
       // Initial (random) height — drawn from a uniform distribution
       // unrelated to position, so the skyline starts noisy and then
@@ -262,6 +312,8 @@
         h: startH,            // current height (animated)
         targetH: targetH,
         startH: startH,
+        edgeLift: edgeLift,
+        shapeNoise: shapeNoise,
         startDelay: startDelay,
         buildDuration: buildDuration,
         floorSpacing: floorSpacing,
@@ -278,6 +330,8 @@
     buildStartedAt = (typeof performance !== "undefined" && performance.now)
       ? performance.now()
       : Date.now();
+    cycleSettleAt = null;
+    markHeroMorphing(true);
 
     for (var p = 0; p < 80; p++) {
       particles.push({
@@ -511,7 +565,7 @@
 
     // Scaffolding cross-pattern across the topmost floor while still
     // under construction — visual cue that this floor is "in progress".
-    if (b.underConstruction) {
+    if (b.underConstruction && !b.morphing) {
       var scaffH = Math.min(floorSpacing, h);
       ctx.strokeStyle = SCAFFOLD;
       ctx.lineWidth = 0.55;
@@ -718,6 +772,7 @@
   // distribution. Any in-progress motion clears the timer.
   function tickAutoCycle(now) {
     if (skylineSettled()) {
+      markHeroMorphing(false);
       if (cycleSettleAt === null) {
         cycleSettleAt = now;
       } else if (now - cycleSettleAt >= HOLD_AT_END_MS) {
@@ -742,7 +797,7 @@
       dots[k].classList.toggle("active", isActive);
     }
     cycleSettleAt = null;
-    generate();
+    morphToDistribution(name);
   }
 
   function draw() {
@@ -764,6 +819,7 @@
         } else if (local >= b.buildDuration) {
           b.h = b.targetH;
           b.underConstruction = false;
+          b.morphing = false;
           b.finishedAt = now;
         } else {
           var t = local / b.buildDuration;
@@ -771,7 +827,13 @@
           b.h = b.startH + (b.targetH - b.startH) * eased;
         }
         b.y = baseY - b.h;
-        b.brightness = 0;
+        var prevBright = b.previousBrightness || 1;
+        if (local <= 0) {
+          b.brightness = prevBright;
+        } else {
+          var darkenRaw = Math.min(1, local / 900);
+          b.brightness = Math.max(0, prevBright * (1 - 0.78 * smoothstep(darkenRaw)));
+        }
       } else {
         // Once construction is done, slowly ramp brightness 0 → 1.
         var bAge = now - (b.finishedAt || now);
@@ -809,7 +871,7 @@
     // Cranes drawn last (over the buildings) so the jib doesn't get
     // clipped by neighbors.
     for (var j = 0; j < buildings.length; j++) {
-      if (buildings[j].underConstruction) {
+      if (buildings[j].underConstruction && !buildings[j].morphing) {
         drawCrane(buildings[j], now);
       }
     }

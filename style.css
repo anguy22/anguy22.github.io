@@ -852,3 +852,267 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+/* ========== SECTION BACKGROUND ANIMATIONS ========== */
+.animated-about-section,
+.animated-education-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.animated-about-section > .container,
+.animated-education-section > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.about-chess-bg,
+.train-track-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.about-chess-bg::after,
+.train-track-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10,8,20,0.92), rgba(10,8,20,0.56) 50%, rgba(10,8,20,0.92));
+  z-index: 2;
+}
+
+.chess-board-3d {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: min(980px, 118vw);
+  height: 520px;
+  transform: translate(-50%, -50%) perspective(720px) rotateX(62deg) rotateZ(-14deg);
+  transform-origin: center;
+  opacity: 0.32;
+  background:
+    linear-gradient(45deg, rgba(188,174,226,0.16) 25%, transparent 25%, transparent 75%, rgba(188,174,226,0.16) 75%),
+    linear-gradient(45deg, rgba(188,174,226,0.16) 25%, transparent 25%, transparent 75%, rgba(188,174,226,0.16) 75%),
+    rgba(255,255,255,0.025);
+  background-position: 0 0, 42px 42px, 0 0;
+  background-size: 84px 84px;
+  border: 1px solid rgba(188,174,226,0.14);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.42), inset 0 0 80px rgba(188,174,226,0.05);
+  animation: chessBoardDrift 24s linear infinite;
+}
+
+.chess-piece {
+  position: absolute;
+  z-index: 1;
+  color: rgba(221,211,240,0.19);
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  text-shadow: 0 14px 30px rgba(0,0,0,0.44);
+  filter: blur(0.1px);
+  transform: translate3d(0,0,0);
+}
+
+.piece-king { left: 14%; top: 58%; animation: chessPieceOne 14s ease-in-out infinite; }
+.piece-queen { left: 34%; top: 35%; animation: chessPieceTwo 17s ease-in-out infinite; }
+.piece-knight { left: 58%; top: 62%; animation: chessPieceThree 16s ease-in-out infinite; }
+.piece-bishop { left: 76%; top: 34%; animation: chessPieceFour 19s ease-in-out infinite; }
+.piece-rook { left: 88%; top: 68%; animation: chessPieceFive 21s ease-in-out infinite; }
+
+@keyframes chessBoardDrift {
+  0% { background-position: 0 0, 42px 42px, 0 0; }
+  100% { background-position: 84px 84px, 126px 126px, 0 0; }
+}
+
+@keyframes chessPieceOne {
+  0%,100% { transform: translate(0,0) scale(1); opacity: 0.16; }
+  35% { transform: translate(84px,-44px) scale(1.05); opacity: 0.24; }
+  70% { transform: translate(126px,34px) scale(0.94); opacity: 0.18; }
+}
+
+@keyframes chessPieceTwo {
+  0%,100% { transform: translate(0,0) scale(0.96); opacity: 0.14; }
+  42% { transform: translate(-68px,72px) scale(1.06); opacity: 0.23; }
+  74% { transform: translate(52px,104px) scale(0.98); opacity: 0.17; }
+}
+
+@keyframes chessPieceThree {
+  0%,100% { transform: translate(0,0) scale(1.02); opacity: 0.15; }
+  45% { transform: translate(-42px,-76px) scale(1.1); opacity: 0.25; }
+  82% { transform: translate(72px,-18px) scale(0.96); opacity: 0.18; }
+}
+
+@keyframes chessPieceFour {
+  0%,100% { transform: translate(0,0) scale(0.94); opacity: 0.13; }
+  38% { transform: translate(-88px,36px) scale(1.04); opacity: 0.22; }
+  76% { transform: translate(-42px,118px) scale(0.9); opacity: 0.16; }
+}
+
+@keyframes chessPieceFive {
+  0%,100% { transform: translate(0,0) scale(0.98); opacity: 0.12; }
+  48% { transform: translate(-138px,-28px) scale(1.08); opacity: 0.22; }
+  80% { transform: translate(-64px,-92px) scale(0.94); opacity: 0.16; }
+}
+
+.train-track-bg {
+  opacity: 0.92;
+}
+
+.train-track-bg::before {
+  content: '';
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 62%;
+  height: 130px;
+  background:
+    repeating-linear-gradient(90deg, rgba(188,174,226,0.18) 0 3px, transparent 3px 44px),
+    linear-gradient(rgba(188,174,226,0.14), rgba(188,174,226,0.14)) center 72% / 100% 2px no-repeat,
+    linear-gradient(rgba(188,174,226,0.11), rgba(188,174,226,0.11)) center 84% / 100% 2px no-repeat;
+  transform: perspective(640px) rotateX(64deg);
+  transform-origin: center top;
+  opacity: 0.35;
+}
+
+.train-track-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 72%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(221,211,240,0.28), transparent);
+}
+
+.boilermaker-train {
+  position: absolute;
+  left: -240px;
+  top: calc(72% - 72px);
+  width: 210px;
+  height: 92px;
+  z-index: 1;
+  opacity: 0.48;
+  animation: trainTraverse 13s linear infinite;
+}
+
+.train-engine {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 192px;
+  height: 72px;
+  filter: drop-shadow(0 16px 22px rgba(0,0,0,0.34));
+}
+
+.train-boiler {
+  position: absolute;
+  left: 54px;
+  bottom: 22px;
+  width: 100px;
+  height: 34px;
+  border-radius: 22px 30px 30px 22px;
+  background: linear-gradient(180deg, rgba(221,211,240,0.30), rgba(85,63,142,0.30));
+  border: 1px solid rgba(221,211,240,0.35);
+}
+
+.train-cab {
+  position: absolute;
+  left: 14px;
+  bottom: 22px;
+  width: 54px;
+  height: 54px;
+  border-radius: 8px 8px 2px 2px;
+  background: linear-gradient(180deg, rgba(188,174,226,0.28), rgba(38,22,83,0.36));
+  border: 1px solid rgba(221,211,240,0.34);
+}
+
+.train-cab::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  width: 22px;
+  height: 18px;
+  border-radius: 3px;
+  background: rgba(245,242,255,0.20);
+  border: 1px solid rgba(245,242,255,0.24);
+}
+
+.train-smokestack {
+  position: absolute;
+  left: 126px;
+  bottom: 53px;
+  width: 19px;
+  height: 27px;
+  border-radius: 4px 4px 0 0;
+  background: rgba(221,211,240,0.28);
+  border: 1px solid rgba(221,211,240,0.34);
+}
+
+.train-cowcatcher {
+  position: absolute;
+  left: 153px;
+  bottom: 22px;
+  width: 34px;
+  height: 28px;
+  clip-path: polygon(0 30%, 100% 100%, 0 100%);
+  background: rgba(221,211,240,0.24);
+  border-bottom: 1px solid rgba(221,211,240,0.32);
+}
+
+.train-wheel {
+  position: absolute;
+  bottom: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid rgba(221,211,240,0.34);
+  background: rgba(10,8,20,0.66);
+  box-shadow: inset 0 0 0 4px rgba(188,174,226,0.08);
+  animation: wheelSpin 0.9s linear infinite;
+}
+
+.wheel-one { left: 30px; }
+.wheel-two { left: 82px; width: 28px; height: 28px; bottom: 5px; }
+.wheel-three { left: 128px; }
+
+.steam {
+  position: absolute;
+  left: 134px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(245,242,255,0.30);
+  filter: blur(1px);
+  animation: steamPuff 2.7s ease-out infinite;
+}
+
+.steam-two { animation-delay: 0.72s; left: 126px; }
+.steam-three { animation-delay: 1.44s; left: 141px; }
+
+@keyframes trainTraverse {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 480px)); }
+}
+
+@keyframes wheelSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes steamPuff {
+  0% { transform: translate(0, 12px) scale(0.42); opacity: 0; }
+  15% { opacity: 0.36; }
+  100% { transform: translate(-28px, -62px) scale(1.9); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chess-board-3d,
+  .chess-piece,
+  .boilermaker-train,
+  .train-wheel,
+  .steam {
+    animation: none !important;
+  }
+}
