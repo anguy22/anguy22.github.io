@@ -86,14 +86,14 @@
   var buildStartedAt = 0;
 
   // ── Black / white / violet architectural palette ──
-  // Body color lerps from BODY_DARK → BODY_BRIGHT once construction
-  // finishes, warming the silhouette into a light violet.
+  // Buildings stay in the dark violet construction palette.
+  // The former bright-purple finished state has been removed.
   var BODY_DARK    = [14, 10, 28];               // #0e0a1c (near-black violet)
-  var BODY_BRIGHT  = [156, 136, 210];            // #9c88d2 (light violet)
+  var BODY_BRIGHT  = BODY_DARK;
   var SIDE_DARK    = [6, 4, 16];                 // very dark violet/black
-  var SIDE_BRIGHT  = [100, 86, 152];             // medium violet
+  var SIDE_BRIGHT  = SIDE_DARK;
   var TOP_DARK     = [30, 22, 58];               // dark violet
-  var TOP_BRIGHT   = [188, 174, 226];            // pale violet (= violet-300)
+  var TOP_BRIGHT   = TOP_DARK;
   var TOP_EDGE     = "rgba(220,210,245,0.92)";   // near-white violet edge
   var TOP_GLOW     = "rgba(188,174,226,0.20)";   // soft violet glow
   var FLOOR_LINE   = "rgba(220,210,245,0.18)";   // pale violet floor stripes
@@ -101,10 +101,10 @@
   var WINDOW_LIT   = "rgba(245,242,255,0.88)";   // near-white window
   var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
 
-  var BRIGHTEN_MS = 4600; // duration of post-transition color ramp
-  var MORPH_MIN_MS = 6200;
-  var MORPH_MAX_MS = 9200;
-  var MORPH_STAGGER_MS = 950;
+  var BRIGHTEN_MS = 0; // bright-purple finish removed
+  var MORPH_MIN_MS = 3200;
+  var MORPH_MAX_MS = 5200;
+  var MORPH_STAGGER_MS = 420;
 
   function lerpRGB(a, b, t) {
     var r = Math.round(a[0] + (b[0] - a[0]) * t);
@@ -114,10 +114,6 @@
   }
 
   // ── Construction palette (light/white instead of yellow) ──
-  var CRANE_COLOR  = "rgba(245,240,255,0.92)";   // off-white crane steel
-  var CRANE_DIM    = "rgba(245,240,255,0.50)";
-  var WARN_LIGHT   = "rgba(255,138,170,0.95)";   // soft pink warning light
-  var WARN_GLOW    = "rgba(255,138,170,0.22)";
   var SCAFFOLD     = "rgba(245,240,255,0.30)";
 
   // ── Distribution definitions ────────────────────────────
@@ -157,11 +153,10 @@
   var currentDistribution = "normal";
 
   // ── Auto-cycle ─────────────────────────────────────────
-  // After every building finishes construction AND fully brightens to
-  // its solid end state, we hold for HOLD_AT_END_MS and then advance
-  // to the next distribution in CYCLE_ORDER. Manual clicks reset this.
+  // After every building finishes resizing into the active distribution,
+  // hold briefly and advance to the next distribution. Manual clicks reset this.
   var CYCLE_ORDER = ["normal", "exponential", "geometric", "lognormal"];
-  var HOLD_AT_END_MS = 2500;
+  var HOLD_AT_END_MS = 550;
   var cycleSettleAt = null; // ms timestamp when skyline first reached its end state
 
   function rand(min, max) {
@@ -216,7 +211,7 @@
       var nextH = getTargetHeightForIndex(i, buildings.length, maxH, name, b);
       b.startH = b.h;
       b.targetH = nextH;
-      b.previousBrightness = b.brightness || 1;
+      b.previousBrightness = 0;
       b.startDelay = rand(0, MORPH_STAGGER_MS);
       b.buildDuration = rand(MORPH_MIN_MS, MORPH_MAX_MS);
       b.floorSpacing = Math.max(11, Math.min(18, nextH / 14));
@@ -320,10 +315,7 @@
         depth: depth,
         roof: roof,
         windows: windows,
-        // Crane: which side the jib points and an animation phase
-        craneFacing: Math.random() > 0.5 ? 1 : -1,
-        cranePhase: Math.random() * Math.PI * 2,
-        underConstruction: true
+          underConstruction: true
       });
     }
 
@@ -565,7 +557,7 @@
 
     // Scaffolding cross-pattern across the topmost floor while still
     // under construction — visual cue that this floor is "in progress".
-    if (b.underConstruction && !b.morphing) {
+    if (b.underConstruction) {
       var scaffH = Math.min(floorSpacing, h);
       ctx.strokeStyle = SCAFFOLD;
       ctx.lineWidth = 0.55;
@@ -608,120 +600,6 @@
     ctx.restore();
   }
 
-  // Tower crane drawn on top of any building still under construction:
-  // mast, jib + counter-jib with diagonal bracing, swinging hook,
-  // operator cab, and a blinking warning light at the mast tip.
-  function drawCrane(b, now) {
-    var x = b.x;
-    var y = b.y;
-    var w = b.w;
-    var mastX = x + w / 2;
-    var mastBottom = y;
-    var mastHeight = Math.min(36, Math.max(20, b.targetH * 0.16 + 14));
-    var mastTop = y - mastHeight;
-
-    ctx.save();
-    ctx.lineCap = "square";
-
-    // Mast — twin chords with diagonal bracing
-    ctx.strokeStyle = CRANE_COLOR;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(mastX - 2, mastBottom);
-    ctx.lineTo(mastX - 2, mastTop);
-    ctx.moveTo(mastX + 2, mastBottom);
-    ctx.lineTo(mastX + 2, mastTop);
-    ctx.stroke();
-
-    ctx.lineWidth = 0.55;
-    ctx.strokeStyle = CRANE_DIM;
-    var segs = Math.max(2, Math.floor(mastHeight / 7));
-    for (var s = 0; s < segs; s++) {
-      var sy1 = mastBottom - s * (mastHeight / segs);
-      var sy2 = mastBottom - (s + 1) * (mastHeight / segs);
-      ctx.beginPath();
-      ctx.moveTo(mastX - 2, sy1);
-      ctx.lineTo(mastX + 2, sy2);
-      ctx.moveTo(mastX + 2, sy1);
-      ctx.lineTo(mastX - 2, sy2);
-      ctx.stroke();
-    }
-
-    // Jib (long arm) + counter-jib (short stub on the other side)
-    var dir = b.craneFacing;
-    var jibLen = Math.max(20, w * 1.05);
-    var counterLen = jibLen * 0.32;
-    var jibTop = mastTop;
-    var jibBottom = mastTop + 3.5;
-    var jibFar = mastX + jibLen * dir;
-    var jibNear = mastX - counterLen * dir;
-
-    ctx.strokeStyle = CRANE_COLOR;
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.moveTo(jibNear, jibTop);
-    ctx.lineTo(jibFar, jibTop);
-    ctx.moveTo(jibNear, jibBottom);
-    ctx.lineTo(jibFar, jibBottom);
-    ctx.stroke();
-
-    // Diagonal jib lattice
-    ctx.lineWidth = 0.5;
-    ctx.strokeStyle = CRANE_DIM;
-    var jibSegs = Math.max(4, Math.floor((jibLen + counterLen) / 5));
-    for (var js = 0; js < jibSegs; js++) {
-      var t1 = js / jibSegs;
-      var t2 = (js + 1) / jibSegs;
-      var px1 = jibNear + (jibFar - jibNear) * t1;
-      var px2 = jibNear + (jibFar - jibNear) * t2;
-      ctx.beginPath();
-      if (js % 2 === 0) {
-        ctx.moveTo(px1, jibTop);
-        ctx.lineTo(px2, jibBottom);
-      } else {
-        ctx.moveTo(px1, jibBottom);
-        ctx.lineTo(px2, jibTop);
-      }
-      ctx.stroke();
-    }
-
-    // Operator cab — small box where jib meets mast
-    ctx.fillStyle = "rgba(245,240,255,0.65)";
-    var cabW = 5.5;
-    var cabH = 4.5;
-    ctx.fillRect(mastX + (dir > 0 ? 1.5 : -cabW - 1.5), jibBottom, cabW, cabH);
-
-    // Swinging hook with cable
-    ctx.strokeStyle = CRANE_COLOR;
-    ctx.lineWidth = 0.7;
-    var swing = Math.sin(now * 0.0011 + b.cranePhase) * 1.6;
-    var hookAnchorX = mastX + jibLen * 0.7 * dir;
-    var hookHang = 9 + Math.sin(now * 0.0017 + b.cranePhase) * 1.2;
-    var hookX = hookAnchorX + swing;
-    var hookY = jibBottom + hookHang;
-    ctx.beginPath();
-    ctx.moveTo(hookAnchorX, jibBottom);
-    ctx.lineTo(hookX, hookY);
-    ctx.stroke();
-    ctx.fillStyle = CRANE_COLOR;
-    ctx.fillRect(hookX - 1.6, hookY, 3.2, 2.4);
-
-    // Blinking warning light at the very top of the mast
-    var blink = Math.sin(now * 0.005 + b.cranePhase * 5) > 0;
-    if (blink) {
-      ctx.fillStyle = WARN_GLOW;
-      ctx.beginPath();
-      ctx.arc(mastX, mastTop - 1, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = WARN_LIGHT;
-      ctx.beginPath();
-      ctx.arc(mastX, mastTop - 1, 1.6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.restore();
-  }
-
   function drawReflection(baseY) {
     ctx.save();
 
@@ -755,21 +633,17 @@
       : Date.now();
   }
 
-  // True only when every building has finished construction AND fully
-  // brightened to its solid end-state color.
+  // True when every building has finished resizing into the active distribution.
   function skylineSettled() {
     if (buildings.length === 0) return false;
     for (var i = 0; i < buildings.length; i++) {
       var b = buildings[i];
       if (b.underConstruction) return false;
-      if ((b.brightness || 0) < 0.999) return false;
     }
     return true;
   }
 
-  // Drives the auto-cycle: once the skyline has settled into its solid
-  // end state, wait HOLD_AT_END_MS and then advance to the next
-  // distribution. Any in-progress motion clears the timer.
+  // Drives the auto-cycle: once the skyline settles, wait briefly and advance.
   function tickAutoCycle(now) {
     if (skylineSettled()) {
       markHeroMorphing(false);
@@ -808,7 +682,7 @@
 
     // Advance construction: each building lerps from its random start
     // height toward its bell-curve target height, on its own schedule.
-    // Once finished, it stops animating and starts brightening.
+    // Once finished, it stops animating until the next distribution cycle.
     for (var i = 0; i < buildings.length; i++) {
       var b = buildings[i];
 
@@ -827,25 +701,13 @@
           b.h = b.startH + (b.targetH - b.startH) * eased;
         }
         b.y = baseY - b.h;
-        var prevBright = b.previousBrightness || 1;
-        if (local <= 0) {
-          b.brightness = prevBright;
-        } else {
-          var darkenRaw = Math.min(1, local / 900);
-          b.brightness = Math.max(0, prevBright * (1 - 0.78 * smoothstep(darkenRaw)));
-        }
+        b.brightness = 0;
       } else {
-        // Once construction is done, slowly ramp brightness 0 → 1.
-        var bAge = now - (b.finishedAt || now);
-        var bp = bAge / BRIGHTEN_MS;
-        if (bp < 0) bp = 0;
-        else if (bp > 1) bp = 1;
-        b.brightness = smoothstep(bp);
+        b.brightness = 0;
       }
     }
 
-    // Advance through distributions automatically once the skyline has
-    // settled into its solid color end state and held for a beat.
+    // Advance through distributions automatically once the skyline settles.
     tickAutoCycle(now);
 
     drawBackground();
@@ -868,13 +730,6 @@
       drawBuilding(buildings[i]);
     }
 
-    // Cranes drawn last (over the buildings) so the jib doesn't get
-    // clipped by neighbors.
-    for (var j = 0; j < buildings.length; j++) {
-      if (buildings[j].underConstruction && !buildings[j].morphing) {
-        drawCrane(buildings[j], now);
-      }
-    }
 
     drawReflection(baseY);
 
@@ -1031,3 +886,9 @@
     });
   });
 })();
+
+
+
+// ───────── ABOUT FAB WORKFLOW BACKGROUND ─────────
+// This section is CSS-driven: lots, wafers, stations, scanners, and robot arms animate in style.css.
+
