@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=17">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -95,12 +95,47 @@
   </section>
 
   <section id="about" class="section animated-about-section">
-    <div class="stock-chart-bg about-stock-bg" aria-hidden="true">
-      <div class="stock-chart-grid"></div>
-      <div class="stock-chart-track" id="about-stock-track">
-        <svg class="stock-line-svg" id="about-stock-line" viewBox="0 0 2200 360" preserveAspectRatio="none"></svg>
-        <div class="stock-candle-layer" id="about-stock-layer"></div>
+    <div class="fab-workflow-bg" aria-hidden="true">
+      <div class="fab-grid"></div>
+      <div class="fab-route fab-route-one"></div>
+      <div class="fab-route fab-route-two"></div>
+
+      <div class="fab-station station-receive">
+        <span>LOT IN</span>
+        <i class="fas fa-box-open"></i>
       </div>
+      <div class="fab-station station-photo">
+        <span>PHOTO</span>
+        <i class="fas fa-lightbulb"></i>
+      </div>
+      <div class="fab-station station-etch">
+        <span>ETCH</span>
+        <i class="fas fa-microchip"></i>
+      </div>
+      <div class="fab-station station-metrology">
+        <span>METROLOGY</span>
+        <i class="fas fa-magnifying-glass-chart"></i>
+      </div>
+      <div class="fab-station station-ship">
+        <span>WIP OUT</span>
+        <i class="fas fa-arrow-right"></i>
+      </div>
+
+      <div class="fab-wafer wafer-a"></div>
+      <div class="fab-wafer wafer-b"></div>
+      <div class="fab-wafer wafer-c"></div>
+      <div class="fab-wafer wafer-d"></div>
+      <div class="fab-carrier carrier-a"><span></span><span></span><span></span></div>
+      <div class="fab-carrier carrier-b"><span></span><span></span><span></span></div>
+
+      <div class="robot-arm arm-photo"><span></span></div>
+      <div class="robot-arm arm-metrology"><span></span></div>
+      <div class="scan-beam scan-one"></div>
+      <div class="scan-beam scan-two"></div>
+
+      <div class="fab-metric metric-one">UTIL 94%</div>
+      <div class="fab-metric metric-two">CT ↓ 8%</div>
+      <div class="fab-metric metric-three">QUEUE OK</div>
     </div>
     <div class="container reveal">
       <h2 class="section-title">About Me</h2>
@@ -110,6 +145,11 @@
           <p>hello there.</p>
           <p>i'm andrew. my work spans entrepreneurial, research, and internship experience across engineering consulting, d1 athletics entertainment, and semiconductor fabrication.</p>
           <p>aside from my studies, i actively manage a semiconductor investing thesis, compete in collegiate chess league, and get outside for soccer and hiking!</p>
+          <p>i am captivated by the chip industry. i am amazed how this space is so uniquely specialized on a company-to-company basis and extraordinarily 
+            capital-intensive from a manufacturing perspective, yet it remains critical to human technological progress and essential 
+            for modern living. that combination creates a particular need for companies to balance demand, supply, risk, innovation, 
+            customer relationships, profitability, and long-term strategic positioning in an industry where a single node transition or 
+            capacity bet can define a decade. this is a space where i find a strong desire to contribute to. </p>
           <p>i aim to document my learning, experiences, and thoughts. if we're going to be replaced by ai it might as well be accurate.</p>
         </div>
 
@@ -332,6 +372,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=15"></script>
+  <script src="script.js?v=17"></script>
 </body>
 </html>

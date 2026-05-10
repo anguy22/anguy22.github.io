@@ -114,10 +114,6 @@
   }
 
   // ── Construction palette (light/white instead of yellow) ──
-  var CRANE_COLOR  = "rgba(245,240,255,0.92)";   // off-white crane steel
-  var CRANE_DIM    = "rgba(245,240,255,0.50)";
-  var WARN_LIGHT   = "rgba(255,138,170,0.95)";   // soft pink warning light
-  var WARN_GLOW    = "rgba(255,138,170,0.22)";
   var SCAFFOLD     = "rgba(245,240,255,0.30)";
 
   // ── Distribution definitions ────────────────────────────
@@ -319,10 +315,7 @@
         depth: depth,
         roof: roof,
         windows: windows,
-        // Crane: which side the jib points and an animation phase
-        craneFacing: Math.random() > 0.5 ? 1 : -1,
-        cranePhase: Math.random() * Math.PI * 2,
-        underConstruction: true
+          underConstruction: true
       });
     }
 
@@ -607,120 +600,6 @@
     ctx.restore();
   }
 
-  // Tower crane drawn on top of any building still under construction:
-  // mast, jib + counter-jib with diagonal bracing, swinging hook,
-  // operator cab, and a blinking warning light at the mast tip.
-  function drawCrane(b, now) {
-    var x = b.x;
-    var y = b.y;
-    var w = b.w;
-    var mastX = x + w / 2;
-    var mastBottom = y;
-    var mastHeight = Math.min(36, Math.max(20, b.targetH * 0.16 + 14));
-    var mastTop = y - mastHeight;
-
-    ctx.save();
-    ctx.lineCap = "square";
-
-    // Mast — twin chords with diagonal bracing
-    ctx.strokeStyle = CRANE_COLOR;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(mastX - 2, mastBottom);
-    ctx.lineTo(mastX - 2, mastTop);
-    ctx.moveTo(mastX + 2, mastBottom);
-    ctx.lineTo(mastX + 2, mastTop);
-    ctx.stroke();
-
-    ctx.lineWidth = 0.55;
-    ctx.strokeStyle = CRANE_DIM;
-    var segs = Math.max(2, Math.floor(mastHeight / 7));
-    for (var s = 0; s < segs; s++) {
-      var sy1 = mastBottom - s * (mastHeight / segs);
-      var sy2 = mastBottom - (s + 1) * (mastHeight / segs);
-      ctx.beginPath();
-      ctx.moveTo(mastX - 2, sy1);
-      ctx.lineTo(mastX + 2, sy2);
-      ctx.moveTo(mastX + 2, sy1);
-      ctx.lineTo(mastX - 2, sy2);
-      ctx.stroke();
-    }
-
-    // Jib (long arm) + counter-jib (short stub on the other side)
-    var dir = b.craneFacing;
-    var jibLen = Math.max(20, w * 1.05);
-    var counterLen = jibLen * 0.32;
-    var jibTop = mastTop;
-    var jibBottom = mastTop + 3.5;
-    var jibFar = mastX + jibLen * dir;
-    var jibNear = mastX - counterLen * dir;
-
-    ctx.strokeStyle = CRANE_COLOR;
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.moveTo(jibNear, jibTop);
-    ctx.lineTo(jibFar, jibTop);
-    ctx.moveTo(jibNear, jibBottom);
-    ctx.lineTo(jibFar, jibBottom);
-    ctx.stroke();
-
-    // Diagonal jib lattice
-    ctx.lineWidth = 0.5;
-    ctx.strokeStyle = CRANE_DIM;
-    var jibSegs = Math.max(4, Math.floor((jibLen + counterLen) / 5));
-    for (var js = 0; js < jibSegs; js++) {
-      var t1 = js / jibSegs;
-      var t2 = (js + 1) / jibSegs;
-      var px1 = jibNear + (jibFar - jibNear) * t1;
-      var px2 = jibNear + (jibFar - jibNear) * t2;
-      ctx.beginPath();
-      if (js % 2 === 0) {
-        ctx.moveTo(px1, jibTop);
-        ctx.lineTo(px2, jibBottom);
-      } else {
-        ctx.moveTo(px1, jibBottom);
-        ctx.lineTo(px2, jibTop);
-      }
-      ctx.stroke();
-    }
-
-    // Operator cab — small box where jib meets mast
-    ctx.fillStyle = "rgba(245,240,255,0.65)";
-    var cabW = 5.5;
-    var cabH = 4.5;
-    ctx.fillRect(mastX + (dir > 0 ? 1.5 : -cabW - 1.5), jibBottom, cabW, cabH);
-
-    // Swinging hook with cable
-    ctx.strokeStyle = CRANE_COLOR;
-    ctx.lineWidth = 0.7;
-    var swing = Math.sin(now * 0.0011 + b.cranePhase) * 1.6;
-    var hookAnchorX = mastX + jibLen * 0.7 * dir;
-    var hookHang = 9 + Math.sin(now * 0.0017 + b.cranePhase) * 1.2;
-    var hookX = hookAnchorX + swing;
-    var hookY = jibBottom + hookHang;
-    ctx.beginPath();
-    ctx.moveTo(hookAnchorX, jibBottom);
-    ctx.lineTo(hookX, hookY);
-    ctx.stroke();
-    ctx.fillStyle = CRANE_COLOR;
-    ctx.fillRect(hookX - 1.6, hookY, 3.2, 2.4);
-
-    // Blinking warning light at the very top of the mast
-    var blink = Math.sin(now * 0.005 + b.cranePhase * 5) > 0;
-    if (blink) {
-      ctx.fillStyle = WARN_GLOW;
-      ctx.beginPath();
-      ctx.arc(mastX, mastTop - 1, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = WARN_LIGHT;
-      ctx.beginPath();
-      ctx.arc(mastX, mastTop - 1, 1.6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.restore();
-  }
-
   function drawReflection(baseY) {
     ctx.save();
 
@@ -803,7 +682,7 @@
 
     // Advance construction: each building lerps from its random start
     // height toward its bell-curve target height, on its own schedule.
-    // Once finished, it stops animating and the crane disappears.
+    // Once finished, it stops animating until the next distribution cycle.
     for (var i = 0; i < buildings.length; i++) {
       var b = buildings[i];
 
@@ -851,13 +730,6 @@
       drawBuilding(buildings[i]);
     }
 
-    // Cranes drawn last (over the buildings) so the jib stays visible
-    // during both initial construction and distribution height morphs.
-    for (var j = 0; j < buildings.length; j++) {
-      if (buildings[j].underConstruction) {
-        drawCrane(buildings[j], now);
-      }
-    }
 
     drawReflection(baseY);
 
@@ -1016,74 +888,7 @@
 })();
 
 
-// ───────── ABOUT STOCK PRICE BACKGROUND ─────────
-(function () {
-  var layer = document.getElementById("about-stock-layer");
-  var svg = document.getElementById("about-stock-line");
-  if (!layer || !svg) return;
 
-  var width = 2200;
-  var height = 360;
-  var step = 54;
-  var prices = [];
-  var price = 178;
+// ───────── ABOUT FAB WORKFLOW BACKGROUND ─────────
+// This section is CSS-driven: lots, wafers, stations, scanners, and robot arms animate in style.css.
 
-  for (var i = 0; i <= 44; i++) {
-    var wave = Math.sin(i * 0.72) * 9 + Math.sin(i * 0.19) * 18;
-    var pulse = (i % 9 === 0 ? 18 : 0) - (i % 13 === 0 ? 22 : 0);
-    price += Math.sin(i * 0.55) * 5 + pulse * 0.16;
-    prices.push(180 + wave + (price - 178));
-  }
-
-  var minP = Math.min.apply(null, prices) - 18;
-  var maxP = Math.max.apply(null, prices) + 18;
-
-  function yFor(p) {
-    return 40 + (maxP - p) / (maxP - minP) * (height - 82);
-  }
-
-  var pathD = "";
-  var areaD = "";
-  layer.innerHTML = "";
-  svg.innerHTML = "";
-
-  for (var j = 1; j < prices.length; j++) {
-    var open = prices[j - 1];
-    var close = prices[j];
-    var high = Math.max(open, close) + 10 + (j % 5) * 3;
-    var low = Math.min(open, close) - 10 - (j % 4) * 4;
-
-    var x = 42 + j * step;
-    var yOpen = yFor(open);
-    var yClose = yFor(close);
-    var yHigh = yFor(high);
-    var yLow = yFor(low);
-    var top = Math.min(yOpen, yClose);
-    var bodyH = Math.max(8, Math.abs(yClose - yOpen));
-    var green = close >= open;
-
-    var candle = document.createElement("span");
-    candle.className = "stock-candle " + (green ? "green" : "red");
-    candle.style.left = x + "px";
-    candle.style.top = top + "px";
-    candle.style.height = bodyH + "px";
-    candle.style.setProperty("--wick-top", (yHigh - top) + "px");
-    candle.style.setProperty("--wick-h", (yLow - yHigh) + "px");
-    layer.appendChild(candle);
-
-    var closeY = yClose;
-    pathD += (j === 1 ? "M " : " L ") + x + " " + closeY;
-    areaD += (j === 1 ? "M " + x + " " + height + " L " : " L ") + x + " " + closeY;
-  }
-  areaD += " L " + (42 + (prices.length - 1) * step) + " " + height + " Z";
-
-  var area = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  area.setAttribute("d", areaD);
-  area.setAttribute("class", "stock-line-area");
-  svg.appendChild(area);
-
-  var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("d", pathD);
-  path.setAttribute("class", "stock-line-path");
-  svg.appendChild(path);
-})();
