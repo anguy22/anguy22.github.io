@@ -158,10 +158,10 @@
 
   // ── Auto-cycle ─────────────────────────────────────────
   // After every building finishes construction AND fully brightens to
-  // its solid end state, we hold for HOLD_AT_END_MS and then advance
+  // its solid end state, we hold briefly for HOLD_AT_END_MS and then advance
   // to the next distribution in CYCLE_ORDER. Manual clicks reset this.
   var CYCLE_ORDER = ["normal", "exponential", "geometric", "lognormal"];
-  var HOLD_AT_END_MS = 2500;
+  var HOLD_AT_END_MS = 700;
   var cycleSettleAt = null; // ms timestamp when skyline first reached its end state
 
   function rand(min, max) {
@@ -768,7 +768,7 @@
   }
 
   // Drives the auto-cycle: once the skyline has settled into its solid
-  // end state, wait HOLD_AT_END_MS and then advance to the next
+  // end state, wait briefly for HOLD_AT_END_MS and then advance to the next
   // distribution. Any in-progress motion clears the timer.
   function tickAutoCycle(now) {
     if (skylineSettled()) {
@@ -1030,4 +1030,37 @@
       }
     });
   });
+})();
+
+// ───────── EDUCATION STOCK CANDLE BACKGROUND ─────────
+(function () {
+  var layer = document.getElementById("stock-candle-layer");
+  if (!layer) return;
+
+  var candleCount = 38;
+  var pattern = [
+    { cls: "green", y: -22, body: 82, wick: 156, wickTop: -48, jump: -36 },
+    { cls: "red",   y:  18, body: 58, wick: 128, wickTop: -38, jump:  28 },
+    { cls: "green", y: -56, body: 106, wick: 184, wickTop: -52, jump: -44 },
+    { cls: "red",   y:  44, body: 74, wick: 150, wickTop: -44, jump:  34 },
+    { cls: "green", y: -10, body: 66, wick: 138, wickTop: -40, jump: -24 },
+    { cls: "red",   y:  72, body: 92, wick: 176, wickTop: -54, jump:  42 }
+  ];
+
+  layer.innerHTML = "";
+
+  for (var i = 0; i < candleCount; i++) {
+    var spec = pattern[i % pattern.length];
+    var candle = document.createElement("span");
+    candle.className = "stock-candle " + spec.cls;
+    candle.style.left = (-8 + i * 3.1) + "vw";
+    candle.style.setProperty("--body-h", spec.body + ((i % 4) * 9) + "px");
+    candle.style.setProperty("--wick-h", spec.wick + ((i % 3) * 15) + "px");
+    candle.style.setProperty("--wick-top", spec.wickTop - ((i % 2) * 10) + "px");
+    candle.style.setProperty("--y", spec.y + ((i % 5) * 12 - 20) + "px");
+    candle.style.setProperty("--jump", spec.jump + "px");
+    candle.style.setProperty("--delay", (i * -0.13) + "s");
+    candle.style.setProperty("--speed", (2.05 + (i % 5) * 0.11) + "s");
+    layer.appendChild(candle);
+  }
 })();
