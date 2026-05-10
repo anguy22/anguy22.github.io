@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -70,11 +70,14 @@
       </a>
     </div>
 
-    <div class="hero-dots" aria-hidden="true">
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="hero-dots" role="tablist" aria-label="Distribution selector">
+      <button class="hero-replay" id="hero-replay" type="button" aria-label="Replay animation" title="Replay">
+        <i class="fas fa-arrow-rotate-right"></i>
+      </button>
+      <button class="hero-dot active" type="button" data-dist="normal" aria-label="Normal distribution" title="Normal"></button>
+      <button class="hero-dot" type="button" data-dist="exponential" aria-label="Exponential distribution" title="Exponential"></button>
+      <button class="hero-dot" type="button" data-dist="geometric" aria-label="Geometric distribution" title="Geometric"></button>
+      <button class="hero-dot" type="button" data-dist="lognormal" aria-label="Log-normal distribution" title="Log-normal"></button>
     </div>
 
     <div class="hero-content">
@@ -307,6 +310,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

@@ -1,26 +1,27 @@
 :root {
-  --green-900: #10261b;
-  --green-800: #173624;
-  --green-700: #1f5a3b;
-  --green-600: #2d7a53;
-  --green-500: #38956a;
-  --green-400: #4db07f;
-  --green-300: #7fcca6;
-  --green-200: #b8e4cc;
-  --green-100: #e6f5ed;
+  /* ── Violet/purple palette (replaces the old greens) ── */
+  --violet-900: #1a0e3a;
+  --violet-800: #261653;
+  --violet-700: #3a2470;
+  --violet-600: #553f8e;
+  --violet-500: #7156a8;
+  --violet-400: #9580c7;
+  --violet-300: #bcaee2;
+  --violet-200: #ddd3f0;
+  --violet-100: #f0eaf9;
 
-  --grey-950: #071012;
-  --grey-900: #0b1114;
-  --grey-850: #0d1517;
+  --grey-950: #050308;
+  --grey-900: #0a0814;
+  --grey-850: #100d1c;
 
   --white: #ffffff;
-  --bg: #0b1114;
-  --bg-alt: #0f171a;
+  --bg: #0a0814;
+  --bg-alt: #100d1c;
   --card: rgba(255,255,255,0.045);
-  --text: #eef5f1;
-  --text-muted: rgba(238,245,241,0.72);
-  --accent: var(--green-400);
-  --border: rgba(184,228,204,0.13);
+  --text: #f0eaf9;
+  --text-muted: rgba(240,234,249,0.72);
+  --accent: var(--violet-300);
+  --border: rgba(220,210,240,0.13);
 
   --font-sans: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
@@ -65,7 +66,7 @@ a {
 }
 
 a:hover {
-  color: var(--green-200);
+  color: var(--violet-200);
 }
 
 .container {
@@ -88,11 +89,11 @@ a:hover {
   text-align: center;
   padding: 14vh 24px 60px;
 
-  color: var(--green-100);
+  color: var(--violet-100);
   background:
-    radial-gradient(circle at 50% 34%, rgba(77,176,127,0.14), transparent 34%),
-    radial-gradient(circle at 50% 92%, rgba(77,176,127,0.16), transparent 35%),
-    linear-gradient(180deg, #091012 0%, #0b1114 46%, #071012 100%);
+    radial-gradient(circle at 50% 34%, rgba(149,128,199,0.14), transparent 34%),
+    radial-gradient(circle at 50% 92%, rgba(149,128,199,0.16), transparent 35%),
+    linear-gradient(180deg, #07050f 0%, #0a0814 46%, #050308 100%);
 }
 
 #hero::before {
@@ -219,13 +220,13 @@ a:hover {
 
   background:
     radial-gradient(circle at 30% 24%, rgba(255,255,255,0.18), transparent 32%),
-    rgba(12,22,24,0.72);
+    rgba(20,12,38,0.72);
 
-  border: 1px solid rgba(255,255,255,0.38);
+  border: 1px solid rgba(220,210,240,0.38);
 
   box-shadow:
     0 16px 44px rgba(0,0,0,0.34),
-    0 0 26px rgba(255,255,255,0.08);
+    0 0 26px rgba(188,174,226,0.10);
 
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -239,15 +240,15 @@ a:hover {
 
 .bubble:hover {
   color: #ffffff;
-  border-color: rgba(255,255,255,0.75);
+  border-color: rgba(220,210,240,0.85);
 
   background:
     radial-gradient(circle at 30% 24%, rgba(255,255,255,0.24), transparent 34%),
-    rgba(18,35,34,0.82);
+    rgba(36,22,68,0.82);
 
   box-shadow:
     0 18px 52px rgba(0,0,0,0.42),
-    0 0 34px rgba(255,255,255,0.10);
+    0 0 34px rgba(188,174,226,0.16);
 }
 
 .bubble i {
@@ -315,30 +316,71 @@ a:hover {
   transform: translateX(4px);
 }
 
+/* ========== HERO DOTS — distribution selector ========== */
 .hero-dots {
   position: absolute;
   z-index: 4;
   right: clamp(24px, 4vw, 70px);
-  top: 39%;
+  top: 33%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 18px;
 }
 
-.hero-dots span {
+.hero-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: rgba(255,255,255,0.48);
   display: block;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
 }
 
-.hero-dots .active {
+.hero-dot:hover {
+  background: rgba(255,255,255,0.85);
+  transform: scale(1.18);
+}
+
+.hero-dot.active {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255,255,255,0.80);
-  background: radial-gradient(circle, rgba(255,255,255,0.92) 0 34%, transparent 38%);
+  border: 2px solid rgba(255,255,255,0.85);
+  background: radial-gradient(circle, rgba(255,255,255,0.95) 0 34%, transparent 38%);
+}
+
+/* Replay icon button — sits at the top of the distribution selector */
+.hero-replay {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(220,210,240,0.40);
+  background: rgba(20,12,38,0.55);
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-replay:hover {
+  background: rgba(36,22,68,0.85);
+  border-color: rgba(220,210,240,0.85);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(188,174,226,0.18);
+}
+
+.hero-replay:active {
+  transform: rotate(-180deg);
 }
 
 /* ========== SCROLL INDICATOR ========== */
@@ -361,13 +403,13 @@ a:hover {
 .section {
   padding: 80px 0;
   background:
-    radial-gradient(circle at top left, rgba(77,176,127,0.05), transparent 35%),
+    radial-gradient(circle at top left, rgba(149,128,199,0.05), transparent 35%),
     var(--bg);
 }
 
 .section-alt {
   background:
-    radial-gradient(circle at top right, rgba(77,176,127,0.04), transparent 35%),
+    radial-gradient(circle at top right, rgba(149,128,199,0.04), transparent 35%),
     var(--bg-alt);
 }
 
@@ -376,7 +418,7 @@ a:hover {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--green-300);
+  color: var(--violet-300);
   margin-bottom: 40px;
 
   display: flex;
@@ -449,7 +491,7 @@ a:hover {
 
 .detail-card i {
   font-size: 1.1rem;
-  color: var(--green-300);
+  color: var(--violet-300);
   width: 20px;
   text-align: center;
 }
@@ -459,7 +501,7 @@ a:hover {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(238,245,241,0.50);
+  color: rgba(240,234,249,0.50);
 }
 
 .detail-card span {
@@ -485,7 +527,7 @@ a:hover {
 .edu-header h3,
 .timeline-header h3,
 .project-card h3 {
-  color: var(--green-100);
+  color: var(--violet-100);
   font-weight: 800;
 }
 
@@ -503,8 +545,8 @@ a:hover {
 .timeline-date {
   font-size: 0.85rem;
   font-weight: 800;
-  color: var(--green-200);
-  background: rgba(127,204,166,0.10);
+  color: var(--violet-200);
+  background: rgba(188,174,226,0.10);
   padding: 4px 12px;
   border-radius: 20px;
   white-space: nowrap;
@@ -514,7 +556,7 @@ a:hover {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgba(238,245,241,0.55);
+  color: rgba(240,234,249,0.55);
   margin-bottom: 12px;
   font-weight: 800;
 }
@@ -530,8 +572,8 @@ a:hover {
 .project-tags span {
   font-size: 0.85rem;
   padding: 6px 14px;
-  background: rgba(127,204,166,0.10);
-  color: var(--green-200);
+  background: rgba(188,174,226,0.10);
+  color: var(--violet-200);
   border-radius: 20px;
   font-weight: 700;
 }
@@ -565,7 +607,7 @@ a:hover {
   height: 16px;
   border-radius: 50%;
   background: var(--bg);
-  border: 3px solid var(--green-400);
+  border: 3px solid var(--violet-400);
 }
 
 .timeline-content {
@@ -628,7 +670,7 @@ a:hover {
   width: 48px;
   height: 48px;
   border-radius: var(--radius);
-  background: rgba(127,204,166,0.10);
+  background: rgba(188,174,226,0.10);
 
   display: flex;
   align-items: center;
@@ -636,7 +678,7 @@ a:hover {
 
   margin-bottom: 16px;
   font-size: 1.25rem;
-  color: var(--green-300);
+  color: var(--violet-300);
 }
 
 .project-card h3 {
@@ -654,7 +696,7 @@ a:hover {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--green-300);
+  color: var(--violet-300);
   font-weight: 800;
 
   display: flex;
@@ -685,7 +727,7 @@ a:hover {
 }
 
 .project-card-details p {
-  color: rgba(238,245,241,0.78);
+  color: rgba(240,234,249,0.78);
   line-height: 1.65;
   font-size: 0.94rem;
   margin-bottom: 16px;
@@ -722,7 +764,7 @@ a:hover {
 
 .contact-card i {
   font-size: 1.5rem;
-  color: var(--green-300);
+  color: var(--violet-300);
   margin-bottom: 12px;
 }
 
@@ -741,7 +783,7 @@ footer {
   padding: 32px 0;
   text-align: center;
   border-top: 1px solid var(--border);
-  color: rgba(238,245,241,0.50);
+  color: rgba(240,234,249,0.50);
   font-size: 0.85rem;
   background: var(--grey-950);
 }

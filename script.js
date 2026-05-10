@@ -80,27 +80,26 @@
 
   var buildings = [];
   var particles = [];
-  var treeLine = [];
 
   // Tracks when this generation cycle started — drives the construction
-  // animation (random height distribution → normal distribution).
+  // animation (random heights → selected target distribution).
   var buildStartedAt = 0;
 
-  // ── Architectural silhouette palette ──
+  // ── Black / white / violet architectural palette ──
   // Body color lerps from BODY_DARK → BODY_BRIGHT once construction
-  // finishes, slowly warming the skyline into a brighter green.
-  var BODY_DARK    = [10, 28, 20];             // #0a1c14 (under construction / just finished)
-  var BODY_BRIGHT  = [40, 110, 76];            // #286e4c (fully matured green)
-  var SIDE_DARK    = [4, 13, 9];               // #040d09
-  var SIDE_BRIGHT  = [18, 56, 38];             // brighter side panel
-  var TOP_DARK     = [19, 48, 31];             // #13301f
-  var TOP_BRIGHT   = [50, 130, 90];            // brighter top panel
-  var TOP_EDGE     = "rgba(127,204,166,0.85)"; // bright top edge
-  var TOP_GLOW     = "rgba(127,204,166,0.18)"; // soft glow under top edge
-  var FLOOR_LINE   = "rgba(127,204,166,0.16)"; // horizontal floor stripes
-  var ACCENT_LINE  = "rgba(127,204,166,0.55)"; // vertical accent stripe
-  var WINDOW_LIT   = "rgba(240,245,243,0.85)";
-  var WINDOW_DIM   = "rgba(127,204,166,0.20)";
+  // finishes, warming the silhouette into a light violet.
+  var BODY_DARK    = [14, 10, 28];               // #0e0a1c (near-black violet)
+  var BODY_BRIGHT  = [156, 136, 210];            // #9c88d2 (light violet)
+  var SIDE_DARK    = [6, 4, 16];                 // very dark violet/black
+  var SIDE_BRIGHT  = [100, 86, 152];             // medium violet
+  var TOP_DARK     = [30, 22, 58];               // dark violet
+  var TOP_BRIGHT   = [188, 174, 226];            // pale violet (= violet-300)
+  var TOP_EDGE     = "rgba(220,210,245,0.92)";   // near-white violet edge
+  var TOP_GLOW     = "rgba(188,174,226,0.20)";   // soft violet glow
+  var FLOOR_LINE   = "rgba(220,210,245,0.18)";   // pale violet floor stripes
+  var ACCENT_LINE  = "rgba(220,210,245,0.60)";   // pale violet accent
+  var WINDOW_LIT   = "rgba(245,242,255,0.88)";   // near-white window
+  var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
 
   var BRIGHTEN_MS = 5500; // duration of post-construction color ramp
 
@@ -111,16 +110,48 @@
     return "rgb(" + r + "," + g + "," + bl + ")";
   }
 
-  // ── Construction palette ──
-  var CRANE_COLOR  = "rgba(255,184,92,0.92)";  // construction yellow
-  var CRANE_DIM    = "rgba(255,184,92,0.55)";
-  var WARN_LIGHT   = "rgba(255,80,80,0.95)";
-  var WARN_GLOW    = "rgba(255,80,80,0.22)";
-  var SCAFFOLD     = "rgba(255,184,92,0.32)";
+  // ── Construction palette (light/white instead of yellow) ──
+  var CRANE_COLOR  = "rgba(245,240,255,0.92)";   // off-white crane steel
+  var CRANE_DIM    = "rgba(245,240,255,0.50)";
+  var WARN_LIGHT   = "rgba(255,138,170,0.95)";   // soft pink warning light
+  var WARN_GLOW    = "rgba(255,138,170,0.22)";
+  var SCAFFOLD     = "rgba(245,240,255,0.30)";
 
-  function normalPDF(x) {
-    return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
-  }
+  // ── Distribution definitions ────────────────────────────
+  // Each distribution exposes fn(t) where t ∈ [0, 1] returns a height
+  // multiplier in [0, 1]. The same fn powers BOTH the target building
+  // heights AND the theoretical curve drawn above the skyline.
+  var distributions = {
+    normal: function (t) {
+      var z = -3 + t * 6;
+      return Math.exp(-0.5 * z * z); // peak = 1 at t = 0.5
+    },
+    exponential: function (t) {
+      var rate = 3.2;
+      return Math.exp(-rate * t);    // peak = 1 at t = 0
+    },
+    geometric: function (t) {
+      // Discrete-feel decay — buildings cluster in stepped bins so
+      // the silhouette looks like a staircase rather than a smooth curve.
+      var bins = 7;
+      var bin = Math.min(bins - 1, Math.floor(t * bins));
+      return Math.pow(0.6, bin);
+    },
+    lognormal: function (t) {
+      var x = 0.1 + t * 3.5;
+      var mu = 0;
+      var sigma = 0.5;
+      var pdf = (1 / (x * sigma * Math.sqrt(2 * Math.PI))) *
+                Math.exp(-Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma));
+      // Normalize by peak (peak at x = exp(mu - sigma^2)).
+      var peakX = Math.exp(mu - sigma * sigma);
+      var peakPdf = (1 / (peakX * sigma * Math.sqrt(2 * Math.PI))) *
+                    Math.exp(-Math.pow(Math.log(peakX) - mu, 2) / (2 * sigma * sigma));
+      return pdf / peakPdf;
+    }
+  };
+
+  var currentDistribution = "normal";
 
   function rand(min, max) {
     return min + Math.random() * (max - min);
@@ -157,7 +188,6 @@
   function generate() {
     buildings = [];
     particles = [];
-    treeLine = [];
 
     var skylineW = W * 0.84;
     var startX = (W - skylineW) / 2;
@@ -167,21 +197,22 @@
     var gap = Math.max(2, W * 0.0023);
     var bw = (skylineW - gap * (count - 1)) / count;
 
-    var mu = (count - 1) / 2;
-    var sigma = count * 0.19;
     var maxH = H * 0.43;
+    var distFn = distributions[currentDistribution] || distributions.normal;
 
     for (var i = 0; i < count; i++) {
-      var z = (i - mu) / sigma;
-      var bell = normalPDF(z) / normalPDF(0);
+      // Normalized position along the skyline, fed into the chosen
+      // distribution function to pick this building's target height.
+      var t = count > 1 ? i / (count - 1) : 0;
+      var shape = distFn(t);
 
       var edgeLift = rand(10, 24);
-      // Final (target) height — sits on the normal distribution.
-      var targetH = edgeLift + maxH * bell * rand(0.86, 1.12);
+      // Final (target) height — sits on the chosen distribution.
+      var targetH = edgeLift + maxH * shape * rand(0.86, 1.12);
 
       // Initial (random) height — drawn from a uniform distribution
       // unrelated to position, so the skyline starts noisy and then
-      // "constructs" itself into the bell curve.
+      // "constructs" itself into the chosen distribution.
       var startH = rand(edgeLift, maxH * 1.05);
 
       // Each building's construction is staggered and runs at its own
@@ -249,31 +280,21 @@
         speed: rand(0.005, 0.018)
       });
     }
-
-    var treeCount = Math.max(58, Math.round(W / 18));
-    for (var t = 0; t < treeCount; t++) {
-      treeLine.push({
-        x: startX + (t / (treeCount - 1)) * skylineW + rand(-5, 5),
-        y: baseY + rand(-8, 3),
-        r: rand(4, 11),
-        color: Math.random() > 0.5 ? "#7fcca6" : "#4db07f"
-      });
-    }
   }
 
   function drawBackground() {
     var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#091012");
-    grad.addColorStop(0.48, "#0d1517");
-    grad.addColorStop(1, "#071012");
+    grad.addColorStop(0, "#07050f");
+    grad.addColorStop(0.48, "#0a0814");
+    grad.addColorStop(1, "#050308");
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
     var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
-    glow.addColorStop(0, "rgba(77,176,127,0.12)");
-    glow.addColorStop(0.42, "rgba(77,176,127,0.05)");
-    glow.addColorStop(1, "rgba(77,176,127,0)");
+    glow.addColorStop(0, "rgba(149,128,199,0.14)");
+    glow.addColorStop(0.42, "rgba(149,128,199,0.05)");
+    glow.addColorStop(1, "rgba(149,128,199,0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
@@ -328,47 +349,62 @@
     return sum / buildings.length;
   }
 
+  // The curve at progress=0 traces the smoothed (random) building tops;
+  // at progress=1 it ALWAYS resolves to the theoretical ideal shape for
+  // the active distribution — independent of any noise in the actual
+  // building heights. In between it lerps between the two so you watch
+  // the data settle into its true distribution.
   function drawBellCurve(baseY, progress) {
     if (buildings.length < 2) return;
 
-    // Quick fade-in over the first ~15% of construction progress,
-    // then the curve stays at full brightness while it morphs.
-    var alpha = Math.min(0.82, progress * 5.5);
+    var alpha = Math.min(0.85, progress * 5.5);
     if (alpha <= 0.01) return;
 
-    var lift = 22; // pixels above building tops
-    var smoothWindow = 3; // moving-average radius across neighboring buildings
+    var lift = 22;
+    var smoothWindow = 3;
 
-    // Smoothed top-y per building. Initially the heights are random so
-    // this curve is jagged; as buildings settle into the bell, the
-    // smoothed trace becomes a clean normal-distribution curve.
+    var maxH = H * 0.43;
+    var distFn = distributions[currentDistribution] || distributions.normal;
+
+    // Compute curve points: blend smoothed traced y with ideal y.
     var pts = [];
-    for (var i = 0; i < buildings.length; i++) {
+    var n = buildings.length;
+    for (var i = 0; i < n; i++) {
       var sumH = 0, cnt = 0;
       for (var j = -smoothWindow; j <= smoothWindow; j++) {
         var k = i + j;
-        if (k >= 0 && k < buildings.length) {
+        if (k >= 0 && k < n) {
           sumH += buildings[k].h;
           cnt++;
         }
       }
-      var smoothedH = sumH / cnt;
+      var tracedY = baseY - (sumH / cnt) - lift;
+
+      // Theoretical ideal y for THIS distribution at this x position
+      // (no per-building noise, no rand multipliers).
+      var t = n > 1 ? i / (n - 1) : 0;
+      var idealH = maxH * distFn(t);
+      var idealY = baseY - idealH - lift;
+
+      // progress = 0 → trace random heights; progress = 1 → ideal curve.
+      var blendedY = tracedY * (1 - progress) + idealY * progress;
+
       pts.push({
         x: buildings[i].x + buildings[i].w / 2,
-        y: baseY - smoothedH - lift
+        y: blendedY
       });
     }
 
     ctx.save();
-    ctx.strokeStyle = "rgba(255,255,255," + alpha.toFixed(3) + ")";
+    ctx.strokeStyle = "rgba(245,242,255," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
     ctx.beginPath();
     ctx.moveTo(pts[0].x, pts[0].y);
 
-    // Quadratic Bezier through midpoints — smooth curve that naturally
-    // flattens into a bell once the underlying heights line up.
+    // Quadratic Bezier through midpoints — smooth curve regardless of
+    // whether it's tracing noisy buildings or the ideal distribution.
     for (var i = 1; i < pts.length - 1; i++) {
       var midX = (pts[i].x + pts[i + 1].x) / 2;
       var midY = (pts[i].y + pts[i + 1].y) / 2;
@@ -424,7 +460,7 @@
     // Soft glow band just under the top edge
     var glowGrad = ctx.createLinearGradient(x, y, x, y + Math.min(h * 0.4, 60));
     glowGrad.addColorStop(0, TOP_GLOW);
-    glowGrad.addColorStop(1, "rgba(127,204,166,0)");
+    glowGrad.addColorStop(1, "rgba(188,174,226,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(x, y, w, Math.min(h * 0.4, 60));
 
@@ -588,7 +624,7 @@
     }
 
     // Operator cab — small box where jib meets mast
-    ctx.fillStyle = "rgba(255,184,92,0.65)";
+    ctx.fillStyle = "rgba(245,240,255,0.65)";
     var cabW = 5.5;
     var cabH = 4.5;
     ctx.fillRect(mastX + (dir > 0 ? 1.5 : -cabW - 1.5), jibBottom, cabW, cabH);
@@ -622,25 +658,6 @@
     }
 
     ctx.restore();
-  }
-
-  function drawTrees() {
-    for (var i = 0; i < treeLine.length; i++) {
-      var t = treeLine[i];
-
-      ctx.fillStyle = t.color;
-      ctx.globalAlpha = 0.82;
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "rgba(255,255,255,0.18)";
-      ctx.beginPath();
-      ctx.arc(t.x - t.r * 0.35, t.y - t.r * 0.35, t.r * 0.35, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.globalAlpha = 1;
   }
 
   function drawReflection(baseY) {
@@ -741,10 +758,37 @@
       }
     }
 
-    drawTrees();
     drawReflection(baseY);
 
     requestAnimationFrame(draw);
+  }
+
+  // ── Controls: replay button + distribution selector dots ──
+  function restart() {
+    // Just regenerate; no need to restart the requestAnimationFrame loop.
+    generate();
+  }
+
+  var replayBtn = document.getElementById("hero-replay");
+  if (replayBtn) {
+    replayBtn.addEventListener("click", function () {
+      restart();
+    });
+  }
+
+  var dots = document.querySelectorAll(".hero-dot");
+  for (var di = 0; di < dots.length; di++) {
+    (function (dot) {
+      dot.addEventListener("click", function () {
+        var name = dot.getAttribute("data-dist");
+        if (!name || !distributions[name]) return;
+        currentDistribution = name;
+        for (var k = 0; k < dots.length; k++) {
+          dots[k].classList.toggle("active", dots[k] === dot);
+        }
+        restart();
+      });
+    })(dots[di]);
   }
 
   window.addEventListener("resize", resize);
