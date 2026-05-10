@@ -888,6 +888,96 @@ footer {
 .chess-board-3d {
   position: absolute;
   left: 50%;
+  top: 50%;
+  width: min(1040px, 124vw);
+  height: 520px;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  transform-origin: center;
+  opacity: 0.26;
+  background:
+    linear-gradient(45deg, rgba(188,174,226,0.18) 25%, transparent 25%, transparent 75%, rgba(188,174,226,0.18) 75%),
+    linear-gradient(45deg, rgba(188,174,226,0.18) 25%, transparent 25%, transparent 75%, rgba(188,174,226,0.18) 75%),
+    rgba(255,255,255,0.018);
+  background-position: 0 0, 40px 40px, 0 0;
+  background-size: 80px 80px;
+  border: 1px solid rgba(188,174,226,0.11);
+  box-shadow: inset 0 0 70px rgba(188,174,226,0.06);
+  animation: chessBoardDrift 28s linear infinite;
+}
+
+.chess-piece {
+  position: absolute;
+  z-index: 1;
+  color: rgba(221,211,240,0.25);
+  font-size: clamp(2.6rem, 5.4vw, 5.3rem);
+  text-shadow: 0 8px 22px rgba(0,0,0,0.46);
+  transform: translate3d(0,0,0);
+}
+
+.piece-king { left: 12%; top: 58%; animation: chessPieceOne 12s steps(1, end) infinite; }
+.piece-queen { left: 34%; top: 34%; animation: chessPieceTwo 15s steps(1, end) infinite; }
+.piece-knight { left: 56%; top: 62%; animation: chessPieceThree 13s steps(1, end) infinite; }
+.piece-bishop { left: 74%; top: 32%; animation: chessPieceFour 16s steps(1, end) infinite; }
+.piece-rook { left: 86%; top: 68%; animation: chessPieceFive 18s steps(1, end) infinite; }
+
+@keyframes chessBoardDrift {
+  0% { background-position: 0 0, 40px 40px, 0 0; }
+  100% { background-position: 80px 80px, 120px 120px, 0 0; }
+}
+
+@keyframes chessPieceOne {
+  0%,100% { transform: translate(0,0); opacity: 0.17; }
+  25% { transform: translate(80px,0); opacity: 0.27; }
+  50% { transform: translate(80px,-80px); opacity: 0.23; }
+  75% { transform: translate(160px,-80px); opacity: 0.19; }
+}
+
+@keyframes chessPieceTwo {
+  0%,100% { transform: translate(0,0); opacity: 0.16; }
+  25% { transform: translate(-80px,80px); opacity: 0.26; }
+  50% { transform: translate(80px,160px); opacity: 0.21; }
+  75% { transform: translate(160px,80px); opacity: 0.18; }
+}
+
+@keyframes chessPieceThree {
+  0%,100% { transform: translate(0,0) rotate(0deg); opacity: 0.18; }
+  33% { transform: translate(-80px,-160px) rotate(-4deg); opacity: 0.28; }
+  66% { transform: translate(80px,-80px) rotate(3deg); opacity: 0.22; }
+}
+
+@keyframes chessPieceFour {
+  0%,100% { transform: translate(0,0); opacity: 0.15; }
+  30% { transform: translate(-80px,80px); opacity: 0.24; }
+  60% { transform: translate(-160px,160px); opacity: 0.20; }
+}
+
+@keyframes chessPieceFive {
+  0%,100% { transform: translate(0,0); opacity: 0.14; }
+  25% { transform: translate(-160px,0); opacity: 0.24; }
+  50% { transform: translate(-160px,-80px); opacity: 0.21; }
+  75% { transform: translate(-240px,-80px); opacity: 0.18; }
+}
+
+.train-track-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.about-chess-bg::after,
+.train-track-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10,8,20,0.92), rgba(10,8,20,0.56) 50%, rgba(10,8,20,0.92));
+  z-index: 2;
+}
+
+.chess-board-3d {
+  position: absolute;
+  left: 50%;
   top: 56%;
   width: min(980px, 118vw);
   height: 520px;
@@ -987,114 +1077,117 @@ footer {
 
 .boilermaker-train {
   position: absolute;
-  left: -240px;
-  top: calc(72% - 72px);
-  width: 210px;
-  height: 92px;
+  left: -360px;
+  top: calc(72% - 112px);
+  width: 330px;
+  height: 145px;
   z-index: 1;
-  opacity: 0.48;
-  animation: trainTraverse 13s linear infinite;
+  opacity: 0.78;
+  animation: trainTraverse 7.2s linear infinite;
 }
 
 .train-engine {
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 192px;
-  height: 72px;
-  filter: drop-shadow(0 16px 22px rgba(0,0,0,0.34));
+  width: 305px;
+  height: 112px;
+  filter: drop-shadow(0 20px 28px rgba(0,0,0,0.44));
 }
 
 .train-boiler {
   position: absolute;
-  left: 54px;
-  bottom: 22px;
-  width: 100px;
-  height: 34px;
-  border-radius: 22px 30px 30px 22px;
-  background: linear-gradient(180deg, rgba(221,211,240,0.30), rgba(85,63,142,0.30));
-  border: 1px solid rgba(221,211,240,0.35);
+  left: 86px;
+  bottom: 34px;
+  width: 162px;
+  height: 52px;
+  border-radius: 30px 44px 44px 30px;
+  background: linear-gradient(180deg, rgba(245,215,138,0.82), rgba(138,95,32,0.74));
+  border: 2px solid rgba(255,232,178,0.68);
 }
 
 .train-cab {
   position: absolute;
-  left: 14px;
-  bottom: 22px;
-  width: 54px;
-  height: 54px;
-  border-radius: 8px 8px 2px 2px;
-  background: linear-gradient(180deg, rgba(188,174,226,0.28), rgba(38,22,83,0.36));
-  border: 1px solid rgba(221,211,240,0.34);
+  left: 20px;
+  bottom: 34px;
+  width: 86px;
+  height: 82px;
+  border-radius: 12px 12px 3px 3px;
+  background: linear-gradient(180deg, rgba(43,30,20,0.94), rgba(12,9,8,0.88));
+  border: 2px solid rgba(245,215,138,0.58);
 }
 
 .train-cab::before {
   content: '';
   position: absolute;
-  left: 12px;
-  top: 11px;
-  width: 22px;
-  height: 18px;
-  border-radius: 3px;
-  background: rgba(245,242,255,0.20);
-  border: 1px solid rgba(245,242,255,0.24);
+  left: 18px;
+  top: 16px;
+  width: 36px;
+  height: 28px;
+  border-radius: 4px;
+  background: rgba(245,242,255,0.42);
+  border: 1px solid rgba(245,242,255,0.52);
 }
 
 .train-smokestack {
   position: absolute;
-  left: 126px;
-  bottom: 53px;
-  width: 19px;
-  height: 27px;
-  border-radius: 4px 4px 0 0;
-  background: rgba(221,211,240,0.28);
-  border: 1px solid rgba(221,211,240,0.34);
+  left: 198px;
+  bottom: 82px;
+  width: 30px;
+  height: 42px;
+  border-radius: 6px 6px 0 0;
+  background: rgba(32,23,18,0.96);
+  border: 2px solid rgba(245,215,138,0.56);
 }
 
 .train-cowcatcher {
   position: absolute;
-  left: 153px;
-  bottom: 22px;
-  width: 34px;
-  height: 28px;
-  clip-path: polygon(0 30%, 100% 100%, 0 100%);
-  background: rgba(221,211,240,0.24);
-  border-bottom: 1px solid rgba(221,211,240,0.32);
+  left: 246px;
+  bottom: 34px;
+  width: 54px;
+  height: 44px;
+  clip-path: polygon(0 28%, 100% 100%, 0 100%);
+  background: rgba(245,215,138,0.62);
+  border-bottom: 2px solid rgba(255,232,178,0.62);
 }
 
 .train-wheel {
   position: absolute;
-  bottom: 8px;
-  width: 22px;
-  height: 22px;
+  bottom: 12px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 3px solid rgba(221,211,240,0.34);
-  background: rgba(10,8,20,0.66);
-  box-shadow: inset 0 0 0 4px rgba(188,174,226,0.08);
-  animation: wheelSpin 0.9s linear infinite;
+  border: 5px solid rgba(245,215,138,0.76);
+  background: rgba(8,7,8,0.90);
+  box-shadow: inset 0 0 0 6px rgba(188,174,226,0.12);
+  animation: wheelSpin 0.48s linear infinite;
 }
 
-.wheel-one { left: 30px; }
-.wheel-two { left: 82px; width: 28px; height: 28px; bottom: 5px; }
-.wheel-three { left: 128px; }
+.wheel-one { left: 46px; }
+.wheel-two { left: 132px; width: 44px; height: 44px; bottom: 7px; }
+.wheel-three { left: 208px; }
 
 .steam {
   position: absolute;
-  left: 134px;
-  top: 4px;
-  width: 18px;
-  height: 18px;
+  left: 211px;
+  top: 0;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: rgba(245,242,255,0.30);
-  filter: blur(1px);
-  animation: steamPuff 2.7s ease-out infinite;
+  background: rgba(245,242,255,0.62);
+  filter: blur(1.4px);
+  animation: steamPuff 1.55s ease-out infinite;
 }
 
-.steam-two { animation-delay: 0.72s; left: 126px; }
-.steam-three { animation-delay: 1.44s; left: 141px; }
+.steam-two { animation-delay: 0.25s; left: 198px; }
+.steam-three { animation-delay: 0.50s; left: 220px; }
+.steam-four { animation-delay: 0.75s; left: 205px; }
+.steam-five { animation-delay: 1.00s; left: 230px; }
+.steam-six { animation-delay: 1.25s; left: 192px; }
 
 @keyframes trainTraverse {
   0% { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 480px)); }
+  100% { transform: translateX(calc(100vw + 720px)); }
 }
 
 @keyframes wheelSpin {
@@ -1102,9 +1195,9 @@ footer {
 }
 
 @keyframes steamPuff {
-  0% { transform: translate(0, 12px) scale(0.42); opacity: 0; }
-  15% { opacity: 0.36; }
-  100% { transform: translate(-28px, -62px) scale(1.9); opacity: 0; }
+  0% { transform: translate(0, 24px) scale(0.35); opacity: 0; }
+  12% { opacity: 0.72; }
+  100% { transform: translate(-44px, -104px) scale(2.55); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

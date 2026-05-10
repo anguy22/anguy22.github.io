@@ -101,10 +101,10 @@
   var WINDOW_LIT   = "rgba(245,242,255,0.88)";   // near-white window
   var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
 
-  var BRIGHTEN_MS = 4600; // duration of post-transition color ramp
-  var MORPH_MIN_MS = 6200;
-  var MORPH_MAX_MS = 9200;
-  var MORPH_STAGGER_MS = 950;
+  var BRIGHTEN_MS = 2800; // duration of post-transition color ramp
+  var MORPH_MIN_MS = 3200;
+  var MORPH_MAX_MS = 5200;
+  var MORPH_STAGGER_MS = 420;
 
   function lerpRGB(a, b, t) {
     var r = Math.round(a[0] + (b[0] - a[0]) * t);
@@ -565,7 +565,7 @@
 
     // Scaffolding cross-pattern across the topmost floor while still
     // under construction — visual cue that this floor is "in progress".
-    if (b.underConstruction && !b.morphing) {
+    if (b.underConstruction) {
       var scaffH = Math.min(floorSpacing, h);
       ctx.strokeStyle = SCAFFOLD;
       ctx.lineWidth = 0.55;
@@ -868,10 +868,10 @@
       drawBuilding(buildings[i]);
     }
 
-    // Cranes drawn last (over the buildings) so the jib doesn't get
-    // clipped by neighbors.
+    // Cranes drawn last (over the buildings) so the jib stays visible
+    // during both initial construction and distribution height morphs.
     for (var j = 0; j < buildings.length; j++) {
-      if (buildings[j].underConstruction && !buildings[j].morphing) {
+      if (buildings[j].underConstruction) {
         drawCrane(buildings[j], now);
       }
     }
