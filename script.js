@@ -86,14 +86,14 @@
   var buildStartedAt = 0;
 
   // ── Black / white / violet architectural palette ──
-  // Body color lerps from BODY_DARK → BODY_BRIGHT once construction
-  // finishes, warming the silhouette into a light violet.
+  // Buildings stay in the dark violet construction palette.
+  // The former bright-purple finished state has been removed.
   var BODY_DARK    = [14, 10, 28];               // #0e0a1c (near-black violet)
-  var BODY_BRIGHT  = [156, 136, 210];            // #9c88d2 (light violet)
+  var BODY_BRIGHT  = BODY_DARK;
   var SIDE_DARK    = [6, 4, 16];                 // very dark violet/black
-  var SIDE_BRIGHT  = [100, 86, 152];             // medium violet
+  var SIDE_BRIGHT  = SIDE_DARK;
   var TOP_DARK     = [30, 22, 58];               // dark violet
-  var TOP_BRIGHT   = [188, 174, 226];            // pale violet (= violet-300)
+  var TOP_BRIGHT   = TOP_DARK;
   var TOP_EDGE     = "rgba(220,210,245,0.92)";   // near-white violet edge
   var TOP_GLOW     = "rgba(188,174,226,0.20)";   // soft violet glow
   var FLOOR_LINE   = "rgba(220,210,245,0.18)";   // pale violet floor stripes
@@ -101,7 +101,7 @@
   var WINDOW_LIT   = "rgba(245,242,255,0.88)";   // near-white window
   var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
 
-  var BRIGHTEN_MS = 2800; // duration of post-transition color ramp
+  var BRIGHTEN_MS = 0; // bright-purple finish removed
   var MORPH_MIN_MS = 3200;
   var MORPH_MAX_MS = 5200;
   var MORPH_STAGGER_MS = 420;
@@ -157,11 +157,10 @@
   var currentDistribution = "normal";
 
   // ── Auto-cycle ─────────────────────────────────────────
-  // After every building finishes construction AND fully brightens to
-  // its solid end state, we hold briefly for HOLD_AT_END_MS and then advance
-  // to the next distribution in CYCLE_ORDER. Manual clicks reset this.
+  // After every building finishes resizing into the active distribution,
+  // hold briefly and advance to the next distribution. Manual clicks reset this.
   var CYCLE_ORDER = ["normal", "exponential", "geometric", "lognormal"];
-  var HOLD_AT_END_MS = 700;
+  var HOLD_AT_END_MS = 550;
   var cycleSettleAt = null; // ms timestamp when skyline first reached its end state
 
   function rand(min, max) {
@@ -216,7 +215,7 @@
       var nextH = getTargetHeightForIndex(i, buildings.length, maxH, name, b);
       b.startH = b.h;
       b.targetH = nextH;
-      b.previousBrightness = b.brightness || 1;
+      b.previousBrightness = 0;
       b.startDelay = rand(0, MORPH_STAGGER_MS);
       b.buildDuration = rand(MORPH_MIN_MS, MORPH_MAX_MS);
       b.floorSpacing = Math.max(11, Math.min(18, nextH / 14));
@@ -755,21 +754,17 @@
       : Date.now();
   }
 
-  // True only when every building has finished construction AND fully
-  // brightened to its solid end-state color.
+  // True when every building has finished resizing into the active distribution.
   function skylineSettled() {
     if (buildings.length === 0) return false;
     for (var i = 0; i < buildings.length; i++) {
       var b = buildings[i];
       if (b.underConstruction) return false;
-      if ((b.brightness || 0) < 0.999) return false;
     }
     return true;
   }
 
-  // Drives the auto-cycle: once the skyline has settled into its solid
-  // end state, wait briefly for HOLD_AT_END_MS and then advance to the next
-  // distribution. Any in-progress motion clears the timer.
+  // Drives the auto-cycle: once the skyline settles, wait briefly and advance.
   function tickAutoCycle(now) {
     if (skylineSettled()) {
       markHeroMorphing(false);
@@ -808,7 +803,7 @@
 
     // Advance construction: each building lerps from its random start
     // height toward its bell-curve target height, on its own schedule.
-    // Once finished, it stops animating and starts brightening.
+    // Once finished, it stops animating and the crane disappears.
     for (var i = 0; i < buildings.length; i++) {
       var b = buildings[i];
 
@@ -827,25 +822,13 @@
           b.h = b.startH + (b.targetH - b.startH) * eased;
         }
         b.y = baseY - b.h;
-        var prevBright = b.previousBrightness || 1;
-        if (local <= 0) {
-          b.brightness = prevBright;
-        } else {
-          var darkenRaw = Math.min(1, local / 900);
-          b.brightness = Math.max(0, prevBright * (1 - 0.78 * smoothstep(darkenRaw)));
-        }
+        b.brightness = 0;
       } else {
-        // Once construction is done, slowly ramp brightness 0 → 1.
-        var bAge = now - (b.finishedAt || now);
-        var bp = bAge / BRIGHTEN_MS;
-        if (bp < 0) bp = 0;
-        else if (bp > 1) bp = 1;
-        b.brightness = smoothstep(bp);
+        b.brightness = 0;
       }
     }
 
-    // Advance through distributions automatically once the skyline has
-    // settled into its solid color end state and held for a beat.
+    // Advance through distributions automatically once the skyline settles.
     tickAutoCycle(now);
 
     drawBackground();
@@ -1032,35 +1015,75 @@
   });
 })();
 
-// ───────── EDUCATION STOCK CANDLE BACKGROUND ─────────
+
+// ───────── ABOUT STOCK PRICE BACKGROUND ─────────
 (function () {
-  var layer = document.getElementById("stock-candle-layer");
-  if (!layer) return;
+  var layer = document.getElementById("about-stock-layer");
+  var svg = document.getElementById("about-stock-line");
+  if (!layer || !svg) return;
 
-  var candleCount = 38;
-  var pattern = [
-    { cls: "green", y: -22, body: 82, wick: 156, wickTop: -48, jump: -36 },
-    { cls: "red",   y:  18, body: 58, wick: 128, wickTop: -38, jump:  28 },
-    { cls: "green", y: -56, body: 106, wick: 184, wickTop: -52, jump: -44 },
-    { cls: "red",   y:  44, body: 74, wick: 150, wickTop: -44, jump:  34 },
-    { cls: "green", y: -10, body: 66, wick: 138, wickTop: -40, jump: -24 },
-    { cls: "red",   y:  72, body: 92, wick: 176, wickTop: -54, jump:  42 }
-  ];
+  var width = 2200;
+  var height = 360;
+  var step = 54;
+  var prices = [];
+  var price = 178;
 
-  layer.innerHTML = "";
-
-  for (var i = 0; i < candleCount; i++) {
-    var spec = pattern[i % pattern.length];
-    var candle = document.createElement("span");
-    candle.className = "stock-candle " + spec.cls;
-    candle.style.left = (-8 + i * 3.1) + "vw";
-    candle.style.setProperty("--body-h", spec.body + ((i % 4) * 9) + "px");
-    candle.style.setProperty("--wick-h", spec.wick + ((i % 3) * 15) + "px");
-    candle.style.setProperty("--wick-top", spec.wickTop - ((i % 2) * 10) + "px");
-    candle.style.setProperty("--y", spec.y + ((i % 5) * 12 - 20) + "px");
-    candle.style.setProperty("--jump", spec.jump + "px");
-    candle.style.setProperty("--delay", (i * -0.13) + "s");
-    candle.style.setProperty("--speed", (2.05 + (i % 5) * 0.11) + "s");
-    layer.appendChild(candle);
+  for (var i = 0; i <= 44; i++) {
+    var wave = Math.sin(i * 0.72) * 9 + Math.sin(i * 0.19) * 18;
+    var pulse = (i % 9 === 0 ? 18 : 0) - (i % 13 === 0 ? 22 : 0);
+    price += Math.sin(i * 0.55) * 5 + pulse * 0.16;
+    prices.push(180 + wave + (price - 178));
   }
+
+  var minP = Math.min.apply(null, prices) - 18;
+  var maxP = Math.max.apply(null, prices) + 18;
+
+  function yFor(p) {
+    return 40 + (maxP - p) / (maxP - minP) * (height - 82);
+  }
+
+  var pathD = "";
+  var areaD = "";
+  layer.innerHTML = "";
+  svg.innerHTML = "";
+
+  for (var j = 1; j < prices.length; j++) {
+    var open = prices[j - 1];
+    var close = prices[j];
+    var high = Math.max(open, close) + 10 + (j % 5) * 3;
+    var low = Math.min(open, close) - 10 - (j % 4) * 4;
+
+    var x = 42 + j * step;
+    var yOpen = yFor(open);
+    var yClose = yFor(close);
+    var yHigh = yFor(high);
+    var yLow = yFor(low);
+    var top = Math.min(yOpen, yClose);
+    var bodyH = Math.max(8, Math.abs(yClose - yOpen));
+    var green = close >= open;
+
+    var candle = document.createElement("span");
+    candle.className = "stock-candle " + (green ? "green" : "red");
+    candle.style.left = x + "px";
+    candle.style.top = top + "px";
+    candle.style.height = bodyH + "px";
+    candle.style.setProperty("--wick-top", (yHigh - top) + "px");
+    candle.style.setProperty("--wick-h", (yLow - yHigh) + "px");
+    layer.appendChild(candle);
+
+    var closeY = yClose;
+    pathD += (j === 1 ? "M " : " L ") + x + " " + closeY;
+    areaD += (j === 1 ? "M " + x + " " + height + " L " : " L ") + x + " " + closeY;
+  }
+  areaD += " L " + (42 + (prices.length - 1) * step) + " " + height + " Z";
+
+  var area = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  area.setAttribute("d", areaD);
+  area.setAttribute("class", "stock-line-area");
+  svg.appendChild(area);
+
+  var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", pathD);
+  path.setAttribute("class", "stock-line-path");
+  svg.appendChild(path);
 })();

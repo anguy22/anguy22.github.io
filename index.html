@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -95,13 +95,12 @@
   </section>
 
   <section id="about" class="section animated-about-section">
-    <div class="about-chess-bg" aria-hidden="true">
-      <div class="chess-board-3d"></div>
-      <span class="chess-piece piece-king">♔</span>
-      <span class="chess-piece piece-queen">♛</span>
-      <span class="chess-piece piece-knight">♞</span>
-      <span class="chess-piece piece-bishop">♗</span>
-      <span class="chess-piece piece-rook">♜</span>
+    <div class="stock-chart-bg about-stock-bg" aria-hidden="true">
+      <div class="stock-chart-grid"></div>
+      <div class="stock-chart-track" id="about-stock-track">
+        <svg class="stock-line-svg" id="about-stock-line" viewBox="0 0 2200 360" preserveAspectRatio="none"></svg>
+        <div class="stock-candle-layer" id="about-stock-layer"></div>
+      </div>
     </div>
     <div class="container reveal">
       <h2 class="section-title">About Me</h2>
@@ -157,10 +156,25 @@
   </section>
 
   <section id="education" class="section section-alt animated-education-section">
-    <div class="stock-chart-bg" id="stock-chart-bg" aria-hidden="true">
-      <div class="stock-chart-grid"></div>
-      <div class="stock-candle-layer" id="stock-candle-layer"></div>
-      <div class="stock-price-line"></div>
+    <div class="train-track-bg" aria-hidden="true">
+      <div class="train-track-line"></div>
+      <div class="boilermaker-train">
+        <div class="steam steam-one"></div>
+        <div class="steam steam-two"></div>
+        <div class="steam steam-three"></div>
+        <div class="steam steam-four"></div>
+        <div class="steam steam-five"></div>
+        <div class="steam steam-six"></div>
+        <div class="train-engine">
+          <div class="train-cab"></div>
+          <div class="train-boiler"></div>
+          <div class="train-smokestack"></div>
+          <div class="train-cowcatcher"></div>
+          <div class="train-wheel wheel-one"></div>
+          <div class="train-wheel wheel-two"></div>
+          <div class="train-wheel wheel-three"></div>
+        </div>
+      </div>
     </div>
     <div class="container reveal">
       <h2 class="section-title">Education</h2>
@@ -323,6 +337,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=14"></script>
+  <script src="script.js?v=15"></script>
 </body>
 </html>

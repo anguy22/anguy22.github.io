@@ -1374,3 +1374,100 @@ footer {
     animation: none !important;
   }
 }
+
+/* ========== ABOUT STOCK LINE + CANDLE BACKGROUND OVERRIDES ========== */
+.about-stock-bg {
+  opacity: 0.96;
+}
+
+.about-stock-bg::after {
+  background:
+    linear-gradient(90deg, rgba(10,8,20,0.94), rgba(10,8,20,0.48) 48%, rgba(10,8,20,0.92)),
+    linear-gradient(180deg, rgba(10,8,20,0.30), rgba(10,8,20,0.84));
+}
+
+.stock-chart-track {
+  position: absolute;
+  left: -6vw;
+  top: 50%;
+  width: 2200px;
+  height: 360px;
+  z-index: 2;
+  transform: translateY(-50%);
+  animation: stockChartTimeFlow 5.8s linear infinite;
+  filter: drop-shadow(0 0 22px rgba(188,174,226,0.08));
+}
+
+.about-stock-bg .stock-candle-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.about-stock-bg .stock-candle {
+  position: absolute;
+  bottom: auto;
+  width: 13px;
+  min-height: 8px;
+  border-radius: 2px;
+  opacity: 0.78;
+  transform: none;
+  animation: candlePulse 0.42s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i, 0) * -0.04s);
+  box-shadow: 0 0 18px var(--glow, rgba(255,255,255,0.16));
+}
+
+.about-stock-bg .stock-candle::before {
+  top: var(--wick-top, -30px);
+  height: var(--wick-h, 90px);
+}
+
+.stock-line-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 2200px;
+  height: 360px;
+  overflow: visible;
+}
+
+.stock-line-path {
+  fill: none;
+  stroke: rgba(245,242,255,0.88);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 10px rgba(245,242,255,0.24));
+}
+
+.stock-line-area {
+  fill: rgba(188,174,226,0.055);
+}
+
+@keyframes stockChartTimeFlow {
+  0% { transform: translateX(0) translateY(-50%); }
+  100% { transform: translateX(-46vw) translateY(-50%); }
+}
+
+@keyframes candlePulse {
+  from { opacity: 0.58; }
+  to { opacity: 0.92; }
+}
+
+@media (max-width: 768px) {
+  .stock-chart-track,
+  .stock-line-svg {
+    width: 1600px;
+  }
+
+  .about-stock-bg .stock-candle {
+    width: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stock-chart-track,
+  .about-stock-bg .stock-candle {
+    animation: none !important;
+  }
+}
