@@ -153,6 +153,14 @@
 
   var currentDistribution = "normal";
 
+  // ── Auto-cycle ─────────────────────────────────────────
+  // After every building finishes construction AND fully brightens to
+  // its solid end state, we hold for HOLD_AT_END_MS and then advance
+  // to the next distribution in CYCLE_ORDER. Manual clicks reset this.
+  var CYCLE_ORDER = ["normal", "exponential", "geometric", "lognormal"];
+  var HOLD_AT_END_MS = 2500;
+  var cycleSettleAt = null; // ms timestamp when skyline first reached its end state
+
   function rand(min, max) {
     return min + Math.random() * (max - min);
   }
@@ -693,6 +701,50 @@
       : Date.now();
   }
 
+  // True only when every building has finished construction AND fully
+  // brightened to its solid end-state color.
+  function skylineSettled() {
+    if (buildings.length === 0) return false;
+    for (var i = 0; i < buildings.length; i++) {
+      var b = buildings[i];
+      if (b.underConstruction) return false;
+      if ((b.brightness || 0) < 0.999) return false;
+    }
+    return true;
+  }
+
+  // Drives the auto-cycle: once the skyline has settled into its solid
+  // end state, wait HOLD_AT_END_MS and then advance to the next
+  // distribution. Any in-progress motion clears the timer.
+  function tickAutoCycle(now) {
+    if (skylineSettled()) {
+      if (cycleSettleAt === null) {
+        cycleSettleAt = now;
+      } else if (now - cycleSettleAt >= HOLD_AT_END_MS) {
+        var idx = CYCLE_ORDER.indexOf(currentDistribution);
+        if (idx < 0) idx = 0;
+        var next = CYCLE_ORDER[(idx + 1) % CYCLE_ORDER.length];
+        setDistribution(next);
+      }
+    } else {
+      cycleSettleAt = null;
+    }
+  }
+
+  // Switches the active distribution, updates the dot UI, and kicks
+  // off a fresh construction cycle.
+  function setDistribution(name) {
+    if (!distributions[name]) return;
+    currentDistribution = name;
+    var dots = document.querySelectorAll(".hero-dot");
+    for (var k = 0; k < dots.length; k++) {
+      var isActive = dots[k].getAttribute("data-dist") === name;
+      dots[k].classList.toggle("active", isActive);
+    }
+    cycleSettleAt = null;
+    generate();
+  }
+
   function draw() {
     frame++;
     var baseY = H * 0.84;
@@ -730,6 +782,10 @@
       }
     }
 
+    // Advance through distributions automatically once the skyline has
+    // settled into its solid color end state and held for a beat.
+    tickAutoCycle(now);
+
     drawBackground();
     drawSubtleGrid(baseY);
 
@@ -764,15 +820,14 @@
   }
 
   // ── Controls: replay button + distribution selector dots ──
-  function restart() {
-    // Just regenerate; no need to restart the requestAnimationFrame loop.
-    generate();
-  }
-
+  // Manual interaction also resets the auto-cycle timer (via
+  // setDistribution / by clearing cycleSettleAt) so we don't immediately
+  // jump to the next distribution right after the user picks one.
   var replayBtn = document.getElementById("hero-replay");
   if (replayBtn) {
     replayBtn.addEventListener("click", function () {
-      restart();
+      cycleSettleAt = null;
+      generate();
     });
   }
 
@@ -781,12 +836,7 @@
     (function (dot) {
       dot.addEventListener("click", function () {
         var name = dot.getAttribute("data-dist");
-        if (!name || !distributions[name]) return;
-        currentDistribution = name;
-        for (var k = 0; k < dots.length; k++) {
-          dots[k].classList.toggle("active", dots[k] === dot);
-        }
-        restart();
+        if (name) setDistribution(name);
       });
     })(dots[di]);
   }
