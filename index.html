@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="style.css?v=18">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -95,47 +95,42 @@
   </section>
 
   <section id="about" class="section animated-about-section">
-    <div class="fab-workflow-bg" aria-hidden="true">
-      <div class="fab-grid"></div>
-      <div class="fab-route fab-route-one"></div>
-      <div class="fab-route fab-route-two"></div>
-
-      <div class="fab-station station-receive">
-        <span>LOT IN</span>
-        <i class="fas fa-box-open"></i>
+    <div class="factory-floor-bg" aria-hidden="true">
+      <div class="factory-floor-grid"></div>
+      <div class="factory-aisle aisle-one"></div>
+      <div class="factory-aisle aisle-two"></div>
+      <div class="factory-conveyor conveyor-one">
+        <span class="factory-package pack-a"></span>
+        <span class="factory-package pack-b"></span>
+        <span class="factory-package pack-c"></span>
+        <span class="factory-package pack-d"></span>
       </div>
-      <div class="fab-station station-photo">
-        <span>PHOTO</span>
-        <i class="fas fa-lightbulb"></i>
+      <div class="factory-conveyor conveyor-two">
+        <span class="factory-package pack-e"></span>
+        <span class="factory-package pack-f"></span>
+        <span class="factory-package pack-g"></span>
       </div>
-      <div class="fab-station station-etch">
-        <span>ETCH</span>
-        <i class="fas fa-microchip"></i>
+      <div class="factory-cell cell-one">
+        <div class="cell-base"></div>
+        <div class="cell-arm"><span></span></div>
+        <div class="cell-light"></div>
       </div>
-      <div class="fab-station station-metrology">
-        <span>METROLOGY</span>
-        <i class="fas fa-magnifying-glass-chart"></i>
+      <div class="factory-cell cell-two">
+        <div class="cell-base"></div>
+        <div class="cell-arm"><span></span></div>
+        <div class="cell-light"></div>
       </div>
-      <div class="fab-station station-ship">
-        <span>WIP OUT</span>
-        <i class="fas fa-arrow-right"></i>
+      <div class="factory-cell cell-three">
+        <div class="cell-base"></div>
+        <div class="cell-arm"><span></span></div>
+        <div class="cell-light"></div>
       </div>
-
-      <div class="fab-wafer wafer-a"></div>
-      <div class="fab-wafer wafer-b"></div>
-      <div class="fab-wafer wafer-c"></div>
-      <div class="fab-wafer wafer-d"></div>
-      <div class="fab-carrier carrier-a"><span></span><span></span><span></span></div>
-      <div class="fab-carrier carrier-b"><span></span><span></span><span></span></div>
-
-      <div class="robot-arm arm-photo"><span></span></div>
-      <div class="robot-arm arm-metrology"><span></span></div>
-      <div class="scan-beam scan-one"></div>
-      <div class="scan-beam scan-two"></div>
-
-      <div class="fab-metric metric-one">UTIL 94%</div>
-      <div class="fab-metric metric-two">CT ↓ 8%</div>
-      <div class="fab-metric metric-three">QUEUE OK</div>
+      <div class="factory-rack rack-one"></div>
+      <div class="factory-rack rack-two"></div>
+      <div class="factory-agv agv-one"><span></span><span></span><span></span></div>
+      <div class="factory-agv agv-two"><span></span><span></span><span></span></div>
+      <div class="factory-scan scan-one"></div>
+      <div class="factory-scan scan-two"></div>
     </div>
     <div class="container reveal">
       <h2 class="section-title">About Me</h2>
@@ -145,11 +140,6 @@
           <p>hello there.</p>
           <p>i'm andrew. my work spans entrepreneurial, research, and internship experience across engineering consulting, d1 athletics entertainment, and semiconductor fabrication.</p>
           <p>aside from my studies, i actively manage a semiconductor investing thesis, compete in collegiate chess league, and get outside for soccer and hiking!</p>
-          <p>i am captivated by the chip industry. i am amazed how this space is so uniquely specialized on a company-to-company basis and extraordinarily 
-            capital-intensive from a manufacturing perspective, yet it remains critical to human technological progress and essential 
-            for modern living. that combination creates a particular need for companies to balance demand, supply, risk, innovation, 
-            customer relationships, profitability, and long-term strategic positioning in an industry where a single node transition or 
-            capacity bet can define a decade. this is a space where i find a strong desire to contribute to. </p>
           <p>i aim to document my learning, experiences, and thoughts. if we're going to be replaced by ai it might as well be accurate.</p>
         </div>
 
@@ -243,41 +233,53 @@
     <div class="container reveal">
       <h2 class="section-title">Experience</h2>
 
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-marker"></div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <h3>Micron Technology</h3>
-              <span class="timeline-date">Summer 2026</span>
+      <div class="experience-grid">
+        <div class="experience-card">
+          <div class="experience-visual visual-sawtooth" aria-hidden="true">
+            <div class="visual-glow"></div>
+            <div class="sawtooth-wave"></div>
+            <div class="mini-drone">
+              <span></span><span></span><span></span><span></span>
             </div>
-            <p class="timeline-role">Industrial Engineering Intern — TPG</p>
-            <p></p>
+            <i class="fas fa-code"></i>
           </div>
+          <h3>Software Engineer</h3>
+          <p class="experience-org">Sawtooth UAV</p>
         </div>
 
-        <div class="timeline-item">
-          <div class="timeline-marker"></div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <h3>Purdue Athletics</h3>
-              <span class="timeline-date">2024 — Present</span>
+        <div class="experience-card">
+          <div class="experience-visual visual-purdue" aria-hidden="true">
+            <div class="visual-glow"></div>
+            <div class="data-nodes">
+              <span></span><span></span><span></span><span></span><span></span>
             </div>
-            <p class="timeline-role">Predictive Data Analyst — Women's Soccer</p>
-            <p>Built an end-to-end recruiting analytics pipeline parsing prospect emails, scoring achievements, and reporting results for athletic staff.</p>
+            <div class="data-link"></div>
+            <i class="fas fa-flask-vial"></i>
           </div>
+          <h3>Data Science Researcher</h3>
+          <p class="experience-org">Purdue University</p>
         </div>
 
-        <div class="timeline-item">
-          <div class="timeline-marker"></div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <h3>Sawtooth UAV</h3>
-              <span class="timeline-date">2022 — 2024</span>
-            </div>
-            <p class="timeline-role">Co-Founder</p>
-            <p>Engineered drone automation utilities and client delivery platforms in Python and C.</p>
+        <div class="experience-card">
+          <div class="experience-visual visual-athletics" aria-hidden="true">
+            <div class="visual-glow"></div>
+            <div class="field-lines"></div>
+            <div class="soccer-ball"></div>
+            <i class="fas fa-chart-line"></i>
           </div>
+          <h3>Predictive Analyst</h3>
+          <p class="experience-org">Purdue Athletics</p>
+        </div>
+
+        <div class="experience-card">
+          <div class="experience-visual visual-micron" aria-hidden="true">
+            <div class="visual-glow"></div>
+            <div class="chip-core"></div>
+            <div class="chip-traces"></div>
+            <i class="fas fa-industry"></i>
+          </div>
+          <h3>Industrial Engineering Intern</h3>
+          <p class="experience-org">Micron</p>
         </div>
       </div>
     </div>
@@ -372,6 +374,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=17"></script>
+  <script src="script.js?v=18"></script>
 </body>
 </html>
