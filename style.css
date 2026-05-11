@@ -2817,10 +2817,6 @@ footer {
   max-height: 1600px;
 }
 
-.projects-grid-quad .project-skill-tag {
-  max-width: 190px;
-}
-
 @media (max-width: 760px) {
   .projects-grid-quad {
     grid-template-columns: 1fr;
@@ -2831,6 +2827,104 @@ footer {
   }
 
   .projects-grid-quad .project-card-front {
+    min-height: auto;
+  }
+}
+
+
+/* ========== PROJECT GRID POLISH — symmetric cards ========== */
+.projects-grid-quad {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+.projects-grid-quad .project-card {
+  min-height: 270px;
+  height: 100%;
+}
+
+.projects-grid-quad .project-card-front {
+  min-height: 270px;
+  display: grid;
+  grid-template-rows: auto minmax(70px, auto) minmax(72px, auto) auto;
+  align-content: start;
+  gap: 14px;
+}
+
+.projects-grid-quad .project-card.expanded .project-card-front {
+  min-height: auto;
+  grid-template-rows: auto auto auto auto;
+}
+
+.project-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.projects-grid-quad .project-icon {
+  margin-bottom: 0;
+  flex: 0 0 auto;
+}
+
+.projects-grid-quad .project-skill-tag {
+  width: 214px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.08;
+  padding: 8px 16px;
+  margin-left: auto;
+  white-space: normal;
+}
+
+.projects-grid-quad .project-card h3 {
+  min-height: 70px;
+  margin-bottom: 0;
+}
+
+.projects-grid-quad .project-summary {
+  min-height: 72px;
+  margin-bottom: 0;
+}
+
+.projects-grid-quad .project-expand-hint {
+  margin-top: auto;
+}
+
+@media (max-width: 980px) {
+  .projects-grid-quad .project-skill-tag {
+    width: 198px;
+  }
+}
+
+@media (max-width: 760px) {
+  .projects-grid-quad .project-card,
+  .projects-grid-quad .project-card-front {
+    min-height: auto;
+    height: auto;
+  }
+
+  .projects-grid-quad .project-card-front {
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .project-card-head {
+    gap: 12px;
+  }
+
+  .projects-grid-quad .project-skill-tag {
+    width: 180px;
+    min-height: 42px;
+    font-size: 0.74rem;
+  }
+
+  .projects-grid-quad .project-card h3,
+  .projects-grid-quad .project-summary {
     min-height: auto;
   }
 }
