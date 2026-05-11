@@ -974,6 +974,293 @@ a:hover {
   100%     { opacity: 0; transform: translateX(4px); }
 }
 
+/* Vertical chip layout (used by the bike-bridges stage) */
+.wf-chips-vertical {
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.wf-chip-alt {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(220,210,245,0.35);
+  margin-top: 4px;
+}
+
+/* ── Solar Stage 2: 40-yr DCF growing bars ─────────── */
+.wf-dcf {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 78px;
+  width: 100%;
+  max-width: 150px;
+  padding: 4px 4px 0;
+  border-bottom: 1px solid rgba(220,210,245,0.30);
+}
+
+.wf-dcf-bar {
+  flex: 1;
+  height: 0;
+  background: linear-gradient(180deg, rgba(220,210,245,0.85), rgba(149,128,199,0.85));
+  border-radius: 1px 1px 0 0;
+  animation: wf-dcf-grow 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes wf-dcf-grow {
+  0%, 12%   { height: 0; }
+  60%, 88%  { height: var(--h, 50%); }
+  100%      { height: 0; }
+}
+
+/* ── Solar Stage 3: NPV / IRR verdict ──────────────── */
+.wf-classify {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.wf-metric {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: rgba(188,174,226,0.10);
+  border: 1px solid rgba(220,210,245,0.22);
+  color: var(--violet-200);
+  opacity: 0;
+  transform: translateY(4px);
+  animation: wf-fade-in 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.wf-verdict {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-top: 4px;
+  background: rgba(220,210,245,0.22);
+  border: 1px solid rgba(220,210,245,0.60);
+  color: var(--violet-100);
+  opacity: 0;
+  transform: translateY(4px);
+  animation: wf-fade-in 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes wf-fade-in {
+  0%, 20%  { opacity: 0; transform: translateY(4px); }
+  42%, 88% { opacity: 1; transform: translateY(0); }
+  100%     { opacity: 0; transform: translateY(-3px); }
+}
+
+/* ── Solar Stage 4: tornado / sensitivity ──────────── */
+.wf-tornado {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  max-width: 160px;
+  position: relative;
+  padding: 4px 0;
+}
+
+.wf-tornado-axis {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(220,210,245,0.45);
+}
+
+.wf-tor-row {
+  height: 8px;
+  position: relative;
+  background: rgba(188,174,226,0.06);
+  border-radius: 2px;
+}
+
+.wf-tor-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  background: linear-gradient(90deg, rgba(220,210,245,0.40), rgba(149,128,199,0.85));
+  border-radius: 2px;
+  animation: wf-tor-extend 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes wf-tor-extend {
+  0%, 18%   { width: 0; transform: translateX(0); }
+  55%, 88%  { width: var(--tw, 30%); transform: translateX(var(--td, 0%)); }
+  100%      { width: 0; transform: translateX(0); }
+}
+
+/* ── Bike Stage 2: labeled bars ────────────────────── */
+.wf-bars-labeled {
+  max-width: 170px;
+}
+
+.wf-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.wf-bar-label {
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--violet-200);
+  flex: 0 0 60px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.wf-bar-label i {
+  margin-left: 3px;
+  color: rgba(245,242,255,0.85);
+}
+
+.wf-bar-row .wf-bar {
+  flex: 1;
+  height: 7px;
+  margin: 0;
+}
+
+.wf-bar-skip .wf-bar-label {
+  color: var(--violet-100);
+  font-weight: 800;
+}
+
+.wf-bar-skip .wf-bar span {
+  background: linear-gradient(90deg, rgba(245,242,255,0.92), rgba(188,174,226,0.92));
+}
+
+/* ── Bike Stage 3: regression coefficients ─────────── */
+.wf-coefs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 150px;
+}
+
+.wf-coef {
+  font-size: 0.60rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  color: var(--violet-100);
+  opacity: 0;
+  transform: translateX(-4px);
+  white-space: nowrap;
+  animation: wf-coef-in 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.wf-coef-pos {
+  background: rgba(220,210,245,0.18);
+  border: 1px solid rgba(220,210,245,0.32);
+}
+
+.wf-coef-neg {
+  background: rgba(188,174,226,0.08);
+  border: 1px solid rgba(220,210,245,0.18);
+}
+
+.wf-coef-neg-big {
+  background: rgba(188,174,226,0.10);
+  border: 1px solid rgba(220,210,245,0.55);
+}
+
+.wf-r2 {
+  font-size: 0.60rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  color: var(--violet-300);
+  margin-top: 4px;
+  padding-left: 2px;
+  opacity: 0;
+  animation: wf-fade-in 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes wf-coef-in {
+  0%, 16%   { opacity: 0; transform: translateX(-6px); }
+  36%, 88%  { opacity: 1; transform: translateX(0); }
+  100%      { opacity: 0; transform: translateX(4px); }
+}
+
+/* ── Bike Stage 4: day-of-week kNN bars ────────────── */
+.wf-dow-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 150px;
+  gap: 3px;
+}
+
+.wf-dow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 3px;
+  height: 50px;
+  width: 100%;
+}
+
+.wf-dow-bar {
+  flex: 1;
+  height: 0;
+  background: linear-gradient(180deg, rgba(220,210,245,0.85), rgba(149,128,199,0.85));
+  border-radius: 1px 1px 0 0;
+  animation: wf-dow-grow 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes wf-dow-grow {
+  0%, 18%   { height: 0; }
+  55%, 88%  { height: var(--h, 50%); }
+  100%      { height: 0; }
+}
+
+.wf-dow-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(220,210,245,0.65);
+}
+
+.wf-dow-labels span {
+  flex: 1;
+  text-align: center;
+}
+
+.wf-accuracy {
+  margin-top: 4px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--violet-300);
+  text-align: center;
+}
+
 /* Vertical stack on narrow viewports */
 @media (max-width: 768px) {
   .workflow-stages {

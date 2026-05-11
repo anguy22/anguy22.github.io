@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=19">
+  <link rel="stylesheet" href="style.css?v=20">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -362,6 +362,186 @@
             </div>
           </div>
         </div>
+
+        <!-- Project 2: Solar PV Economic Modeling & Sensitivity -->
+        <div class="project-card project-card-large" onclick="this.classList.toggle('expanded')">
+          <div class="project-card-front">
+            <div class="project-icon">
+              <i class="fas fa-solar-panel"></i>
+            </div>
+            <h3>Solar PV Economic Modeling &amp; Sensitivity</h3>
+            <p class="project-summary">40-year DCF + NPV/IRR analysis across six parametric scenarios.</p>
+            <span class="project-expand-hint">
+              View workflow <i class="fas fa-chevron-down"></i>
+            </span>
+          </div>
+          <div class="project-card-details">
+            <div class="workflow-blurb">
+              <p>Built six parametric financial models projecting forty-year discounted cash flows for solar PV systems, applying NPV and IRR benchmarks to classify each scenario. Diagnostic analytics across energy yield, price escalation, and capital cost inputs surfaced the system KPIs that drive recommendation outcomes.</p>
+            </div>
+
+            <div class="workflow-stages">
+              <div class="wf-stage">
+                <div class="wf-stage-label">1 · Parametric inputs</div>
+                <div class="wf-stage-content">
+                  <div class="wf-chips">
+                    <span class="wf-chip" style="--d:0s">Energy yield</span>
+                    <span class="wf-chip" style="--d:0.15s">Capex</span>
+                    <span class="wf-chip" style="--d:0.30s">Price esc.</span>
+                    <span class="wf-chip" style="--d:0.45s">Discount</span>
+                    <span class="wf-chip" style="--d:0.60s">Lifetime</span>
+                    <span class="wf-chip" style="--d:0.75s">Degradation</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+
+              <div class="wf-stage">
+                <div class="wf-stage-label">2 · 40-yr DCF</div>
+                <div class="wf-stage-content">
+                  <div class="wf-dcf">
+                    <span class="wf-dcf-bar" style="--d:0s;    --h:14%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.05s; --h:24%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.10s; --h:38%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.15s; --h:50%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.20s; --h:62%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.25s; --h:72%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.30s; --h:80%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.35s; --h:84%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.40s; --h:88%"></span>
+                    <span class="wf-dcf-bar" style="--d:0.45s; --h:92%"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+
+              <div class="wf-stage">
+                <div class="wf-stage-label">3 · NPV / IRR verdict</div>
+                <div class="wf-stage-content">
+                  <div class="wf-classify">
+                    <span class="wf-metric" style="--d:0s">NPV &gt; 0</span>
+                    <span class="wf-metric" style="--d:0.15s">IRR &gt; hurdle</span>
+                    <span class="wf-verdict" style="--d:0.35s">RECOMMEND</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+
+              <div class="wf-stage">
+                <div class="wf-stage-label">4 · Sensitivity / KPIs</div>
+                <div class="wf-stage-content">
+                  <div class="wf-tornado">
+                    <span class="wf-tornado-axis" aria-hidden="true"></span>
+                    <div class="wf-tor-row" style="--d:0s;    --tw:42%; --td:-12%"><span class="wf-tor-bar"></span></div>
+                    <div class="wf-tor-row" style="--d:0.10s; --tw:32%; --td: 16%"><span class="wf-tor-bar"></span></div>
+                    <div class="wf-tor-row" style="--d:0.20s; --tw:22%; --td: -8%"><span class="wf-tor-bar"></span></div>
+                    <div class="wf-tor-row" style="--d:0.30s; --tw:14%; --td:  6%"><span class="wf-tor-bar"></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3: NYC Bike Traffic — Bridge Sensor Allocation -->
+        <div class="project-card project-card-large" onclick="this.classList.toggle('expanded')">
+          <div class="project-card-front">
+            <div class="project-icon">
+              <i class="fas fa-bicycle"></i>
+            </div>
+            <h3>NYC Bike Traffic — Bridge Sensor Allocation</h3>
+            <p class="project-summary">Cross-validated regression &amp; kNN across the four East River bridges.</p>
+            <span class="project-expand-hint">
+              View workflow <i class="fas fa-chevron-down"></i>
+            </span>
+          </div>
+          <div class="project-card-details">
+            <div class="workflow-blurb">
+              <p>Sensor-allocation study for the four East River bridges (Brooklyn, Manhattan, Williamsburg, Queensboro). Leave-one-bridge-out linear regression with 5-fold cross-validation identified the most predictable bridge as the one to defensibly skip; follow-up models tested weather-driven ridership and used k-Nearest-Neighbors to classify day-of-week from total ridership.</p>
+            </div>
+
+            <div class="workflow-stages">
+              <div class="wf-stage">
+                <div class="wf-stage-label">1 · Bridges + weather</div>
+                <div class="wf-stage-content">
+                  <div class="wf-chips wf-chips-vertical">
+                    <span class="wf-chip" style="--d:0s">Brooklyn</span>
+                    <span class="wf-chip" style="--d:0.12s">Manhattan</span>
+                    <span class="wf-chip" style="--d:0.24s">Williamsburg</span>
+                    <span class="wf-chip" style="--d:0.36s">Queensboro</span>
+                    <span class="wf-chip wf-chip-alt" style="--d:0.58s">Temp + Precip</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+
+              <div class="wf-stage">
+                <div class="wf-stage-label">2 · Leave-one-out R²</div>
+                <div class="wf-stage-content">
+                  <div class="wf-bars wf-bars-labeled">
+                    <div class="wf-bar-row">
+                      <span class="wf-bar-label">Brooklyn</span>
+                      <div class="wf-bar" style="--d:0s; --w:46%"><span></span></div>
+                    </div>
+                    <div class="wf-bar-row">
+                      <span class="wf-bar-label">Manhattan</span>
+                      <div class="wf-bar" style="--d:0.10s; --w:56%"><span></span></div>
+                    </div>
+                    <div class="wf-bar-row">
+                      <span class="wf-bar-label">Williamsbg</span>
+                      <div class="wf-bar" style="--d:0.20s; --w:77%"><span></span></div>
+                    </div>
+                    <div class="wf-bar-row wf-bar-skip">
+                      <span class="wf-bar-label">Queensboro <i class="fas fa-circle-check"></i></span>
+                      <div class="wf-bar" style="--d:0.30s; --w:89%"><span></span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+
+              <div class="wf-stage">
+                <div class="wf-stage-label">3 · Weather regression</div>
+                <div class="wf-stage-content">
+                  <div class="wf-coefs">
+                    <span class="wf-coef wf-coef-pos" style="--d:0s">+ HighTemp</span>
+                    <span class="wf-coef wf-coef-neg" style="--d:0.15s">− LowTemp</span>
+                    <span class="wf-coef wf-coef-neg-big" style="--d:0.30s">−− Precipitation</span>
+                    <span class="wf-r2" style="--d:0.50s">R² ≈ 0.24</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+
+              <div class="wf-stage">
+                <div class="wf-stage-label">4 · kNN day classifier</div>
+                <div class="wf-stage-content">
+                  <div class="wf-dow-wrap">
+                    <div class="wf-dow">
+                      <div class="wf-dow-bar" style="--d:0s;    --h:62%"></div>
+                      <div class="wf-dow-bar" style="--d:0.05s; --h:68%"></div>
+                      <div class="wf-dow-bar" style="--d:0.10s; --h:78%"></div>
+                      <div class="wf-dow-bar" style="--d:0.15s; --h:68%"></div>
+                      <div class="wf-dow-bar" style="--d:0.20s; --h:58%"></div>
+                      <div class="wf-dow-bar" style="--d:0.25s; --h:46%"></div>
+                      <div class="wf-dow-bar" style="--d:0.30s; --h:40%"></div>
+                    </div>
+                    <div class="wf-dow-labels" aria-hidden="true">
+                      <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                    </div>
+                    <div class="wf-accuracy">24.7% acc · 14% baseline</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -399,6 +579,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=19"></script>
+  <script src="script.js?v=20"></script>
 </body>
 </html>
