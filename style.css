@@ -2941,3 +2941,32 @@ footer {
   }
 }
 
+
+
+/* ========== PROJECT CARD SPACING TIGHTEN ========== */
+.projects-grid-quad .project-card {
+  min-height: 252px;
+}
+
+.projects-grid-quad .project-card-front {
+  min-height: 252px;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.projects-grid-quad .project-card-head {
+  margin-bottom: 2px;
+}
+
+.projects-grid-quad .project-summary {
+  margin-bottom: 2px;
+}
+
+.projects-grid-quad .project-expand-hint {
+  margin-top: 12px;
+  padding-top: 0;
+}
+
+.projects-grid-quad .project-card.expanded .project-expand-hint {
+  margin-top: 10px;
+}
