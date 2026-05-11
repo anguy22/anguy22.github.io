@@ -2776,3 +2776,61 @@ footer {
     animation: none !important;
   }
 }
+
+/* ========== PROJECT GRID REWORK — 2x2 expandable cards ========== */
+.projects-grid-quad {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 980px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.projects-grid-quad .project-card {
+  min-height: 230px;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition),
+    grid-column 0.35s ease;
+}
+
+.projects-grid-quad .project-card.expanded {
+  grid-column: 1 / -1;
+}
+
+.projects-grid-quad .project-card-front {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.projects-grid-quad .project-card.expanded .project-card-front {
+  min-height: auto;
+}
+
+.projects-grid-quad .project-card-details {
+  transition: max-height 0.42s ease, padding 0.38s ease, opacity 0.28s ease;
+}
+
+.projects-grid-quad .project-card.expanded .project-card-details {
+  max-height: 1600px;
+}
+
+.projects-grid-quad .project-skill-tag {
+  max-width: 190px;
+}
+
+@media (max-width: 760px) {
+  .projects-grid-quad {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid-quad .project-card.expanded {
+    grid-column: auto;
+  }
+
+  .projects-grid-quad .project-card-front {
+    min-height: auto;
+  }
+}
