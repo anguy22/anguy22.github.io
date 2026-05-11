@@ -921,4 +921,3 @@
 
 // ───────── ABOUT FAB WORKFLOW BACKGROUND ─────────
 // This section is CSS-driven: lots, wafers, stations, scanners, and robot arms animate in style.css.
-
