@@ -102,9 +102,11 @@
   var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
 
   var BRIGHTEN_MS = 0; // bright-purple finish removed
-  var MORPH_MIN_MS = 3200;
-  var MORPH_MAX_MS = 5200;
-  var MORPH_STAGGER_MS = 420;
+  // 40% faster than before: 3200/5200 → 1920/3120 morph window,
+  // 420 → 250 stagger between buildings.
+  var MORPH_MIN_MS = 1920;
+  var MORPH_MAX_MS = 3120;
+  var MORPH_STAGGER_MS = 250;
 
   function lerpRGB(a, b, t) {
     var r = Math.round(a[0] + (b[0] - a[0]) * t);
@@ -124,6 +126,23 @@
     normal: function (t) {
       var z = -3 + t * 6;
       return Math.exp(-0.5 * z * z); // peak = 1 at t = 0.5
+    },
+    triangular: function (t) {
+      // Sharp linear peak in the middle — visual cousin of normal.
+      return Math.max(0, 1 - 2 * Math.abs(t - 0.5));
+    },
+    bimodal: function (t) {
+      // Two narrow gaussian peaks at t = 0.25 and t = 0.75 (valley in middle).
+      var sigma = 0.12;
+      var z1 = (t - 0.25) / sigma;
+      var z2 = (t - 0.75) / sigma;
+      return Math.max(Math.exp(-0.5 * z1 * z1), Math.exp(-0.5 * z2 * z2));
+    },
+    uniform: function (t) {
+      // Roughly flat skyline (mid-height) — small dip at the edges so it
+      // doesn't look like a perfect rectangle.
+      var edgeFalloff = 1 - 0.18 * Math.pow(2 * t - 1, 4);
+      return 0.62 * edgeFalloff;
     },
     exponential: function (t) {
       var rate = 3.2;
@@ -155,8 +174,19 @@
   // ── Auto-cycle ─────────────────────────────────────────
   // After every building finishes resizing into the active distribution,
   // hold briefly and advance to the next distribution. Manual clicks reset this.
-  var CYCLE_ORDER = ["normal", "exponential", "geometric", "lognormal"];
-  var HOLD_AT_END_MS = 550;
+  // Order is chosen so consecutive shapes are visually related — peak
+  // sharpens, splits, flattens, tilts, becomes stepped, then skews back:
+  //   bell → sharp peak → two peaks → flat → left-tall → stepped → skewed → bell
+  var CYCLE_ORDER = [
+    "normal",
+    "triangular",
+    "bimodal",
+    "uniform",
+    "exponential",
+    "geometric",
+    "lognormal"
+  ];
+  var HOLD_AT_END_MS = 330;
   var cycleSettleAt = null; // ms timestamp when skyline first reached its end state
 
   function rand(min, max) {

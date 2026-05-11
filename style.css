@@ -645,11 +645,18 @@ a:hover {
   font-size: 0.95rem;
 }
 
-/* ========== PROJECTS / RAMBLINGS ========== */
+/* ========== PROJECTS ========== */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
+}
+
+/* Single project card spans the full container width. */
+.projects-grid-single {
+  grid-template-columns: 1fr;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .project-card {
@@ -721,7 +728,7 @@ a:hover {
 }
 
 .project-card.expanded .project-card-details {
-  max-height: 900px;
+  max-height: 1400px;
   opacity: 1;
   padding: 0 28px 28px;
 }
@@ -731,6 +738,251 @@ a:hover {
   line-height: 1.65;
   font-size: 0.94rem;
   margin-bottom: 16px;
+}
+
+/* ========== PROJECT WORKFLOW ANIMATION ========== */
+.workflow-blurb p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  max-width: 760px;
+}
+
+.workflow-stages {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 0 4px;
+}
+
+.wf-stage {
+  flex: 1 1 0;
+  min-width: 150px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px 14px 18px;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+}
+
+.wf-stage-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--violet-300);
+  margin-bottom: 14px;
+}
+
+.wf-stage-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 110px;
+}
+
+.wf-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--violet-300);
+  font-size: 0.95rem;
+  opacity: 0.55;
+}
+
+/* ── Stage 1: envelope ──────────────────────────────── */
+.wf-envelope {
+  width: 86px;
+  height: 60px;
+  position: relative;
+  animation: wf-envelope-bob 3.6s ease-in-out infinite;
+}
+
+.wf-envelope-body {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: rgba(188,174,226,0.08);
+  border: 1px solid rgba(220,210,245,0.45);
+  overflow: hidden;
+  padding: 18px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wf-envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 18px;
+  background: linear-gradient(180deg, rgba(220,210,245,0.30), rgba(188,174,226,0.10));
+  border-bottom: 1px solid rgba(220,210,245,0.55);
+  transform-origin: top center;
+  animation: wf-flap-open 3.6s ease-in-out infinite;
+  z-index: 2;
+}
+
+.wf-email-line {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(220,210,245,0.45);
+  width: 100%;
+  opacity: 0;
+  animation: wf-line-in 3.6s ease-in-out infinite;
+}
+
+.wf-email-line:nth-child(2) { animation-delay: 0.15s; width: 86%; }
+.wf-email-line:nth-child(3) { animation-delay: 0.30s; }
+.wf-email-line.short { width: 60%; }
+
+@keyframes wf-envelope-bob {
+  0%, 100% { transform: translateY(8px); opacity: 0.35; }
+  18%, 82% { transform: translateY(0);   opacity: 1; }
+}
+
+@keyframes wf-flap-open {
+  0%, 28%   { transform: rotateX(0deg); }
+  45%, 88%  { transform: rotateX(160deg); }
+  100%      { transform: rotateX(0deg); }
+}
+
+@keyframes wf-line-in {
+  0%, 35% { opacity: 0; transform: translateY(2px); }
+  55%, 95% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(2px); }
+}
+
+/* ── Stage 2: parsed chips ──────────────────────────── */
+.wf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.wf-chip {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(188,174,226,0.12);
+  color: var(--violet-200);
+  border: 1px solid rgba(220,210,245,0.28);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: wf-chip-in 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+  white-space: nowrap;
+}
+
+@keyframes wf-chip-in {
+  0%, 12%  { opacity: 0; transform: translateY(10px); }
+  30%, 78% { opacity: 1; transform: translateY(0); }
+  92%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+
+/* ── Stage 3: score bars ────────────────────────────── */
+.wf-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 160px;
+}
+
+.wf-bar {
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(188,174,226,0.10);
+  border: 1px solid rgba(220,210,245,0.18);
+  overflow: hidden;
+  position: relative;
+}
+
+.wf-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, rgba(220,210,245,0.85), rgba(149,128,199,0.85));
+  border-radius: 4px;
+  animation: wf-bar-fill 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes wf-bar-fill {
+  0%, 18%   { width: 0; }
+  55%, 88%  { width: var(--w, 60%); }
+  100%      { width: 0; }
+}
+
+/* ── Stage 4: ranked spreadsheet ────────────────────── */
+.wf-spreadsheet {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  max-width: 150px;
+  padding: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+}
+
+.wf-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 0.7fr;
+  gap: 4px;
+  height: 9px;
+  opacity: 0;
+  transform: translateX(-6px);
+  animation: wf-row-in 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.wf-row span {
+  display: block;
+  background: rgba(220,210,245,0.30);
+  border-radius: 2px;
+}
+
+.wf-row-header {
+  animation: wf-row-in-header 3.6s ease-in-out infinite;
+}
+
+.wf-row-header span {
+  background: rgba(220,210,245,0.55);
+}
+
+@keyframes wf-row-in {
+  0%, 25%  { opacity: 0; transform: translateX(-6px); }
+  45%, 88% { opacity: 1; transform: translateX(0); }
+  100%     { opacity: 0; transform: translateX(4px); }
+}
+
+@keyframes wf-row-in-header {
+  0%, 8%   { opacity: 0; transform: translateX(-6px); }
+  22%, 92% { opacity: 1; transform: translateX(0); }
+  100%     { opacity: 0; transform: translateX(4px); }
+}
+
+/* Vertical stack on narrow viewports */
+@media (max-width: 768px) {
+  .workflow-stages {
+    flex-direction: column;
+  }
+  .wf-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
 }
 
 /* ========== CONTACT ========== */
