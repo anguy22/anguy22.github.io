@@ -671,6 +671,28 @@ a:hover {
 
 .project-card-front {
   padding: 28px;
+  position: relative;
+  padding-right: min(260px, 32%);
+}
+
+.project-skill-tag {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  max-width: 220px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  color: var(--violet-100);
+  background: rgba(188,174,226,0.12);
+  border: 1px solid rgba(220,210,245,0.30);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.16);
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: right;
+  white-space: normal;
 }
 
 .project-icon {
@@ -1272,6 +1294,132 @@ a:hover {
   }
 }
 
+
+/* ── ACC MATLAB Project Animation ───────────────────── */
+.wf-acc-stack {
+  width: 100%;
+  max-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wf-acc-row {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(220,210,245,0.28), rgba(149,128,199,0.82));
+  border: 1px solid rgba(220,210,245,0.18);
+  width: 0;
+  animation: wf-acc-row-load 3.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.wf-acc-row:nth-child(1) { --row-w: 88%; }
+.wf-acc-row:nth-child(2) { --row-w: 72%; }
+.wf-acc-row:nth-child(3) { --row-w: 96%; }
+.wf-acc-row:nth-child(4) { --row-w: 64%; }
+.wf-acc-row:nth-child(5) { --row-w: 82%; }
+
+@keyframes wf-acc-row-load {
+  0%, 18% { width: 0; opacity: 0.35; }
+  50%, 88% { width: var(--row-w, 80%); opacity: 1; }
+  100% { width: 0; opacity: 0.35; }
+}
+
+.wf-acc-compare {
+  width: 150px;
+  height: 92px;
+  position: relative;
+  border-left: 1px solid rgba(220,210,245,0.35);
+  border-bottom: 1px solid rgba(220,210,245,0.35);
+  border-radius: 0 0 0 4px;
+}
+
+.wf-acc-axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 25px;
+  height: 1px;
+  background: rgba(220,210,245,0.13);
+}
+
+.wf-acc-line {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 3px;
+  border-radius: 999px;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: wf-acc-line-draw 3.6s ease-in-out infinite;
+}
+
+.wf-acc-line-base {
+  bottom: 34px;
+  background: rgba(220,210,245,0.82);
+}
+
+.wf-acc-line-exp {
+  bottom: 52px;
+  background: rgba(149,128,199,0.92);
+  animation-delay: 0.22s;
+}
+
+@keyframes wf-acc-line-draw {
+  0%, 20% { transform: scaleX(0); opacity: 0.35; }
+  54%, 88% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0); opacity: 0.35; }
+}
+
+.wf-docs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.wf-doc {
+  min-width: 86px;
+  padding: 5px 9px;
+  border-radius: 5px;
+  background: rgba(188,174,226,0.10);
+  border: 1px solid rgba(220,210,245,0.24);
+  color: var(--violet-200);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: wf-fade-in 3.6s ease-in-out infinite;
+}
+
+.wf-doc i {
+  margin-right: 5px;
+}
+
+.wf-doc-word {
+  animation-delay: 0.16s;
+}
+
+.wf-honor {
+  margin-top: 2px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(220,210,245,0.18);
+  border: 1px solid rgba(220,210,245,0.42);
+  color: var(--violet-100);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: wf-fade-in 3.6s ease-in-out infinite;
+  animation-delay: 0.34s;
+}
+
 /* ========== CONTACT ========== */
 .contact-text {
   color: var(--text-muted);
@@ -1389,6 +1537,17 @@ footer {
   .projects-grid,
   .contact-links {
     grid-template-columns: 1fr;
+  }
+
+  .project-card-front {
+    padding-right: 28px;
+  }
+
+  .project-skill-tag {
+    position: static;
+    display: inline-flex;
+    margin: 0 0 14px;
+    text-align: left;
   }
 }
 

@@ -271,12 +271,12 @@
     buildings = [];
     particles = [];
 
-    var skylineW = W * 0.84;
+    var skylineW = W * 0.88;
     var startX = (W - skylineW) / 2;
     var baseY = H * 0.84;
 
-    var count = Math.max(38, Math.round(W / 34));
-    var gap = Math.max(2, W * 0.0023);
+    var count = Math.max(30, Math.round(W / 46));
+    var gap = Math.max(2, W * 0.0018);
     var bw = (skylineW - gap * (count - 1)) / count;
 
     var maxH = H * 0.43;
@@ -300,20 +300,22 @@
 
       // Each building's construction is staggered and runs at its own
       // pace, like a real building site.
-      var startDelay = rand(0, 2200);
-      var buildDuration = rand(5500, 9500);
+      var startDelay = rand(0, MORPH_STAGGER_MS);
+      var buildDuration = rand(MORPH_MIN_MS, MORPH_MAX_MS);
 
       var x = startX + i * (bw + gap);
 
       var depth = Math.max(4, bw * rand(0.18, 0.28));
       var roof = Math.random() > 0.72 ? "cap" : (Math.random() > 0.84 ? "spire" : "flat");
+      var antenna = Math.random() > 0.72;
+      var inset = rand(0.10, 0.18);
 
       // Window grid is sized to the FINAL height so the lit pattern
       // doesn't pop in once construction completes. We draw windows
       // only up to the current height during the build.
       var floorSpacing = Math.max(11, Math.min(18, targetH / 14));
       var rows = Math.max(2, Math.floor(targetH / floorSpacing));
-      var cols = Math.max(1, Math.floor(bw / rand(10, 14)));
+      var cols = Math.max(2, Math.floor(bw / rand(8, 11)));
       var windows = [];
 
       for (var r = 1; r < rows; r++) {
@@ -344,6 +346,8 @@
         floorSpacing: floorSpacing,
         depth: depth,
         roof: roof,
+        antenna: antenna,
+        inset: inset,
         windows: windows,
           underConstruction: true
       });
@@ -548,6 +552,25 @@
     ctx.fillStyle = glowGrad;
     ctx.fillRect(x, y, w, Math.min(h * 0.4, 60));
 
+    // Subtle inset facade panel for wider buildings.
+    var inset = b.inset || 0.14;
+    var panelX = x + w * inset;
+    var panelW = w * (1 - inset * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.022)";
+    ctx.fillRect(panelX, y + 4, panelW, Math.max(0, h - 4));
+
+    // Vertical mullions make wider buildings feel more architectural.
+    ctx.strokeStyle = "rgba(220,210,245,0.10)";
+    ctx.lineWidth = 0.65;
+    var mullions = Math.max(2, Math.floor(w / 9));
+    for (var mv = 1; mv < mullions; mv++) {
+      var mx = x + (mv / mullions) * w;
+      ctx.beginPath();
+      ctx.moveTo(mx, y + 3);
+      ctx.lineTo(mx, groundY - 1);
+      ctx.stroke();
+    }
+
     // Horizontal floor lines — anchored to the ground so already-built
     // floors stay put as the building rises around them.
     ctx.strokeStyle = FLOOR_LINE;
@@ -583,7 +606,26 @@
       ctx.globalAlpha = win.lit ? 0.75 : 0.38;
       ctx.fillRect(x + win.x - ww / 2, groundY - win.yFromGround - wh / 2, ww, wh);
     }
+    // Side-panel windows add depth without brightening the whole skyline.
+    ctx.globalAlpha = 0.32;
+    ctx.fillStyle = WINDOW_DIM;
+    var sideCols = 1;
+    var sideW = Math.max(1.4, d * 0.22);
+    for (var sf = floorSpacing * 1.4; sf < h; sf += floorSpacing * 1.65) {
+      var sy = groundY - sf;
+      for (var sc = 0; sc < sideCols; sc++) {
+        ctx.fillRect(x + w + d * 0.42, sy - 1, sideW, 2.2);
+      }
+    }
     ctx.globalAlpha = 1;
+
+    // Thin roof outline across the depth panel.
+    ctx.strokeStyle = "rgba(245,242,255,0.42)";
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x + w, y + 0.5);
+    ctx.lineTo(x + w + d, y + d + 0.5);
+    ctx.stroke();
 
     // Scaffolding cross-pattern across the topmost floor while still
     // under construction — visual cue that this floor is "in progress".
@@ -624,6 +666,19 @@
         ctx.strokeStyle = TOP_EDGE;
         ctx.lineWidth = 1;
         ctx.strokeRect(x + w * 0.22, y - 4, w * 0.56, 4);
+      }
+
+      if (b.antenna) {
+        ctx.strokeStyle = "rgba(245,242,255,0.55)";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.72, y);
+        ctx.lineTo(x + w * 0.72, y - 10);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x + w * 0.72, y - 11, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(245,242,255,0.70)";
+        ctx.fill();
       }
     }
 
@@ -921,3 +976,4 @@
 
 // ───────── ABOUT FAB WORKFLOW BACKGROUND ─────────
 // This section is CSS-driven: lots, wafers, stations, scanners, and robot arms animate in style.css.
+
