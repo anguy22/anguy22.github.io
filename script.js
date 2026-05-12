@@ -1330,3 +1330,113 @@
   paint();
 })();
 
+
+// ───── BOILERMAKER TRAIN EXPERIENCE ─────
+(function () {
+  var root = document.querySelector('.train-section');
+  if (!root) return;
+
+  var stage = root.querySelector('.train-stage');
+  var train = root.querySelector('.boilermaker-train');
+  var stops = Array.prototype.slice.call(root.querySelectorAll('.journey-stop'));
+  var cards = Array.prototype.slice.call(root.querySelectorAll('.journey-card'));
+  var empty = root.querySelector('.journey-empty');
+  var rails = Array.prototype.slice.call(root.querySelectorAll('.journey-rail-main, .journey-rail-accent'));
+  var activeId = '';
+
+  function moveTrainTo(stop) {
+    if (!train || !stop) return;
+    var x = parseFloat(stop.getAttribute('data-train-x') || '0');
+    var y = parseFloat(stop.getAttribute('data-train-y') || '0');
+    train.style.transform = 'translate(' + (x - 72) + 'px, ' + (y - 28) + 'px)';
+  }
+
+  function setActive(id) {
+    activeId = id || '';
+
+    stops.forEach(function (stop) {
+      var match = stop.getAttribute('data-station') === activeId;
+      stop.classList.toggle('is-active', match);
+      stop.setAttribute('aria-expanded', match ? 'true' : 'false');
+    });
+
+    cards.forEach(function (card) {
+      card.classList.toggle('is-active', card.getAttribute('data-station') === activeId);
+    });
+
+    if (empty) empty.hidden = !!activeId;
+
+    if (!activeId) {
+      moveTrainTo(stops[0]);
+      return;
+    }
+
+    var target = stops.find(function (stop) {
+      return stop.getAttribute('data-station') === activeId;
+    });
+
+    moveTrainTo(target || stops[0]);
+  }
+
+  stops.forEach(function (stop) {
+    stop.addEventListener('click', function () {
+      var id = stop.getAttribute('data-station');
+      setActive(activeId === id ? '' : id);
+    });
+
+    stop.addEventListener('mouseenter', function () {
+      if (!activeId) moveTrainTo(stop);
+    });
+
+    stop.addEventListener('mouseleave', function () {
+      if (!activeId) moveTrainTo(stops[0]);
+    });
+
+    stop.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        stop.click();
+      }
+    });
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') setActive('');
+  });
+
+  rails.forEach(function (rail) {
+    var length = 0;
+    try {
+      length = rail.getTotalLength();
+    } catch (e) {
+      length = 0;
+    }
+    if (length) {
+      rail.style.strokeDasharray = String(length);
+      rail.style.strokeDashoffset = String(length);
+    }
+  });
+
+  if ('IntersectionObserver' in window && stage) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+
+        stage.classList.add('in-view');
+        rails.forEach(function (rail, index) {
+          rail.style.transition = 'stroke-dashoffset 1.3s cubic-bezier(0.4,0,0.2,1) ' + (index * 0.12) + 's';
+          rail.style.strokeDashoffset = '0';
+        });
+
+        observer.disconnect();
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(stage);
+  } else if (stage) {
+    stage.classList.add('in-view');
+    rails.forEach(function (rail) { rail.style.strokeDashoffset = '0'; });
+  }
+
+  moveTrainTo(stops[0]);
+})();
