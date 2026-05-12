@@ -1102,3 +1102,18 @@
     }
   });
 })();
+
+// ───────── WHOLE RESUME HOVER / TAP ANIMATION TOGGLE ─────────
+(function () {
+  var paper = document.querySelector('.resume-story-paper');
+  if (!paper) return;
+
+  paper.addEventListener('click', function (event) {
+    if (event.target.closest('a')) return;
+    paper.classList.toggle('resume-paper-active');
+  });
+
+  paper.addEventListener('mouseleave', function () {
+    paper.classList.remove('resume-paper-active');
+  });
+})();
