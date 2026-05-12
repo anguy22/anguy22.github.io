@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=94">
+  <link rel="stylesheet" href="style.css?v=100">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -176,354 +176,167 @@
     </div>
   </section>
 
-  <section id="projects" class="section section-alt">
+  <section id="projects" class="section section-alt resume-section">
     <div class="container reveal">
-      <h2 class="section-title">Projects</h2>
+      <h2 class="section-title resume-section-title">Resume</h2>
 
-      <div class="projects-grid projects-grid-quad">
-        <div class="project-card project-card-large">
-          <div class="project-card-front">
-            <div class="project-card-head">
-              <div class="project-icon">
-                <i class="fas fa-envelope-open-text"></i>
-              </div>
-              <span class="project-skill-tag">Operations Research</span>
-            </div>
-            <h3>Recruiting Analytics Pipeline</h3>
-            <p class="project-summary">Automated prospect triage for Purdue Women's Soccer.</p>
-            <span class="project-expand-hint">
-              View workflow <i class="fas fa-chevron-down"></i>
-            </span>
+      <div class="resume-paper" aria-label="Interactive resume document">
+        <div class="resume-paper-header">
+          <div>
+            <p class="resume-kicker">Interactive Resume</p>
+            <h3>Andrew Nguyen</h3>
+            <p class="resume-headline">Industrial Engineering · Data Science · Analytics Systems</p>
           </div>
-          <div class="project-card-details">
-            <div class="workflow-blurb">
-              <p>An end-to-end pipeline that triages inbound prospect emails for Purdue Women's Soccer. Incoming messages are parsed for structured player data, ranked against a positional rubric, and delivered to the coaching staff as ranked reports — replacing manual inbox triage with a repeatable, auditable workflow.</p>
-            </div>
-
-            <div class="workflow-stages">
-              <div class="wf-stage wf-stage-email">
-                <div class="wf-stage-label">1 · Email arrives</div>
-                <div class="wf-stage-content">
-                  <div class="wf-envelope">
-                    <div class="wf-envelope-flap"></div>
-                    <div class="wf-envelope-body">
-                      <span class="wf-email-line"></span>
-                      <span class="wf-email-line"></span>
-                      <span class="wf-email-line short"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage wf-stage-parse">
-                <div class="wf-stage-label">2 · Parsed fields</div>
-                <div class="wf-stage-content">
-                  <div class="wf-chips">
-                    <span class="wf-chip" style="--d:0s">Name</span>
-                    <span class="wf-chip" style="--d:0.18s">Position</span>
-                    <span class="wf-chip" style="--d:0.36s">Year</span>
-                    <span class="wf-chip" style="--d:0.54s">Club</span>
-                    <span class="wf-chip" style="--d:0.72s">Stats</span>
-                    <span class="wf-chip" style="--d:0.90s">Video</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage wf-stage-score">
-                <div class="wf-stage-label">3 · Scored &amp; sorted</div>
-                <div class="wf-stage-content">
-                  <div class="wf-bars">
-                    <div class="wf-bar" style="--d:0s;    --w:88%"><span></span></div>
-                    <div class="wf-bar" style="--d:0.12s; --w:74%"><span></span></div>
-                    <div class="wf-bar" style="--d:0.24s; --w:61%"><span></span></div>
-                    <div class="wf-bar" style="--d:0.36s; --w:48%"><span></span></div>
-                    <div class="wf-bar" style="--d:0.48s; --w:33%"><span></span></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage wf-stage-output">
-                <div class="wf-stage-label">4 · Ranked report</div>
-                <div class="wf-stage-content">
-                  <div class="wf-spreadsheet">
-                    <div class="wf-row wf-row-header">
-                      <span></span><span></span><span></span>
-                    </div>
-                    <div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div>
-                    <div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div>
-                    <div class="wf-row" style="--d:0.40s"><span></span><span></span><span></span></div>
-                    <div class="wf-row" style="--d:0.55s"><span></span><span></span><span></span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="resume-contact-strip" aria-label="Resume summary tags">
+            <span>Purdue IE</span>
+            <span>Statistics Minor</span>
+            <span>SQL · Python · Tableau</span>
           </div>
         </div>
 
-        <!-- Project 2: Solar PV Economic Modeling & Sensitivity -->
-        <div class="project-card project-card-large">
-          <div class="project-card-front">
-            <div class="project-card-head">
-              <div class="project-icon">
-                <i class="fas fa-solar-panel"></i>
+        <div class="resume-divider"></div>
+
+        <div class="resume-grid">
+          <article class="resume-entry project-card resume-entry-featured">
+            <div class="project-card-front resume-entry-front">
+              <div class="resume-entry-topline">
+                <span class="resume-category">Experience</span>
+                <span class="resume-date">Summer 2026</span>
               </div>
-              <span class="project-skill-tag">Financial Modeling</span>
+              <div class="resume-title-row">
+                <div class="project-icon resume-icon"><i class="fas fa-microchip"></i></div>
+                <div>
+                  <h3>TPG Global Industrial Engineer Intern</h3>
+                  <p class="resume-org">Micron · Technology &amp; Products Group</p>
+                </div>
+              </div>
+              <p class="project-summary resume-summary">Fab analytics role focused on KPI visibility, planning data, SQL-driven analysis, and operational dashboarding.</p>
+              <div class="resume-tags"><span>SQL</span><span>Python</span><span>KPIs</span><span>Dashboards</span></div>
+              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <h3>Solar PV Economic Modeling</h3>
-            <p class="project-summary">40-year DCF + NPV/IRR analysis across six parametric scenarios.</p>
-            <span class="project-expand-hint">
-              View workflow <i class="fas fa-chevron-down"></i>
-            </span>
-          </div>
-          <div class="project-card-details">
-            <div class="workflow-blurb">
-              <p>Built six parametric financial models projecting forty-year discounted cash flows for solar PV systems, applying NPV and IRR benchmarks to classify each scenario. Diagnostic analytics across energy yield, price escalation, and capital cost inputs surfaced the system KPIs that drive recommendation outcomes.</p>
-            </div>
-
-            <div class="workflow-stages">
-              <div class="wf-stage">
-                <div class="wf-stage-label">1 · Parametric inputs</div>
-                <div class="wf-stage-content">
-                  <div class="wf-chips">
-                    <span class="wf-chip" style="--d:0s">Energy yield</span>
-                    <span class="wf-chip" style="--d:0.15s">Capex</span>
-                    <span class="wf-chip" style="--d:0.30s">Price esc.</span>
-                    <span class="wf-chip" style="--d:0.45s">Discount</span>
-                    <span class="wf-chip" style="--d:0.60s">Lifetime</span>
-                    <span class="wf-chip" style="--d:0.75s">Degradation</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">2 · 40-yr DCF</div>
-                <div class="wf-stage-content">
-                  <div class="wf-dcf">
-                    <span class="wf-dcf-bar" style="--d:0s;    --h:14%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.05s; --h:24%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.10s; --h:38%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.15s; --h:50%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.20s; --h:62%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.25s; --h:72%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.30s; --h:80%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.35s; --h:84%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.40s; --h:88%"></span>
-                    <span class="wf-dcf-bar" style="--d:0.45s; --h:92%"></span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">3 · NPV / IRR verdict</div>
-                <div class="wf-stage-content">
-                  <div class="wf-classify">
-                    <span class="wf-metric" style="--d:0s">NPV &gt; 0</span>
-                    <span class="wf-metric" style="--d:0.15s">IRR &gt; hurdle</span>
-                    <span class="wf-verdict" style="--d:0.35s">RECOMMEND</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">4 · Sensitivity / KPIs</div>
-                <div class="wf-stage-content">
-                  <div class="wf-tornado">
-                    <span class="wf-tornado-axis" aria-hidden="true"></span>
-                    <div class="wf-tor-row" style="--d:0s;    --tw:42%; --td:-12%"><span class="wf-tor-bar"></span></div>
-                    <div class="wf-tor-row" style="--d:0.10s; --tw:32%; --td: 16%"><span class="wf-tor-bar"></span></div>
-                    <div class="wf-tor-row" style="--d:0.20s; --tw:22%; --td: -8%"><span class="wf-tor-bar"></span></div>
-                    <div class="wf-tor-row" style="--d:0.30s; --tw:14%; --td:  6%"><span class="wf-tor-bar"></span></div>
-                  </div>
-                </div>
+            <div class="project-card-details resume-entry-details">
+              <div class="workflow-blurb"><p>Converts raw manufacturing and planning data into decision-support views for R&amp;D fab operations. The workflow emphasizes clean extraction, KPI definition, repeatable analysis, and executive-ready visualization.</p></div>
+              <div class="workflow-stages resume-workflow">
+                <div class="wf-stage"><div class="wf-stage-label">1 · Pull data</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">SQL tables</span><span class="wf-chip" style="--d:0.16s">WIP</span><span class="wf-chip" style="--d:0.32s">Cycle time</span><span class="wf-chip" style="--d:0.48s">Tool state</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Clean logic</div><div class="wf-stage-content"><div class="wf-spreadsheet"><div class="wf-row wf-row-header"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.40s"><span></span><span></span><span></span></div></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · KPI model</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:86%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:70%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:54%"><span></span></div></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Dashboard</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">Capacity</span><span class="wf-metric" style="--d:0.16s">Utilization</span><span class="wf-verdict" style="--d:0.32s">FAB VISIBILITY</span></div></div></div>
               </div>
             </div>
-          </div>
-        </div>
+          </article>
 
-        <!-- Project 3: NYC Bike Traffic — Bridge Sensor Allocation -->
-        <div class="project-card project-card-large">
-          <div class="project-card-front">
-            <div class="project-card-head">
-              <div class="project-icon">
-                <i class="fas fa-bicycle"></i>
-              </div>
-              <span class="project-skill-tag">Regression Analysis</span>
+          <article class="resume-entry project-card">
+            <div class="project-card-front resume-entry-front">
+              <div class="resume-entry-topline"><span class="resume-category">Experience</span><span class="resume-date">2025–Present</span></div>
+              <div class="resume-title-row"><div class="project-icon resume-icon"><i class="fas fa-chart-line"></i></div><div><h3>Recruiting Analytics Researcher</h3><p class="resume-org">Purdue Women's Soccer · The Data Mine</p></div></div>
+              <p class="project-summary resume-summary">Built a recruiting analytics pipeline that parses emails, detects clubs and achievements, scores prospects, and exports coach-ready reports.</p>
+              <div class="resume-tags"><span>ETL</span><span>Regex</span><span>Python</span><span>Tableau</span></div>
+              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <h3>NYC Bike Traffic — Bridge Sensor Allocation</h3>
-            <p class="project-summary">Cross-validated regression &amp; kNN across the four East River bridges.</p>
-            <span class="project-expand-hint">
-              View workflow <i class="fas fa-chevron-down"></i>
-            </span>
-          </div>
-          <div class="project-card-details">
-            <div class="workflow-blurb">
-              <p>Sensor-allocation study for the four East River bridges (Brooklyn, Manhattan, Williamsburg, Queensboro). Leave-one-bridge-out linear regression with 5-fold cross-validation identified the most predictable bridge as the one to defensibly skip; follow-up models tested weather-driven ridership and used k-Nearest-Neighbors to classify day-of-week from total ridership.</p>
-            </div>
-
-            <div class="workflow-stages">
-              <div class="wf-stage">
-                <div class="wf-stage-label">1 · Bridges + weather</div>
-                <div class="wf-stage-content">
-                  <div class="wf-chips wf-chips-vertical">
-                    <span class="wf-chip" style="--d:0s">Brooklyn</span>
-                    <span class="wf-chip" style="--d:0.12s">Manhattan</span>
-                    <span class="wf-chip" style="--d:0.24s">Williamsburg</span>
-                    <span class="wf-chip" style="--d:0.36s">Queensboro</span>
-                    <span class="wf-chip wf-chip-alt" style="--d:0.58s">Temp + Precip</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">2 · Leave-one-out R²</div>
-                <div class="wf-stage-content">
-                  <div class="wf-bars wf-bars-labeled">
-                    <div class="wf-bar-row">
-                      <span class="wf-bar-label">Brooklyn</span>
-                      <div class="wf-bar" style="--d:0s; --w:46%"><span></span></div>
-                    </div>
-                    <div class="wf-bar-row">
-                      <span class="wf-bar-label">Manhattan</span>
-                      <div class="wf-bar" style="--d:0.10s; --w:56%"><span></span></div>
-                    </div>
-                    <div class="wf-bar-row">
-                      <span class="wf-bar-label">Williamsbg</span>
-                      <div class="wf-bar" style="--d:0.20s; --w:77%"><span></span></div>
-                    </div>
-                    <div class="wf-bar-row wf-bar-skip">
-                      <span class="wf-bar-label">Queensboro <i class="fas fa-circle-check"></i></span>
-                      <div class="wf-bar" style="--d:0.30s; --w:89%"><span></span></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">3 · Weather regression</div>
-                <div class="wf-stage-content">
-                  <div class="wf-coefs">
-                    <span class="wf-coef wf-coef-pos" style="--d:0s">+ HighTemp</span>
-                    <span class="wf-coef wf-coef-neg" style="--d:0.15s">− LowTemp</span>
-                    <span class="wf-coef wf-coef-neg-big" style="--d:0.30s">−− Precipitation</span>
-                    <span class="wf-r2" style="--d:0.50s">R² ≈ 0.24</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">4 · kNN day classifier</div>
-                <div class="wf-stage-content">
-                  <div class="wf-dow-wrap">
-                    <div class="wf-dow">
-                      <div class="wf-dow-bar" style="--d:0s;    --h:62%"></div>
-                      <div class="wf-dow-bar" style="--d:0.05s; --h:68%"></div>
-                      <div class="wf-dow-bar" style="--d:0.10s; --h:78%"></div>
-                      <div class="wf-dow-bar" style="--d:0.15s; --h:68%"></div>
-                      <div class="wf-dow-bar" style="--d:0.20s; --h:58%"></div>
-                      <div class="wf-dow-bar" style="--d:0.25s; --h:46%"></div>
-                      <div class="wf-dow-bar" style="--d:0.30s; --h:40%"></div>
-                    </div>
-                    <div class="wf-dow-labels" aria-hidden="true">
-                      <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                    </div>
-                    <div class="wf-accuracy">24.7% acc · 14% baseline</div>
-                  </div>
-                </div>
+            <div class="project-card-details resume-entry-details">
+              <div class="workflow-blurb"><p>Automates manual prospect review by turning unstructured emails into ranked, auditable recruiting outputs.</p></div>
+              <div class="workflow-stages resume-workflow">
+                <div class="wf-stage wf-stage-email"><div class="wf-stage-label">1 · Email</div><div class="wf-stage-content"><div class="wf-envelope"><div class="wf-envelope-flap"></div><div class="wf-envelope-body"><span class="wf-email-line"></span><span class="wf-email-line"></span><span class="wf-email-line short"></span></div></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Parse</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Name</span><span class="wf-chip" style="--d:0.18s">Club</span><span class="wf-chip" style="--d:0.36s">Year</span><span class="wf-chip" style="--d:0.54s">Awards</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Score</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:88%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:74%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:61%"><span></span></div></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Report</div><div class="wf-stage-content"><div class="wf-spreadsheet"><div class="wf-row wf-row-header"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.40s"><span></span><span></span><span></span></div></div></div></div>
               </div>
             </div>
-          </div>
-        </div>
+          </article>
 
-        <!-- Project 4: AI Revolution Employability Research -->
-        <div class="project-card project-card-large">
-          <div class="project-card-front">
-            <div class="project-card-head">
-              <div class="project-icon">
-                <i class="fas fa-brain"></i>
-              </div>
-              <span class="project-skill-tag">Research Inquiry</span>
+          <article class="resume-entry project-card">
+            <div class="project-card-front resume-entry-front">
+              <div class="resume-entry-topline"><span class="resume-category">Leadership</span><span class="resume-date">2025–Present</span></div>
+              <div class="resume-title-row"><div class="project-icon resume-icon"><i class="fas fa-chess-knight"></i></div><div><h3>Team Captain</h3><p class="resume-org">Purdue Collegiate Chess League Team</p></div></div>
+              <p class="project-summary resume-summary">Coordinates competitive preparation, match structure, and team communication for collegiate chess play.</p>
+              <div class="resume-tags"><span>Leadership</span><span>Strategy</span><span>Scheduling</span></div>
+              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <h3>AI Revolution Employability Research</h3>
-            <p class="project-summary">Compared Boise teacher and technology-employer interviews to identify which human skills remain employable in an AI-integrated workforce.</p>
-            <span class="project-expand-hint">
-              View workflow <i class="fas fa-chevron-down"></i>
-            </span>
-          </div>
-          <div class="project-card-details">
-            <div class="workflow-blurb">
-              <p>A comparative thematic research study examining how Boise high schools prepare students for employability in the Fourth Industrial Revolution, using interviews with technology-industry employees and teachers to compare valued workplace skills against classroom skill emphasis.</p>
-            </div>
-
-            <div class="workflow-stages">
-              <div class="wf-stage">
-                <div class="wf-stage-label">1 · Research question</div>
-                <div class="wf-stage-content">
-                  <div class="wf-research-question">
-                    <i class="fas fa-question"></i>
-                    <span>Education vs. AI-era employability</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">2 · Interview groups</div>
-                <div class="wf-stage-content">
-                  <div class="wf-research-groups">
-                    <span class="wf-research-group" style="--d:0s">10 employees</span>
-                    <span class="wf-research-group" style="--d:0.15s">9 teachers</span>
-                    <span class="wf-research-group" style="--d:0.30s">Boise / Treasure Valley</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">3 · Thematic coding</div>
-                <div class="wf-stage-content">
-                  <div class="wf-research-themes">
-                    <span style="--d:0s">Interpersonal</span>
-                    <span style="--d:0.12s">Problem-solving</span>
-                    <span style="--d:0.24s">Adaptability</span>
-                    <span style="--d:0.36s">Resource use</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
-
-              <div class="wf-stage">
-                <div class="wf-stage-label">4 · Finding</div>
-                <div class="wf-stage-content">
-                  <div class="wf-research-findings">
-                    <span class="wf-finding-line" style="--d:0s; --w:88%"></span>
-                    <span class="wf-finding-line" style="--d:0.12s; --w:78%"></span>
-                    <span class="wf-finding-verdict" style="--d:0.32s">SKILL ALIGNMENT + OUTCOME GAP</span>
-                  </div>
-                </div>
+            <div class="project-card-details resume-entry-details">
+              <div class="workflow-blurb"><p>Runs a repeatable preparation loop: scout opponents, assign boards, prepare openings, review games, and improve team decision quality.</p></div>
+              <div class="workflow-stages resume-workflow">
+                <div class="wf-stage"><div class="wf-stage-label">1 · Scout</div><div class="wf-stage-content"><div class="wf-chips wf-chips-vertical"><span class="wf-chip" style="--d:0s">Ratings</span><span class="wf-chip" style="--d:0.16s">Openings</span><span class="wf-chip" style="--d:0.32s">Style</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Prepare</div><div class="wf-stage-content"><div class="wf-coefs"><span class="wf-coef" style="--d:0s">Board 1</span><span class="wf-coef" style="--d:0.12s">Board 2</span><span class="wf-coef" style="--d:0.24s">Board 3</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Match</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:65%"><span></span></div><div class="wf-bar" style="--d:0.15s;--w:82%"><span></span></div></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Review</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">Blunders</span><span class="wf-verdict" style="--d:0.25s">GAME FILE</span></div></div></div>
               </div>
             </div>
-          </div>
+          </article>
+
+          <article class="resume-entry project-card">
+            <div class="project-card-front resume-entry-front">
+              <div class="resume-entry-topline"><span class="resume-category">Extracurricular</span><span class="resume-date">2025–Present</span></div>
+              <div class="resume-title-row"><div class="project-icon resume-icon"><i class="fas fa-industry"></i></div><div><h3>Executive Project Team / Intern Bank Mentor</h3><p class="resume-org">Semiconductor Student Alliance</p></div></div>
+              <p class="project-summary resume-summary">Supports semiconductor-focused student programming, peer mentorship, and industry preparation.</p>
+              <div class="resume-tags"><span>Semiconductors</span><span>Mentorship</span><span>Projects</span></div>
+              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="project-card-details resume-entry-details">
+              <div class="workflow-blurb"><p>Turns scattered internship and industry knowledge into useful student resources through project planning, mentor routing, and technical context.</p></div>
+              <div class="workflow-stages resume-workflow">
+                <div class="wf-stage"><div class="wf-stage-label">1 · Need</div><div class="wf-stage-content"><div class="wf-research-question"><i class="fas fa-question"></i><span>Career gap</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Route</div><div class="wf-stage-content"><div class="wf-research-groups"><span class="wf-research-group" style="--d:0s">Interns</span><span class="wf-research-group" style="--d:0.15s">Mentors</span><span class="wf-research-group" style="--d:0.30s">Events</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Build</div><div class="wf-stage-content"><div class="wf-research-themes"><span style="--d:0s">Resume</span><span style="--d:0.12s">Interview</span><span style="--d:0.24s">Fab terms</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Share</div><div class="wf-stage-content"><div class="wf-research-findings"><span class="wf-finding-line" style="--d:0s;--w:82%"></span><span class="wf-finding-verdict" style="--d:0.25s">STUDENT RESOURCE</span></div></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="resume-entry project-card">
+            <div class="project-card-front resume-entry-front">
+              <div class="resume-entry-topline"><span class="resume-category">Project</span><span class="resume-date">2025</span></div>
+              <div class="resume-title-row"><div class="project-icon resume-icon"><i class="fas fa-solar-panel"></i></div><div><h3>Solar PV Economic Modeling</h3><p class="resume-org">Engineering Economy Analysis</p></div></div>
+              <p class="project-summary resume-summary">Built discounted cash-flow models comparing rooftop PV and grid-only alternatives under scenario sensitivity.</p>
+              <div class="resume-tags"><span>DCF</span><span>NPV</span><span>IRR</span><span>Sensitivity</span></div>
+              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="project-card-details resume-entry-details">
+              <div class="workflow-blurb"><p>Combines public cost, production, rate, degradation, tax-credit, and salvage assumptions into a recommendation model.</p></div>
+              <div class="workflow-stages resume-workflow">
+                <div class="wf-stage"><div class="wf-stage-label">1 · Inputs</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Capex</span><span class="wf-chip" style="--d:0.15s">Yield</span><span class="wf-chip" style="--d:0.30s">Rates</span><span class="wf-chip" style="--d:0.45s">MARR</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · DCF</div><div class="wf-stage-content"><div class="wf-dcf"><span class="wf-dcf-bar" style="--d:0s;--h:14%"></span><span class="wf-dcf-bar" style="--d:0.05s;--h:28%"></span><span class="wf-dcf-bar" style="--d:0.10s;--h:45%"></span><span class="wf-dcf-bar" style="--d:0.15s;--h:70%"></span><span class="wf-dcf-bar" style="--d:0.20s;--h:86%"></span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Sensitivity</div><div class="wf-stage-content"><div class="wf-tornado"><div class="wf-tornado-axis"></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0s;--tw:42%;--td:-42%"></span></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0.12s;--tw:34%;--td:0%"></span></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0.24s;--tw:25%;--td:-25%"></span></div></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Verdict</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">NPV</span><span class="wf-metric" style="--d:0.16s">IRR</span><span class="wf-verdict" style="--d:0.32s">RECOMMEND</span></div></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="resume-entry project-card">
+            <div class="project-card-front resume-entry-front">
+              <div class="resume-entry-topline"><span class="resume-category">Research</span><span class="resume-date">2025</span></div>
+              <div class="resume-title-row"><div class="project-icon resume-icon"><i class="fas fa-brain"></i></div><div><h3>AI Revolution Employability Research</h3><p class="resume-org">Education and workforce-readiness inquiry</p></div></div>
+              <p class="project-summary resume-summary">Studied how AI-era hiring pressures reshape the relationship between education, skills, and employability.</p>
+              <div class="resume-tags"><span>Research</span><span>Interviews</span><span>Thematic Coding</span></div>
+              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="project-card-details resume-entry-details">
+              <div class="workflow-blurb"><p>Frames a research question, gathers stakeholder perspectives, codes themes, and turns qualitative evidence into a clean finding structure.</p></div>
+              <div class="workflow-stages resume-workflow">
+                <div class="wf-stage"><div class="wf-stage-label">1 · Question</div><div class="wf-stage-content"><div class="wf-research-question"><i class="fas fa-question"></i><span>Education vs. AI labor market</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Interviews</div><div class="wf-stage-content"><div class="wf-research-groups"><span class="wf-research-group" style="--d:0s">Employees</span><span class="wf-research-group" style="--d:0.15s">Teachers</span><span class="wf-research-group" style="--d:0.30s">Students</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Themes</div><div class="wf-stage-content"><div class="wf-research-themes"><span style="--d:0s">Adaptability</span><span style="--d:0.12s">Judgment</span><span style="--d:0.24s">Resource use</span></div></div></div>
+                <div class="wf-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Finding</div><div class="wf-stage-content"><div class="wf-research-findings"><span class="wf-finding-line" style="--d:0s;--w:88%"></span><span class="wf-finding-line" style="--d:0.12s;--w:74%"></span><span class="wf-finding-verdict" style="--d:0.30s">SKILL GAP</span></div></div></div>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </div>
@@ -650,6 +463,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=94"></script>
+  <script src="script.js?v=100"></script>
 </body>
 </html>

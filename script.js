@@ -1036,24 +1036,28 @@
 // This section is CSS-driven: lots, wafers, stations, scanners, and robot arms animate in style.css.
 
 
-// ───────── PROJECT CARD EXPANSION ─────────
-// Cards sit as a 2x2 grid. Clicking opens one card to the full row;
-// clicking the same card again collapses it.
+// ───────── INTERACTIVE CARD EXPANSION ─────────
+// Resume entries and legacy project cards use the same expand/collapse behavior.
 (function () {
-  var cards = document.querySelectorAll(".projects-grid-quad .project-card");
-  if (!cards.length) return;
+  var groups = document.querySelectorAll(".projects-grid-quad, .resume-grid");
+  if (!groups.length) return;
 
-  cards.forEach(function (card) {
-    card.addEventListener("click", function () {
-      var wasExpanded = card.classList.contains("expanded");
+  groups.forEach(function (group) {
+    var cards = group.querySelectorAll(".project-card");
+    if (!cards.length) return;
 
-      cards.forEach(function (other) {
-        other.classList.remove("expanded");
+    cards.forEach(function (card) {
+      card.addEventListener("click", function () {
+        var wasExpanded = card.classList.contains("expanded");
+
+        cards.forEach(function (other) {
+          other.classList.remove("expanded");
+        });
+
+        if (!wasExpanded) {
+          card.classList.add("expanded");
+        }
       });
-
-      if (!wasExpanded) {
-        card.classList.add("expanded");
-      }
     });
   });
 })();
