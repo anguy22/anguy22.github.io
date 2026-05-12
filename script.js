@@ -1,5 +1,5 @@
 /* ==========================================================
-   script.js — Green / Black Distribution Skyline · Stable Floating Bubbles
+   script.js — Dark Distribution Skyline · Stable Floating Bubbles
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
@@ -85,23 +85,35 @@
   // animation (random heights → selected target distribution).
   var buildStartedAt = 0;
 
-  // ── Green / black / white architectural palette ──
-  // Buildings stay in the dark green construction palette.
-  // The former bright-green finished state has been removed.
-  var BODY_DARK    = [2, 19, 10];                // near-black green
+  // ── Dark purple / blue / black architectural palette ──
+  // Building colors are motion-driven:
+  //   rising  -> green
+  //   falling -> red
+  //   settled -> grey
+  var BODY_DARK    = [74, 78, 90];
   var BODY_BRIGHT  = BODY_DARK;
-  var SIDE_DARK    = [0, 0, 0];                  // black
+  var SIDE_DARK    = [42, 45, 55];
   var SIDE_BRIGHT  = SIDE_DARK;
-  var TOP_DARK     = [6, 78, 59];                // dark green
+  var TOP_DARK     = [118, 123, 138];
   var TOP_BRIGHT   = TOP_DARK;
-  var TOP_EDGE     = "rgba(167,243,208,0.92)";   // near-white green edge
-  var TOP_GLOW     = "rgba(52,211,153,0.20)";   // soft green glow
-  var FLOOR_LINE   = "rgba(167,243,208,0.18)";   // pale green floor stripes
-  var ACCENT_LINE  = "rgba(167,243,208,0.60)";   // pale green accent
-  var WINDOW_LIT   = "rgba(236,253,245,0.88)";   // near-white window
-  var WINDOW_DIM   = "rgba(52,211,153,0.22)";   // dim green window
 
-  var BRIGHTEN_MS = 0; // bright-green finish removed
+  var RISE_BODY    = [18, 155, 94];
+  var RISE_SIDE    = [8, 88, 58];
+  var RISE_TOP     = [84, 235, 162];
+  var FALL_BODY    = [178, 43, 54];
+  var FALL_SIDE    = [96, 20, 28];
+  var FALL_TOP     = [245, 100, 110];
+  var SETTLE_BODY  = [74, 78, 90];
+  var SETTLE_SIDE  = [42, 45, 55];
+  var SETTLE_TOP   = [118, 123, 138];
+
+  var TOP_EDGE     = "rgba(247,248,255,0.92)";
+  var FLOOR_LINE   = "rgba(205,212,255,0.18)";
+  var ACCENT_LINE  = "rgba(247,248,255,0.62)";
+  var WINDOW_LIT   = "rgba(247,248,255,0.88)";
+  var WINDOW_DIM   = "rgba(172,182,215,0.24)";
+
+  var BRIGHTEN_MS = 0; // bright-purple finish removed
   // 40% faster than before: 3200/5200 → 1920/3120 morph window,
   // 420 → 250 stagger between buildings.
   var MORPH_MIN_MS = 1920;
@@ -115,8 +127,40 @@
     return "rgb(" + r + "," + g + "," + bl + ")";
   }
 
+  function buildingMotionPalette(b) {
+    var dir = b.motionDirection || "settled";
+    if (dir === "rising") {
+      return {
+        body: RISE_BODY,
+        side: RISE_SIDE,
+        top: RISE_TOP,
+        glow: "rgba(84,235,162,0.28)",
+        edge: "rgba(190,255,225,0.96)",
+        accent: "rgba(126,255,190,0.72)"
+      };
+    }
+    if (dir === "falling") {
+      return {
+        body: FALL_BODY,
+        side: FALL_SIDE,
+        top: FALL_TOP,
+        glow: "rgba(245,100,110,0.28)",
+        edge: "rgba(255,205,210,0.96)",
+        accent: "rgba(255,130,140,0.72)"
+      };
+    }
+    return {
+      body: SETTLE_BODY,
+      side: SETTLE_SIDE,
+      top: SETTLE_TOP,
+      glow: "rgba(180,188,205,0.16)",
+      edge: "rgba(235,238,245,0.86)",
+      accent: "rgba(205,212,225,0.50)"
+    };
+  }
+
   // ── Construction palette (light/white instead of yellow) ──
-  var SCAFFOLD     = "rgba(245,240,255,0.30)";
+  var SCAFFOLD     = "rgba(247,248,255,0.34)";
 
   // ── Distribution definitions ────────────────────────────
   // Each distribution exposes fn(t) where t ∈ [0, 1] returns a height
@@ -241,6 +285,7 @@
       var nextH = getTargetHeightForIndex(i, buildings.length, maxH, name, b);
       b.startH = b.h;
       b.targetH = nextH;
+      b.motionDirection = nextH > b.startH + 0.75 ? "rising" : (nextH < b.startH - 0.75 ? "falling" : "settled");
       b.previousBrightness = 0;
       b.startDelay = rand(0, MORPH_STAGGER_MS);
       b.buildDuration = rand(MORPH_MIN_MS, MORPH_MAX_MS);
@@ -349,6 +394,7 @@
         antenna: antenna,
         inset: inset,
         windows: windows,
+        motionDirection: targetH > startH + 0.75 ? "rising" : (targetH < startH - 0.75 ? "falling" : "settled"),
           underConstruction: true
       });
     }
@@ -372,17 +418,17 @@
 
   function drawBackground() {
     var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#020403");
-    grad.addColorStop(0.48, "#041007");
-    grad.addColorStop(1, "#000000");
+    grad.addColorStop(0, "#03040a");
+    grad.addColorStop(0.48, "#070914");
+    grad.addColorStop(1, "#03040a");
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
     var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
-    glow.addColorStop(0, "rgba(16,185,129,0.14)");
-    glow.addColorStop(0.42, "rgba(16,185,129,0.05)");
-    glow.addColorStop(1, "rgba(16,185,129,0)");
+    glow.addColorStop(0, "rgba(73,89,210,0.18)");
+    glow.addColorStop(0.42, "rgba(91,69,190,0.07)");
+    glow.addColorStop(1, "rgba(91,69,190,0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
@@ -484,7 +530,7 @@
     }
 
     ctx.save();
-    ctx.strokeStyle = "rgba(236,253,245," + alpha.toFixed(3) + ")";
+    ctx.strokeStyle = "rgba(247,248,255," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
@@ -512,12 +558,11 @@
     var groundY = y + h;
     var floorSpacing = b.floorSpacing;
 
-    // Brightness 0 → 1 after construction. Body / side / top all
-    // warm up together so the silhouette gains depth as it matures.
-    var bright = b.brightness || 0;
-    var bodyColor = lerpRGB(BODY_DARK, BODY_BRIGHT, bright);
-    var sideColor = lerpRGB(SIDE_DARK, SIDE_BRIGHT, bright);
-    var topColor  = lerpRGB(TOP_DARK,  TOP_BRIGHT,  bright);
+    // Color follows motion state: green while rising, red while falling, grey once settled.
+    var palette = buildingMotionPalette(b);
+    var bodyColor = lerpRGB(palette.body, palette.body, 1);
+    var sideColor = lerpRGB(palette.side, palette.side, 1);
+    var topColor  = lerpRGB(palette.top,  palette.top,  1);
 
     ctx.save();
 
@@ -547,8 +592,8 @@
 
     // Soft glow band just under the top edge
     var glowGrad = ctx.createLinearGradient(x, y, x, y + Math.min(h * 0.4, 60));
-    glowGrad.addColorStop(0, TOP_GLOW);
-    glowGrad.addColorStop(1, "rgba(52,211,153,0)");
+    glowGrad.addColorStop(0, palette.glow);
+    glowGrad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(x, y, w, Math.min(h * 0.4, 60));
 
@@ -560,7 +605,7 @@
     ctx.fillRect(panelX, y + 4, panelW, Math.max(0, h - 4));
 
     // Vertical mullions make wider buildings feel more architectural.
-    ctx.strokeStyle = "rgba(167,243,208,0.10)";
+    ctx.strokeStyle = "rgba(205,212,255,0.10)";
     ctx.lineWidth = 0.65;
     var mullions = Math.max(2, Math.floor(w / 9));
     for (var mv = 1; mv < mullions; mv++) {
@@ -585,11 +630,11 @@
     }
 
     // Vertical accent stripe
-    ctx.fillStyle = ACCENT_LINE;
+    ctx.fillStyle = palette.accent || ACCENT_LINE;
     ctx.fillRect(x + 0.5, y + 1, 1.2, h - 1);
 
     // Bright top edge — defines the current roofline
-    ctx.strokeStyle = TOP_EDGE;
+    ctx.strokeStyle = palette.edge || TOP_EDGE;
     ctx.lineWidth = 1.4;
     ctx.beginPath();
     ctx.moveTo(x, y + 0.5);
@@ -620,7 +665,7 @@
     ctx.globalAlpha = 1;
 
     // Thin roof outline across the depth panel.
-    ctx.strokeStyle = "rgba(236,253,245,0.42)";
+    ctx.strokeStyle = "rgba(247,248,255,0.42)";
     ctx.lineWidth = 0.8;
     ctx.beginPath();
     ctx.moveTo(x + w, y + 0.5);
@@ -669,7 +714,7 @@
       }
 
       if (b.antenna) {
-        ctx.strokeStyle = "rgba(236,253,245,0.55)";
+        ctx.strokeStyle = "rgba(247,248,255,0.55)";
         ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(x + w * 0.72, y);
@@ -677,7 +722,7 @@
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(x + w * 0.72, y - 11, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(236,253,245,0.70)";
+        ctx.fillStyle = "rgba(247,248,255,0.70)";
         ctx.fill();
       }
     }
@@ -779,6 +824,7 @@
           b.h = b.targetH;
           b.underConstruction = false;
           b.morphing = false;
+          b.motionDirection = "settled";
           b.finishedAt = now;
         } else {
           var t = local / b.buildDuration;
@@ -786,8 +832,12 @@
           b.h = b.startH + (b.targetH - b.startH) * eased;
         }
         b.y = baseY - b.h;
+        if (b.underConstruction) {
+          b.motionDirection = b.targetH > b.startH + 0.75 ? "rising" : (b.targetH < b.startH - 0.75 ? "falling" : "settled");
+        }
         b.brightness = 0;
       } else {
+        b.motionDirection = "settled";
         b.brightness = 0;
       }
     }
