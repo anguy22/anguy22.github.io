@@ -1061,3 +1061,44 @@
     });
   });
 })();
+
+// ───────── RESUME HOVER/CLICK INTERACTIONS v120 ─────────
+// Desktop: hover/focus reveals animation. Touch/mobile: tap toggles it.
+(function () {
+  var entries = Array.prototype.slice.call(document.querySelectorAll('.resume-hover-entry'));
+  if (!entries.length) return;
+
+  function closeOthers(active) {
+    entries.forEach(function (entry) {
+      if (entry !== active) entry.classList.remove('resume-active');
+    });
+  }
+
+  entries.forEach(function (entry) {
+    entry.addEventListener('click', function (e) {
+      closeOthers(entry);
+      entry.classList.toggle('resume-active');
+      e.stopPropagation();
+    });
+
+    entry.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        closeOthers(entry);
+        entry.classList.toggle('resume-active');
+      }
+    });
+
+    entry.addEventListener('mouseenter', function () {
+      closeOthers(entry);
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.resume-hover-entry')) {
+      entries.forEach(function (entry) {
+        entry.classList.remove('resume-active');
+      });
+    }
+  });
+})();

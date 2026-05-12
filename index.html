@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=111">
+  <link rel="stylesheet" href="style.css?v=120">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -180,16 +180,16 @@
     <div class="container reveal">
       <h2 class="section-title resume-section-title">Resume</h2>
 
-      <div class="resume-paper resume-paper-authentic" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
-        <div class="resume-document-header">
+      <div class="resume-paper resume-paper-live" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
+        <header class="resume-document-header">
           <h3>Andrew C. Nguyen</h3>
           <p>andrewchinguyen@gmail.com | (208) 860-9436 | Boise, Idaho 83716</p>
-        </div>
+        </header>
 
         <div class="resume-doc-section resume-static-section">
           <h4>EDUCATION &amp; ACADEMIC HONORS</h4>
-          <div class="resume-line-block">
-            <div class="resume-line-main">
+          <div class="resume-static-block">
+            <div class="resume-meta-row three-col">
               <strong>Purdue University</strong>
               <span>West Lafayette, IN</span>
               <span>Est. Graduation: May 2028</span>
@@ -206,210 +206,168 @@
           <p><strong>Coursework:</strong> DoE | SPC | Statistical &amp; Probabilistic Modeling | Data Science Applications | Manufacturing Processes</p>
         </div>
 
-        <div class="resume-doc-section">
+        <div class="resume-doc-section interactive-resume-group">
           <h4>PROFESSIONAL EXPERIENCE</h4>
 
-          <article class="resume-line-card project-card resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row three-col">
                 <strong>Micron Technology</strong>
                 <span>Boise, ID</span>
                 <span>May 2026 - Aug 2026</span>
               </div>
               <p class="resume-role">Industrial Engineering Intern – R&amp;D Modeling &amp; Analytics</p>
-              <ul class="resume-bullets">
-                <li>A</li>
-                <li>B</li>
-                <li>C</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-blurb"><p>Interactive workflow layer for the resume entry while preserving the original resume text above.</p></div>
+            <div class="resume-entry-animation" aria-label="Micron workflow animation replacing original A, B, C bullet placeholders">
+              <div class="resume-flow-note">Hover layer: R&amp;D fab analytics workflow</div>
               <div class="workflow-stages resume-workflow">
-                <div class="wf-stage"><div class="wf-stage-label">1 · R&amp;D data</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Planning</span><span class="wf-chip" style="--d:0.16s">Fab KPIs</span><span class="wf-chip" style="--d:0.32s">SQL</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">1 · Fab signal</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">WIP</span><span class="wf-chip" style="--d:0.14s">Cycle time</span><span class="wf-chip" style="--d:0.28s">Tool states</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">2 · Model</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:86%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:68%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:52%"><span></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · SQL extract</div><div class="wf-stage-content"><div class="wf-spreadsheet"><div class="wf-row wf-row-header"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.40s"><span></span><span></span><span></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">3 · Analytics</div><div class="wf-stage-content"><div class="wf-spreadsheet"><div class="wf-row wf-row-header"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Model</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:86%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:68%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:52%"><span></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="wf-stage"><div class="wf-stage-label">4 · Decision support</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">KPI</span><span class="wf-metric" style="--d:0.16s">Dashboard</span><span class="wf-verdict" style="--d:0.32s">OUTPUT</span></div></div></div>
               </div>
             </div>
           </article>
 
-          <article class="resume-line-card project-card resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row three-col">
                 <strong>Purdue D1 Women’s Soccer</strong>
                 <span>West Lafayette, IN</span>
                 <span>May 2026 - Present</span>
               </div>
               <p class="resume-role">Predictive Data Analyst</p>
-              <ul class="resume-bullets">
-                <li>Developed predictive model framework (Python, SQL) to evaluate opponent tendencies and inform match preparation</li>
-                <li>Translated Big Ten benchmark data across 200+ athletes to deliver 19 player-specific improvement plans to athletes</li>
-                <li>Standardized twice-weekly reports of scouting, recruiting, and performance data to coaching and training staff</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-blurb"><p>Animation mirrors the actual work sequence: gather performance data, model tendencies, benchmark athletes, and deliver recurring reports.</p></div>
+            <div class="resume-entry-animation" aria-label="Developed predictive model framework; translated Big Ten benchmark data across 200+ athletes; standardized twice-weekly reports">
+              <div class="resume-flow-note">Developed predictive model framework → benchmarked 200+ athletes → delivered 19 plans → standardized twice-weekly reports</div>
               <div class="workflow-stages resume-workflow">
-                <div class="wf-stage"><div class="wf-stage-label">1 · Data</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Scouting</span><span class="wf-chip" style="--d:0.16s">Recruiting</span><span class="wf-chip" style="--d:0.32s">Performance</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">1 · Match data</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Scouting</span><span class="wf-chip" style="--d:0.16s">Recruiting</span><span class="wf-chip" style="--d:0.32s">Performance</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">2 · Model</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:78%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:65%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:92%"><span></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Python / SQL model</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:78%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:65%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:92%"><span></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">3 · Benchmark</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">200+ athletes</span><span class="wf-metric" style="--d:0.16s">19 plans</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Benchmark</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">200+ athletes</span><span class="wf-verdict" style="--d:0.20s">19 plans</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">4 · Reports</div><div class="wf-stage-content"><div class="wf-spreadsheet"><div class="wf-row wf-row-header"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Staff reports</div><div class="wf-stage-content"><div class="wf-spreadsheet"><div class="wf-row wf-row-header"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.10s"><span></span><span></span><span></span></div><div class="wf-row" style="--d:0.25s"><span></span><span></span><span></span></div></div></div></div>
               </div>
             </div>
           </article>
 
-          <article class="resume-line-card project-card resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row three-col">
                 <strong>Sawtooth UAV Solutions</strong>
                 <span>Boise, ID</span>
                 <span>Dec 2022 - Aug 2024</span>
               </div>
               <p class="resume-role">Co-Founder and Entrepreneur</p>
-              <ul class="resume-bullets">
-                <li>Managed 10 end-to-end client relationships and produced 56 FPV video missions with 100% on-time delivery</li>
-                <li>Built automation utilities in C / Python, cutting sortie setup time/tracking in half and streamlining client delivery</li>
-                <li>Designed custom drone frames in SolidWorks, scaling fleet to 4 aircraft across multi-rotor and fixed-wing platforms</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-blurb"><p>Animation converts the resume line into a client-delivery pipeline: scope, build, fly, edit, and deliver.</p></div>
+            <div class="resume-entry-animation" aria-label="Managed 10 client relationships; produced 56 FPV missions with 100% on-time delivery; built C/Python utilities; designed SolidWorks drone frames">
+              <div class="resume-flow-note">10 client relationships → 56 FPV missions → C/Python automation → SolidWorks fleet scaling</div>
               <div class="workflow-stages resume-workflow">
-                <div class="wf-stage"><div class="wf-stage-label">1 · Client</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">10 clients</span><span class="wf-chip" style="--d:0.16s">Scope</span><span class="wf-chip" style="--d:0.32s">Mission</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">1 · Client scope</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">10 clients</span><span class="wf-chip" style="--d:0.16s">Mission brief</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">2 · Build</div><div class="wf-stage-content"><div class="wf-coefs"><span class="wf-coef" style="--d:0s">C</span><span class="wf-coef" style="--d:0.12s">Python</span><span class="wf-coef" style="--d:0.24s">SolidWorks</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · Build tools</div><div class="wf-stage-content"><div class="wf-coefs"><span class="wf-coef" style="--d:0s">C utilities</span><span class="wf-coef" style="--d:0.12s">Python tracking</span><span class="wf-coef" style="--d:0.24s">SolidWorks frames</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">3 · Missions</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:56%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:100%"><span></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Fly missions</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:56%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:100%"><span></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">4 · Delivery</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">56 FPV</span><span class="wf-verdict" style="--d:0.20s">100% ON-TIME</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">4 · Deliver</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">4 aircraft</span><span class="wf-metric" style="--d:0.14s">56 FPV</span><span class="wf-verdict" style="--d:0.28s">100% ON-TIME</span></div></div></div>
               </div>
             </div>
           </article>
 
-          <article class="resume-line-card project-card resume-entry compact-resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry compact-resume-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row three-col">
                 <strong>Diana’s Korean Market</strong>
                 <span>Boise, ID</span>
                 <span>Dec 2022 - Aug 2024</span>
               </div>
-              <ul class="resume-bullets">
-                <li>Developed customer service skills in Korean language while servicing diverse customer base as sole weekend cashier/clerk</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View interaction <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-stages resume-workflow mini-workflow">
-                <div class="wf-stage"><div class="wf-stage-label">Customer flow</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Korean</span><span class="wf-chip" style="--d:0.16s">Service</span><span class="wf-chip" style="--d:0.32s">Clerk</span></div></div></div>
-              </div>
+            <div class="resume-entry-animation" aria-label="Developed customer service skills in Korean language while servicing diverse customer base as sole weekend cashier and clerk">
+              <div class="resume-flow-note">Korean-language service → diverse customer base → sole weekend cashier/clerk</div>
+              <div class="workflow-stages resume-workflow mini-workflow"><div class="wf-stage"><div class="wf-stage-label">Customer interaction</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Korean</span><span class="wf-chip" style="--d:0.16s">Service</span><span class="wf-chip" style="--d:0.32s">Weekend clerk</span></div></div></div></div>
             </div>
           </article>
         </div>
 
-        <div class="resume-doc-section">
+        <div class="resume-doc-section interactive-resume-group">
           <h4>EXTRACURRICULAR INVOLVEMENT</h4>
 
-          <article class="resume-line-card project-card resume-entry compact-resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry compact-resume-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row three-col">
                 <strong>Collegiate Chess League (CCL)</strong>
                 <span>Team Captain and Competitor</span>
                 <span>Aug 2024 – May 2026</span>
               </div>
-              <ul class="resume-bullets">
-                <li>Competed on a 6-member team as a 2000+ ELO-rated competitor against top US universities for team Purdue</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
+            <div class="resume-entry-animation" aria-label="Competed on a 6-member team as a 2000+ ELO-rated competitor against top US universities for team Purdue">
+              <div class="resume-flow-note">6-member Purdue team → top university competition → 2000+ ELO competitor</div>
               <div class="workflow-stages resume-workflow mini-workflow">
                 <div class="wf-stage"><div class="wf-stage-label">Prepare</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Scout</span><span class="wf-chip" style="--d:0.16s">Board prep</span><span class="wf-chip" style="--d:0.32s">Compete</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">Result</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">6-member team</span><span class="wf-verdict" style="--d:0.20s">2000+ ELO</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">Rating signal</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">6-member team</span><span class="wf-verdict" style="--d:0.20s">2000+ ELO</span></div></div></div>
               </div>
             </div>
           </article>
 
-          <article class="resume-line-card project-card resume-entry compact-resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry compact-resume-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row three-col">
                 <strong>Autodesk</strong>
                 <span>Design &amp; Make Ambassador</span>
                 <span>Jun 2025 – May 2026</span>
               </div>
-              <ul class="resume-bullets">
-                <li>Mentored students using AutoCAD software and consulted peers on engineering design assemblies</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-stages resume-workflow mini-workflow">
-                <div class="wf-stage"><div class="wf-stage-label">Mentor</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">AutoCAD</span><span class="wf-chip" style="--d:0.16s">Design</span><span class="wf-chip" style="--d:0.32s">Assemblies</span></div></div></div>
-              </div>
+            <div class="resume-entry-animation" aria-label="Mentored students using AutoCAD software and consulted peers on engineering design assemblies">
+              <div class="resume-flow-note">AutoCAD mentoring → peer design consulting → engineering assemblies</div>
+              <div class="workflow-stages resume-workflow mini-workflow"><div class="wf-stage"><div class="wf-stage-label">Mentor</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">AutoCAD</span><span class="wf-chip" style="--d:0.16s">Design</span><span class="wf-chip" style="--d:0.32s">Assemblies</span></div></div></div></div>
             </div>
           </article>
         </div>
 
-        <div class="resume-doc-section">
+        <div class="resume-doc-section interactive-resume-group">
           <h4>PROJECTS</h4>
 
-          <article class="resume-line-card project-card resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row two-col">
                 <strong>Athletic Recruiting Filter &amp; ETL Analytics Pipeline</strong>
                 <span>Data Mine at Purdue University</span>
               </div>
-              <ul class="resume-bullets">
-                <li>Led 5-member team to build ETL pipeline and export top 15% recruits, saving est. 40 hrs/week of manual staff review</li>
-                <li>Engineered KPI framework to quantify prospective player strengths in 200+ emails/week with rule-based scoring logic</li>
-                <li>Visualized model performance in Tableau to Purdue Athletics stakeholders and green-lit for continued implementation</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-blurb"><p>Interactive workflow maps the ETL project from inbound emails to ranked recruit exports and stakeholder Tableau review.</p></div>
+            <div class="resume-entry-animation" aria-label="Led 5-member team to build ETL pipeline and export top 15 percent recruits, saving estimated 40 hours per week; engineered KPI framework for 200+ emails per week; visualized Tableau model performance">
+              <div class="resume-flow-note">5-member ETL team → top 15% recruit export → 200+ emails/week → Tableau stakeholder review</div>
               <div class="workflow-stages resume-workflow">
                 <div class="wf-stage wf-stage-email"><div class="wf-stage-label">1 · Emails</div><div class="wf-stage-content"><div class="wf-envelope"><div class="wf-envelope-flap"></div><div class="wf-envelope-body"><span class="wf-email-line"></span><span class="wf-email-line"></span><span class="wf-email-line short"></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">2 · ETL</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Parse</span><span class="wf-chip" style="--d:0.16s">Score</span><span class="wf-chip" style="--d:0.32s">Top 15%</span></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">2 · ETL score</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Parse</span><span class="wf-chip" style="--d:0.16s">Rule score</span><span class="wf-chip" style="--d:0.32s">Top 15%</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">3 · KPI</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:83%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:72%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:91%"><span></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · KPI framework</div><div class="wf-stage-content"><div class="wf-bars"><div class="wf-bar" style="--d:0s;--w:83%"><span></span></div><div class="wf-bar" style="--d:0.12s;--w:72%"><span></span></div><div class="wf-bar" style="--d:0.24s;--w:91%"><span></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="wf-stage"><div class="wf-stage-label">4 · Tableau</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">200+ emails/week</span><span class="wf-verdict" style="--d:0.20s">40 HRS/WEEK</span></div></div></div>
               </div>
             </div>
           </article>
 
-          <article class="resume-line-card project-card resume-entry">
-            <div class="project-card-front resume-line-front">
-              <div class="resume-line-main">
+          <article class="resume-line-card resume-hover-entry" tabindex="0">
+            <div class="resume-entry-summary">
+              <div class="resume-meta-row two-col">
                 <strong>Solar PV System Economic Modeling &amp; Sensitivity Analysis</strong>
                 <span>Purdue University</span>
               </div>
-              <ul class="resume-bullets">
-                <li>Built 6 parametric models projecting 40-year DCF’s and applied NPV/IRR benchmarks to classify recommendations</li>
-                <li>Conducted multi-variable diagnostic analytics across energy yield and price escalation inputs to identify system KPIs</li>
-              </ul>
-              <span class="project-expand-hint resume-expand">View workflow <i class="fas fa-chevron-down"></i></span>
             </div>
-            <div class="project-card-details resume-entry-details">
-              <div class="workflow-blurb"><p>Interactive workflow visualizes the model path from assumptions to discounted cash flow, sensitivity testing, and recommendation classification.</p></div>
+            <div class="resume-entry-animation" aria-label="Built 6 parametric models projecting 40-year DCFs and applied NPV/IRR benchmarks; conducted multi-variable diagnostic analytics across energy yield and price escalation inputs">
+              <div class="resume-flow-note">6 parametric models → 40-year DCF → NPV/IRR benchmarks → KPI sensitivity</div>
               <div class="workflow-stages resume-workflow">
                 <div class="wf-stage"><div class="wf-stage-label">1 · Inputs</div><div class="wf-stage-content"><div class="wf-chips"><span class="wf-chip" style="--d:0s">Yield</span><span class="wf-chip" style="--d:0.16s">Capex</span><span class="wf-chip" style="--d:0.32s">Escalation</span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="wf-stage"><div class="wf-stage-label">2 · 40-year DCF</div><div class="wf-stage-content"><div class="wf-dcf"><span class="wf-dcf-bar" style="--d:0s;--h:18%"></span><span class="wf-dcf-bar" style="--d:0.05s;--h:34%"></span><span class="wf-dcf-bar" style="--d:0.10s;--h:52%"></span><span class="wf-dcf-bar" style="--d:0.15s;--h:73%"></span><span class="wf-dcf-bar" style="--d:0.20s;--h:88%"></span></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="wf-stage"><div class="wf-stage-label">3 · Sensitivity</div><div class="wf-stage-content"><div class="wf-tornado"><div class="wf-tornado-axis"></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0s;--tw:42%;--td:-42%"></span></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0.12s;--tw:34%;--td:0%"></span></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0.24s;--tw:26%;--td:-26%"></span></div></div></div></div>
+                <div class="wf-stage"><div class="wf-stage-label">3 · Diagnostics</div><div class="wf-stage-content"><div class="wf-tornado"><div class="wf-tornado-axis"></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0s;--tw:42%;--td:-42%"></span></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0.12s;--tw:34%;--td:0%"></span></div><div class="wf-tor-row"><span class="wf-tor-bar" style="--d:0.24s;--tw:26%;--td:-26%"></span></div></div></div></div>
                 <div class="wf-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="wf-stage"><div class="wf-stage-label">4 · Classify</div><div class="wf-stage-content"><div class="wf-classify"><span class="wf-metric" style="--d:0s">NPV</span><span class="wf-metric" style="--d:0.16s">IRR</span><span class="wf-verdict" style="--d:0.32s">RECOMMEND</span></div></div></div>
               </div>
@@ -546,6 +504,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=111"></script>
+  <script src="script.js?v=120"></script>
 </body>
 </html>
