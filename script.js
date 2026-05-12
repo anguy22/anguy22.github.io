@@ -1117,3 +1117,51 @@
     paper.classList.remove('resume-paper-active');
   });
 })();
+
+
+// ───────── RESUME ENTRY EXPANSION v141 ─────────
+(function () {
+  var entries = Array.prototype.slice.call(document.querySelectorAll('.resume-entry.is-expandable'));
+  if (!entries.length) return;
+
+  function closeOthers(active) {
+    entries.forEach(function (entry) {
+      if (entry !== active) {
+        entry.classList.remove('is-open');
+        var btn = entry.querySelector('.resume-entry-toggle');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  entries.forEach(function (entry) {
+    var btn = entry.querySelector('.resume-entry-toggle');
+
+    function toggleEntry(e) {
+      if (e) e.preventDefault();
+      var willOpen = !entry.classList.contains('is-open');
+      closeOthers(entry);
+      entry.classList.toggle('is-open', willOpen);
+      if (btn) btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    }
+
+    entry.addEventListener('click', function (e) {
+      if (e.target.closest('.resume-entry-toggle') || e.target.closest('.resume-entry-head') || e.target === entry) {
+        toggleEntry(e);
+      }
+    });
+
+    if (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        toggleEntry(e);
+      });
+    }
+
+    entry.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        toggleEntry(e);
+      }
+    });
+  });
+})();

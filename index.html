@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=130">
+  <link rel="stylesheet" href="style.css?v=141">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -176,25 +176,21 @@
     </div>
   </section>
 
+
   <section id="projects" class="section section-alt resume-section">
     <div class="container reveal">
       <h2 class="section-title resume-section-title">Resume</h2>
 
-      <div class="resume-paper resume-paper-live resume-story-paper" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
-        <div class="resume-hover-control" aria-hidden="true">
-          <span class="resume-hover-dot"></span>
-          <span>Hover over the document to animate the work behind each line</span>
-        </div>
-
-        <header class="resume-document-header resume-story-header">
+      <div class="resume-document-v2" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
+        <header class="resume-doc-head">
           <h3>Andrew C. Nguyen</h3>
           <p>andrewchinguyen@gmail.com | (208) 860-9436 | Boise, Idaho 83716</p>
         </header>
 
-        <div class="resume-doc-section resume-static-section">
+        <div class="resume-doc-block">
           <h4>EDUCATION &amp; ACADEMIC HONORS</h4>
-          <div class="resume-static-block">
-            <div class="resume-meta-row three-col">
+          <div class="resume-static-card">
+            <div class="resume-line-grid line-3">
               <strong>Purdue University</strong>
               <span>West Lafayette, IN</span>
               <span>Est. Graduation: May 2028</span>
@@ -205,167 +201,361 @@
           </div>
         </div>
 
-        <div class="resume-doc-section resume-static-section">
+        <div class="resume-doc-block">
           <h4>TOOLS &amp; COURSEWORK</h4>
-          <p><strong>Tools:</strong> Python (pandas, scikit-learn, NumPy) | SQL | Tableau | MATLAB | Excel | CAD</p>
-          <p><strong>Coursework:</strong> DoE | SPC | Statistical &amp; Probabilistic Modeling | Data Science Applications | Manufacturing Processes</p>
+          <div class="resume-static-card">
+            <p><strong>Tools:</strong> Python (pandas, scikit-learn, NumPy) | SQL | Tableau | MATLAB | Excel | CAD</p>
+            <p><strong>Coursework:</strong> DoE | SPC | Statistical &amp; Probabilistic Modeling | Data Science Applications | Manufacturing Processes</p>
+          </div>
         </div>
 
-        <div class="resume-doc-section resume-story-group">
+        <div class="resume-doc-block">
           <h4>PROFESSIONAL EXPERIENCE</h4>
 
-          <article class="resume-story-card micron-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row three-col">
+          <article class="resume-entry is-expandable" tabindex="0">
+            <div class="resume-entry-head">
+              <div class="resume-entry-title">
                 <strong>Micron Technology</strong>
+                <span>Industrial Engineering Intern – R&amp;D Modeling &amp; Analytics</span>
+              </div>
+              <div class="resume-entry-meta">
                 <span>Boise, ID</span>
                 <span>May 2026 - Aug 2026</span>
               </div>
-              <p class="resume-role">Industrial Engineering Intern – R&amp;D Modeling &amp; Analytics</p>
+              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle Micron workflow">
+                <span>Workflow</span><i class="fas fa-plus"></i>
+              </button>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">R&amp;D fab analytics: signal extraction, KPI modeling, and dashboard-ready decision support.</p>
-              <div class="impact-fab">
-                <span class="fab-wafer"><i></i><i></i><i></i><i></i></span>
-                <span class="fab-sql">SQL</span>
-                <span class="fab-kpi">KPI</span>
-                <span class="fab-dashboard"><b></b><b></b><b></b></span>
+            <div class="resume-entry-panel">
+              <p class="resume-panel-summary">Fab producing wafers → data tables → prediction projections/models → dashboards</p>
+              <div class="workflow-track steps-4">
+                <div class="workflow-step">
+                  <div class="mini-visual fab-visual">
+                    <div class="fab-box"></div>
+                    <div class="wafer-stack"><span></span><span></span><span></span></div>
+                  </div>
+                  <div class="step-label">Fab / wafers</div>
+                  <div class="step-desc">Wafer output and process signals coming off the fab floor.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual table-visual">
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                  </div>
+                  <div class="step-label">Data tables</div>
+                  <div class="step-desc">Structured operational data staged for analysis.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual model-visual">
+                    <div class="axis x"></div><div class="axis y"></div>
+                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M8 58 C28 44, 48 48, 68 36 S96 18, 112 14"/></svg>
+                    <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div>
+                  </div>
+                  <div class="step-label">Prediction models</div>
+                  <div class="step-desc">Forecasts and projections built from fab behavior.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual dashboard-visual">
+                    <div class="dash-card main"><b style="--h:70%"></b><b style="--h:44%"></b><b style="--h:84%"></b></div>
+                    <div class="dash-card side"><i></i><i></i></div>
+                  </div>
+                  <div class="step-label">Dashboards</div>
+                  <div class="step-desc">Decision-ready KPI views for fab operations.</div>
+                </div>
               </div>
             </div>
           </article>
 
-          <article class="resume-story-card soccer-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row three-col">
+          <article class="resume-entry is-expandable" tabindex="0">
+            <div class="resume-entry-head">
+              <div class="resume-entry-title">
                 <strong>Purdue D1 Women’s Soccer</strong>
+                <span>Predictive Data Analyst</span>
+              </div>
+              <div class="resume-entry-meta">
                 <span>West Lafayette, IN</span>
                 <span>May 2026 - Present</span>
               </div>
-              <p class="resume-role">Predictive Data Analyst</p>
+              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle Purdue Soccer workflow">
+                <span>Workflow</span><i class="fas fa-plus"></i>
+              </button>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Developed predictive model framework, translated 200+ athlete benchmarks, and delivered 19 player-specific plans.</p>
-              <div class="impact-soccer">
-                <div class="pitch-line mid"></div><div class="pitch-box left"></div><div class="pitch-box right"></div>
-                <span class="player-dot d1"></span><span class="player-dot d2"></span><span class="player-dot d3"></span><span class="player-dot d4"></span>
-                <div class="soccer-bars"><b style="--w:82%"></b><b style="--w:66%"></b><b style="--w:94%"></b></div>
+            <div class="resume-entry-panel">
+              <p class="resume-panel-summary">Soccer field with player icons moving → data tables → prediction/models → gameplans</p>
+              <div class="workflow-track steps-4">
+                <div class="workflow-step">
+                  <div class="mini-visual field-visual">
+                    <div class="field-midline"></div><div class="field-center"></div>
+                    <span class="player a"></span><span class="player b"></span><span class="player c"></span><span class="player d"></span>
+                  </div>
+                  <div class="step-label">Player movement</div>
+                  <div class="step-desc">Field positioning and opponent tendencies mapped visually.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual table-visual compact">
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                  </div>
+                  <div class="step-label">Data tables</div>
+                  <div class="step-desc">Benchmark and scouting data organized player by player.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual model-visual bars-only">
+                    <div class="prob-bars"><b style="--h:76%"></b><b style="--h:58%"></b><b style="--h:88%"></b></div>
+                    <div class="prob-chip">Model</div>
+                  </div>
+                  <div class="step-label">Prediction / models</div>
+                  <div class="step-desc">Patterns converted into practical predictive insights.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual gameplan-visual">
+                    <div class="clip-board"></div>
+                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M15 54 C34 44, 48 40, 60 26 S83 22, 102 15"/><path d="M28 20 L44 30 L36 40"/></svg>
+                  </div>
+                  <div class="step-label">Gameplans</div>
+                  <div class="step-desc">Findings distilled into actionable preparation plans.</div>
+                </div>
               </div>
             </div>
           </article>
 
-          <article class="resume-story-card uav-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row three-col">
+          <article class="resume-entry is-expandable" tabindex="0">
+            <div class="resume-entry-head">
+              <div class="resume-entry-title">
                 <strong>Sawtooth UAV Solutions</strong>
+                <span>Co-Founder and Entrepreneur</span>
+              </div>
+              <div class="resume-entry-meta">
                 <span>Boise, ID</span>
                 <span>Dec 2022 - Aug 2024</span>
               </div>
-              <p class="resume-role">Co-Founder and Entrepreneur</p>
+              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle Sawtooth UAV workflow">
+                <span>Workflow</span><i class="fas fa-plus"></i>
+              </button>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Managed 10 client relationships, produced 56 FPV missions with 100% on-time delivery, and scaled a 4-aircraft fleet.</p>
-              <div class="impact-drone">
-                <span class="drone-body"><i></i><i></i><i></i><i></i></span>
-                <svg viewBox="0 0 220 70" aria-hidden="true"><path d="M12 58 C55 12, 91 62, 126 31 S185 5, 210 42" /></svg>
-                <span class="drone-label one">56 missions</span><span class="drone-label two">100% on-time</span>
+            <div class="resume-entry-panel">
+              <p class="resume-panel-summary">Drones flying → automated flight paths → online client footage delivery</p>
+              <div class="workflow-track steps-3">
+                <div class="workflow-step">
+                  <div class="mini-visual drone-visual">
+                    <div class="drone-shape"><i></i><i></i><i></i><i></i></div>
+                    <span class="flight-dot one"></span><span class="flight-dot two"></span>
+                  </div>
+                  <div class="step-label">Drone missions</div>
+                  <div class="step-desc">FPV aircraft collecting footage across client missions.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual path-visual">
+                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M12 58 C24 20, 52 16, 68 44 S102 52, 108 16"/></svg>
+                    <span class="waypoint w1"></span><span class="waypoint w2"></span><span class="waypoint w3"></span>
+                  </div>
+                  <div class="step-label">Automated paths</div>
+                  <div class="step-desc">Flight routines streamlined with automation utilities.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual delivery-visual">
+                    <div class="video-window"></div>
+                    <div class="upload-bar"><b></b></div>
+                    <div class="delivery-chip">Delivered</div>
+                  </div>
+                  <div class="step-label">Client delivery</div>
+                  <div class="step-desc">Footage packaged and delivered online to clients.</div>
+                </div>
               </div>
             </div>
           </article>
 
-          <article class="resume-story-card market-card compact-story-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row three-col">
+          <article class="resume-entry resume-entry-static">
+            <div class="resume-entry-head static-only">
+              <div class="resume-entry-title">
                 <strong>Diana’s Korean Market</strong>
+                <span>Weekend cashier / clerk</span>
+              </div>
+              <div class="resume-entry-meta">
                 <span>Boise, ID</span>
                 <span>Dec 2022 - Aug 2024</span>
               </div>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Developed customer service skills in Korean language while serving a diverse customer base as sole weekend cashier/clerk.</p>
-              <div class="impact-service"><span>안녕하세요</span><span>Service</span><span>Checkout</span></div>
-            </div>
+            <p class="resume-entry-note">Developed customer service skills in Korean while serving a diverse customer base as sole weekend cashier/clerk.</p>
           </article>
         </div>
 
-        <div class="resume-doc-section resume-story-group">
+        <div class="resume-doc-block">
           <h4>EXTRACURRICULAR INVOLVEMENT</h4>
 
-          <article class="resume-story-card chess-card compact-story-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row three-col">
+          <article class="resume-entry resume-entry-static compact-static">
+            <div class="resume-entry-head static-only">
+              <div class="resume-entry-title">
                 <strong>Collegiate Chess League (CCL)</strong>
                 <span>Team Captain and Competitor</span>
+              </div>
+              <div class="resume-entry-meta">
+                <span>&nbsp;</span>
                 <span>Aug 2024 – May 2026</span>
               </div>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Competed on a 6-member Purdue team as a 2000+ ELO-rated competitor against top US universities.</p>
-              <div class="impact-chess"><span class="king">♘</span><div class="elo-ring"><b>2000+</b><small>ELO</small></div><span class="team-label">6-member team</span></div>
-            </div>
+            <p class="resume-entry-note">Competed on a 6-member Purdue team as a 2000+ ELO-rated competitor against top US universities.</p>
           </article>
 
-          <article class="resume-story-card cad-card compact-story-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row three-col">
+          <article class="resume-entry resume-entry-static compact-static">
+            <div class="resume-entry-head static-only">
+              <div class="resume-entry-title">
                 <strong>Autodesk</strong>
                 <span>Design &amp; Make Ambassador</span>
+              </div>
+              <div class="resume-entry-meta">
+                <span>&nbsp;</span>
                 <span>Jun 2025 – May 2026</span>
               </div>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Mentored students using AutoCAD software and consulted peers on engineering design assemblies.</p>
-              <div class="impact-cad"><span class="cube"></span><span class="dimension dim-a"></span><span class="dimension dim-b"></span><span class="cad-label">AutoCAD assemblies</span></div>
-            </div>
+            <p class="resume-entry-note">Mentored students using AutoCAD software and consulted peers on engineering design assemblies.</p>
           </article>
         </div>
 
-        <div class="resume-doc-section resume-story-group">
+        <div class="resume-doc-block">
           <h4>PROJECTS</h4>
 
-          <article class="resume-story-card recruiting-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row two-col">
+          <article class="resume-entry is-expandable" tabindex="0">
+            <div class="resume-entry-head">
+              <div class="resume-entry-title">
                 <strong>Athletic Recruiting Filter &amp; ETL Analytics Pipeline</strong>
                 <span>Data Mine at Purdue University</span>
               </div>
+              <div class="resume-entry-meta resume-entry-meta-single">
+                <span>Interactive workflow</span>
+              </div>
+              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle recruiting workflow">
+                <span>Workflow</span><i class="fas fa-plus"></i>
+              </button>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Led a 5-member team to export the top 15% of recruits, saving an estimated 40 hrs/week across 200+ emails/week.</p>
-              <div class="impact-etl">
-                <span class="mail-stack"><i></i><i></i><i></i></span>
-                <span class="etl-arrow"></span>
-                <span class="score-model"><b style="--w:92%"></b><b style="--w:74%"></b><b style="--w:58%"></b></span>
-                <span class="top-badge">Top 15%</span>
-                <span class="save-badge">40 hrs/week</span>
+            <div class="resume-entry-panel">
+              <p class="resume-panel-summary">Player email → fetching and processing → algorithm scoring → prediction models/projections → CSV and graph data for coaches</p>
+              <div class="workflow-track steps-5">
+                <div class="workflow-step">
+                  <div class="mini-visual email-visual">
+                    <div class="mail-card"></div>
+                    <div class="mail-line l1"></div><div class="mail-line l2"></div>
+                    <div class="mail-player">#10</div>
+                  </div>
+                  <div class="step-label">Player email</div>
+                  <div class="step-desc">Recruit messages arrive with raw player information.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual process-visual">
+                    <div class="gear one"></div><div class="gear two"></div>
+                    <div class="fetch-pill">Fetch</div>
+                  </div>
+                  <div class="step-label">Fetch / process</div>
+                  <div class="step-desc">Text is parsed, cleaned, and structured for downstream use.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual scoring-visual">
+                    <div class="score-ring"><b>87</b></div>
+                    <div class="score-bars"><i style="--w:78%"></i><i style="--w:56%"></i></div>
+                  </div>
+                  <div class="step-label">Algorithm scoring</div>
+                  <div class="step-desc">Rules and weights convert features into ranked signals.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual model-visual bars-only">
+                    <div class="prob-bars"><b style="--h:64%"></b><b style="--h:84%"></b><b style="--h:52%"></b></div>
+                    <div class="prob-chip">Projection</div>
+                  </div>
+                  <div class="step-label">Models / projections</div>
+                  <div class="step-desc">Ranked recruits are modeled for coach-facing decisions.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual export-visual">
+                    <div class="csv-sheet"></div>
+                    <div class="mini-chart"><b style="--h:42%"></b><b style="--h:70%"></b><b style="--h:88%"></b></div>
+                  </div>
+                  <div class="step-label">CSV + graphs</div>
+                  <div class="step-desc">Results exported into coach-ready files and visual summaries.</div>
+                </div>
               </div>
             </div>
           </article>
 
-          <article class="resume-story-card solar-card">
-            <div class="resume-entry-summary">
-              <div class="resume-meta-row two-col">
+          <article class="resume-entry is-expandable" tabindex="0">
+            <div class="resume-entry-head">
+              <div class="resume-entry-title">
                 <strong>Solar PV System Economic Modeling &amp; Sensitivity Analysis</strong>
                 <span>Purdue University</span>
               </div>
+              <div class="resume-entry-meta resume-entry-meta-single">
+                <span>Interactive workflow</span>
+              </div>
+              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle solar workflow">
+                <span>Workflow</span><i class="fas fa-plus"></i>
+              </button>
             </div>
-            <div class="resume-impact-panel">
-              <p class="impact-caption">Built 6 parametric 40-year DCF models and used NPV/IRR benchmarks with sensitivity diagnostics to classify recommendations.</p>
-              <div class="impact-solar">
-                <span class="solar-panel"><i></i><i></i><i></i><i></i></span>
-                <svg viewBox="0 0 220 80" aria-hidden="true"><path class="cash-curve" d="M10 68 C52 70, 65 46, 96 48 S139 22, 168 28 S197 12, 212 18" /></svg>
-                <div class="sensitivity-bars"><b style="--w:72%"></b><b style="--w:54%"></b><b style="--w:38%"></b></div>
+            <div class="resume-entry-panel">
+              <p class="resume-panel-summary">Historical financial data → models/projections → engineering economics → technical report</p>
+              <div class="workflow-track steps-4">
+                <div class="workflow-step">
+                  <div class="mini-visual finance-visual">
+                    <div class="candles"><i class="up"></i><i class="down"></i><i class="up"></i><i class="up"></i></div>
+                    <div class="hist-line"></div>
+                  </div>
+                  <div class="step-label">Historical data</div>
+                  <div class="step-desc">Past cost and financial trends establish the base case.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual model-visual">
+                    <div class="axis x"></div><div class="axis y"></div>
+                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M8 56 C24 58, 42 44, 60 40 S86 22, 112 18"/></svg>
+                    <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div>
+                  </div>
+                  <div class="step-label">Models / projections</div>
+                  <div class="step-desc">DCF scenarios project long-run system performance.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual econ-visual">
+                    <div class="econ-chip">NPV</div>
+                    <div class="econ-chip">IRR</div>
+                    <div class="econ-chip">MARR</div>
+                  </div>
+                  <div class="step-label">Engineering economics</div>
+                  <div class="step-desc">Economic criteria classify recommendations and tradeoffs.</div>
+                </div>
+                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="workflow-step">
+                  <div class="mini-visual report-visual">
+                    <div class="report-page"></div>
+                    <div class="report-line r1"></div><div class="report-line r2"></div><div class="report-line r3"></div>
+                  </div>
+                  <div class="step-label">Technical report</div>
+                  <div class="step-desc">Results are summarized into a final engineering report.</div>
+                </div>
               </div>
             </div>
           </article>
         </div>
 
-        <div class="resume-doc-section resume-static-section resume-interests">
+        <div class="resume-doc-block resume-interests-v2">
           <h4>INTERESTS</h4>
           <p>Rapid Chess | Soccer | Hiking | Game/Decision Theory | Tech Sector Coverage | Kung Fu Movies</p>
         </div>
       </div>
     </div>
   </section>
+
 
 <section id="education" class="section section-alt animated-education-section edu-exp-section">
     <span id="experience" class="section-anchor"></span>
@@ -488,6 +678,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=130"></script>
+  <script src="script.js?v=141"></script>
 </body>
 </html>
