@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=141">
+  <link rel="stylesheet" href="style.css?v=142">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -184,28 +184,60 @@
       <div class="resume-document-v2" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
         <header class="resume-doc-head">
           <h3>Andrew C. Nguyen</h3>
-          <p>andrewchinguyen@gmail.com | (208) 860-9436 | Boise, Idaho 83716</p>
+          <p>Industrial Engineering &middot; Statistics &middot; Purdue '28</p>
         </header>
 
-        <div class="resume-doc-block">
-          <h4>EDUCATION &amp; ACADEMIC HONORS</h4>
-          <div class="resume-static-card">
-            <div class="resume-line-grid line-3">
-              <strong>Purdue University</strong>
-              <span>West Lafayette, IN</span>
-              <span>Est. Graduation: May 2028</span>
-            </div>
-            <p>B.S. Industrial Engineering | Minor: Statistics <strong>GPA: 3.85/4.00</strong></p>
-            <p>Purdue Presidential Scholar • Simplot Foundation Scholar • Redinger Family Scholarship</p>
-            <p>Certifications: Semiconductors and Microelectronics • Semiconductor Fabrication • Data Science</p>
-          </div>
-        </div>
+        <div class="resume-doc-block edu-capabilities-block">
+          <h4>EDUCATION &amp; CAPABILITIES</h4>
+          <div class="edu-cap-grid">
+            <div class="edu-cap-info">
+              <div class="edu-cap-school-row">
+                <strong>Purdue University</strong>
+                <span class="edu-cap-gpa">GPA 3.85 / 4.00</span>
+              </div>
+              <p class="edu-cap-degree">B.S. Industrial Engineering &middot; Minor in Statistics</p>
+              <p class="edu-cap-meta">West Lafayette, IN &middot; Est. May 2028</p>
 
-        <div class="resume-doc-block">
-          <h4>TOOLS &amp; COURSEWORK</h4>
-          <div class="resume-static-card">
-            <p><strong>Tools:</strong> Python (pandas, scikit-learn, NumPy) | SQL | Tableau | MATLAB | Excel | CAD</p>
-            <p><strong>Coursework:</strong> DoE | SPC | Statistical &amp; Probabilistic Modeling | Data Science Applications | Manufacturing Processes</p>
+              <div class="edu-cap-section">
+                <span class="edu-cap-tag-label">Honors</span>
+                <div class="edu-cap-tag-row">
+                  <span class="edu-cap-pill honor"><i class="fas fa-medal"></i>Presidential Scholar</span>
+                  <span class="edu-cap-pill honor"><i class="fas fa-medal"></i>Simplot Scholar</span>
+                  <span class="edu-cap-pill honor"><i class="fas fa-medal"></i>Redinger Family</span>
+                </div>
+              </div>
+
+              <div class="edu-cap-section">
+                <span class="edu-cap-tag-label">Certifications</span>
+                <div class="edu-cap-tag-row">
+                  <span class="edu-cap-pill cert"><i class="fas fa-microchip"></i>Semiconductors</span>
+                  <span class="edu-cap-pill cert"><i class="fas fa-microchip"></i>Fabrication</span>
+                  <span class="edu-cap-pill cert"><i class="fas fa-chart-line"></i>Data Science</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="edu-cap-tools">
+              <span class="edu-cap-tag-label">Toolkit</span>
+              <div class="tools-grid">
+                <div class="tool-item" style="--i:0"><i class="fab fa-python"></i><span>Python</span><small>pandas · sklearn · NumPy</small></div>
+                <div class="tool-item" style="--i:1"><i class="fas fa-database"></i><span>SQL</span><small>queries · joins · ETL</small></div>
+                <div class="tool-item" style="--i:2"><i class="fas fa-chart-pie"></i><span>Tableau</span><small>dashboards</small></div>
+                <div class="tool-item" style="--i:3"><i class="fas fa-square-root-variable"></i><span>MATLAB</span><small>modeling</small></div>
+                <div class="tool-item" style="--i:4"><i class="fas fa-file-excel"></i><span>Excel</span><small>analysis</small></div>
+                <div class="tool-item" style="--i:5"><i class="fas fa-compass-drafting"></i><span>CAD</span><small>AutoCAD · drafting</small></div>
+              </div>
+
+              <span class="edu-cap-tag-label coursework-label">Coursework</span>
+              <div class="edu-cap-tag-row coursework-row">
+                <span class="edu-cap-pill course">DoE</span>
+                <span class="edu-cap-pill course">SPC</span>
+                <span class="edu-cap-pill course">Statistical Modeling</span>
+                <span class="edu-cap-pill course">Probabilistic Modeling</span>
+                <span class="edu-cap-pill course">Data Science Apps</span>
+                <span class="edu-cap-pill course">Manufacturing Processes</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -227,44 +259,72 @@
               </button>
             </div>
             <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Fab producing wafers → data tables → prediction projections/models → dashboards</p>
+              <p class="resume-panel-summary">Wafer fab signals are staged into structured tables, fed into yield-forecast models, and surfaced as decision-ready dashboards for R&amp;D.</p>
               <div class="workflow-track steps-4">
                 <div class="workflow-step">
-                  <div class="mini-visual fab-visual">
-                    <div class="fab-box"></div>
-                    <div class="wafer-stack"><span></span><span></span><span></span></div>
+                  <div class="mini-visual fab-visual-v2">
+                    <div class="fab-building">
+                      <div class="fab-roof"></div>
+                      <div class="fab-window"></div><div class="fab-window"></div>
+                      <div class="fab-window"></div><div class="fab-window"></div>
+                      <div class="fab-stack"></div>
+                      <div class="fab-puff"></div>
+                    </div>
+                    <div class="wafer-conveyor">
+                      <span class="wafer-disc"></span>
+                      <span class="wafer-disc"></span>
+                      <span class="wafer-disc"></span>
+                    </div>
                   </div>
-                  <div class="step-label">Fab / wafers</div>
-                  <div class="step-desc">Wafer output and process signals coming off the fab floor.</div>
+                  <div class="step-label">Wafer fab</div>
+                  <div class="step-desc">Process signals + wafer output from the fab floor.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual table-visual">
-                    <span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span>
+                  <div class="mini-visual table-visual-v2">
+                    <div class="tv-header">
+                      <span>Lot</span><span>Yield</span><span>Defect</span>
+                    </div>
+                    <div class="tv-row"><span>A-204</span><span>96.2%</span><span class="ok">·</span></div>
+                    <div class="tv-row"><span>A-205</span><span>91.4%</span><span class="warn">·</span></div>
+                    <div class="tv-row"><span>A-206</span><span>97.8%</span><span class="ok">·</span></div>
+                    <div class="tv-row"><span>A-207</span><span>88.7%</span><span class="bad">·</span></div>
                   </div>
                   <div class="step-label">Data tables</div>
-                  <div class="step-desc">Structured operational data staged for analysis.</div>
+                  <div class="step-desc">Lot, yield, and defect rows cleaned for analysis.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual model-visual">
+                  <div class="mini-visual model-visual model-band-visual">
                     <div class="axis x"></div><div class="axis y"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M8 58 C28 44, 48 48, 68 36 S96 18, 112 14"/></svg>
+                    <svg viewBox="0 0 120 72" aria-hidden="true">
+                      <path class="band-fill" d="M8 56 L28 48 L48 50 L68 38 L88 24 L112 18 L112 30 L88 38 L68 48 L48 58 L28 56 L8 64 Z"/>
+                      <path class="trend-line" d="M8 60 C28 50, 48 50, 68 40 S96 22, 112 18"/>
+                    </svg>
                     <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div>
+                    <span class="model-tag">Forecast</span>
                   </div>
-                  <div class="step-label">Prediction models</div>
-                  <div class="step-desc">Forecasts and projections built from fab behavior.</div>
+                  <div class="step-label">Yield models</div>
+                  <div class="step-desc">Forecasts with confidence bands across lots.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual dashboard-visual">
-                    <div class="dash-card main"><b style="--h:70%"></b><b style="--h:44%"></b><b style="--h:84%"></b></div>
-                    <div class="dash-card side"><i></i><i></i></div>
+                  <div class="mini-visual dashboard-visual-v2">
+                    <div class="dash-kpis">
+                      <div class="dash-kpi"><small>Yield</small><strong>94.6%</strong></div>
+                      <div class="dash-kpi"><small>Δ WoW</small><strong>+1.8</strong></div>
+                    </div>
+                    <div class="dash-spark">
+                      <svg viewBox="0 0 100 36" aria-hidden="true">
+                        <polyline points="2,28 14,22 26,24 38,16 50,18 62,10 74,12 86,6 98,8"/>
+                      </svg>
+                    </div>
+                    <div class="dash-bars">
+                      <b style="--h:62%"></b><b style="--h:84%"></b><b style="--h:50%"></b><b style="--h:74%"></b>
+                    </div>
                   </div>
                   <div class="step-label">Dashboards</div>
-                  <div class="step-desc">Decision-ready KPI views for fab operations.</div>
+                  <div class="step-desc">KPIs, trends, and ops views surfaced to R&amp;D.</div>
                 </div>
               </div>
             </div>
@@ -285,43 +345,55 @@
               </button>
             </div>
             <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Soccer field with player icons moving → data tables → prediction/models → gameplans</p>
+              <p class="resume-panel-summary">Player tracking, scouting tables, and predictive models distilled into actionable gameplans for the coaching staff.</p>
               <div class="workflow-track steps-4">
                 <div class="workflow-step">
-                  <div class="mini-visual field-visual">
-                    <div class="field-midline"></div><div class="field-center"></div>
+                  <div class="mini-visual field-visual-v2">
+                    <div class="pitch-stripes"></div>
+                    <div class="pitch-mid"></div><div class="pitch-center"></div>
+                    <div class="pitch-goal left"></div><div class="pitch-goal right"></div>
                     <span class="player a"></span><span class="player b"></span><span class="player c"></span><span class="player d"></span>
+                    <span class="ball"></span>
                   </div>
-                  <div class="step-label">Player movement</div>
-                  <div class="step-desc">Field positioning and opponent tendencies mapped visually.</div>
+                  <div class="step-label">Player tracking</div>
+                  <div class="step-desc">Positioning + opponent tendencies mapped from match feeds.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual table-visual compact">
-                    <span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span>
-                    <span></span><span></span><span></span><span></span>
+                  <div class="mini-visual table-visual-v2 soccer-table">
+                    <div class="tv-header"><span>#</span><span>Pos</span><span>xG</span></div>
+                    <div class="tv-row"><span>10</span><span>FW</span><span>0.41</span></div>
+                    <div class="tv-row"><span>7</span><span>MF</span><span>0.18</span></div>
+                    <div class="tv-row"><span>4</span><span>DF</span><span>0.04</span></div>
+                    <div class="tv-row"><span>9</span><span>FW</span><span>0.33</span></div>
                   </div>
-                  <div class="step-label">Data tables</div>
-                  <div class="step-desc">Benchmark and scouting data organized player by player.</div>
+                  <div class="step-label">Scouting tables</div>
+                  <div class="step-desc">Player-by-player benchmark + scouting data.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
                   <div class="mini-visual model-visual bars-only">
-                    <div class="prob-bars"><b style="--h:76%"></b><b style="--h:58%"></b><b style="--h:88%"></b></div>
-                    <div class="prob-chip">Model</div>
+                    <div class="prob-bars"><b style="--h:76%"></b><b style="--h:58%"></b><b style="--h:88%"></b><b style="--h:46%"></b></div>
+                    <span class="model-tag">Win prob</span>
                   </div>
-                  <div class="step-label">Prediction / models</div>
-                  <div class="step-desc">Patterns converted into practical predictive insights.</div>
+                  <div class="step-label">Predictive models</div>
+                  <div class="step-desc">Win-probability + matchup signals per scenario.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual gameplan-visual">
-                    <div class="clip-board"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M15 54 C34 44, 48 40, 60 26 S83 22, 102 15"/><path d="M28 20 L44 30 L36 40"/></svg>
+                  <div class="mini-visual gameplan-visual-v2">
+                    <div class="tactic-board"></div>
+                    <svg viewBox="0 0 120 72" aria-hidden="true">
+                      <path class="play-line p1" d="M18 56 C34 44, 50 38, 70 30"/>
+                      <path class="play-line p2" d="M70 30 L94 18"/>
+                      <path class="play-line p3" d="M70 30 L102 50"/>
+                    </svg>
+                    <span class="tactic-dot d1"></span>
+                    <span class="tactic-dot d2"></span>
+                    <span class="tactic-dot d3"></span>
                   </div>
                   <div class="step-label">Gameplans</div>
-                  <div class="step-desc">Findings distilled into actionable preparation plans.</div>
+                  <div class="step-desc">Tactical sets delivered to the coaching staff.</div>
                 </div>
               </div>
             </div>
@@ -342,34 +414,45 @@
               </button>
             </div>
             <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Drones flying → automated flight paths → online client footage delivery</p>
+              <p class="resume-panel-summary">Drone missions captured under automated flight routines, then packaged and delivered to clients online.</p>
               <div class="workflow-track steps-3">
                 <div class="workflow-step">
-                  <div class="mini-visual drone-visual">
-                    <div class="drone-shape"><i></i><i></i><i></i><i></i></div>
-                    <span class="flight-dot one"></span><span class="flight-dot two"></span>
+                  <div class="mini-visual drone-visual-v2">
+                    <div class="drone-sky"></div>
+                    <div class="drone-body">
+                      <div class="drone-core"></div>
+                      <i class="drone-rotor r1"></i><i class="drone-rotor r2"></i>
+                      <i class="drone-rotor r3"></i><i class="drone-rotor r4"></i>
+                    </div>
+                    <span class="drone-shadow"></span>
                   </div>
                   <div class="step-label">Drone missions</div>
-                  <div class="step-desc">FPV aircraft collecting footage across client missions.</div>
+                  <div class="step-desc">FPV aircraft capturing client footage in-flight.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual path-visual">
-                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M12 58 C24 20, 52 16, 68 44 S102 52, 108 16"/></svg>
+                  <div class="mini-visual path-visual-v2">
+                    <div class="path-grid"></div>
+                    <svg viewBox="0 0 120 72" aria-hidden="true">
+                      <path class="path-route" d="M12 58 C24 20, 52 16, 68 44 S102 52, 108 16"/>
+                    </svg>
                     <span class="waypoint w1"></span><span class="waypoint w2"></span><span class="waypoint w3"></span>
+                    <span class="path-tag">Auto</span>
                   </div>
-                  <div class="step-label">Automated paths</div>
-                  <div class="step-desc">Flight routines streamlined with automation utilities.</div>
+                  <div class="step-label">Flight paths</div>
+                  <div class="step-desc">Automated routines with mapped waypoints.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual delivery-visual">
-                    <div class="video-window"></div>
+                  <div class="mini-visual delivery-visual-v2">
+                    <div class="video-window">
+                      <i class="fas fa-play"></i>
+                    </div>
                     <div class="upload-bar"><b></b></div>
-                    <div class="delivery-chip">Delivered</div>
+                    <div class="delivery-chip"><i class="fas fa-circle-check"></i> Delivered</div>
                   </div>
                   <div class="step-label">Client delivery</div>
-                  <div class="step-desc">Footage packaged and delivered online to clients.</div>
+                  <div class="step-desc">Footage packaged + uploaded for client access.</div>
                 </div>
               </div>
             </div>
@@ -439,52 +522,76 @@
               </button>
             </div>
             <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Player email → fetching and processing → algorithm scoring → prediction models/projections → CSV and graph data for coaches</p>
+              <p class="resume-panel-summary">Recruit emails are fetched, parsed, scored against a rubric, projected into ranked models, and exported as coach-ready CSV files and graphs.</p>
               <div class="workflow-track steps-5">
                 <div class="workflow-step">
-                  <div class="mini-visual email-visual">
-                    <div class="mail-card"></div>
-                    <div class="mail-line l1"></div><div class="mail-line l2"></div>
-                    <div class="mail-player">#10</div>
+                  <div class="mini-visual email-visual-v2">
+                    <div class="email-envelope">
+                      <div class="email-flap"></div>
+                      <div class="email-body">
+                        <span class="email-from">From: Recruit #10</span>
+                        <span class="email-line"></span>
+                        <span class="email-line short"></span>
+                      </div>
+                    </div>
+                    <span class="email-badge">New</span>
                   </div>
                   <div class="step-label">Player email</div>
-                  <div class="step-desc">Recruit messages arrive with raw player information.</div>
+                  <div class="step-desc">Recruit messages arrive with raw player info.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual process-visual">
-                    <div class="gear one"></div><div class="gear two"></div>
-                    <div class="fetch-pill">Fetch</div>
+                  <div class="mini-visual process-visual-v2">
+                    <div class="gear-stack">
+                      <div class="gear one"></div><div class="gear two"></div>
+                    </div>
+                    <div class="parse-chips">
+                      <span class="parse-chip">name</span>
+                      <span class="parse-chip">club</span>
+                      <span class="parse-chip">stats</span>
+                    </div>
                   </div>
-                  <div class="step-label">Fetch / process</div>
-                  <div class="step-desc">Text is parsed, cleaned, and structured for downstream use.</div>
+                  <div class="step-label">Fetch &amp; parse</div>
+                  <div class="step-desc">Text parsed, cleaned, and structured into fields.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual scoring-visual">
-                    <div class="score-ring"><b>87</b></div>
-                    <div class="score-bars"><i style="--w:78%"></i><i style="--w:56%"></i></div>
+                  <div class="mini-visual scoring-visual-v2">
+                    <div class="score-ring"><b>87</b><small>/ 100</small></div>
+                    <div class="score-bars">
+                      <i style="--w:78%"></i>
+                      <i style="--w:56%"></i>
+                      <i style="--w:88%"></i>
+                    </div>
                   </div>
                   <div class="step-label">Algorithm scoring</div>
-                  <div class="step-desc">Rules and weights convert features into ranked signals.</div>
+                  <div class="step-desc">Rubric-weighted features produce a recruit score.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
                   <div class="mini-visual model-visual bars-only">
-                    <div class="prob-bars"><b style="--h:64%"></b><b style="--h:84%"></b><b style="--h:52%"></b></div>
-                    <div class="prob-chip">Projection</div>
+                    <div class="prob-bars">
+                      <b style="--h:64%"></b><b style="--h:84%"></b><b style="--h:52%"></b><b style="--h:72%"></b>
+                    </div>
+                    <span class="model-tag">Ranked</span>
                   </div>
-                  <div class="step-label">Models / projections</div>
-                  <div class="step-desc">Ranked recruits are modeled for coach-facing decisions.</div>
+                  <div class="step-label">Models / ranking</div>
+                  <div class="step-desc">Recruits ranked + projected for coach decisions.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual export-visual">
-                    <div class="csv-sheet"></div>
-                    <div class="mini-chart"><b style="--h:42%"></b><b style="--h:70%"></b><b style="--h:88%"></b></div>
+                  <div class="mini-visual export-visual-v2">
+                    <div class="csv-sheet">
+                      <span class="csv-row"></span>
+                      <span class="csv-row"></span>
+                      <span class="csv-row"></span>
+                    </div>
+                    <div class="mini-chart">
+                      <b style="--h:42%"></b><b style="--h:70%"></b><b style="--h:88%"></b><b style="--h:58%"></b>
+                    </div>
                   </div>
                   <div class="step-label">CSV + graphs</div>
-                  <div class="step-desc">Results exported into coach-ready files and visual summaries.</div>
+                  <div class="step-desc">Coach-ready files + visual summaries exported.</div>
                 </div>
               </div>
             </div>
@@ -504,44 +611,65 @@
               </button>
             </div>
             <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Historical financial data → models/projections → engineering economics → technical report</p>
+              <p class="resume-panel-summary">Six parametric DCF models built from historical cost data, evaluated against NPV/IRR/MARR benchmarks, and summarized into a recommendation-grade technical report.</p>
               <div class="workflow-track steps-4">
                 <div class="workflow-step">
-                  <div class="mini-visual finance-visual">
-                    <div class="candles"><i class="up"></i><i class="down"></i><i class="up"></i><i class="up"></i></div>
+                  <div class="mini-visual finance-visual-v2">
+                    <div class="candles">
+                      <i class="up" style="--h:32px"></i>
+                      <i class="down" style="--h:22px"></i>
+                      <i class="up" style="--h:42px"></i>
+                      <i class="up" style="--h:36px"></i>
+                      <i class="down" style="--h:18px"></i>
+                      <i class="up" style="--h:48px"></i>
+                    </div>
                     <div class="hist-line"></div>
+                    <span class="model-tag finance-tag">$ kWh</span>
                   </div>
                   <div class="step-label">Historical data</div>
-                  <div class="step-desc">Past cost and financial trends establish the base case.</div>
+                  <div class="step-desc">Past cost &amp; price trends establish base inputs.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual model-visual">
+                  <div class="mini-visual model-visual model-band-visual">
                     <div class="axis x"></div><div class="axis y"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true"><path d="M8 56 C24 58, 42 44, 60 40 S86 22, 112 18"/></svg>
+                    <svg viewBox="0 0 120 72" aria-hidden="true">
+                      <path class="band-fill" d="M8 60 L28 56 L48 46 L68 40 L88 26 L112 16 L112 28 L88 36 L68 50 L48 56 L28 64 L8 66 Z"/>
+                      <path class="trend-line" d="M8 62 C24 60, 42 46, 60 40 S86 22, 112 18"/>
+                    </svg>
                     <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div>
+                    <span class="model-tag">DCF 40y</span>
                   </div>
                   <div class="step-label">Models / projections</div>
-                  <div class="step-desc">DCF scenarios project long-run system performance.</div>
+                  <div class="step-desc">6 parametric DCFs across 40-year horizons.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual econ-visual">
-                    <div class="econ-chip">NPV</div>
-                    <div class="econ-chip">IRR</div>
-                    <div class="econ-chip">MARR</div>
+                  <div class="mini-visual econ-visual-v2">
+                    <div class="econ-chip"><strong>NPV</strong><small>&gt; 0</small></div>
+                    <div class="econ-chip"><strong>IRR</strong><small>&gt; hurdle</small></div>
+                    <div class="econ-chip"><strong>MARR</strong><small>8.0%</small></div>
+                    <div class="econ-verdict"><i class="fas fa-circle-check"></i> Recommend</div>
                   </div>
                   <div class="step-label">Engineering economics</div>
-                  <div class="step-desc">Economic criteria classify recommendations and tradeoffs.</div>
+                  <div class="step-desc">NPV / IRR / MARR criteria classify the case.</div>
                 </div>
                 <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="workflow-step">
-                  <div class="mini-visual report-visual">
-                    <div class="report-page"></div>
-                    <div class="report-line r1"></div><div class="report-line r2"></div><div class="report-line r3"></div>
+                  <div class="mini-visual report-visual-v2">
+                    <div class="report-page">
+                      <div class="report-line r1"></div>
+                      <div class="report-line r2"></div>
+                      <div class="report-line r3"></div>
+                      <div class="report-line r4"></div>
+                      <div class="report-mini-chart">
+                        <b style="--h:50%"></b><b style="--h:78%"></b><b style="--h:34%"></b>
+                      </div>
+                    </div>
+                    <span class="report-stamp">Tech Brief</span>
                   </div>
                   <div class="step-label">Technical report</div>
-                  <div class="step-desc">Results are summarized into a final engineering report.</div>
+                  <div class="step-desc">Findings + recommendation packaged for review.</div>
                 </div>
               </div>
             </div>
@@ -678,6 +806,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=141"></script>
+  <script src="script.js?v=142"></script>
 </body>
 </html>
