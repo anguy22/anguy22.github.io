@@ -1,5 +1,5 @@
 /* ==========================================================
-   script.js — Dark Distribution Skyline · Stable Floating Bubbles
+   script.js — Green / Black Distribution Skyline · Stable Floating Bubbles
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
@@ -85,35 +85,44 @@
   // animation (random heights → selected target distribution).
   var buildStartedAt = 0;
 
-  // ── Dark purple / blue / black architectural palette ──
-  // Building colors are motion-driven:
+  // ── Dark purple/blue site palette + motion-state building colors ──
+  // Body colors are selected per frame:
   //   rising  -> green
   //   falling -> red
   //   settled -> grey
-  var BODY_DARK    = [74, 78, 90];
-  var BODY_BRIGHT  = BODY_DARK;
-  var SIDE_DARK    = [42, 45, 55];
-  var SIDE_BRIGHT  = SIDE_DARK;
-  var TOP_DARK     = [118, 123, 138];
-  var TOP_BRIGHT   = TOP_DARK;
+  var RISE_BODY    = [8, 96, 62];                // green, rising
+  var RISE_SIDE    = [3, 45, 32];
+  var RISE_TOP     = [32, 186, 121];
 
-  var RISE_BODY    = [18, 155, 94];
-  var RISE_SIDE    = [8, 88, 58];
-  var RISE_TOP     = [84, 235, 162];
-  var FALL_BODY    = [178, 43, 54];
-  var FALL_SIDE    = [96, 20, 28];
-  var FALL_TOP     = [245, 100, 110];
-  var SETTLE_BODY  = [74, 78, 90];
-  var SETTLE_SIDE  = [42, 45, 55];
-  var SETTLE_TOP   = [118, 123, 138];
+  var FALL_BODY    = [122, 28, 38];              // red, falling
+  var FALL_SIDE    = [58, 12, 20];
+  var FALL_TOP     = [248, 91, 91];
 
-  var TOP_EDGE     = "rgba(247,248,255,0.92)";
-  var FLOOR_LINE   = "rgba(205,212,255,0.18)";
-  var ACCENT_LINE  = "rgba(247,248,255,0.62)";
-  var WINDOW_LIT   = "rgba(247,248,255,0.88)";
-  var WINDOW_DIM   = "rgba(172,182,215,0.24)";
+  var SETTLE_BODY  = [58, 63, 73];               // grey, settled
+  var SETTLE_SIDE  = [27, 31, 38];
+  var SETTLE_TOP   = [107, 114, 128];
 
-  var BRIGHTEN_MS = 0; // bright-purple finish removed
+  var DETAIL_BODY  = [11, 18, 32];               // blue-black detail shadows
+  var TOP_EDGE     = "rgba(236,242,255,0.92)";
+  var TOP_GLOW     = "rgba(129,140,248,0.16)";
+  var FLOOR_LINE   = "rgba(236,242,255,0.13)";
+  var ACCENT_LINE  = "rgba(236,242,255,0.42)";
+  var WINDOW_LIT   = "rgba(248,250,252,0.92)";
+  var WINDOW_DIM   = "rgba(148,163,184,0.34)";
+  var WINDOW_RISE  = "rgba(167,243,208,0.66)";
+  var WINDOW_FALL  = "rgba(254,202,202,0.62)";
+
+  function getBuildingPalette(b) {
+    if (b.motionState === "rising") {
+      return { body: RISE_BODY, side: RISE_SIDE, top: RISE_TOP, window: WINDOW_RISE, glow: "rgba(34,197,94,0.20)" };
+    }
+    if (b.motionState === "falling") {
+      return { body: FALL_BODY, side: FALL_SIDE, top: FALL_TOP, window: WINDOW_FALL, glow: "rgba(239,68,68,0.20)" };
+    }
+    return { body: SETTLE_BODY, side: SETTLE_SIDE, top: SETTLE_TOP, window: WINDOW_DIM, glow: "rgba(148,163,184,0.16)" };
+  }
+
+  var BRIGHTEN_MS = 0; // bright-green finish removed
   // 40% faster than before: 3200/5200 → 1920/3120 morph window,
   // 420 → 250 stagger between buildings.
   var MORPH_MIN_MS = 1920;
@@ -127,40 +136,8 @@
     return "rgb(" + r + "," + g + "," + bl + ")";
   }
 
-  function buildingMotionPalette(b) {
-    var dir = b.motionDirection || "settled";
-    if (dir === "rising") {
-      return {
-        body: RISE_BODY,
-        side: RISE_SIDE,
-        top: RISE_TOP,
-        glow: "rgba(84,235,162,0.28)",
-        edge: "rgba(190,255,225,0.96)",
-        accent: "rgba(126,255,190,0.72)"
-      };
-    }
-    if (dir === "falling") {
-      return {
-        body: FALL_BODY,
-        side: FALL_SIDE,
-        top: FALL_TOP,
-        glow: "rgba(245,100,110,0.28)",
-        edge: "rgba(255,205,210,0.96)",
-        accent: "rgba(255,130,140,0.72)"
-      };
-    }
-    return {
-      body: SETTLE_BODY,
-      side: SETTLE_SIDE,
-      top: SETTLE_TOP,
-      glow: "rgba(180,188,205,0.16)",
-      edge: "rgba(235,238,245,0.86)",
-      accent: "rgba(205,212,225,0.50)"
-    };
-  }
-
   // ── Construction palette (light/white instead of yellow) ──
-  var SCAFFOLD     = "rgba(247,248,255,0.34)";
+  var SCAFFOLD     = "rgba(226,232,255,0.32)";
 
   // ── Distribution definitions ────────────────────────────
   // Each distribution exposes fn(t) where t ∈ [0, 1] returns a height
@@ -285,17 +262,41 @@
       var nextH = getTargetHeightForIndex(i, buildings.length, maxH, name, b);
       b.startH = b.h;
       b.targetH = nextH;
-      b.motionDirection = nextH > b.startH + 0.75 ? "rising" : (nextH < b.startH - 0.75 ? "falling" : "settled");
       b.previousBrightness = 0;
       b.startDelay = rand(0, MORPH_STAGGER_MS);
       b.buildDuration = rand(MORPH_MIN_MS, MORPH_MAX_MS);
-      b.floorSpacing = Math.max(11, Math.min(18, nextH / 14));
+      b.floorSpacing = Math.max(10, Math.min(17, Math.max(b.startH, nextH) / 15));
+      b.windows = createWindowGrid(b.w, Math.max(b.startH, nextH), b.floorSpacing);
+      b.motionState = nextH > b.startH + 0.8 ? "rising" : (nextH < b.startH - 0.8 ? "falling" : "settled");
       b.underConstruction = true;
       b.morphing = true;
       b.finishedAt = null;
       b.brightness = 0;
       b.y = baseY - b.h;
     }
+  }
+
+
+  function createWindowGrid(buildingWidth, maxHeight, floorSpacing) {
+    var rows = Math.max(3, Math.floor(maxHeight / floorSpacing));
+    var cols = Math.max(2, Math.floor(buildingWidth / 8));
+    var windows = [];
+
+    for (var r = 1; r < rows; r++) {
+      for (var col = 0; col < cols; col++) {
+        // Slightly denser than before so non-normal distributions do not look blank.
+        if (Math.random() > 0.18) {
+          windows.push({
+            x: (col + 0.5) * (buildingWidth / cols),
+            yFromGround: (rows - r) * floorSpacing,
+            lit: Math.random() > 0.48,
+            pulse: rand(0, Math.PI * 2)
+          });
+        }
+      }
+    }
+
+    return windows;
   }
 
   function resize() {
@@ -355,27 +356,11 @@
       var antenna = Math.random() > 0.72;
       var inset = rand(0.10, 0.18);
 
-      // Window grid is sized to the FINAL height so the lit pattern
-      // doesn't pop in once construction completes. We draw windows
-      // only up to the current height during the build.
-      var floorSpacing = Math.max(11, Math.min(18, targetH / 14));
-      var rows = Math.max(2, Math.floor(targetH / floorSpacing));
-      var cols = Math.max(2, Math.floor(bw / rand(8, 11)));
-      var windows = [];
-
-      for (var r = 1; r < rows; r++) {
-        for (var col = 0; col < cols; col++) {
-          if (Math.random() > 0.30) {
-            windows.push({
-              x: (col + 0.5) * (bw / cols),
-              // Height above the ground line — stays fixed as the
-              // building grows around it (real floors don't move).
-              yFromGround: (rows - r) * floorSpacing,
-              lit: Math.random() > 0.55
-            });
-          }
-        }
-      }
+      // Window grid is sized to the tallest height involved in this cycle,
+      // not only the first distribution. This keeps windows visible when
+      // later distributions morph a short building into a tall one.
+      var floorSpacing = Math.max(10, Math.min(17, targetH / 15));
+      var windows = createWindowGrid(bw, Math.max(startH, targetH), floorSpacing);
 
       buildings.push({
         x: x,
@@ -394,8 +379,10 @@
         antenna: antenna,
         inset: inset,
         windows: windows,
-        motionDirection: targetH > startH + 0.75 ? "rising" : (targetH < startH - 0.75 ? "falling" : "settled"),
-          underConstruction: true
+        motionState: targetH > startH + 0.8 ? "rising" : (targetH < startH - 0.8 ? "falling" : "settled"),
+        facadeSeed: Math.random(),
+        detailBandEvery: Math.floor(rand(3, 6)),
+        underConstruction: true
       });
     }
 
@@ -418,17 +405,17 @@
 
   function drawBackground() {
     var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#03040a");
-    grad.addColorStop(0.48, "#070914");
-    grad.addColorStop(1, "#03040a");
+    grad.addColorStop(0, "#020403");
+    grad.addColorStop(0.48, "#041007");
+    grad.addColorStop(1, "#000000");
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
     var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
-    glow.addColorStop(0, "rgba(73,89,210,0.18)");
-    glow.addColorStop(0.42, "rgba(91,69,190,0.07)");
-    glow.addColorStop(1, "rgba(91,69,190,0)");
+    glow.addColorStop(0, "rgba(79,70,229,0.16)");
+    glow.addColorStop(0.42, "rgba(59,130,246,0.07)");
+    glow.addColorStop(1, "rgba(79,70,229,0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
@@ -530,7 +517,7 @@
     }
 
     ctx.save();
-    ctx.strokeStyle = "rgba(247,248,255," + alpha.toFixed(3) + ")";
+    ctx.strokeStyle = "rgba(226,232,255," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
@@ -558,11 +545,10 @@
     var groundY = y + h;
     var floorSpacing = b.floorSpacing;
 
-    // Color follows motion state: green while rising, red while falling, grey once settled.
-    var palette = buildingMotionPalette(b);
-    var bodyColor = lerpRGB(palette.body, palette.body, 1);
-    var sideColor = lerpRGB(palette.side, palette.side, 1);
-    var topColor  = lerpRGB(palette.top,  palette.top,  1);
+    var palette = getBuildingPalette(b);
+    var bodyColor = lerpRGB(DETAIL_BODY, palette.body, 0.86);
+    var sideColor = lerpRGB(DETAIL_BODY, palette.side, 0.92);
+    var topColor  = lerpRGB(DETAIL_BODY, palette.top, 0.90);
 
     ctx.save();
 
@@ -593,7 +579,7 @@
     // Soft glow band just under the top edge
     var glowGrad = ctx.createLinearGradient(x, y, x, y + Math.min(h * 0.4, 60));
     glowGrad.addColorStop(0, palette.glow);
-    glowGrad.addColorStop(1, "rgba(0,0,0,0)");
+    glowGrad.addColorStop(1, "rgba(15,23,42,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(x, y, w, Math.min(h * 0.4, 60));
 
@@ -601,11 +587,29 @@
     var inset = b.inset || 0.14;
     var panelX = x + w * inset;
     var panelW = w * (1 - inset * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.022)";
+    ctx.fillStyle = "rgba(255,255,255,0.026)";
     ctx.fillRect(panelX, y + 4, panelW, Math.max(0, h - 4));
 
+    // Center facade bevel and lower equipment band add detail without changing silhouette.
+    var bevelW = Math.max(1, w * 0.045);
+    ctx.fillStyle = "rgba(255,255,255,0.055)";
+    ctx.fillRect(x + w * 0.14, y + 6, bevelW, Math.max(0, h - 10));
+    ctx.fillStyle = "rgba(0,0,0,0.18)";
+    ctx.fillRect(x + w * 0.72, y + 8, Math.max(1, w * 0.08), Math.max(0, h - 12));
+
+    var bandEvery = Math.max(3, b.detailBandEvery || 4);
+    ctx.strokeStyle = "rgba(255,255,255,0.075)";
+    ctx.lineWidth = 0.75;
+    for (var band = floorSpacing * bandEvery; band < h; band += floorSpacing * bandEvery) {
+      var by = groundY - band;
+      ctx.beginPath();
+      ctx.moveTo(x + 1, by + 0.5);
+      ctx.lineTo(x + w - 1, by + 0.5);
+      ctx.stroke();
+    }
+
     // Vertical mullions make wider buildings feel more architectural.
-    ctx.strokeStyle = "rgba(205,212,255,0.10)";
+    ctx.strokeStyle = "rgba(226,232,255,0.12)";
     ctx.lineWidth = 0.65;
     var mullions = Math.max(2, Math.floor(w / 9));
     for (var mv = 1; mv < mullions; mv++) {
@@ -630,11 +634,11 @@
     }
 
     // Vertical accent stripe
-    ctx.fillStyle = palette.accent || ACCENT_LINE;
+    ctx.fillStyle = ACCENT_LINE;
     ctx.fillRect(x + 0.5, y + 1, 1.2, h - 1);
 
     // Bright top edge — defines the current roofline
-    ctx.strokeStyle = palette.edge || TOP_EDGE;
+    ctx.strokeStyle = TOP_EDGE;
     ctx.lineWidth = 1.4;
     ctx.beginPath();
     ctx.moveTo(x, y + 0.5);
@@ -647,13 +651,18 @@
     for (var i = 0; i < b.windows.length; i++) {
       var win = b.windows[i];
       if (win.yFromGround > h) continue; // floor not built yet
-      ctx.fillStyle = win.lit ? WINDOW_LIT : WINDOW_DIM;
-      ctx.globalAlpha = win.lit ? 0.75 : 0.38;
-      ctx.fillRect(x + win.x - ww / 2, groundY - win.yFromGround - wh / 2, ww, wh);
+      var wx = x + win.x - ww / 2;
+      var wy = groundY - win.yFromGround - wh / 2;
+      ctx.fillStyle = "rgba(0,0,0,0.20)";
+      ctx.globalAlpha = 0.55;
+      ctx.fillRect(wx - 0.6, wy - 0.6, ww + 1.2, wh + 1.2);
+      ctx.fillStyle = win.lit ? WINDOW_LIT : palette.window;
+      ctx.globalAlpha = win.lit ? 0.82 : 0.48;
+      ctx.fillRect(wx, wy, ww, wh);
     }
     // Side-panel windows add depth without brightening the whole skyline.
     ctx.globalAlpha = 0.32;
-    ctx.fillStyle = WINDOW_DIM;
+    ctx.fillStyle = palette.window;
     var sideCols = 1;
     var sideW = Math.max(1.4, d * 0.22);
     for (var sf = floorSpacing * 1.4; sf < h; sf += floorSpacing * 1.65) {
@@ -665,7 +674,7 @@
     ctx.globalAlpha = 1;
 
     // Thin roof outline across the depth panel.
-    ctx.strokeStyle = "rgba(247,248,255,0.42)";
+    ctx.strokeStyle = "rgba(226,232,255,0.42)";
     ctx.lineWidth = 0.8;
     ctx.beginPath();
     ctx.moveTo(x + w, y + 0.5);
@@ -714,7 +723,7 @@
       }
 
       if (b.antenna) {
-        ctx.strokeStyle = "rgba(247,248,255,0.55)";
+        ctx.strokeStyle = "rgba(226,232,255,0.55)";
         ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(x + w * 0.72, y);
@@ -722,7 +731,7 @@
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(x + w * 0.72, y - 11, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(247,248,255,0.70)";
+        ctx.fillStyle = "rgba(226,232,255,0.70)";
         ctx.fill();
       }
     }
@@ -820,24 +829,23 @@
         var local = elapsed - b.startDelay;
         if (local <= 0) {
           b.h = b.startH;
+          b.motionState = b.targetH > b.startH + 0.8 ? "rising" : (b.targetH < b.startH - 0.8 ? "falling" : "settled");
         } else if (local >= b.buildDuration) {
           b.h = b.targetH;
           b.underConstruction = false;
           b.morphing = false;
-          b.motionDirection = "settled";
           b.finishedAt = now;
+          b.motionState = "settled";
         } else {
           var t = local / b.buildDuration;
           var eased = smoothstep(t);
           b.h = b.startH + (b.targetH - b.startH) * eased;
+          b.motionState = b.targetH > b.startH + 0.8 ? "rising" : (b.targetH < b.startH - 0.8 ? "falling" : "settled");
         }
         b.y = baseY - b.h;
-        if (b.underConstruction) {
-          b.motionDirection = b.targetH > b.startH + 0.75 ? "rising" : (b.targetH < b.startH - 0.75 ? "falling" : "settled");
-        }
         b.brightness = 0;
       } else {
-        b.motionDirection = "settled";
+        b.motionState = "settled";
         b.brightness = 0;
       }
     }
