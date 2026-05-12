@@ -6230,3 +6230,523 @@ footer {
   letter-spacing: 0.06em;
   transform: rotate(-3deg);
 }
+
+/* ═══ TRANSIT MAP (v143) ═══ */
+.resume-section {
+  position: relative;
+}
+
+.transit-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(167,139,250,0.10), transparent 30%),
+    radial-gradient(circle at 82% 40%, rgba(34,211,238,0.08), transparent 34%),
+    linear-gradient(180deg, #0a0814 0%, #060817 100%);
+}
+
+.transit-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.026) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 86%, transparent 100%);
+}
+
+.transit-section .container {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+}
+
+.transit-intro {
+  max-width: 680px;
+  color: rgba(238,242,255,0.72);
+  margin: -24px 0 28px;
+  font-size: 0.98rem;
+}
+
+.transit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.72fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.transit-map-wrap,
+.transit-detail {
+  border: 1px solid rgba(199,210,254,0.14);
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255,255,255,0.06), transparent 28%),
+    rgba(255,255,255,0.035);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.transit-map-wrap {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 22px;
+  padding: 18px;
+}
+
+.transit-map-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.045) 0 1px, transparent 1.5px) 0 0 / 18px 18px;
+  opacity: 0.42;
+}
+
+.transit-legend {
+  position: absolute;
+  z-index: 5;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 430px;
+  list-style: none;
+}
+
+.transit-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(199,210,254,0.16);
+  background: rgba(8,12,28,0.72);
+  color: rgba(238,242,255,0.78);
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
+}
+
+.transit-legend li span {
+  width: 28px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--c);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c), transparent 55%);
+}
+
+.transit-legend li:hover,
+.transit-legend li:focus-visible,
+.transit-legend li.is-active {
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.42);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.transit-legend li.is-muted {
+  opacity: 0.36;
+}
+
+.transit-map {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 890px;
+  height: auto;
+  display: block;
+}
+
+.year-axis line {
+  stroke: rgba(255,255,255,0.30);
+  stroke-width: 1;
+}
+
+.year-axis text {
+  fill: rgba(238,242,255,0.62);
+  font-size: 11px;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-anchor: middle;
+}
+
+.transit-line,
+.transit-line-highlight {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.transit-line {
+  stroke-width: 8;
+  opacity: 0.88;
+}
+
+.transit-line-highlight {
+  stroke: rgba(255,255,255,0.35);
+  stroke-width: 2;
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+.transit-line[data-line="L1"] { stroke: #a78bfa; }
+.transit-line[data-line="L2"] { stroke: #22d3ee; }
+.transit-line[data-line="L3"] { stroke: #fb923c; }
+.transit-line[data-line="L4"] { stroke: #fbbf24; }
+.transit-connector { opacity: 0.60; }
+
+.transit-line.is-dim,
+.transit-line-highlight.is-dim {
+  opacity: 0.22;
+  filter: none;
+}
+
+.transit-line.is-lit {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.transit-map.in-view .transit-line,
+.transit-map.in-view .transit-line-highlight {
+  animation: transitDraw 1.4s ease forwards;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+@keyframes transitDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+.station {
+  cursor: pointer;
+  color: var(--station-color, #ffffff);
+  transition: opacity 0.22s ease;
+}
+
+.station-hit {
+  fill: transparent;
+}
+
+.station-marker {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.22s ease, filter 0.22s ease;
+}
+
+.station-dot {
+  fill: #ffffff;
+  stroke: var(--station-color, #ffffff);
+  stroke-width: 3;
+}
+
+.station-outer,
+.station-inner {
+  fill: none;
+  stroke: var(--station-color, #ffffff);
+}
+
+.station-outer { stroke-width: 4; }
+.station-inner { stroke-width: 2; opacity: 0.72; }
+.station-glow { fill: rgba(255,255,255,0.16); }
+
+.station-hub .station-dot {
+  stroke: rgba(255,255,255,0.95);
+  stroke-width: 3;
+}
+
+.station-label,
+.station-date {
+  pointer-events: none;
+  font-family: var(--font-sans);
+}
+
+.station-label {
+  fill: rgba(255,255,255,0.94);
+  font-size: 14px;
+  font-weight: 800;
+  paint-order: stroke;
+  stroke: rgba(10,8,20,0.80);
+  stroke-width: 3px;
+}
+
+.station-date {
+  fill: rgba(238,242,255,0.62);
+  font-size: 11px;
+  font-weight: 800;
+  paint-order: stroke;
+  stroke: rgba(10,8,20,0.82);
+  stroke-width: 3px;
+}
+
+.station:hover .station-marker,
+.station:focus-visible .station-marker,
+.station.is-lit .station-marker,
+.station.is-active .station-marker {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 12px rgba(255,255,255,0.52));
+}
+
+.station:focus-visible {
+  outline: none;
+}
+
+.station:focus-visible .station-dot,
+.station:focus-visible .station-outer {
+  stroke: #ffffff;
+  stroke-width: 5;
+}
+
+.station.is-dim {
+  opacity: 0.25;
+}
+
+.station.is-active .station-dot,
+.station.is-active .station-outer,
+.station.is-active .station-inner {
+  stroke: #ffffff;
+}
+
+.transit-detail {
+  border-radius: 22px;
+  padding: 22px;
+  min-height: 380px;
+  position: sticky;
+  top: 24px;
+  overflow: hidden;
+}
+
+.transit-detail-empty {
+  min-height: 310px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgba(238,242,255,0.58);
+  border: 1px dashed rgba(199,210,254,0.20);
+  border-radius: 16px;
+  padding: 22px;
+  font-weight: 800;
+}
+
+.transit-detail.has-active .transit-detail-empty {
+  display: none;
+}
+
+.transit-detail-card {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.transit-detail-card.is-active {
+  display: block;
+  animation: transitCardIn 0.2s ease forwards;
+}
+
+@keyframes transitCardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.transit-detail-card header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.transit-detail-card header strong {
+  color: #ffffff;
+  font-size: 1.14rem;
+  line-height: 1.15;
+}
+
+.transit-detail-card header span {
+  color: rgba(238,242,255,0.82);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.transit-detail-card header .meta {
+  color: rgba(238,242,255,0.54);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.transit-detail-summary {
+  color: rgba(238,242,255,0.70);
+  font-size: 0.93rem;
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.transit-mini-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.transit-mini-grid span {
+  display: block;
+  border: 1px solid rgba(199,210,254,0.14);
+  background: rgba(255,255,255,0.035);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: rgba(238,242,255,0.78);
+  font-size: 0.9rem;
+}
+
+.transit-mini-grid b {
+  display: block;
+  color: rgba(167,139,250,0.92);
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.transit-detail .resume-panel-summary {
+  display: none;
+}
+
+.transit-detail .workflow-track,
+.transit-detail .workflow-track.steps-3,
+.transit-detail .workflow-track.steps-4,
+.transit-detail .workflow-track.steps-5 {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.transit-detail .workflow-arrow {
+  min-height: 18px;
+  transform: rotate(90deg);
+  color: rgba(199,210,254,0.55);
+}
+
+.transit-detail .workflow-step {
+  opacity: 1;
+  transform: none;
+  min-height: 154px;
+}
+
+.transit-detail-card.is-active .table-visual-v2 .tv-row { animation: tvRowIn 0.5s ease forwards; }
+.transit-detail-card.is-active .table-visual-v2 .tv-row:nth-child(2) { animation-delay: 0.10s; }
+.transit-detail-card.is-active .table-visual-v2 .tv-row:nth-child(3) { animation-delay: 0.20s; }
+.transit-detail-card.is-active .table-visual-v2 .tv-row:nth-child(4) { animation-delay: 0.30s; }
+.transit-detail-card.is-active .table-visual-v2 .tv-row:nth-child(5) { animation-delay: 0.40s; }
+.transit-detail-card.is-active .model-band-visual .band-fill { animation: bandFade 1.4s ease forwards 0.3s; }
+.transit-detail-card.is-active .model-band-visual .trend-line,
+.transit-detail-card.is-active .model-visual path,
+.transit-detail-card.is-active .gameplan-visual path,
+.transit-detail-card.is-active .path-visual path,
+.transit-detail-card.is-active .path-route,
+.transit-detail-card.is-active .dash-spark polyline { animation: drawLine 1.3s ease forwards 0.1s; }
+.transit-detail-card.is-active .proj-dot,
+.transit-detail-card.is-active .tactic-dot,
+.transit-detail-card.is-active .path-visual-v2 .waypoint { animation: dotPop 0.4s ease forwards 0.5s; }
+.transit-detail-card.is-active .field-visual-v2 .player.a { animation: moveA 2.4s ease-in-out infinite; }
+.transit-detail-card.is-active .field-visual-v2 .player.b { animation: moveB 2.4s ease-in-out infinite; }
+.transit-detail-card.is-active .field-visual-v2 .player.c { animation: moveC 2.4s ease-in-out infinite; }
+.transit-detail-card.is-active .field-visual-v2 .player.d { animation: moveD 2.4s ease-in-out infinite; }
+.transit-detail-card.is-active .ball { animation: ballRoll 3.2s ease-in-out infinite; }
+.transit-detail-card.is-active .play-line.p1 { animation: drawLine 0.9s ease forwards 0.1s; }
+.transit-detail-card.is-active .play-line.p2 { animation: drawLine 0.7s ease forwards 0.8s; }
+.transit-detail-card.is-active .play-line.p3 { animation: drawLine 0.7s ease forwards 1.4s; }
+.transit-detail-card.is-active .tactic-dot.d1 { animation-delay: 0.7s; }
+.transit-detail-card.is-active .tactic-dot.d2 { animation-delay: 1.3s; }
+.transit-detail-card.is-active .tactic-dot.d3 { animation-delay: 1.8s; }
+.transit-detail-card.is-active .drone-body { animation: droneBob 2.4s ease-in-out infinite; }
+.transit-detail-card.is-active .drone-rotor::before { animation: rotorSpin 0.3s linear infinite; }
+.transit-detail-card.is-active .drone-shadow { animation: shadowPulse 2.4s ease-in-out infinite; }
+.transit-detail-card.is-active .path-visual-v2 .waypoint.w1 { animation-delay: 0.4s; }
+.transit-detail-card.is-active .path-visual-v2 .waypoint.w2 { animation-delay: 1.0s; }
+.transit-detail-card.is-active .path-visual-v2 .waypoint.w3 { animation-delay: 1.6s; }
+.transit-detail-card.is-active .delivery-visual-v2 .upload-bar b,
+.transit-detail-card.is-active .delivery-visual .upload-bar b { animation: uploadFill 1.3s ease forwards 0.3s; }
+.transit-detail-card.is-active .process-visual-v2 .gear,
+.transit-detail-card.is-active .process-visual .gear { animation: spinGear 2.4s linear infinite; }
+.transit-detail-card.is-active .process-visual-v2 .gear.two,
+.transit-detail-card.is-active .process-visual .gear.two { animation-direction: reverse; }
+.transit-detail-card.is-active .parse-chip { animation: parseChipIn 0.4s ease forwards; }
+.transit-detail-card.is-active .parse-chip:nth-child(1) { animation-delay: 0.3s; }
+.transit-detail-card.is-active .parse-chip:nth-child(2) { animation-delay: 0.5s; }
+.transit-detail-card.is-active .parse-chip:nth-child(3) { animation-delay: 0.7s; }
+.transit-detail-card.is-active .scoring-visual-v2 .score-ring { animation: ringSpin 1.4s ease forwards; }
+.transit-detail-card.is-active .scoring-visual-v2 .score-bars i:nth-child(1) { animation-delay: 0.3s; }
+.transit-detail-card.is-active .scoring-visual-v2 .score-bars i:nth-child(2) { animation-delay: 0.5s; }
+.transit-detail-card.is-active .scoring-visual-v2 .score-bars i:nth-child(3) { animation-delay: 0.7s; }
+
+@media (max-width: 980px) {
+  .transit-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .transit-detail {
+    position: relative;
+    top: auto;
+  }
+}
+
+@media (max-width: 820px) {
+  .transit-map-wrap {
+    padding: 14px;
+  }
+
+  .transit-legend {
+    position: relative;
+    top: auto;
+    right: auto;
+    max-width: none;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .transit-map {
+    min-width: 820px;
+  }
+}
+
+@media (max-width: 560px) {
+  .transit-map {
+    min-width: 760px;
+  }
+
+  .transit-detail {
+    padding: 16px;
+  }
+
+  .transit-legend li {
+    font-size: 0.66rem;
+    padding: 6px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transit-map.in-view .transit-line,
+  .transit-map.in-view .transit-line-highlight {
+    animation: none;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .station-marker,
+  .transit-detail-card,
+  .transit-legend li {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .station:hover .station-marker,
+  .station:focus-visible .station-marker,
+  .station.is-lit .station-marker,
+  .station.is-active .station-marker {
+    transform: none;
+  }
+}
+

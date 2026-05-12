@@ -1165,3 +1165,168 @@
     });
   });
 })();
+
+// ───── TRANSIT MAP ─────
+(function () {
+  var root = document.querySelector('.transit-section');
+  if (!root) return;
+
+  var map = root.querySelector('.transit-map');
+  var stations = Array.prototype.slice.call(root.querySelectorAll('.station'));
+  var lines = Array.prototype.slice.call(root.querySelectorAll('.transit-line, .transit-line-highlight'));
+  var legends = Array.prototype.slice.call(root.querySelectorAll('.transit-legend [data-line]'));
+  var cards = Array.prototype.slice.call(root.querySelectorAll('.transit-detail-card'));
+  var detail = root.querySelector('.transit-detail');
+  var activeStation = null;
+  var previewStation = null;
+  var activeLine = null;
+
+  function splitLines(node) {
+    if (!node) return [];
+    return (node.getAttribute('data-lines') || '').trim().split(/\s+/).filter(Boolean);
+  }
+
+  function stationById(id) {
+    return stations.find(function (s) { return s.getAttribute('data-station') === id; });
+  }
+
+  function stationHasLine(station, line) {
+    return splitLines(station).indexOf(line) !== -1;
+  }
+
+  function sharedLine(station, targetLines) {
+    return splitLines(station).some(function (line) { return targetLines.indexOf(line) !== -1; });
+  }
+
+  function showCard(id) {
+    cards.forEach(function (card) {
+      card.classList.toggle('is-active', card.getAttribute('data-station') === id);
+    });
+    if (detail) detail.classList.toggle('has-active', !!id);
+  }
+
+  function setPressed() {
+    stations.forEach(function (station) {
+      var on = station.getAttribute('data-station') === activeStation;
+      station.classList.toggle('is-active', on);
+      station.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    legends.forEach(function (legend) {
+      var on = legend.getAttribute('data-line') === activeLine;
+      legend.classList.toggle('is-active', on);
+      legend.classList.toggle('is-muted', !!activeLine && !on);
+      legend.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function paint() {
+    var focusStation = previewStation || activeStation;
+    var focusLines = activeLine ? [activeLine] : (focusStation ? splitLines(stationById(focusStation)) : []);
+
+    root.toggleAttribute('data-has-focus', !!focusLines.length);
+    if (activeStation) root.setAttribute('data-active-station', activeStation);
+    else root.removeAttribute('data-active-station');
+    if (activeLine) root.setAttribute('data-filter-line', activeLine);
+    else root.removeAttribute('data-filter-line');
+
+    lines.forEach(function (line) {
+      var on = focusLines.indexOf(line.getAttribute('data-line')) !== -1;
+      line.classList.toggle('is-lit', on);
+      line.classList.toggle('is-dim', !!focusLines.length && !on);
+    });
+
+    stations.forEach(function (station) {
+      var on = activeLine ? stationHasLine(station, activeLine) : (!!focusLines.length && sharedLine(station, focusLines));
+      station.classList.toggle('is-lit', on);
+      station.classList.toggle('is-dim', !!focusLines.length && !on);
+    });
+
+    setPressed();
+    showCard(activeStation);
+  }
+
+  function clearAll() {
+    activeStation = null;
+    previewStation = null;
+    activeLine = null;
+    paint();
+  }
+
+  function activateStation(station) {
+    var id = station.getAttribute('data-station');
+    activeLine = null;
+    activeStation = activeStation === id ? null : id;
+    paint();
+  }
+
+  stations.forEach(function (station) {
+    station.addEventListener('mouseenter', function () {
+      if (!activeLine) {
+        previewStation = station.getAttribute('data-station');
+        paint();
+      }
+    });
+    station.addEventListener('mouseleave', function () {
+      previewStation = null;
+      paint();
+    });
+    station.addEventListener('click', function () {
+      activateStation(station);
+    });
+    station.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activateStation(station);
+      }
+      if (e.key === 'Escape') clearAll();
+    });
+  });
+
+  legends.forEach(function (legend) {
+    legend.addEventListener('click', function () {
+      var line = legend.getAttribute('data-line');
+      activeStation = null;
+      activeLine = activeLine === line ? null : line;
+      paint();
+    });
+    legend.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        legend.click();
+      }
+      if (e.key === 'Escape') clearAll();
+    });
+  });
+
+  if (map) {
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    lines.forEach(function (line, i) {
+      if (typeof line.getTotalLength === 'function') {
+        var len = Math.ceil(line.getTotalLength());
+        line.style.strokeDasharray = len;
+        line.style.strokeDashoffset = reduceMotion ? 0 : len;
+        line.style.setProperty('--line-delay', (i % 8) * 100 + 'ms');
+      }
+    });
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      map.classList.add('in-view');
+    } else {
+      new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            map.classList.add('in-view');
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.32 }).observe(map);
+    }
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') clearAll();
+  });
+
+  paint();
+})();
+
