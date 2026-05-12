@@ -1,5 +1,5 @@
 /* ==========================================================
-   script.js — Dark Distribution Skyline · Stable Floating Bubbles
+   script.js — Green / Black Distribution Skyline · Stable Floating Bubbles
    ========================================================== */
 
 // ───────── DECRYPT ANIMATION ─────────
@@ -85,23 +85,23 @@
   // animation (random heights → selected target distribution).
   var buildStartedAt = 0;
 
-  // ── Black / white / violet architectural palette ──
-  // Buildings stay in the dark violet construction palette.
-  // The former bright-purple finished state has been removed.
-  var BODY_DARK    = [14, 10, 28];               // #0e0a1c (near-black violet)
+  // ── Green / black / white architectural palette ──
+  // Buildings stay in the dark green construction palette.
+  // The former bright-green finished state has been removed.
+  var BODY_DARK    = [2, 19, 10];                // near-black green
   var BODY_BRIGHT  = BODY_DARK;
-  var SIDE_DARK    = [6, 4, 16];                 // very dark violet/black
+  var SIDE_DARK    = [0, 0, 0];                  // black
   var SIDE_BRIGHT  = SIDE_DARK;
-  var TOP_DARK     = [30, 22, 58];               // dark violet
+  var TOP_DARK     = [6, 78, 59];                // dark green
   var TOP_BRIGHT   = TOP_DARK;
-  var TOP_EDGE     = "rgba(220,210,245,0.92)";   // near-white violet edge
-  var TOP_GLOW     = "rgba(188,174,226,0.20)";   // soft violet glow
-  var FLOOR_LINE   = "rgba(220,210,245,0.18)";   // pale violet floor stripes
-  var ACCENT_LINE  = "rgba(220,210,245,0.60)";   // pale violet accent
-  var WINDOW_LIT   = "rgba(245,242,255,0.88)";   // near-white window
-  var WINDOW_DIM   = "rgba(188,174,226,0.22)";   // dim violet window
+  var TOP_EDGE     = "rgba(167,243,208,0.92)";   // near-white green edge
+  var TOP_GLOW     = "rgba(52,211,153,0.20)";   // soft green glow
+  var FLOOR_LINE   = "rgba(167,243,208,0.18)";   // pale green floor stripes
+  var ACCENT_LINE  = "rgba(167,243,208,0.60)";   // pale green accent
+  var WINDOW_LIT   = "rgba(236,253,245,0.88)";   // near-white window
+  var WINDOW_DIM   = "rgba(52,211,153,0.22)";   // dim green window
 
-  var BRIGHTEN_MS = 0; // bright-purple finish removed
+  var BRIGHTEN_MS = 0; // bright-green finish removed
   // 40% faster than before: 3200/5200 → 1920/3120 morph window,
   // 420 → 250 stagger between buildings.
   var MORPH_MIN_MS = 1920;
@@ -372,17 +372,17 @@
 
   function drawBackground() {
     var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#07050f");
-    grad.addColorStop(0.48, "#0a0814");
-    grad.addColorStop(1, "#050308");
+    grad.addColorStop(0, "#020403");
+    grad.addColorStop(0.48, "#041007");
+    grad.addColorStop(1, "#000000");
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
     var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
-    glow.addColorStop(0, "rgba(149,128,199,0.14)");
-    glow.addColorStop(0.42, "rgba(149,128,199,0.05)");
-    glow.addColorStop(1, "rgba(149,128,199,0)");
+    glow.addColorStop(0, "rgba(16,185,129,0.14)");
+    glow.addColorStop(0.42, "rgba(16,185,129,0.05)");
+    glow.addColorStop(1, "rgba(16,185,129,0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
@@ -484,7 +484,7 @@
     }
 
     ctx.save();
-    ctx.strokeStyle = "rgba(245,242,255," + alpha.toFixed(3) + ")";
+    ctx.strokeStyle = "rgba(236,253,245," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
@@ -548,7 +548,7 @@
     // Soft glow band just under the top edge
     var glowGrad = ctx.createLinearGradient(x, y, x, y + Math.min(h * 0.4, 60));
     glowGrad.addColorStop(0, TOP_GLOW);
-    glowGrad.addColorStop(1, "rgba(188,174,226,0)");
+    glowGrad.addColorStop(1, "rgba(52,211,153,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(x, y, w, Math.min(h * 0.4, 60));
 
@@ -560,7 +560,7 @@
     ctx.fillRect(panelX, y + 4, panelW, Math.max(0, h - 4));
 
     // Vertical mullions make wider buildings feel more architectural.
-    ctx.strokeStyle = "rgba(220,210,245,0.10)";
+    ctx.strokeStyle = "rgba(167,243,208,0.10)";
     ctx.lineWidth = 0.65;
     var mullions = Math.max(2, Math.floor(w / 9));
     for (var mv = 1; mv < mullions; mv++) {
@@ -620,7 +620,7 @@
     ctx.globalAlpha = 1;
 
     // Thin roof outline across the depth panel.
-    ctx.strokeStyle = "rgba(245,242,255,0.42)";
+    ctx.strokeStyle = "rgba(236,253,245,0.42)";
     ctx.lineWidth = 0.8;
     ctx.beginPath();
     ctx.moveTo(x + w, y + 0.5);
@@ -669,7 +669,7 @@
       }
 
       if (b.antenna) {
-        ctx.strokeStyle = "rgba(245,242,255,0.55)";
+        ctx.strokeStyle = "rgba(236,253,245,0.55)";
         ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(x + w * 0.72, y);
@@ -677,7 +677,7 @@
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(x + w * 0.72, y - 11, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(245,242,255,0.70)";
+        ctx.fillStyle = "rgba(236,253,245,0.70)";
         ctx.fill();
       }
     }
