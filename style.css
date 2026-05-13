@@ -5318,8 +5318,8 @@ footer {
 }
 
 .project-flow {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 8px;
   max-height: 0;
@@ -5390,6 +5390,162 @@ footer {
   .wafer-section-lede {
     margin-top: 0;
   }
+}
+
+/* ===== Personable resume chapter pass v161 ===== */
+.wafer-story-section,
+.wafer-project-section,
+.wafer-lab-section {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(20, 184, 166, 0.10), transparent 30%),
+    radial-gradient(circle at 86% 18%, rgba(129, 140, 248, 0.10), transparent 30%),
+    linear-gradient(180deg, #090b18 0%, #101424 100%);
+}
+
+.wafer-section-kicker {
+  color: #a7f3d0;
+}
+
+.wafer-section-lede {
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 1.02rem;
+}
+
+.wafer-track-map {
+  min-height: 650px;
+  background:
+    linear-gradient(rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.045), rgba(248, 250, 252, 0.015));
+  background-size: 30px 30px, 30px 30px, 100% 100%;
+  border-radius: 18px;
+}
+
+.wafer-track-map::before {
+  opacity: 0.22;
+}
+
+.track-line {
+  stroke: rgba(167, 243, 208, 0.52);
+  stroke-width: 8;
+  stroke-dasharray: 10 16;
+}
+
+.track-shadow {
+  stroke-width: 22;
+  stroke: rgba(15, 23, 42, 0.42);
+}
+
+.wafer-track-card,
+.lab-profile-panel,
+.lab-console,
+.lab-detail-panel,
+.project-wafer-card {
+  border-radius: 16px;
+  background:
+    linear-gradient(rgba(49, 73, 137, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(49, 73, 137, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(242, 246, 252, 0.88));
+  background-size: 22px 22px, 22px 22px, 100% 100%;
+  color: #101828;
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+  backdrop-filter: none;
+}
+
+.wafer-track-card:hover,
+.wafer-track-card:focus-visible,
+.wafer-track-card.is-active,
+.project-wafer-card:hover,
+.project-wafer-card:focus-visible,
+.project-wafer-card.is-active {
+  border-color: rgba(20, 184, 166, 0.46);
+  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.26);
+}
+
+.wafer-track-card h3,
+.project-wafer-card h3,
+.lab-profile-panel h3 {
+  color: #101828;
+}
+
+.wafer-track-card p,
+.project-wafer-card p,
+.lab-profile-panel p {
+  color: #475569;
+}
+
+.station-panel strong {
+  color: #047857;
+}
+
+.station-panel span {
+  color: #334155;
+}
+
+.station-node,
+.lab-chip i,
+.project-orb {
+  background: radial-gradient(circle at 30% 22%, #ffffff, #d1fae5 40%, #5eead4);
+  color: #0f172a;
+}
+
+.station-visual {
+  border-color: rgba(20, 184, 166, 0.18);
+}
+
+.lab-console {
+  align-content: stretch;
+}
+
+.lab-chip {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.92));
+  border-color: rgba(148, 163, 184, 0.24);
+  color: #172033;
+}
+
+.lab-chip:hover,
+.lab-chip:focus-visible,
+.lab-chip.is-active {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(20, 184, 166, 0.13), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f8fafc);
+  border-color: rgba(20, 184, 166, 0.45);
+}
+
+.lab-stat-row span {
+  color: #475569;
+  border-top-color: rgba(148, 163, 184, 0.26);
+}
+
+.lab-stat-row strong,
+.detail-label {
+  color: #047857;
+}
+
+.lab-detail-panel p {
+  color: #334155;
+}
+
+.detail-meter {
+  background: rgba(148, 163, 184, 0.22);
+}
+
+.project-wafer-card::after {
+  opacity: 0.24;
+}
+
+.project-flow span {
+  color: #064e3b;
+  background: rgba(20, 184, 166, 0.12);
+  border-color: rgba(20, 184, 166, 0.28);
+}
+
+.project-flow i {
+  color: #0f766e;
+  transform: rotate(90deg);
+  justify-self: center;
 }
 
 @media (max-width: 980px) {
