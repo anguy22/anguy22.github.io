@@ -32,6 +32,12 @@
   --radius: 10px;
   --radius-lg: 16px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --paper: #f7f3e8;
+  --paper-soft: #fbf8ef;
+  --paper-line: rgba(31, 41, 55, 0.105);
+  --ink: #111111;
+  --ink-muted: #4b5563;
 }
 
 *, *::before, *::after {
@@ -47,8 +53,12 @@ html {
 
 body {
   font-family: var(--font-sans);
-  color: var(--text);
-  background: var(--bg);
+  color: var(--ink);
+  background:
+    linear-gradient(var(--paper-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-line) 1px, transparent 1px),
+    var(--paper);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
   line-height: 1.7;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
@@ -5546,6 +5556,750 @@ footer {
   color: #0f766e;
   transform: rotate(90deg);
   justify-self: center;
+}
+
+/* ===== Engineering paper rebuild v170 ===== */
+.paper-section,
+#contact {
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    var(--paper);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+  color: var(--ink);
+}
+
+.paper-section .section-title,
+#contact .section-title {
+  color: var(--ink);
+}
+
+.paper-kicker {
+  color: #111;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.paper-lede {
+  max-width: 760px;
+  color: var(--ink-muted);
+  margin: -8px 0 28px;
+  line-height: 1.7;
+}
+
+.experience-rail-map {
+  min-height: 680px;
+  position: relative;
+  border: 2px solid #111;
+  border-radius: 4px;
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.075) 1px, transparent 1px),
+    rgba(251, 248, 239, 0.72);
+  background-size: 24px 24px;
+  box-shadow: 8px 8px 0 #111;
+  overflow: hidden;
+}
+
+.rail-line-svg {
+  position: absolute;
+  inset: 28px;
+  width: calc(100% - 56px);
+  height: calc(100% - 56px);
+  pointer-events: none;
+}
+
+.rail-bed,
+.rail-tie-line {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.rail-bed {
+  stroke: #111;
+  stroke-width: 18;
+}
+
+.rail-tie-line {
+  stroke: var(--paper);
+  stroke-width: 12;
+  stroke-dasharray: 4 18;
+  animation: railTies 1.8s linear infinite;
+}
+
+@keyframes railTies {
+  to { stroke-dashoffset: -22; }
+}
+
+.boiler-train {
+  position: absolute;
+  left: 6%;
+  top: 11%;
+  width: 82px;
+  height: 46px;
+  z-index: 2;
+  animation: boilerRoute 25s linear infinite;
+}
+
+.train-body,
+.train-cab,
+.train-stack,
+.train-wheel,
+.train-smoke {
+  position: absolute;
+  background: #111;
+}
+
+.train-body {
+  left: 18px;
+  top: 18px;
+  width: 48px;
+  height: 18px;
+  border-radius: 10px 12px 4px 4px;
+}
+
+.train-cab {
+  left: 48px;
+  top: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 3px 3px 0 0;
+}
+
+.train-stack {
+  left: 20px;
+  top: 6px;
+  width: 9px;
+  height: 15px;
+}
+
+.train-wheel {
+  top: 34px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid #111;
+  background: var(--paper);
+  animation: wheelSpin 0.55s linear infinite;
+}
+
+.train-wheel.w1 { left: 25px; }
+.train-wheel.w2 { left: 54px; }
+
+.train-smoke {
+  left: 6px;
+  top: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  opacity: 0.24;
+  animation: trainSmoke 1.5s ease-out infinite;
+}
+
+@keyframes wheelSpin { to { transform: rotate(360deg); } }
+@keyframes trainSmoke {
+  to { opacity: 0; transform: translate(-18px, -18px) scale(1.8); }
+}
+
+@keyframes boilerRoute {
+  0%, 15% { left: 6%; top: 10%; transform: rotate(-12deg); }
+  20%, 35% { left: 59%; top: 10%; transform: rotate(10deg); }
+  40%, 55% { left: 13%; top: 57%; transform: rotate(12deg); }
+  60%, 75% { left: 44%; top: 39%; transform: rotate(-18deg); }
+  80%, 95% { left: 75%; top: 58%; transform: rotate(8deg); }
+  100% { left: 6%; top: 10%; transform: rotate(-12deg); }
+}
+
+.experience-stop {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 3;
+  width: min(300px, 30vw);
+  min-height: 156px;
+  border: 2px solid #111;
+  border-radius: 4px;
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.055) 1px, transparent 1px),
+    #fffdf6;
+  background-size: 18px 18px;
+  color: #111;
+  padding: 16px;
+  box-shadow: 5px 5px 0 #111;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.experience-stop:hover,
+.experience-stop:focus-visible,
+.experience-stop.is-active {
+  transform: translateY(-5px);
+  box-shadow: 8px 8px 0 #111;
+}
+
+.stop-number {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  color: #111;
+  font-size: 0.8rem;
+  font-weight: 900;
+  border: 2px solid #111;
+  background: var(--paper);
+  padding: 2px 7px;
+}
+
+.experience-stop h3 {
+  max-width: 210px;
+  color: #111;
+  font-size: 1.15rem;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.exp-role,
+.exp-date {
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.exp-date {
+  margin-top: 5px;
+  font-weight: 800;
+}
+
+.exp-panel {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.36s ease, opacity 0.25s ease, margin-top 0.25s ease;
+}
+
+.experience-stop.is-active .exp-panel,
+.experience-stop:hover .exp-panel,
+.experience-stop:focus-visible .exp-panel {
+  max-height: 250px;
+  opacity: 1;
+  margin-top: 12px;
+}
+
+.exp-panel .mini-visual {
+  height: 86px;
+  border: 2px solid #111;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.exp-panel p {
+  color: #1f2937;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.service-visual {
+  display: grid;
+  place-items: center;
+  background: #fff;
+}
+
+.service-visual i {
+  font-size: 2rem;
+  color: #111;
+}
+
+.service-visual span {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  height: 2px;
+  background: #111;
+  opacity: 0.18;
+}
+
+.service-visual span:nth-child(2) { top: 24px; }
+.service-visual span:nth-child(3) { top: 42px; }
+.service-visual span:nth-child(4) { top: 60px; }
+
+.education-paper-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(360px, 1.15fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.education-main-card,
+.education-tool-card,
+.paper-note-card,
+.project-workflow-card {
+  border: 2px solid #111;
+  border-radius: 4px;
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.06) 1px, transparent 1px),
+    #fffdf6;
+  background-size: 18px 18px;
+  box-shadow: 5px 5px 0 #111;
+}
+
+.education-main-card,
+.paper-note-card,
+.project-workflow-card {
+  padding: 20px;
+}
+
+.education-main-card h3,
+.project-workflow-card h3 {
+  color: #111;
+  line-height: 1.18;
+  margin-bottom: 8px;
+}
+
+.education-main-card p,
+.project-workflow-card p {
+  color: #374151;
+}
+
+.education-facts {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.education-facts span {
+  border-top: 1px solid rgba(17, 24, 39, 0.28);
+  padding-top: 7px;
+  color: #374151;
+}
+
+.education-facts strong {
+  color: #111;
+  margin-right: 8px;
+}
+
+.honor-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.honor-row span,
+.paper-chip {
+  border: 2px solid #111;
+  background: #fff;
+  color: #111;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.honor-row span {
+  padding: 6px 10px;
+  font-size: 0.78rem;
+}
+
+.education-tool-card {
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 10px;
+}
+
+.paper-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.paper-chip:hover,
+.paper-chip:focus-visible,
+.paper-chip.is-active {
+  background: #111;
+  color: #fffdf6;
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 rgba(17, 17, 17, 0.28);
+}
+
+.paper-note-card {
+  grid-column: 1 / -1;
+  min-height: 120px;
+}
+
+.paper-note-card span {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.paper-note-card p {
+  color: #374151;
+  max-width: 760px;
+}
+
+.project-workflow-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.project-workflow-card {
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.project-workflow-card:hover,
+.project-workflow-card:focus-visible,
+.project-workflow-card.is-open {
+  transform: translateY(-3px);
+  box-shadow: 8px 8px 0 #111;
+}
+
+.project-workflow-panel {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.42s ease, opacity 0.28s ease, margin-top 0.28s ease;
+}
+
+.project-workflow-card.is-open .project-workflow-panel {
+  max-height: 520px;
+  opacity: 1;
+  margin-top: 16px;
+}
+
+.project-workflow-card.is-open .workflow-step,
+.experience-stop.is-active .workflow-step {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-workflow-card .workflow-step {
+  border: 2px solid #111;
+  border-radius: 4px;
+  background: #fffdf6;
+  box-shadow: none;
+}
+
+.project-workflow-card .workflow-arrow {
+  color: #111;
+}
+
+.bridge-visual,
+.regression-visual,
+.residual-visual {
+  background: #fff;
+  border: 1px solid rgba(17, 17, 17, 0.18);
+}
+
+.bridge-deck {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 42px;
+  height: 4px;
+  background: #111;
+}
+
+.bridge-arch {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 22px;
+  height: 42px;
+  border: 4px solid #111;
+  border-top: 0;
+  border-radius: 0 0 90px 90px;
+}
+
+.bridge-visual i {
+  position: absolute;
+  top: 42px;
+  bottom: 16px;
+  width: 3px;
+  background: #111;
+}
+.bridge-visual i:nth-child(3) { left: 35%; }
+.bridge-visual i:nth-child(4) { left: 50%; }
+.bridge-visual i:nth-child(5) { left: 65%; }
+
+.regression-visual svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.regression-visual path {
+  fill: none;
+  stroke: #111;
+  stroke-width: 3;
+  stroke-dasharray: 160;
+  stroke-dashoffset: 160;
+}
+
+.project-workflow-card.is-open .regression-visual path {
+  animation: drawLine 1.1s ease forwards;
+}
+
+.r-dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #111;
+  opacity: 0;
+}
+.r-dot.d1 { left: 28px; bottom: 28px; }
+.r-dot.d2 { left: 48px; bottom: 38px; }
+.r-dot.d3 { left: 75px; bottom: 30px; }
+.r-dot.d4 { left: 94px; bottom: 50px; }
+.project-workflow-card.is-open .r-dot { animation: dotPop .35s ease forwards; }
+.project-workflow-card.is-open .r-dot.d2 { animation-delay: .18s; }
+.project-workflow-card.is-open .r-dot.d3 { animation-delay: .32s; }
+.project-workflow-card.is-open .r-dot.d4 { animation-delay: .46s; }
+
+.residual-visual {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+}
+
+.residual-visual b {
+  width: 14px;
+  height: var(--h);
+  background: #111;
+  transform-origin: bottom;
+  transform: scaleY(0);
+}
+
+.project-workflow-card.is-open .residual-visual b {
+  animation: residualRise .6s ease forwards;
+}
+
+.residual-visual span {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+@keyframes residualRise {
+  to { transform: scaleY(1); }
+}
+
+@media (max-width: 980px) {
+  .experience-rail-map {
+    min-height: auto;
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .rail-line-svg,
+  .boiler-train {
+    display: none;
+  }
+
+  .experience-stop {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+  }
+
+  .education-paper-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .paper-note-card {
+    grid-column: auto;
+  }
+}
+
+@media (min-width: 761px) {
+  .experience-rail-map {
+    min-height: 700px;
+    display: block;
+    padding: 0;
+  }
+
+  .rail-line-svg,
+  .boiler-train {
+    display: block;
+  }
+
+  .experience-stop {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: min(252px, 26vw);
+  }
+
+  .experience-stop[style*="--x: 61%"] { --x: 58%; }
+  .experience-stop[style*="--x: 67%"],
+  .experience-stop[style*="--x: 72%"] { --x: 69%; }
+}
+
+@media (max-width: 760px) {
+  .experience-rail-map {
+    min-height: auto;
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .rail-line-svg,
+  .boiler-train {
+    display: none;
+  }
+
+  .experience-stop {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+  }
+}
+
+/* Make the original hero belong to the engineering-paper system. */
+#hero {
+  color: #111;
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    var(--paper);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+}
+
+#hero::before {
+  opacity: 0;
+}
+
+#hero h1,
+.decrypt-line {
+  color: #111;
+  text-shadow: none;
+}
+
+#cityscape {
+  filter: grayscale(1) contrast(1.1);
+  opacity: 0.72;
+}
+
+.bubble {
+  background: #fffdf6;
+  border: 2px solid #111;
+  color: #111;
+  box-shadow: 5px 5px 0 #111;
+}
+
+.bubble:hover,
+.bubble:focus-visible {
+  color: #111;
+  border-color: #111;
+  box-shadow: 8px 8px 0 #111;
+}
+
+.social-links a {
+  color: #111;
+}
+
+.scroll-indicator {
+  color: #111;
+}
+
+.experience-stop[style*="--x: 72%"] {
+  --x: 67%;
+}
+
+.experience-stop.is-active .drone-body { animation: droneBob 2.4s ease-in-out infinite; }
+.experience-stop.is-active .drone-rotor::before { animation: rotorSpin 0.45s linear infinite; }
+.experience-stop.is-active .drone-shadow { animation: shadowPulse 2.4s ease-in-out infinite; }
+.experience-stop.is-active .player.a { animation: moveA 2.4s ease-in-out infinite; }
+.experience-stop.is-active .player.b { animation: moveB 2.4s ease-in-out infinite; }
+.experience-stop.is-active .player.c { animation: moveC 2.4s ease-in-out infinite; }
+.experience-stop.is-active .player.d { animation: moveD 2.4s ease-in-out infinite; }
+.experience-stop.is-active .ball { animation: ballRoll 3.2s ease-in-out infinite; }
+.experience-stop.is-active .model-visual path,
+.project-workflow-card.is-open .model-visual path {
+  animation: drawLine 1.3s ease forwards .1s;
+}
+.experience-stop.is-active .proj-dot,
+.project-workflow-card.is-open .proj-dot {
+  animation: dotPop .4s ease forwards;
+}
+.experience-stop.is-active .fab-building .fab-window { animation: fabBlink 2.4s ease-in-out infinite; }
+.experience-stop.is-active .fab-puff { animation: fabPuff 2.4s ease-out infinite; }
+.experience-stop.is-active .wafer-disc { animation: waferRoll 3.6s linear infinite; }
+
+.project-workflow-card.is-open .process-visual-v2 .gear { animation: spinGear 2.4s linear infinite; }
+.project-workflow-card.is-open .process-visual-v2 .gear.two { animation-direction: reverse; }
+.project-workflow-card.is-open .parse-chip { animation: parseChipIn 0.4s ease forwards; }
+.project-workflow-card.is-open .parse-chip:nth-child(1) { animation-delay: 0.3s; }
+.project-workflow-card.is-open .parse-chip:nth-child(2) { animation-delay: 0.5s; }
+.project-workflow-card.is-open .parse-chip:nth-child(3) { animation-delay: 0.7s; }
+.project-workflow-card.is-open .scoring-visual-v2 .score-ring { animation: scoreRing 1.2s ease forwards; }
+.project-workflow-card.is-open .score-bars i { animation: scoreBar 0.8s ease forwards; }
+.project-workflow-card.is-open .dash-spark polyline { animation: drawLine 1.2s ease forwards; }
+
+@keyframes scoreRing {
+  from { transform: rotate(-18deg) scale(0.92); }
+  to { transform: rotate(0) scale(1); }
+}
+
+@keyframes scoreBar {
+  from { transform: scaleX(0); transform-origin: left; }
+  to { transform: scaleX(1); transform-origin: left; }
+}
+
+#about,
+footer {
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    var(--paper);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+  color: #111;
+}
+
+#about .section-title,
+#about .about-text p,
+#about .detail-card strong,
+footer p {
+  color: #111;
+}
+
+#about .detail-card,
+#contact .contact-card {
+  background: #fffdf6;
+  border: 2px solid #111;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 #111;
+  color: #111;
+}
+
+#about .detail-card span,
+#contact .contact-card span,
+#contact .contact-text {
+  color: #374151;
+}
+
+#contact .contact-card strong,
+#contact .contact-card i {
+  color: #111;
 }
 
 @media (max-width: 980px) {

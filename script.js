@@ -67,7 +67,7 @@
   setTimeout(step, 700);
 })();
 
-// Wafer portfolio interactions: track stations, lab chips, and project cards.
+// Engineering-paper portfolio interactions: train stops, education chips, and project cards.
 (function () {
   function activateWithin(selector, item) {
     document.querySelectorAll(selector).forEach(function (other) {
@@ -75,26 +75,45 @@
     });
   }
 
-  document.querySelectorAll('[data-track-card]').forEach(function (card) {
-    card.addEventListener('click', function () {
-      activateWithin('[data-track-card]', card);
+  var expCards = Array.prototype.slice.call(document.querySelectorAll('[data-exp-card]'));
+  var expIndex = 0;
+  var expHoldUntil = 0;
+
+  function activateExperience(index) {
+    if (!expCards.length) return;
+    expIndex = (index + expCards.length) % expCards.length;
+    expCards.forEach(function (card, i) {
+      card.classList.toggle('is-active', i === expIndex);
     });
-    card.addEventListener('mouseenter', function () {
-      activateWithin('[data-track-card]', card);
+  }
+
+  if (expCards.length) {
+    activateExperience(0);
+    setInterval(function () {
+      if (Date.now() < expHoldUntil) return;
+      activateExperience(expIndex + 1);
+    }, 5000);
+  }
+
+  expCards.forEach(function (card, index) {
+    card.addEventListener('click', function () {
+      expHoldUntil = Date.now() + 11000;
+      activateExperience(index);
     });
     card.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        activateWithin('[data-track-card]', card);
+        expHoldUntil = Date.now() + 11000;
+        activateExperience(index);
       }
     });
   });
 
-  var labDetail = document.getElementById('labDetailText');
-  document.querySelectorAll('.lab-chip').forEach(function (chip) {
+  var paperNote = document.getElementById('paperNoteText');
+  document.querySelectorAll('.paper-chip').forEach(function (chip) {
     function activateChip() {
-      activateWithin('.lab-chip', chip);
-      if (labDetail) labDetail.textContent = chip.getAttribute('data-lab-detail') || '';
+      activateWithin('.paper-chip', chip);
+      if (paperNote) paperNote.textContent = chip.getAttribute('data-paper-note') || '';
     }
 
     chip.addEventListener('click', activateChip);
@@ -103,15 +122,14 @@
 
   document.querySelectorAll('[data-project-card]').forEach(function (card) {
     card.addEventListener('click', function () {
-      activateWithin('[data-project-card]', card);
-    });
-    card.addEventListener('mouseenter', function () {
-      activateWithin('[data-project-card]', card);
+      document.querySelectorAll('[data-project-card]').forEach(function (other) {
+        other.classList.toggle('is-open', other === card ? !card.classList.contains('is-open') : false);
+      });
     });
     card.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        activateWithin('[data-project-card]', card);
+        card.click();
       }
     });
   });

@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=161">
+  <link rel="stylesheet" href="style.css?v=173">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -177,146 +177,182 @@
   </section>
 
 
-  <section id="experience" class="section wafer-story-section">
+  <section id="experience" class="section paper-section experience-rail-section">
     <div class="container reveal">
-      <div class="wafer-section-kicker">experience</div>
-      <h2 class="section-title">Where I Have Been Learning By Doing</h2>
-      <p class="wafer-section-lede">Each role is a small story from the resume. Click or hover a card to see what the work looked like in motion.</p>
+      <div class="paper-kicker">experience route</div>
+      <h2 class="section-title">From First Clients To The Fab</h2>
+      <p class="paper-lede">The train runs through my experience in order. When it reaches a station, that card opens and the work animation starts. You can also click a card to hold it open.</p>
 
-      <div class="wafer-track-map" aria-label="Interactive experience track">
-        <svg class="wafer-track-svg" viewBox="0 0 1100 720" aria-hidden="true">
-          <path class="track-shadow" d="M120 92 C420 20, 580 140, 430 250 C270 368, 642 390, 850 314 C1020 252, 1045 476, 836 536 C626 596, 422 496, 226 636" />
-          <path class="track-line" d="M120 92 C420 20, 580 140, 430 250 C270 368, 642 390, 850 314 C1020 252, 1045 476, 836 536 C626 596, 422 496, 226 636" />
+      <div class="experience-rail-map" aria-label="Experience route from Sawtooth UAV to Micron">
+        <svg class="rail-line-svg" viewBox="0 0 1120 680" aria-hidden="true">
+          <path class="rail-bed" d="M92 112 C288 28 422 168 326 268 C214 384 472 444 620 338 C800 210 1036 278 950 456 C890 582 630 596 458 524" />
+          <path class="rail-tie-line" d="M92 112 C288 28 422 168 326 268 C214 384 472 444 620 338 C800 210 1036 278 950 456 C890 582 630 596 458 524" />
         </svg>
 
-        <article class="wafer-track-card station-micron is-active" style="--x: 7%; --y: 3%;" tabindex="0" data-track-card>
-          <span class="station-node">01</span>
-          <div class="station-visual mini-visual fab-visual-v2">
-            <div class="fab-building"><div class="fab-roof"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-stack"></div><div class="fab-puff"></div></div>
-            <div class="wafer-conveyor"><span class="wafer-disc"></span><span class="wafer-disc"></span><span class="wafer-disc"></span></div>
-          </div>
-          <h3>Micron Technology</h3>
-          <p>Industrial Engineering Intern - R&amp;D Modeling &amp; Analytics</p>
-          <div class="station-panel">
-            <strong>Turning noisy fab data into something people can use.</strong>
-            <span>Process signals move into structured tables, yield models, and dashboards for R&amp;D decisions.</span>
-          </div>
-        </article>
+        <div class="boiler-train" aria-hidden="true">
+          <div class="train-smoke"></div>
+          <div class="train-stack"></div>
+          <div class="train-cab"></div>
+          <div class="train-body"></div>
+          <div class="train-wheel w1"></div>
+          <div class="train-wheel w2"></div>
+        </div>
 
-        <article class="wafer-track-card station-soccer" style="--x: 50%; --y: 17%;" tabindex="0" data-track-card>
-          <span class="station-node">02</span>
-          <div class="station-visual mini-visual field-visual-v2">
-            <div class="pitch-stripes"></div><div class="pitch-mid"></div><div class="pitch-center"></div><div class="pitch-goal left"></div><div class="pitch-goal right"></div>
-            <span class="player a"></span><span class="player b"></span><span class="player c"></span><span class="player d"></span><span class="ball"></span>
-          </div>
-          <h3>Purdue D1 Women's Soccer</h3>
-          <p>Predictive Data Analyst</p>
-          <div class="station-panel">
-            <strong>Helping coaches see the game through data.</strong>
-            <span>Player tendencies, scouting tables, predictive signals, and tactical summaries for match prep.</span>
-          </div>
-        </article>
-
-        <article class="wafer-track-card station-research" style="--x: 69%; --y: 47%;" tabindex="0" data-track-card>
-          <span class="station-node">03</span>
-          <div class="station-visual mini-visual model-visual model-band-visual">
-            <div class="axis x"></div><div class="axis y"></div>
-            <svg viewBox="0 0 120 72" aria-hidden="true"><path class="band-fill" d="M8 56 L28 48 L48 50 L68 38 L88 24 L112 18 L112 30 L88 38 L68 48 L48 58 L28 56 L8 64 Z"/><path class="trend-line" d="M8 60 C28 50, 48 50, 68 40 S96 22, 112 18"/></svg>
-            <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div><span class="model-tag">Research</span>
-          </div>
-          <h3>Purdue University</h3>
-          <p>Data Science Researcher</p>
-          <div class="station-panel">
-            <strong>Taking a messy question and making it measurable.</strong>
-            <span>Exploratory analysis, statistical modeling, and visual explanations that make the result easier to discuss.</span>
-          </div>
-        </article>
-
-        <article class="wafer-track-card station-uav" style="--x: 18%; --y: 68%;" tabindex="0" data-track-card>
-          <span class="station-node">04</span>
-          <div class="station-visual mini-visual drone-visual-v2">
-            <div class="drone-sky"></div><div class="drone-body"><div class="drone-core"></div><i class="drone-rotor r1"></i><i class="drone-rotor r2"></i><i class="drone-rotor r3"></i><i class="drone-rotor r4"></i></div><span class="drone-shadow"></span>
-          </div>
+        <article class="experience-stop is-active" style="--x: 5%; --y: 6%;" tabindex="0" data-exp-card>
+          <span class="stop-number">01</span>
           <h3>Sawtooth UAV Solutions</h3>
-          <p>Co-Founder and Entrepreneur</p>
-          <div class="station-panel">
-            <strong>Building something real for real clients.</strong>
-            <span>Drone missions, mapped capture paths, packaged footage, and the practical work of running a small service business.</span>
+          <p class="exp-role">Co-Founder and Entrepreneur</p>
+          <p class="exp-date">Dec 2022 - Aug 2024</p>
+          <div class="exp-panel">
+            <div class="mini-visual drone-visual-v2"><div class="drone-sky"></div><div class="drone-body"><div class="drone-core"></div><i class="drone-rotor r1"></i><i class="drone-rotor r2"></i><i class="drone-rotor r3"></i><i class="drone-rotor r4"></i></div><span class="drone-shadow"></span></div>
+            <p>Captured drone footage, mapped flight routines, and delivered finished media to clients online.</p>
+          </div>
+        </article>
+
+        <article class="experience-stop" style="--x: 61%; --y: 4%;" tabindex="0" data-exp-card>
+          <span class="stop-number">02</span>
+          <h3>Diana's Korean Market</h3>
+          <p class="exp-role">Weekend Cashier / Clerk</p>
+          <p class="exp-date">Dec 2022 - Aug 2024</p>
+          <div class="exp-panel">
+            <div class="mini-visual service-visual">
+              <i class="fas fa-store"></i><span></span><span></span><span></span>
+            </div>
+            <p>Developed customer service skills in Korean while serving as the sole weekend cashier and clerk.</p>
+          </div>
+        </article>
+
+        <article class="experience-stop" style="--x: 12%; --y: 55%;" tabindex="0" data-exp-card>
+          <span class="stop-number">03</span>
+          <h3>Purdue D1 Women's Soccer</h3>
+          <p class="exp-role">Predictive Data Analyst</p>
+          <p class="exp-date">May 2026 - Present</p>
+          <div class="exp-panel">
+            <div class="mini-visual field-visual-v2"><div class="pitch-stripes"></div><div class="pitch-mid"></div><div class="pitch-center"></div><div class="pitch-goal left"></div><div class="pitch-goal right"></div><span class="player a"></span><span class="player b"></span><span class="player c"></span><span class="player d"></span><span class="ball"></span></div>
+            <p>Turned player tracking, scouting tables, and model outputs into coach-ready match preparation.</p>
+          </div>
+        </article>
+
+        <article class="experience-stop" style="--x: 43%; --y: 36%;" tabindex="0" data-exp-card>
+          <span class="stop-number">04</span>
+          <h3>Purdue University</h3>
+          <p class="exp-role">Data Science Researcher</p>
+          <p class="exp-date">Research + analytics</p>
+          <div class="exp-panel">
+            <div class="mini-visual model-visual model-band-visual"><div class="axis x"></div><div class="axis y"></div><svg viewBox="0 0 120 72" aria-hidden="true"><path class="band-fill" d="M8 56 L28 48 L48 50 L68 38 L88 24 L112 18 L112 30 L88 38 L68 48 L48 58 L28 56 L8 64 Z"/><path class="trend-line" d="M8 60 C28 50, 48 50, 68 40 S96 22, 112 18"/></svg><div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div></div>
+            <p>Worked through data questions with statistical modeling, exploratory analysis, and visual explanation.</p>
+          </div>
+        </article>
+
+        <article class="experience-stop" style="--x: 72%; --y: 55%;" tabindex="0" data-exp-card>
+          <span class="stop-number">05</span>
+          <h3>Micron Technology</h3>
+          <p class="exp-role">Industrial Engineering Intern</p>
+          <p class="exp-date">May 2026 - Aug 2026</p>
+          <div class="exp-panel">
+            <div class="mini-visual fab-visual-v2"><div class="fab-building"><div class="fab-roof"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-stack"></div><div class="fab-puff"></div></div><div class="wafer-conveyor"><span class="wafer-disc"></span><span class="wafer-disc"></span><span class="wafer-disc"></span></div></div>
+            <p>Staged fab signals into structured tables, yield-forecast models, and dashboards for R&amp;D decisions.</p>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <section id="education" class="section section-alt wafer-lab-section">
+  <section id="education" class="section paper-section education-paper-section">
     <div class="container reveal">
-      <div class="wafer-section-kicker">education + toolkit</div>
-      <h2 class="section-title">What I Am Studying And Using</h2>
-      <p class="wafer-section-lede">The school, classes, tools, and credentials that keep showing up in my work. Click a chip to see how I think about it.</p>
+      <div class="paper-kicker">education + tools</div>
+      <h2 class="section-title">Purdue, Methods, And The Tools I Keep Reusing</h2>
+      <p class="paper-lede">This is the resume's education block, made lighter and more interactive. Click a tool or course tag to update the note.</p>
 
-      <div class="wafer-lab-grid">
-        <div class="lab-profile-panel">
-          <div class="lab-wafer-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="education-paper-grid">
+        <div class="education-main-card">
           <h3>Purdue University</h3>
           <p>B.S. Industrial Engineering &middot; Minor in Statistics</p>
-          <div class="lab-stat-row">
-            <span><strong>3.85</strong> GPA</span>
-            <span><strong>2028</strong> Est. Grad</span>
-            <span><strong>IE + Stats</strong> Focus</span>
+          <div class="education-facts">
+            <span><strong>GPA</strong> 3.85 / 4.00</span>
+            <span><strong>Location</strong> West Lafayette, IN</span>
+            <span><strong>Graduation</strong> Est. May 2028</span>
+          </div>
+          <div class="honor-row">
+            <span>Presidential Scholar</span>
+            <span>Simplot Scholar</span>
+            <span>Redinger Family</span>
           </div>
         </div>
 
-        <div class="lab-console" aria-label="Interactive tools and coursework">
-          <button class="lab-chip tool-chip is-active" type="button" data-lab-detail="Python pipelines: pandas, sklearn, NumPy, data cleaning, modeling, and quick analytical prototypes."><i class="fab fa-python"></i><span>Python</span></button>
-          <button class="lab-chip tool-chip" type="button" data-lab-detail="SQL work for joins, ETL thinking, tidy tables, and data that survives handoff."><i class="fas fa-database"></i><span>SQL</span></button>
-          <button class="lab-chip tool-chip" type="button" data-lab-detail="Tableau dashboards for trends, KPIs, and decision-ready visual summaries."><i class="fas fa-chart-pie"></i><span>Tableau</span></button>
-          <button class="lab-chip tool-chip" type="button" data-lab-detail="MATLAB and Excel for modeling, sensitivity analysis, and engineering calculations."><i class="fas fa-square-root-variable"></i><span>Modeling</span></button>
-          <button class="lab-chip course-chip" type="button" data-lab-detail="Operations research: optimization, constraints, tradeoffs, and better decisions under scarcity."><i class="fas fa-route"></i><span>Operations Research</span></button>
-          <button class="lab-chip course-chip" type="button" data-lab-detail="Engineering economics: NPV, IRR, MARR, sensitivity, and whether a system should exist."><i class="fas fa-coins"></i><span>Engineering Economics</span></button>
-          <button class="lab-chip course-chip" type="button" data-lab-detail="Probability, statistics, DoE, SPC, and statistical modeling for noisy real-world systems."><i class="fas fa-chart-simple"></i><span>Stats Core</span></button>
-          <button class="lab-chip cert-chip" type="button" data-lab-detail="Semiconductor fabrication and data science credentials tie the wafer theme back to actual skills."><i class="fas fa-microchip"></i><span>Semiconductors</span></button>
+        <div class="education-tool-card" aria-label="Interactive tools and coursework">
+          <button class="paper-chip is-active" type="button" data-paper-note="Python: pandas, sklearn, NumPy, modeling, and fast analytical prototypes."><i class="fab fa-python"></i>Python</button>
+          <button class="paper-chip" type="button" data-paper-note="SQL: joins, queries, ETL thinking, and keeping data structured enough for someone else to use."><i class="fas fa-database"></i>SQL</button>
+          <button class="paper-chip" type="button" data-paper-note="Tableau: dashboards, trends, KPIs, and visual summaries."><i class="fas fa-chart-pie"></i>Tableau</button>
+          <button class="paper-chip" type="button" data-paper-note="MATLAB / Excel / CAD: modeling, engineering calculations, spreadsheets, and drafting."><i class="fas fa-compass-drafting"></i>Engineering Tools</button>
+          <button class="paper-chip" type="button" data-paper-note="Operations Research: constraints, optimization, and deciding what to do when tradeoffs are real.">Operations Research</button>
+          <button class="paper-chip" type="button" data-paper-note="Engineering Economics: NPV, IRR, MARR, sensitivity analysis, and investment decisions.">Engineering Economics</button>
+          <button class="paper-chip" type="button" data-paper-note="Statistics core: probability, DoE, SPC, statistical modeling, and noisy systems.">Probability &amp; Statistics</button>
+          <button class="paper-chip" type="button" data-paper-note="Certifications: semiconductors, fabrication, and data science.">Semiconductors + Data Science</button>
         </div>
 
-        <aside class="lab-detail-panel" aria-live="polite">
-          <span class="detail-label">Selected note</span>
-          <p id="labDetailText">Python pipelines: pandas, sklearn, NumPy, data cleaning, modeling, and quick analytical prototypes.</p>
-          <div class="detail-meter"><b></b></div>
+        <aside class="paper-note-card" aria-live="polite">
+          <span>selected note</span>
+          <p id="paperNoteText">Python: pandas, sklearn, NumPy, modeling, and fast analytical prototypes.</p>
         </aside>
       </div>
     </div>
   </section>
 
-  <section id="projects" class="section wafer-project-section">
+  <section id="projects" class="section paper-section project-paper-section">
     <div class="container reveal">
-      <div class="wafer-section-kicker">projects</div>
-      <h2 class="section-title">Things I Have Built Or Modeled</h2>
-      <p class="wafer-section-lede">These are the project pieces from the resume, separated into cards so the process is easier to follow.</p>
+      <div class="paper-kicker">projects</div>
+      <h2 class="section-title">Project Workflows</h2>
+      <p class="paper-lede">Each project opens into the same kind of small workflow animation the resume used, but as its own section instead of one long document.</p>
 
-      <div class="project-wafer-grid">
-        <article class="project-wafer-card is-active" tabindex="0" data-project-card>
-          <div class="project-orb"><i class="fas fa-envelope-open-text"></i></div>
+      <div class="project-workflow-grid">
+        <article class="project-workflow-card is-open" tabindex="0" data-project-card>
           <h3>Athletic Recruiting Filter &amp; ETL Analytics Pipeline</h3>
           <p>A practical pipeline for turning messy recruiting emails into ranked, coach-readable outputs.</p>
-          <div class="project-flow">
-            <span>Email</span><i class="fas fa-arrow-right"></i><span>Parse</span><i class="fas fa-arrow-right"></i><span>Score</span><i class="fas fa-arrow-right"></i><span>CSV</span>
+          <div class="project-workflow-panel">
+            <div class="workflow-track steps-5">
+              <div class="workflow-step"><div class="mini-visual email-visual-v2"><div class="email-envelope"><div class="email-flap"></div><div class="email-body"><span class="email-from">From: Recruit #10</span><span class="email-line"></span><span class="email-line short"></span></div></div><span class="email-badge">New</span></div><div class="step-label">Email</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual process-visual-v2"><div class="gear-stack"><div class="gear one"></div><div class="gear two"></div></div><div class="parse-chips"><span class="parse-chip">name</span><span class="parse-chip">club</span><span class="parse-chip">stats</span></div></div><div class="step-label">Parse</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual scoring-visual-v2"><div class="score-ring"><b>87</b><small>/ 100</small></div><div class="score-bars"><i style="--w:78%"></i><i style="--w:56%"></i><i style="--w:88%"></i></div></div><div class="step-label">Score</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual model-visual bars-only"><div class="prob-bars"><b style="--h:64%"></b><b style="--h:84%"></b><b style="--h:52%"></b><b style="--h:72%"></b></div><span class="model-tag">Ranked</span></div><div class="step-label">Rank</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual export-visual-v2"><div class="csv-sheet"><span class="csv-row"></span><span class="csv-row"></span><span class="csv-row"></span></div><div class="mini-chart"><b style="--h:42%"></b><b style="--h:70%"></b><b style="--h:88%"></b><b style="--h:58%"></b></div></div><div class="step-label">Export</div></div>
+            </div>
           </div>
         </article>
 
-        <article class="project-wafer-card" tabindex="0" data-project-card>
-          <div class="project-orb"><i class="fas fa-solar-panel"></i></div>
+        <article class="project-workflow-card" tabindex="0" data-project-card>
           <h3>Solar PV Economic Modeling &amp; Sensitivity Analysis</h3>
           <p>An engineering economics model that asks whether the numbers actually support a solar PV investment.</p>
-          <div class="project-flow">
-            <span>Costs</span><i class="fas fa-arrow-right"></i><span>DCF</span><i class="fas fa-arrow-right"></i><span>Risk</span><i class="fas fa-arrow-right"></i><span>Brief</span>
+          <div class="project-workflow-panel">
+            <div class="workflow-track steps-4">
+              <div class="workflow-step"><div class="mini-visual finance-visual-v2"><div class="candles"><i class="up"></i><i class="down"></i><i class="up"></i><i class="up"></i><i class="down"></i><i class="up"></i></div><div class="hist-line"></div><span class="model-tag finance-tag">$ / kWh</span></div><div class="step-label">Inputs</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual model-visual model-band-visual"><div class="axis x"></div><div class="axis y"></div><svg viewBox="0 0 120 72" aria-hidden="true"><path class="band-fill" d="M8 60 L28 56 L48 46 L68 40 L88 26 L112 16 L112 28 L88 36 L68 50 L48 56 L28 64 L8 66 Z"/><path class="trend-line" d="M8 62 C24 60, 42 46, 60 40 S86 22, 112 18"/></svg><div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div><span class="model-tag">DCF</span></div><div class="step-label">Model</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual econ-visual-v2"><div class="econ-chip"><strong>NPV</strong><small>&gt; 0</small></div><div class="econ-chip"><strong>IRR</strong><small>&gt; hurdle</small></div><div class="econ-chip"><strong>MARR</strong><small>8.0%</small></div></div><div class="step-label">Evaluate</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual report-visual-v2"><div class="report-page"><div class="report-line r1"></div><div class="report-line r2"></div><div class="report-line r3"></div><div class="report-line r4"></div></div><span class="report-stamp">Brief</span></div><div class="step-label">Report</div></div>
+            </div>
           </div>
         </article>
 
-        <article class="project-wafer-card" tabindex="0" data-project-card>
-          <div class="project-orb"><i class="fas fa-chess-knight"></i></div>
-          <h3>Chess, Decision Theory, And Competitive Analysis</h3>
-          <p>A home for the decision-making side of my interests: chess, game theory, evaluation, and tradeoffs.</p>
-          <div class="project-flow">
-            <span>Position</span><i class="fas fa-arrow-right"></i><span>Evaluate</span><i class="fas fa-arrow-right"></i><span>Choose</span>
+        <article class="project-workflow-card" tabindex="0" data-project-card>
+          <h3>Bridge Regression Mini Project</h3>
+          <p>A bridge-focused regression workflow: define features, fit the model, inspect error, and summarize the result.</p>
+          <div class="project-workflow-panel">
+            <div class="workflow-track steps-4">
+              <div class="workflow-step"><div class="mini-visual bridge-visual"><span class="bridge-deck"></span><span class="bridge-arch"></span><i></i><i></i><i></i></div><div class="step-label">Bridge data</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual table-visual-v2"><div class="tv-header"><span>x1</span><span>x2</span><span>y</span></div><div class="tv-row"><span>12</span><span>4</span><span>31</span></div><div class="tv-row"><span>18</span><span>7</span><span>45</span></div><div class="tv-row"><span>21</span><span>9</span><span>52</span></div></div><div class="step-label">Features</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual regression-visual"><svg viewBox="0 0 120 72" aria-hidden="true"><path d="M10 58 L110 16"></path></svg><span class="r-dot d1"></span><span class="r-dot d2"></span><span class="r-dot d3"></span><span class="r-dot d4"></span></div><div class="step-label">Regression</div></div>
+              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
+              <div class="workflow-step"><div class="mini-visual residual-visual"><b style="--h:60%"></b><b style="--h:34%"></b><b style="--h:76%"></b><b style="--h:42%"></b><span>error check</span></div><div class="step-label">Report</div></div>
+            </div>
           </div>
         </article>
       </div>
@@ -952,6 +988,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=161"></script>
+  <script src="script.js?v=173"></script>
 </body>
 </html>
