@@ -580,7 +580,7 @@
     }
 
     ctx.save();
-    ctx.strokeStyle = "rgba(255,255,255," + alpha.toFixed(3) + ")";
+    ctx.strokeStyle = "rgba(0,0,0," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
