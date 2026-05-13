@@ -6496,3 +6496,213 @@ footer {
     flex-direction: column;
   }
 }
+
+/* ========== CLOWNFISH WAFER THEME (v145) ========== */
+:root {
+  --wafer-amber: #f59e0b;
+  --wafer-coral: #fb923c;
+  --wafer-sand: #fdba74;
+  --wafer-cyan: #67e8f9;
+  --wafer-ink: #040712;
+  --wafer-deep: #081120;
+  --wafer-card: rgba(255, 180, 80, 0.055);
+  --wafer-border: rgba(251, 146, 60, 0.18);
+}
+
+html {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(251,146,60,0.11), transparent 24%),
+    radial-gradient(circle at 88% 18%, rgba(103,232,249,0.08), transparent 22%),
+    linear-gradient(180deg, #050714 0%, #040610 44%, #03050b 100%);
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(251,146,60,0.10), transparent 20%),
+    radial-gradient(circle at 84% 14%, rgba(103,232,249,0.07), transparent 22%),
+    radial-gradient(circle at 50% 100%, rgba(245,158,11,0.08), transparent 30%),
+    linear-gradient(180deg, #060816 0%, #050812 45%, #03050b 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(251,146,60,0.14), transparent 18%),
+    radial-gradient(circle at 78% 24%, rgba(103,232,249,0.10), transparent 20%),
+    radial-gradient(circle at 46% 76%, rgba(245,158,11,0.12), transparent 26%);
+  filter: hue-rotate(0deg) saturate(1.05);
+  animation: waferHueShift 18s ease-in-out infinite alternate;
+}
+
+@keyframes waferHueShift {
+  0% { filter: hue-rotate(0deg) saturate(1); }
+  50% { filter: hue-rotate(18deg) saturate(1.08); }
+  100% { filter: hue-rotate(-12deg) saturate(0.98); }
+}
+
+#hero {
+  background:
+    radial-gradient(circle at 16% 20%, rgba(251,146,60,0.14), transparent 26%),
+    radial-gradient(circle at 84% 18%, rgba(103,232,249,0.10), transparent 24%),
+    radial-gradient(circle at 52% 86%, rgba(245,158,11,0.12), transparent 28%),
+    linear-gradient(180deg, #060816 0%, #090d1b 52%, #04060f 100%);
+}
+
+#hero::before {
+  background:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px),
+    radial-gradient(circle at 50% 48%, rgba(251,146,60,0.10), transparent 42%);
+}
+
+#hero::after,
+.section::before,
+.section-alt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 24%, rgba(251,146,60,0.06), transparent 22%),
+    radial-gradient(circle at 80% 16%, rgba(103,232,249,0.05), transparent 20%),
+    radial-gradient(circle at 50% 100%, rgba(245,158,11,0.05), transparent 28%);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+#hero::after {
+  animation: waferHueShift 20s ease-in-out infinite alternate;
+}
+
+.section,
+.section-alt,
+#about,
+#projects,
+#contact {
+  position: relative;
+  background:
+    radial-gradient(circle at top left, rgba(251,146,60,0.045), transparent 30%),
+    radial-gradient(circle at top right, rgba(103,232,249,0.035), transparent 28%),
+    linear-gradient(180deg, rgba(7,10,21,0.98), rgba(4,6,13,0.98));
+}
+
+#cityscape {
+  filter: hue-rotate(-24deg) saturate(0.92) brightness(0.98);
+  opacity: 0.95;
+}
+
+.bubble,
+.detail-card,
+.edu-block,
+.timeline-content,
+.project-card,
+.contact-card,
+.resume-document-v2,
+.resume-doc-block,
+.tool-item,
+.resume-entry,
+.workflow-step,
+.wf-stage {
+  background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.032));
+  border-color: rgba(251,146,60,0.16);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+}
+
+.bubble {
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.18), transparent 32%),
+    rgba(34, 20, 10, 0.62);
+  border-color: rgba(251,146,60,0.28);
+  box-shadow:
+    0 16px 44px rgba(0,0,0,0.34),
+    0 0 26px rgba(251,146,60,0.10);
+}
+
+.bubble:hover,
+.detail-card:hover,
+.timeline-item:hover .timeline-content,
+.project-card:hover,
+.contact-card:hover,
+.resume-entry:hover,
+.tool-item:hover {
+  border-color: rgba(251,146,60,0.34);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.26), 0 0 0 1px rgba(251,146,60,0.08);
+}
+
+.section-title,
+.hero-dot.active,
+.timeline-marker,
+.project-expand-hint,
+.resume-entry-toggle span,
+.edu-cap-tag-label,
+.coursework-heading,
+.course-tag,
+.project-tags span,
+.wf-stage-label,
+.wf-accuracy,
+.wf-r2,
+.timeline-date,
+.edu-date {
+  color: var(--wafer-sand);
+}
+
+.section-title::after,
+.timeline::before,
+.hero-rule {
+  background: linear-gradient(90deg, rgba(251,146,60,0.22), rgba(103,232,249,0.16));
+}
+
+.hero-replay,
+.hero-dot.active,
+.course-tag,
+.project-tags span,
+.edu-cap-pill,
+.resume-entry-toggle,
+.tool-item small,
+.timeline-date,
+.edu-cap-gpa {
+  border-color: rgba(251,146,60,0.22);
+}
+
+.hero-replay,
+.course-tag,
+.project-tags span,
+.edu-cap-pill,
+.resume-entry-toggle,
+.timeline-date,
+.edu-date,
+.edu-cap-gpa {
+  background: rgba(251,146,60,0.09);
+}
+
+.project-icon,
+.detail-card i,
+.tool-item i,
+.bubble i,
+.hero-side-links a:hover,
+.hero-dot:hover,
+.hero-replay:hover {
+  color: var(--wafer-coral);
+}
+
+.workflow-track,
+.workflow-stages,
+.resume-entry-panel,
+.project-card-details {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  #hero::after {
+    animation: none;
+  }
+}
