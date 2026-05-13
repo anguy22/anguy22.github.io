@@ -472,18 +472,13 @@
   }
 
   function drawBackground() {
-    var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#020403");
-    grad.addColorStop(0.48, "#041007");
-    grad.addColorStop(1, "#000000");
-
-    ctx.fillStyle = grad;
+    ctx.fillStyle = "#f7f3e8";
     ctx.fillRect(0, 0, W, H);
 
     var glow = ctx.createRadialGradient(W / 2, H * 0.66, 0, W / 2, H * 0.66, W * 0.48);
-    glow.addColorStop(0, "rgba(79,70,229,0.16)");
-    glow.addColorStop(0.42, "rgba(59,130,246,0.07)");
-    glow.addColorStop(1, "rgba(79,70,229,0)");
+    glow.addColorStop(0, "rgba(16,185,129,0.10)");
+    glow.addColorStop(0.42, "rgba(239,68,68,0.06)");
+    glow.addColorStop(1, "rgba(16,185,129,0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
@@ -492,7 +487,7 @@
   function drawSubtleGrid(baseY) {
     ctx.save();
 
-    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.strokeStyle = "rgba(17,24,39,0.14)";
     ctx.lineWidth = 1.35;
     ctx.setLineDash([5, 8]);
 

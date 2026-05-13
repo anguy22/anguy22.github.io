@@ -6302,6 +6302,113 @@ footer p {
   color: #111;
 }
 
+/* ===== Final requested state: original interactive resume on eggshell paper ===== */
+body,
+#hero,
+#about,
+#projects,
+#education,
+#contact,
+footer {
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    var(--paper);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+}
+
+#cityscape {
+  filter: none;
+  opacity: 1;
+}
+
+#about .section-title,
+#projects .section-title,
+#education .section-title,
+#contact .section-title,
+#about .about-text p,
+#contact .contact-text,
+footer p {
+  color: #111;
+}
+
+#projects.resume-section,
+#education.edu-exp-section {
+  color: #111;
+}
+
+.legacy-resume-archive {
+  display: none !important;
+}
+
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.decrypt-text,
+.decrypt-text .glyph.scramble,
+.decrypt-text .glyph.done {
+  color: #111;
+}
+
+.hero-divider {
+  background: linear-gradient(90deg, transparent, rgba(17,17,17,0.46), transparent);
+}
+
+#about.animated-about-section,
+#about .about-chess-bg {
+  background:
+    linear-gradient(rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.085) 1px, transparent 1px),
+    var(--paper) !important;
+  background-size: 24px 24px, 24px 24px, 100% 100% !important;
+}
+
+#about .about-chess-bg::after {
+  background: transparent !important;
+}
+
+#about .fab-workflow-bg::after {
+  background: transparent !important;
+}
+
+#about .chess-board-3d,
+#about .chess-piece,
+#about .about-fab-bg,
+#about .fab-workflow-bg,
+#about .factory-floor-bg {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  #hero h1 {
+    font-size: 2rem;
+    max-width: 72vw;
+    margin-inline: auto;
+  }
+
+  .bubble,
+  .bubble-profile,
+  #bubble-education,
+  #bubble-experience,
+  #bubble-projects,
+  #bubble-contact {
+    width: 62px;
+    height: 62px;
+  }
+
+  .bubble i,
+  .bubble-profile i {
+    font-size: 1.05rem;
+  }
+
+  .bubble-label {
+    font-size: 0.45rem;
+    letter-spacing: 0.07em;
+  }
+}
+
 @media (max-width: 980px) {
   .resume-entry-head,
   .resume-entry-head.static-only,
