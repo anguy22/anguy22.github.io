@@ -67,6 +67,56 @@
   setTimeout(step, 700);
 })();
 
+// Wafer portfolio interactions: track stations, lab chips, and project cards.
+(function () {
+  function activateWithin(selector, item) {
+    document.querySelectorAll(selector).forEach(function (other) {
+      other.classList.toggle('is-active', other === item);
+    });
+  }
+
+  document.querySelectorAll('[data-track-card]').forEach(function (card) {
+    card.addEventListener('click', function () {
+      activateWithin('[data-track-card]', card);
+    });
+    card.addEventListener('mouseenter', function () {
+      activateWithin('[data-track-card]', card);
+    });
+    card.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activateWithin('[data-track-card]', card);
+      }
+    });
+  });
+
+  var labDetail = document.getElementById('labDetailText');
+  document.querySelectorAll('.lab-chip').forEach(function (chip) {
+    function activateChip() {
+      activateWithin('.lab-chip', chip);
+      if (labDetail) labDetail.textContent = chip.getAttribute('data-lab-detail') || '';
+    }
+
+    chip.addEventListener('click', activateChip);
+    chip.addEventListener('mouseenter', activateChip);
+  });
+
+  document.querySelectorAll('[data-project-card]').forEach(function (card) {
+    card.addEventListener('click', function () {
+      activateWithin('[data-project-card]', card);
+    });
+    card.addEventListener('mouseenter', function () {
+      activateWithin('[data-project-card]', card);
+    });
+    card.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activateWithin('[data-project-card]', card);
+      }
+    });
+  });
+})();
+
 
 // ───────── DARK DISTRIBUTION CITYSCAPE CANVAS ─────────
 (function () {

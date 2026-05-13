@@ -22,9 +22,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=146">
+  <link rel="stylesheet" href="style.css?v=160">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="icon" type="image/svg+xml" href="favicon-clownfish.svg?v=1">
 </head>
 
 <body>
@@ -38,10 +37,19 @@
         <span class="bubble-label">About</span>
       </a>
 
+      <a href="#education" class="bubble" id="bubble-education" aria-label="Education">
+        <i class="fas fa-graduation-cap"></i>
+        <span class="bubble-label">Education</span>
+      </a>
 
-      <a href="#projects" class="bubble" id="bubble-projects" aria-label="Resume">
+      <a href="#experience" class="bubble" id="bubble-experience" aria-label="Experience">
+        <i class="fas fa-briefcase"></i>
+        <span class="bubble-label">Experience</span>
+      </a>
+
+      <a href="#projects" class="bubble" id="bubble-projects" aria-label="Projects">
         <i class="fas fa-file-lines"></i>
-        <span class="bubble-label">Resume</span>
+        <span class="bubble-label">Projects</span>
       </a>
 
       <a href="#contact" class="bubble" id="bubble-contact" aria-label="Contact">
@@ -169,13 +177,159 @@
   </section>
 
 
-  <section id="projects" class="section section-alt resume-section">
+  <section id="experience" class="section wafer-story-section">
+    <div class="container reveal">
+      <div class="wafer-section-kicker">experience track</div>
+      <h2 class="section-title">Work, As A Moving Process</h2>
+      <p class="wafer-section-lede">Follow the glossy wafer route through each role. Hover or tap a station to bring the work into motion.</p>
+
+      <div class="wafer-track-map" aria-label="Interactive experience track">
+        <svg class="wafer-track-svg" viewBox="0 0 1100 720" aria-hidden="true">
+          <path class="track-shadow" d="M120 92 C420 20, 580 140, 430 250 C270 368, 642 390, 850 314 C1020 252, 1045 476, 836 536 C626 596, 422 496, 226 636" />
+          <path class="track-line" d="M120 92 C420 20, 580 140, 430 250 C270 368, 642 390, 850 314 C1020 252, 1045 476, 836 536 C626 596, 422 496, 226 636" />
+        </svg>
+
+        <article class="wafer-track-card station-micron is-active" style="--x: 7%; --y: 3%;" tabindex="0" data-track-card>
+          <span class="station-node">01</span>
+          <div class="station-visual mini-visual fab-visual-v2">
+            <div class="fab-building"><div class="fab-roof"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-window"></div><div class="fab-stack"></div><div class="fab-puff"></div></div>
+            <div class="wafer-conveyor"><span class="wafer-disc"></span><span class="wafer-disc"></span><span class="wafer-disc"></span></div>
+          </div>
+          <h3>Micron Technology</h3>
+          <p>Industrial Engineering Intern - R&amp;D Modeling &amp; Analytics</p>
+          <div class="station-panel">
+            <strong>Wafer fab signals -> yield forecasts -> dashboards.</strong>
+            <span>Built around process data, structured tables, model outputs, and decision-ready R&amp;D views.</span>
+          </div>
+        </article>
+
+        <article class="wafer-track-card station-soccer" style="--x: 50%; --y: 17%;" tabindex="0" data-track-card>
+          <span class="station-node">02</span>
+          <div class="station-visual mini-visual field-visual-v2">
+            <div class="pitch-stripes"></div><div class="pitch-mid"></div><div class="pitch-center"></div><div class="pitch-goal left"></div><div class="pitch-goal right"></div>
+            <span class="player a"></span><span class="player b"></span><span class="player c"></span><span class="player d"></span><span class="ball"></span>
+          </div>
+          <h3>Purdue D1 Women's Soccer</h3>
+          <p>Predictive Data Analyst</p>
+          <div class="station-panel">
+            <strong>Tracking data becomes scouting signal.</strong>
+            <span>Player tendencies, xG tables, win-probability ideas, and coach-ready tactical summaries.</span>
+          </div>
+        </article>
+
+        <article class="wafer-track-card station-research" style="--x: 69%; --y: 47%;" tabindex="0" data-track-card>
+          <span class="station-node">03</span>
+          <div class="station-visual mini-visual model-visual model-band-visual">
+            <div class="axis x"></div><div class="axis y"></div>
+            <svg viewBox="0 0 120 72" aria-hidden="true"><path class="band-fill" d="M8 56 L28 48 L48 50 L68 38 L88 24 L112 18 L112 30 L88 38 L68 48 L48 58 L28 56 L8 64 Z"/><path class="trend-line" d="M8 60 C28 50, 48 50, 68 40 S96 22, 112 18"/></svg>
+            <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div><span class="model-tag">Research</span>
+          </div>
+          <h3>Purdue University</h3>
+          <p>Data Science Researcher</p>
+          <div class="station-panel">
+            <strong>Questions get turned into measurable systems.</strong>
+            <span>Statistical modeling, exploratory analysis, and clear visual explanation for technical audiences.</span>
+          </div>
+        </article>
+
+        <article class="wafer-track-card station-uav" style="--x: 18%; --y: 68%;" tabindex="0" data-track-card>
+          <span class="station-node">04</span>
+          <div class="station-visual mini-visual drone-visual-v2">
+            <div class="drone-sky"></div><div class="drone-body"><div class="drone-core"></div><i class="drone-rotor r1"></i><i class="drone-rotor r2"></i><i class="drone-rotor r3"></i><i class="drone-rotor r4"></i></div><span class="drone-shadow"></span>
+          </div>
+          <h3>Sawtooth UAV Solutions</h3>
+          <p>Co-Founder and Entrepreneur</p>
+          <div class="station-panel">
+            <strong>Flight routines become client deliverables.</strong>
+            <span>Drone missions, mapped capture paths, packaged footage, and small-business execution.</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="education" class="section section-alt wafer-lab-section">
+    <div class="container reveal">
+      <div class="wafer-section-kicker">education + toolkit</div>
+      <h2 class="section-title">Purdue Wafer Lab</h2>
+      <p class="wafer-section-lede">A glossy control room for the classes, tools, and credentials behind the work.</p>
+
+      <div class="wafer-lab-grid">
+        <div class="lab-profile-panel">
+          <div class="lab-wafer-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+          <h3>Purdue University</h3>
+          <p>B.S. Industrial Engineering &middot; Minor in Statistics</p>
+          <div class="lab-stat-row">
+            <span><strong>3.85</strong> GPA</span>
+            <span><strong>2028</strong> Est. Grad</span>
+            <span><strong>IE + Stats</strong> Focus</span>
+          </div>
+        </div>
+
+        <div class="lab-console" aria-label="Interactive tools and coursework">
+          <button class="lab-chip tool-chip is-active" type="button" data-lab-detail="Python pipelines: pandas, sklearn, NumPy, data cleaning, modeling, and quick analytical prototypes."><i class="fab fa-python"></i><span>Python</span></button>
+          <button class="lab-chip tool-chip" type="button" data-lab-detail="SQL work for joins, ETL thinking, tidy tables, and data that survives handoff."><i class="fas fa-database"></i><span>SQL</span></button>
+          <button class="lab-chip tool-chip" type="button" data-lab-detail="Tableau dashboards for trends, KPIs, and decision-ready visual summaries."><i class="fas fa-chart-pie"></i><span>Tableau</span></button>
+          <button class="lab-chip tool-chip" type="button" data-lab-detail="MATLAB and Excel for modeling, sensitivity analysis, and engineering calculations."><i class="fas fa-square-root-variable"></i><span>Modeling</span></button>
+          <button class="lab-chip course-chip" type="button" data-lab-detail="Operations research: optimization, constraints, tradeoffs, and better decisions under scarcity."><i class="fas fa-route"></i><span>Operations Research</span></button>
+          <button class="lab-chip course-chip" type="button" data-lab-detail="Engineering economics: NPV, IRR, MARR, sensitivity, and whether a system should exist."><i class="fas fa-coins"></i><span>Engineering Economics</span></button>
+          <button class="lab-chip course-chip" type="button" data-lab-detail="Probability, statistics, DoE, SPC, and statistical modeling for noisy real-world systems."><i class="fas fa-chart-simple"></i><span>Stats Core</span></button>
+          <button class="lab-chip cert-chip" type="button" data-lab-detail="Semiconductor fabrication and data science credentials tie the wafer theme back to actual skills."><i class="fas fa-microchip"></i><span>Semiconductors</span></button>
+        </div>
+
+        <aside class="lab-detail-panel" aria-live="polite">
+          <span class="detail-label">Selected signal</span>
+          <p id="labDetailText">Python pipelines: pandas, sklearn, NumPy, data cleaning, modeling, and quick analytical prototypes.</p>
+          <div class="detail-meter"><b></b></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="section wafer-project-section">
+    <div class="container reveal">
+      <div class="wafer-section-kicker">project bench</div>
+      <h2 class="section-title">Projects You Can Poke At</h2>
+      <p class="wafer-section-lede">Each card opens like a little process tool: input, transformation, output.</p>
+
+      <div class="project-wafer-grid">
+        <article class="project-wafer-card is-active" tabindex="0" data-project-card>
+          <div class="project-orb"><i class="fas fa-envelope-open-text"></i></div>
+          <h3>Athletic Recruiting Filter &amp; ETL Analytics Pipeline</h3>
+          <p>Recruit emails are fetched, parsed, scored, ranked, and exported for coach review.</p>
+          <div class="project-flow">
+            <span>Email</span><i class="fas fa-arrow-right"></i><span>Parse</span><i class="fas fa-arrow-right"></i><span>Score</span><i class="fas fa-arrow-right"></i><span>CSV</span>
+          </div>
+        </article>
+
+        <article class="project-wafer-card" tabindex="0" data-project-card>
+          <div class="project-orb"><i class="fas fa-solar-panel"></i></div>
+          <h3>Solar PV Economic Modeling &amp; Sensitivity Analysis</h3>
+          <p>Historical inputs flow through 40-year DCF models, NPV/IRR/MARR checks, and a technical recommendation.</p>
+          <div class="project-flow">
+            <span>Costs</span><i class="fas fa-arrow-right"></i><span>DCF</span><i class="fas fa-arrow-right"></i><span>Risk</span><i class="fas fa-arrow-right"></i><span>Brief</span>
+          </div>
+        </article>
+
+        <article class="project-wafer-card" tabindex="0" data-project-card>
+          <div class="project-orb"><i class="fas fa-chess-knight"></i></div>
+          <h3>Chess, Decision Theory, And Competitive Analysis</h3>
+          <p>Rapid chess and game theory show up as pattern recognition, evaluation, and practical tradeoff thinking.</p>
+          <div class="project-flow">
+            <span>Position</span><i class="fas fa-arrow-right"></i><span>Evaluate</span><i class="fas fa-arrow-right"></i><span>Choose</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="resume-archive" class="section section-alt resume-section legacy-resume-archive" aria-hidden="true">
     <div class="container reveal">
       <h2 class="section-title resume-section-title">Resume</h2>
 
       <div class="resume-document-v2" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
         <header class="resume-doc-head">
-          <h3>My Resume</h3>
+          <h3>Andrew C. Nguyen</h3>
           <p>Industrial Engineering &middot; Statistics &middot; Purdue '28</p>
         </header>
 
@@ -677,6 +831,94 @@
   </section>
 
 
+<section id="education-archive" class="section section-alt animated-education-section edu-exp-section legacy-resume-archive" aria-hidden="true">
+    <span id="experience-archive" class="section-anchor"></span>
+
+    <div class="train-track-bg" aria-hidden="true">
+      <div class="train-track-line"></div>
+      <div class="boilermaker-train">
+        <div class="steam steam-one"></div>
+        <div class="steam steam-two"></div>
+        <div class="steam steam-three"></div>
+        <div class="steam steam-four"></div>
+        <div class="steam steam-five"></div>
+        <div class="steam steam-six"></div>
+        <div class="train-engine">
+          <div class="train-cab"></div>
+          <div class="train-boiler"></div>
+          <div class="train-smokestack"></div>
+          <div class="train-cowcatcher"></div>
+          <div class="train-wheel wheel-one"></div>
+          <div class="train-wheel wheel-two"></div>
+          <div class="train-wheel wheel-three"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container reveal">
+      <h2 class="section-title">Education &amp; Experience</h2>
+
+      <div class="edu-exp-layout">
+        <div class="edu-block edu-exp-education-card">
+          <div class="edu-header">
+            <div>
+              <h3>Purdue University</h3>
+              <p class="edu-degree">B.S. Industrial Engineering &middot; Minor in Statistics</p>
+            </div>
+            <span class="edu-date">Aug 2024 — May 2028</span>
+          </div>
+
+          <h4 class="coursework-heading">Relevant Coursework</h4>
+
+          <div class="coursework-grid edu-exp-coursework-grid">
+            <span class="course-tag">Operations Research</span>
+            <span class="course-tag">Engineering Economics</span>
+            <span class="course-tag">Data Analytics</span>
+            <span class="course-tag">Probability &amp; Statistics</span>
+          </div>
+        </div>
+
+        <div class="edu-exp-experience-grid" aria-label="Experience">
+          <div class="experience-card">
+            <div class="experience-visual visual-micron simple-visual" aria-hidden="true">
+              <div class="visual-glow"></div>
+              <i class="fas fa-microchip"></i>
+            </div>
+            <h3>Industrial Engineering Intern</h3>
+            <p class="experience-org">Micron Technology</p>
+          </div>
+
+          <div class="experience-card">
+            <div class="experience-visual visual-athletics simple-visual" aria-hidden="true">
+              <div class="visual-glow"></div>
+              <i class="fas fa-person-running"></i>
+            </div>
+            <h3>Predictive Data Analyst</h3>
+            <p class="experience-org">Purdue Athletics (WSOCC)</p>
+          </div>
+
+          <div class="experience-card">
+            <div class="experience-visual visual-purdue simple-visual" aria-hidden="true">
+              <div class="visual-glow"></div>
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Data Science Researcher</h3>
+            <p class="experience-org">Purdue University</p>
+          </div>
+
+          <div class="experience-card">
+            <div class="experience-visual visual-sawtooth simple-visual" aria-hidden="true">
+              <div class="visual-glow"></div>
+              <i class="fas fa-code"></i>
+            </div>
+            <h3>Software Engineer</h3>
+            <p class="experience-org">Sawtooth UAV Solutions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="contact" class="section section-alt">
     <div class="container reveal">
       <h2 class="section-title">Contact</h2>
@@ -710,6 +952,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=145"></script>
+  <script src="script.js?v=160"></script>
 </body>
 </html>
