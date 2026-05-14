@@ -67,6 +67,31 @@
   setTimeout(step, 700);
 })();
 
+// Expandable education/capability pills inside the resume header.
+(function () {
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.edu-cap-expand'));
+  if (!pills.length) return;
+
+  function closeOthers(active) {
+    pills.forEach(function (pill) {
+      if (pill !== active) {
+        pill.classList.remove('is-open');
+        pill.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function (event) {
+      event.preventDefault();
+      var willOpen = !pill.classList.contains('is-open');
+      closeOthers(pill);
+      pill.classList.toggle('is-open', willOpen);
+      pill.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+  });
+})();
+
 // Engineering-paper portfolio interactions: train stops, education chips, and project cards.
 (function () {
   function activateWithin(selector, item) {
@@ -580,7 +605,7 @@
     }
 
     ctx.save();
-    ctx.strokeStyle = "rgba(0,0,0," + alpha.toFixed(3) + ")";
+    ctx.strokeStyle = "rgba(226,232,255," + alpha.toFixed(3) + ")";
     ctx.lineWidth = 2.9;
     ctx.setLineDash([4, 6]);
     ctx.shadowBlur = 0;
