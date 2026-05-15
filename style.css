@@ -8225,6 +8225,14 @@ footer p {
   font-size: 0.85rem;
 }
 
+.watchlist-subtitle {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: #9ca3af;
+  margin: -12px 0 20px 0;
+  font-weight: 600;
+}
+
 .watchlist-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
