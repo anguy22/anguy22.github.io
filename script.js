@@ -1307,3 +1307,217 @@
       console.warn("Lichess stats unavailable:", err);
     });
 })();
+
+/* ================================================================
+   Opening Board Animations
+   ================================================================ */
+(function () {
+  var PIECE_MAP = {
+    K: "♔", Q: "♕", R: "♖", B: "♗", N: "♘", P: "♙",
+    k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟"
+  };
+
+  var INITIAL = [
+    ["r","n","b","q","k","b","n","r"],
+    ["p","p","p","p","p","p","p","p"],
+    [" "," "," "," "," "," "," "," "],
+    [" "," "," "," "," "," "," "," "],
+    [" "," "," "," "," "," "," "," "],
+    [" "," "," "," "," "," "," "," "],
+    ["P","P","P","P","P","P","P","P"],
+    ["R","N","B","Q","K","B","N","R"]
+  ];
+
+  // Each move: [[fromRow, fromCol], [toRow, toCol]]
+  // Row 0 = rank 8 (black back), Row 7 = rank 1 (white back)
+  // Col 0 = a-file, Col 7 = h-file
+  var OPENINGS = {
+    "goring-gambit": [
+      [[6,4],[4,4]],  // 1. e4
+      [[1,4],[3,4]],  //    e5
+      [[7,6],[5,5]],  // 2. Nf3
+      [[0,1],[2,2]],  //    Nc6
+      [[6,3],[4,3]],  // 3. d4
+      [[3,4],[4,3]],  //    exd4
+      [[6,2],[5,2]]   // 4. c3
+    ],
+    "caro-kann": [
+      [[6,4],[4,4]],  // 1. e4
+      [[1,2],[2,2]],  //    c6
+      [[6,3],[4,3]],  // 2. d4
+      [[1,3],[3,3]]   //    d5
+    ],
+    "italian": [
+      [[6,4],[4,4]],  // 1. e4
+      [[1,4],[3,4]],  //    e5
+      [[7,6],[5,5]],  // 2. Nf3
+      [[0,1],[2,2]],  //    Nc6
+      [[7,5],[4,2]]   // 3. Bc4
+    ],
+    "modern": [
+      [[6,4],[4,4]],  // 1. e4
+      [[1,6],[2,6]],  //    g6
+      [[6,3],[4,3]],  // 2. d4
+      [[0,5],[1,6]]   //    Bg7
+    ],
+    "scotch": [
+      [[6,4],[4,4]],  // 1. e4
+      [[1,4],[3,4]],  //    e5
+      [[7,6],[5,5]],  // 2. Nf3
+      [[0,1],[2,2]],  //    Nc6
+      [[6,3],[4,3]],  // 3. d4
+      [[3,4],[4,3]],  //    exd4
+      [[5,5],[4,3]]   // 4. Nxd4
+    ]
+  };
+
+  function cloneBoard(b) {
+    return b.map(function (r) { return r.slice(); });
+  }
+
+  function applyMove(board, move) {
+    var b = cloneBoard(board);
+    b[move[1][0]][move[1][1]] = b[move[0][0]][move[0][1]];
+    b[move[0][0]][move[0][1]] = " ";
+    return b;
+  }
+
+  function renderBoard(el, board, lastMove) {
+    el.innerHTML = "";
+    for (var r = 0; r < 8; r++) {
+      for (var c = 0; c < 8; c++) {
+        var sq = document.createElement("div");
+        var isLight = (r + c) % 2 === 0;
+        sq.className = "lichess-sq " + (isLight ? "light" : "dark");
+        if (lastMove) {
+          if ((r === lastMove[0][0] && c === lastMove[0][1]) ||
+              (r === lastMove[1][0] && c === lastMove[1][1])) {
+            sq.classList.add("highlight");
+          }
+        }
+        var piece = board[r][c];
+        if (piece && piece !== " ") {
+          var span = document.createElement("span");
+          span.className = "lichess-piece " + (piece === piece.toUpperCase() ? "white" : "black");
+          span.textContent = PIECE_MAP[piece];
+          sq.appendChild(span);
+        }
+        el.appendChild(sq);
+      }
+    }
+  }
+
+  var states = {};
+
+  function initBoard(key) {
+    var el = document.getElementById("board-" + key);
+    if (!el) return;
+    states[key] = {
+      el: el,
+      moves: OPENINGS[key] || [],
+      step: 0,
+      board: cloneBoard(INITIAL),
+      timer: null
+    };
+    renderBoard(el, states[key].board, null);
+  }
+
+  function stepForward(key) {
+    var s = states[key];
+    if (!s || s.step >= s.moves.length) return false;
+    var move = s.moves[s.step];
+    s.board = applyMove(s.board, move);
+    s.step++;
+    renderBoard(s.el, s.board, move);
+    return s.step < s.moves.length;
+  }
+
+  function resetBoard(key) {
+    var s = states[key];
+    if (!s) return;
+    stopPlay(key);
+    s.board = cloneBoard(INITIAL);
+    s.step = 0;
+    renderBoard(s.el, s.board, null);
+    updatePlayBtn(key, false);
+  }
+
+  function stopPlay(key) {
+    var s = states[key];
+    if (s && s.timer) {
+      clearInterval(s.timer);
+      s.timer = null;
+    }
+  }
+
+  function updatePlayBtn(key, playing) {
+    var item = document.querySelector('[data-opening="' + key + '"]');
+    if (!item) return;
+    var icon = item.querySelector(".lichess-play-btn i");
+    if (icon) icon.className = playing ? "fas fa-pause" : "fas fa-play";
+  }
+
+  function togglePlay(key) {
+    var s = states[key];
+    if (!s) return;
+    if (s.timer) {
+      stopPlay(key);
+      updatePlayBtn(key, false);
+      return;
+    }
+    if (s.step >= s.moves.length) resetBoard(key);
+    updatePlayBtn(key, true);
+    stepForward(key);
+    s.timer = setInterval(function () {
+      if (!stepForward(key)) {
+        stopPlay(key);
+        updatePlayBtn(key, false);
+      }
+    }, 800);
+  }
+
+  // Wire up expand / collapse
+  var items = document.querySelectorAll(".lichess-opening-item");
+  items.forEach(function (item) {
+    var key = item.getAttribute("data-opening");
+    var toggle = item.querySelector(".lichess-opening-toggle");
+
+    toggle.addEventListener("click", function () {
+      var isOpen = item.classList.contains("is-open");
+
+      // Close every other card first
+      items.forEach(function (other) {
+        var ok = other.getAttribute("data-opening");
+        other.classList.remove("is-open");
+        other.querySelector(".lichess-opening-toggle").setAttribute("aria-expanded", "false");
+        stopPlay(ok);
+        updatePlayBtn(ok, false);
+      });
+
+      if (!isOpen) {
+        item.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        if (!states[key]) initBoard(key);
+        else resetBoard(key);
+      }
+    });
+
+    // Board control buttons
+    item.querySelectorAll(".lichess-ctrl-btn").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var action = btn.getAttribute("data-action");
+        if (action === "reset") {
+          resetBoard(key);
+        } else if (action === "play") {
+          togglePlay(key);
+        } else if (action === "step") {
+          stopPlay(key);
+          updatePlayBtn(key, false);
+          if (states[key] && states[key].step >= states[key].moves.length) resetBoard(key);
+          stepForward(key);
+        }
+      });
+    });
+  });
+})();

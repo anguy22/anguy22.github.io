@@ -22,7 +22,7 @@ f<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=181">
+  <link rel="stylesheet" href="style.css?v=183">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -227,12 +227,88 @@ f<!DOCTYPE html>
         <div class="lichess-extras">
           <div class="lichess-openings">
             <h4 class="lichess-sub-heading">Favorite Openings</h4>
-            <div class="lichess-opening-tags">
-              <span class="lichess-opening-tag">Goring Gambit</span>
-              <span class="lichess-opening-tag">Caro-Kann Defense</span>
-              <span class="lichess-opening-tag">Italian Game</span>
-              <span class="lichess-opening-tag">Modern Defense</span>
-              <span class="lichess-opening-tag">Scotch Game</span>
+            <div class="lichess-opening-list">
+
+              <div class="lichess-opening-item" data-opening="goring-gambit">
+                <button class="lichess-opening-toggle" aria-expanded="false">
+                  <span class="lichess-opening-tag">Goring Gambit</span>
+                  <span class="lichess-opening-pgn">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.c3</span>
+                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
+                </button>
+                <div class="lichess-opening-expand">
+                  <div class="lichess-mini-board" id="board-goring-gambit"></div>
+                  <div class="lichess-board-controls">
+                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
+                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
+                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lichess-opening-item" data-opening="caro-kann">
+                <button class="lichess-opening-toggle" aria-expanded="false">
+                  <span class="lichess-opening-tag">Caro-Kann Defense</span>
+                  <span class="lichess-opening-pgn">1.e4 c6 2.d4 d5</span>
+                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
+                </button>
+                <div class="lichess-opening-expand">
+                  <div class="lichess-mini-board" id="board-caro-kann"></div>
+                  <div class="lichess-board-controls">
+                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
+                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
+                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lichess-opening-item" data-opening="italian">
+                <button class="lichess-opening-toggle" aria-expanded="false">
+                  <span class="lichess-opening-tag">Italian Game</span>
+                  <span class="lichess-opening-pgn">1.e4 e5 2.Nf3 Nc6 3.Bc4</span>
+                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
+                </button>
+                <div class="lichess-opening-expand">
+                  <div class="lichess-mini-board" id="board-italian"></div>
+                  <div class="lichess-board-controls">
+                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
+                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
+                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lichess-opening-item" data-opening="modern">
+                <button class="lichess-opening-toggle" aria-expanded="false">
+                  <span class="lichess-opening-tag">Modern Defense</span>
+                  <span class="lichess-opening-pgn">1.e4 g6 2.d4 Bg7</span>
+                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
+                </button>
+                <div class="lichess-opening-expand">
+                  <div class="lichess-mini-board" id="board-modern"></div>
+                  <div class="lichess-board-controls">
+                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
+                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
+                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lichess-opening-item" data-opening="scotch">
+                <button class="lichess-opening-toggle" aria-expanded="false">
+                  <span class="lichess-opening-tag">Scotch Game</span>
+                  <span class="lichess-opening-pgn">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4</span>
+                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
+                </button>
+                <div class="lichess-opening-expand">
+                  <div class="lichess-mini-board" id="board-scotch"></div>
+                  <div class="lichess-board-controls">
+                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
+                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
+                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -851,6 +927,6 @@ f<!DOCTYPE html>
     </div>
   </footer>
 
-  <script src="script.js?v=181"></script>
+  <script src="script.js?v=183"></script>
 </body>
 </html>
