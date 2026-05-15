@@ -8185,6 +8185,28 @@ footer p {
   line-height: 1;
 }
 
+.lichess-stats .lichess-ccl-opponents {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 6px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e1d8;
+}
+
+.lichess-stats .lichess-ccl-opponents span {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #9ca3af;
+}
+
+.lichess-stats .lichess-ccl-opponents span:first-child {
+  font-style: italic;
+  color: #b5b5b5;
+}
+
 /* --- Responsive --- */
 
 @media (max-width: 640px) {
