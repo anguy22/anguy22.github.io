@@ -22,7 +22,7 @@ f<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=180">
+  <link rel="stylesheet" href="style.css?v=181">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -163,6 +163,68 @@ f<!DOCTYPE html>
           </div>
         </div>
       </div>
+
+      <div class="lichess-stats" id="lichess-stats">
+        <h3 class="lichess-heading">
+          <i class="fas fa-chess-knight"></i>
+          <span>Live Chess Stats</span>
+          <a href="https://lichess.org/@/an_d22" target="_blank" rel="noreferrer" class="lichess-profile-link">
+            @an_d22 <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+        </h3>
+
+        <div class="lichess-rating-grid" id="lichess-ratings">
+          <div class="lichess-card" data-perf="bullet">
+            <div class="lichess-card-icon"><i class="fas fa-bolt"></i></div>
+            <div class="lichess-card-label">Bullet</div>
+            <div class="lichess-card-rating">—</div>
+            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
+          </div>
+          <div class="lichess-card" data-perf="blitz">
+            <div class="lichess-card-icon"><i class="fas fa-fire"></i></div>
+            <div class="lichess-card-label">Blitz</div>
+            <div class="lichess-card-rating">—</div>
+            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
+          </div>
+          <div class="lichess-card" data-perf="rapid">
+            <div class="lichess-card-icon"><i class="fas fa-clock"></i></div>
+            <div class="lichess-card-label">Rapid</div>
+            <div class="lichess-card-rating">—</div>
+            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
+          </div>
+          <div class="lichess-card" data-perf="classical">
+            <div class="lichess-card-icon"><i class="fas fa-hourglass-half"></i></div>
+            <div class="lichess-card-label">Classical</div>
+            <div class="lichess-card-rating">—</div>
+            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
+          </div>
+        </div>
+
+        <div class="lichess-summary" id="lichess-summary">
+          <div class="lichess-summary-stat">
+            <strong id="lichess-total">—</strong>
+            <span>Games</span>
+          </div>
+          <div class="lichess-summary-stat win">
+            <strong id="lichess-wins">—</strong>
+            <span>Wins</span>
+          </div>
+          <div class="lichess-summary-stat loss">
+            <strong id="lichess-losses">—</strong>
+            <span>Losses</span>
+          </div>
+          <div class="lichess-summary-stat draw">
+            <strong id="lichess-draws">—</strong>
+            <span>Draws</span>
+          </div>
+          <div class="lichess-winrate-bar" id="lichess-winrate-bar">
+            <div class="bar-win" id="bar-win"></div>
+            <div class="bar-draw" id="bar-draw"></div>
+            <div class="bar-loss" id="bar-loss"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -765,6 +827,6 @@ f<!DOCTYPE html>
     </div>
   </footer>
 
-  <script src="script.js?v=180"></script>
+  <script src="script.js?v=181"></script>
 </body>
 </html>

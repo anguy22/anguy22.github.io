@@ -1228,3 +1228,82 @@
     });
   });
 })();
+
+
+// ───────── LICHESS LIVE STATS ─────────
+(function () {
+  var LICHESS_USER = "an_d22";
+  var API_URL = "https://lichess.org/api/user/" + LICHESS_USER;
+
+  // Which time controls to display (in order).
+  var PERFS = ["bullet", "blitz", "rapid", "classical"];
+
+  function formatNumber(n) {
+    if (n == null) return "—";
+    return n.toLocaleString();
+  }
+
+  function populateRatings(data) {
+    var perfs = data.perfs || {};
+
+    PERFS.forEach(function (key) {
+      var card = document.querySelector('.lichess-card[data-perf="' + key + '"]');
+      if (!card) return;
+
+      var perf = perfs[key];
+      if (!perf || !perf.games) {
+        card.querySelector(".lichess-card-rating").textContent = "—";
+        card.querySelector(".lichess-games").textContent = "0 games";
+        return;
+      }
+
+      card.querySelector(".lichess-card-rating").textContent = perf.rating;
+      card.querySelector(".lichess-games").textContent = formatNumber(perf.games) + " games";
+
+      var progEl = card.querySelector(".lichess-prog");
+      if (perf.prog > 0) {
+        progEl.className = "lichess-prog up";
+        progEl.textContent = perf.prog;
+      } else if (perf.prog < 0) {
+        progEl.className = "lichess-prog down";
+        progEl.textContent = Math.abs(perf.prog);
+      } else {
+        progEl.className = "lichess-prog flat";
+        progEl.textContent = "—";
+      }
+    });
+  }
+
+  function populateSummary(data) {
+    var count = data.count || {};
+    var total = count.all || 0;
+    var wins = count.win || 0;
+    var losses = count.loss || 0;
+    var draws = count.draw || 0;
+
+    document.getElementById("lichess-total").textContent = formatNumber(total);
+    document.getElementById("lichess-wins").textContent = formatNumber(wins);
+    document.getElementById("lichess-losses").textContent = formatNumber(losses);
+    document.getElementById("lichess-draws").textContent = formatNumber(draws);
+
+    // Win-rate bar
+    if (total > 0) {
+      document.getElementById("bar-win").style.width = ((wins / total) * 100).toFixed(1) + "%";
+      document.getElementById("bar-draw").style.width = ((draws / total) * 100).toFixed(1) + "%";
+      document.getElementById("bar-loss").style.width = ((losses / total) * 100).toFixed(1) + "%";
+    }
+  }
+
+  fetch(API_URL, { headers: { Accept: "application/json" } })
+    .then(function (res) {
+      if (!res.ok) throw new Error("Lichess API " + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      populateRatings(data);
+      populateSummary(data);
+    })
+    .catch(function (err) {
+      console.warn("Lichess stats unavailable:", err);
+    });
+})();
