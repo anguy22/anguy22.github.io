@@ -22,7 +22,7 @@ f<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=184">
+  <link rel="stylesheet" href="style.css?v=185">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -40,6 +40,16 @@ f<!DOCTYPE html>
       <a href="#projects" class="bubble" id="bubble-projects" aria-label="Resume">
         <i class="fas fa-file-lines"></i>
         <span class="bubble-label">Resume</span>
+      </a>
+
+      <a href="#lichess-stats" class="bubble" id="bubble-chess" aria-label="Chess">
+        <i class="fas fa-chess-knight"></i>
+        <span class="bubble-label">Chess</span>
+      </a>
+
+      <a href="#stock-watchlist" class="bubble" id="bubble-watchlist" aria-label="Watchlist">
+        <i class="fas fa-chart-line"></i>
+        <span class="bubble-label">Watchlist</span>
       </a>
 
       <a href="#contact" class="bubble" id="bubble-contact" aria-label="Contact">
@@ -131,8 +141,8 @@ f<!DOCTYPE html>
       <div class="about-grid">
         <div class="about-text">
           <p>hi there.</p>
-          <p>i'm andrew. thank you for stopping by, check out my site!</p>
-          <p>i'm always looking to learn from others in any field. i find personal joy in the passions and interests of the people i meet.</p>
+          <p>i'm andrew. thank you for stopping by, check out my resume and work!</p>
+          <p>i'm always looking to learn from others in any field. i find personal joy in the passions and interests of people i meet.</p>
           <p>here i aim to document my learning, experiences, and work. if we're going to be replaced by ai it might as well be accurate.</p>
           <p>please get in touch!</p>
         </div>
@@ -149,8 +159,8 @@ f<!DOCTYPE html>
           <div class="detail-card">
             <i class="fas fa-chess-knight"></i>
             <div>
-              <strong>Diet Coke or Coke Zero</strong>
-              <span>Coke Zero</span>
+              <strong>Peak Rapid ELO</strong>
+              <span>2050</span>
             </div>
           </div>
 
@@ -332,6 +342,95 @@ f<!DOCTYPE html>
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ===== STOCK WATCHLIST ===== -->
+  <section id="stock-watchlist" class="section paper-section">
+    <div class="container reveal">
+      <h2 class="watchlist-heading">
+        <i class="fas fa-chart-line"></i>
+        <span>Market Watchlist</span>
+      </h2>
+      <div class="watchlist-grid">
+
+        <div class="watchlist-card">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "NASDAQ:AMAT",
+              "width": "100%",
+              "height": "100%",
+              "locale": "en",
+              "dateRange": "3M",
+              "colorTheme": "light",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": ""
+            }
+            </script>
+          </div>
+        </div>
+
+        <div class="watchlist-card">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "NASDAQ:INTC",
+              "width": "100%",
+              "height": "100%",
+              "locale": "en",
+              "dateRange": "3M",
+              "colorTheme": "light",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": ""
+            }
+            </script>
+          </div>
+        </div>
+
+        <div class="watchlist-card">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "NASDAQ:GOOGL",
+              "width": "100%",
+              "height": "100%",
+              "locale": "en",
+              "dateRange": "3M",
+              "colorTheme": "light",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": ""
+            }
+            </script>
+          </div>
+        </div>
+
+        <div class="watchlist-card">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "NASDAQ:MU",
+              "width": "100%",
+              "height": "100%",
+              "locale": "en",
+              "dateRange": "3M",
+              "colorTheme": "light",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": ""
+            }
+            </script>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
@@ -930,7 +1029,7 @@ f<!DOCTYPE html>
 
   <footer>
     <div class="container">
-      <p>&copy; 2026 Andrew Nguyen. All rights reserved.</p>
+      <p>&copy; 2026 Andrew Nguyen. Built with diet coke and ai.</p>
     </div>
   </footer>
 
