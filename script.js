@@ -1521,3 +1521,196 @@
     });
   });
 })();
+
+/* ================================================================
+   Pitch Analytics – NCAA D1 half-field zone stats
+   ================================================================ */
+(function () {
+  /* ---------- data ---------- */
+  var ZONES = {
+    "six-yard": {
+      label: "6-Yard Box",
+      desc: "Close-range finishes, tap-ins, and goal-mouth scrambles",
+      heat: "hot",
+      men:   { xG: 0.68, xA: 0.04, shotAcc: 72, goalPct: 28 },
+      women: { xG: 0.63, xA: 0.05, shotAcc: 69, goalPct: 26 }
+    },
+    "penalty-area": {
+      label: "Penalty Area",
+      desc: "Primary shooting zone inside the 18-yard box",
+      heat: "hot",
+      men:   { xG: 0.28, xA: 0.08, shotAcc: 51, goalPct: 38 },
+      women: { xG: 0.25, xA: 0.09, shotAcc: 48, goalPct: 36 }
+    },
+    "left-wing": {
+      label: "Left Wing",
+      desc: "Wide channel — crosses, cutbacks, driven balls",
+      heat: "cold",
+      men:   { xG: 0.06, xA: 0.18, shotAcc: 32, goalPct: 5 },
+      women: { xG: 0.05, xA: 0.16, shotAcc: 30, goalPct: 6 }
+    },
+    "right-wing": {
+      label: "Right Wing",
+      desc: "Wide channel — crosses, cutbacks, driven balls",
+      heat: "cold",
+      men:   { xG: 0.07, xA: 0.20, shotAcc: 34, goalPct: 6 },
+      women: { xG: 0.06, xA: 0.18, shotAcc: 33, goalPct: 7 }
+    },
+    "edge-of-box": {
+      label: "Edge of Box",
+      desc: "The D — set pieces, long-range strikes, through balls",
+      heat: "warm",
+      men:   { xG: 0.08, xA: 0.14, shotAcc: 38, goalPct: 16 },
+      women: { xG: 0.07, xA: 0.13, shotAcc: 36, goalPct: 18 }
+    },
+    "deep-half": {
+      label: "Deep Midfield",
+      desc: "Long-range distribution and switches of play",
+      heat: "cold",
+      men:   { xG: 0.03, xA: 0.10, shotAcc: 24, goalPct: 7 },
+      women: { xG: 0.02, xA: 0.09, shotAcc: 22, goalPct: 7 }
+    }
+  };
+
+  var STAT_META = [
+    { key: "xG",      label: "xG per Shot",        fmt: "dec", positive: true  },
+    { key: "xA",      label: "xA per Key Pass",     fmt: "dec", positive: true  },
+    { key: "shotAcc", label: "Shot Accuracy",        fmt: "pct", positive: true  },
+    { key: "goalPct", label: "Share of Total Goals",  fmt: "pct", positive: true  }
+  ];
+
+  var gender = "men";
+  var activeZone = null;
+  var panel = document.getElementById("pitch-stats-panel");
+  var zones = document.querySelectorAll(".pitch-zone");
+
+  /* ---------- helpers ---------- */
+  function allValues(statKey) {
+    var vals = [];
+    Object.keys(ZONES).forEach(function (z) { vals.push(ZONES[z][gender][statKey]); });
+    return vals;
+  }
+
+  function percentile(val, arr) {
+    var sorted = arr.slice().sort(function (a, b) { return a - b; });
+    var below = 0;
+    sorted.forEach(function (v) { if (v < val) below++; });
+    return below / (sorted.length - 1 || 1);
+  }
+
+  function statColor(pct) {
+    if (pct >= 0.6) return "stat-green";
+    if (pct >= 0.3) return "stat-amber";
+    return "stat-red";
+  }
+
+  function strokeColor(pct) {
+    if (pct >= 0.6) return "#16a34a";
+    if (pct >= 0.3) return "#d97706";
+    return "#dc2626";
+  }
+
+  /* ---------- mini distribution SVG ---------- */
+  function buildDistSVG(value, statKey) {
+    var all = allValues(statKey);
+    var min = Math.min.apply(null, all);
+    var max = Math.max.apply(null, all);
+    var range = max - min || 1;
+    var pad = range * 0.18;
+    var lo = min - pad;
+    var hi = max + pad;
+    var span = hi - lo;
+    var mean = all.reduce(function (a, b) { return a + b; }, 0) / all.length;
+    var variance = all.reduce(function (a, b) { return a + Math.pow(b - mean, 2); }, 0) / all.length;
+    var std = Math.sqrt(variance) || span / 5;
+
+    var W = 160, H = 44, base = 40, top = 6;
+
+    function xPos(v) { return ((v - lo) / span) * W; }
+    function gauss(x) { return Math.exp(-0.5 * Math.pow((x - mean) / std, 2)); }
+
+    // build curve points
+    var pts = [];
+    for (var i = 0; i <= W; i += 2) {
+      var v = lo + (i / W) * span;
+      var y = base - gauss(v) * (base - top);
+      pts.push(i + "," + y.toFixed(1));
+    }
+
+    var pct = percentile(value, all);
+    var col = strokeColor(pct);
+    var mx = xPos(value);
+    var my = base - gauss(value) * (base - top);
+
+    // zone dots
+    var dots = "";
+    all.forEach(function (v) {
+      var dx = xPos(v);
+      dots += '<circle class="pitch-dist-zone-dot" cx="' + dx.toFixed(1) + '" cy="' + base + '" r="2" fill="#d1d5db"/>';
+    });
+
+    var svg =
+      '<svg class="pitch-dist-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' +
+      '<path class="pitch-dist-fill" d="M0,' + base + ' L' + pts.join(" L") + ' L' + W + ',' + base + ' Z"/>' +
+      '<polyline class="pitch-dist-stroke" points="' + pts.join(" ") + '"/>' +
+      dots +
+      '<line class="pitch-dist-marker" x1="' + mx.toFixed(1) + '" y1="' + (my - 2).toFixed(1) +
+        '" x2="' + mx.toFixed(1) + '" y2="' + base + '" stroke="' + col + '" stroke-dasharray="3 2"/>' +
+      '<circle class="pitch-dist-dot" cx="' + mx.toFixed(1) + '" cy="' + my.toFixed(1) + '" r="3.5" fill="' + col + '"/>' +
+      '</svg>';
+    return svg;
+  }
+
+  /* ---------- render stats panel ---------- */
+  function renderPanel(zoneKey) {
+    var z = ZONES[zoneKey];
+    var d = z[gender];
+    var html = '<h3 class="pitch-zone-title">' + z.label + '</h3>' +
+               '<p class="pitch-zone-desc">' + z.desc + '</p>';
+
+    STAT_META.forEach(function (meta) {
+      var val = d[meta.key];
+      var all = allValues(meta.key);
+      var pct = percentile(val, all);
+      var display = meta.fmt === "dec" ? val.toFixed(2) : val + "%";
+      html += '<div class="pitch-stat-row">' +
+        '<div class="pitch-stat-header">' +
+          '<span class="pitch-stat-label">' + meta.label + '</span>' +
+          '<span class="pitch-stat-value ' + statColor(pct) + '">' + display + '</span>' +
+        '</div>' +
+        buildDistSVG(val, meta.key) +
+        '</div>';
+    });
+
+    panel.innerHTML = html;
+  }
+
+  /* ---------- zone click ---------- */
+  function selectZone(zoneKey) {
+    activeZone = zoneKey;
+    var z = ZONES[zoneKey];
+    zones.forEach(function (el) {
+      el.classList.remove("zone-hot", "zone-warm", "zone-cold");
+    });
+    var clicked = document.querySelector('.pitch-zone[data-zone="' + zoneKey + '"]');
+    if (clicked) clicked.classList.add("zone-" + z.heat);
+    renderPanel(zoneKey);
+  }
+
+  zones.forEach(function (el) {
+    el.addEventListener("click", function () {
+      selectZone(el.getAttribute("data-zone"));
+    });
+  });
+
+  /* ---------- gender toggle ---------- */
+  var toggleBtns = document.querySelectorAll(".pitch-toggle-btn");
+  toggleBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      toggleBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      gender = btn.getAttribute("data-gender");
+      if (activeZone) renderPanel(activeZone);
+    });
+  });
+})();
