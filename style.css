@@ -8326,12 +8326,13 @@ footer p {
 }
 
 .pitch-field-wrap {
-  flex: 0 0 380px;
+  flex: 1 1 0%;
   background: #fffdf6;
   border: 2px solid #111;
   border-radius: 4px;
   box-shadow: 4px 4px 0 #111;
   padding: 10px;
+  min-width: 0;
 }
 
 .pitch-svg {
@@ -8372,12 +8373,12 @@ footer p {
 }
 
 .pitch-stats-panel {
-  flex: 1;
+  flex: 0 0 260px;
   background: #fffdf6;
   border: 2px solid #111;
   border-radius: 4px;
   box-shadow: 4px 4px 0 #111;
-  padding: 20px;
+  padding: 14px 16px;
   min-height: 320px;
 }
 
@@ -8386,48 +8387,49 @@ footer p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  height: 280px;
+  gap: 8px;
+  height: 260px;
   color: #c5c0b6;
 }
 
 .pitch-stats-empty i {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .pitch-stats-empty p {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
 }
 
 .pitch-zone-title {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: #111;
-  margin: 0 0 3px 0;
+  margin: 0 0 2px 0;
 }
 
 .pitch-zone-desc {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #9ca3af;
   font-style: italic;
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
   font-weight: 600;
+  line-height: 1.3;
 }
 
 .pitch-stat-row {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .pitch-stat-header {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
 .pitch-stat-label {
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -8435,7 +8437,7 @@ footer p {
 }
 
 .pitch-stat-value {
-  font-size: 1.1rem;
+  font-size: 0.92rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -8445,10 +8447,20 @@ footer p {
 .pitch-stat-value.stat-amber { color: #d97706; }
 .pitch-stat-value.stat-red { color: #dc2626; }
 
+/* Player formation dots */
+.pitch-player {
+  fill: #fffdf6;
+  stroke: #111;
+  stroke-width: 2;
+  pointer-events: none;
+  transition: cx 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              cy 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .pitch-dist-svg {
   display: block;
   width: 100%;
-  height: 38px;
+  height: 30px;
 }
 
 .pitch-dist-fill {

@@ -1572,6 +1572,58 @@
     }
   };
 
+  /* ---------- 4-4-2 formation positions per zone ---------- */
+  // order: gk, lb, lcb, rcb, rb, lm, lcm, rcm, rm, lst, rst
+  var PLAYER_IDS = ["pp-gk","pp-lb","pp-lcb","pp-rcb","pp-rb","pp-lm","pp-lcm","pp-rcm","pp-rm","pp-lst","pp-rst"];
+
+  var FORMATIONS = {
+    "default": [
+      [250,355],[70,275],[185,285],[315,285],[430,275],
+      [70,195],[195,200],[305,200],[430,195],
+      [195,100],[305,100]
+    ],
+    "six-yard": [
+      [250,355],[95,215],[190,225],[310,225],[405,215],
+      [115,125],[215,110],[285,110],[385,125],
+      [225,38],[275,38]
+    ],
+    "penalty-area": [
+      [250,355],[85,230],[190,240],[310,240],[415,230],
+      [115,140],[215,125],[285,125],[385,140],
+      [215,70],[285,70]
+    ],
+    "left-wing": [
+      [250,355],[42,195],[155,260],[305,285],[415,280],
+      [38,115],[160,170],[300,205],[405,215],
+      [95,65],[265,90]
+    ],
+    "right-wing": [
+      [250,355],[85,280],[195,285],[345,260],[458,195],
+      [95,215],[200,205],[340,170],[462,115],
+      [235,90],[405,65]
+    ],
+    "edge-of-box": [
+      [250,355],[75,250],[185,255],[315,255],[425,250],
+      [110,160],[210,148],[290,148],[390,160],
+      [210,100],[290,100]
+    ],
+    "deep-half": [
+      [250,355],[75,300],[185,310],[315,310],[425,300],
+      [80,238],[195,242],[305,242],[420,238],
+      [200,175],[300,175]
+    ]
+  };
+
+  function moveFormation(key) {
+    var pos = FORMATIONS[key] || FORMATIONS["default"];
+    PLAYER_IDS.forEach(function (id, i) {
+      var el = document.getElementById(id);
+      if (!el || !pos[i]) return;
+      el.setAttribute("cx", pos[i][0]);
+      el.setAttribute("cy", pos[i][1]);
+    });
+  }
+
   var STAT_META = [
     { key: "xG",      label: "xG per Shot",        fmt: "dec", positive: true  },
     { key: "xA",      label: "xA per Key Pass",     fmt: "dec", positive: true  },
@@ -1694,6 +1746,7 @@
     });
     var clicked = document.querySelector('.pitch-zone[data-zone="' + zoneKey + '"]');
     if (clicked) clicked.classList.add("zone-" + z.heat);
+    moveFormation(zoneKey);
     renderPanel(zoneKey);
   }
 
