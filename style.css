@@ -299,6 +299,9 @@ a:hover {
 #bubble-education,
 #bubble-experience,
 #bubble-projects,
+#bubble-chess,
+#bubble-watchlist,
+#bubble-pitch,
 #bubble-contact {
   width: 92px;
   height: 92px;
@@ -1520,6 +1523,9 @@ footer {
   #bubble-education,
   #bubble-experience,
   #bubble-projects,
+  #bubble-chess,
+  #bubble-watchlist,
+  #bubble-pitch,
   #bubble-contact {
     width: 72px;
     height: 72px;
@@ -6393,6 +6399,9 @@ footer p {
   #bubble-education,
   #bubble-experience,
   #bubble-projects,
+  #bubble-chess,
+  #bubble-watchlist,
+  #bubble-pitch,
   #bubble-contact {
     width: 62px;
     height: 62px;
@@ -8322,7 +8331,7 @@ footer p {
 .pitch-layout {
   display: flex;
   gap: 22px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .pitch-field-wrap {
@@ -8379,7 +8388,8 @@ footer p {
   border-radius: 4px;
   box-shadow: 4px 4px 0 #111;
   padding: 14px 16px;
-  min-height: 320px;
+  display: flex;
+  flex-direction: column;
 }
 
 .pitch-stats-empty {
@@ -8388,7 +8398,7 @@ footer p {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 260px;
+  flex: 1;
   color: #c5c0b6;
 }
 
