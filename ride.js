@@ -38,6 +38,12 @@ const RAIL_H    = 3.2;    // rail floats this far above the surface
 const CAM_H     = 5.6;    // camera rides this far above the rail
 const LOOKAHEAD = 0.011;  // how far down the curve the camera aims
 
+/* Third-person chase. The camera sits back along the curve itself rather
+   than along the tangent — following the same path keeps it inherently
+   smooth through bends, where a tangent offset would swing. */
+const CHASE_T  = 0.016;   // how far behind the cart, in curve parameter
+const CHASE_UP = 12.5;    // and how far above the rail
+
 /* ---- pacing -------------------------------------------------------------
    The ride drives itself. LOOP_SECONDS is the master dial: seconds for one
    full circuit at cruise. Near a station it eases to STATION_SLOW of cruise
@@ -136,6 +142,7 @@ let renderer, scene, camera, clock;
 let curve, curveLen;
 let paperUniforms;
 let chessBars = null;
+let cart = null;
 
 const stationGroups = {};
 
@@ -188,6 +195,7 @@ function init() {
   buildPaper();
   buildAxes();
   buildRail();
+  buildCart();
   buildStations();
   buildRailNav();
   lighting();
@@ -547,6 +555,40 @@ function buildAxes() {
 /* ============================================================================
    8 · THE PLOTTED CURVE
    ========================================================================= */
+
+/** The cart: a single point riding the plotted line. */
+function buildCart() {
+  cart = new THREE.Group();
+
+  const sphere = new THREE.SphereGeometry(1.5, 20, 14);
+  cart.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: C.accent })));
+  cart.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.SphereGeometry(1.5, 10, 7)),
+    new THREE.LineBasicMaterial({ color: C.ink, transparent: true, opacity: 0.55 })
+  ));
+
+  // a flat halo so the point still reads against the paper from above
+  const halo = new THREE.Mesh(
+    new THREE.RingGeometry(2.5, 2.95, 36),
+    new THREE.MeshBasicMaterial({
+      color: C.accentSoft, side: THREE.DoubleSide, transparent: true, opacity: 0.6,
+    })
+  );
+  halo.rotation.x = -Math.PI / 2;
+  cart.add(halo);
+  cart.userData.halo = halo;
+
+  // dropped marker showing where it sits on the sheet below
+  const drop = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, -RAIL_H, 0),
+    ]),
+    new THREE.LineBasicMaterial({ color: C.accent, transparent: true, opacity: 0.5 })
+  );
+  cart.add(drop);
+
+  scene.add(cart);
+}
 
 function buildRail() {
   const N = 1600;
@@ -928,7 +970,9 @@ const camAim = new THREE.Vector3();
 
 function placeCameraAt(u) {
   const p = railPoint(u);
-  camera.position.set(p.x, p.y + CAM_H, p.z);
+  const behind = railPoint(u - CHASE_T);
+  camera.position.set(behind.x, behind.y + CHASE_UP, behind.z);
+  if (cart) cart.position.copy(p);
 
   // open already facing the first station, not a blank stretch of paper
   const first = STATIONS.reduce((best, st) => {
@@ -938,11 +982,30 @@ function placeCameraAt(u) {
   }, STATIONS[0]);
 
   camera.up.set(0, 1, 0);
-  camera.lookAt(first.x, first.h + 9.5, first.y);
+  camera.lookAt(
+    first.x * 0.58 + p.x * 0.42,
+    (first.h + 9.5) * 0.58 + (p.y + 1.5) * 0.42,
+    first.y * 0.58 + p.z * 0.42
+  );
 }
 
-const _probe = new THREE.Object3D();
+/* IMPORTANT: this probe must be a Camera, not a plain Object3D.
+   Object3D.lookAt() aims the object's +Z at the target; Camera.lookAt() aims
+   its -Z, because cameras look down negative Z. Copying a plain Object3D's
+   quaternion onto a camera therefore points the camera 180 degrees the wrong
+   way. Every place we derive an orientation for the camera goes through here. */
+const _probe = new THREE.PerspectiveCamera();
+
+/** Orientation for a camera at `from` looking at `at`. */
+function lookQuat(from, at, out) {
+  _probe.position.copy(from);
+  _probe.up.set(0, 1, 0);
+  _probe.lookAt(at);
+  return out.copy(_probe.quaternion);
+}
+
 const _aimSmooth = new THREE.Vector3();
+const _qTmp = new THREE.Quaternion();
 const _stationAim = new THREE.Vector3();
 const _trackAim = new THREE.Vector3();
 let aimInit = false;
@@ -968,8 +1031,12 @@ function stationAhead() {
 function updateRideCamera(dt) {
   const p = railPoint(t);
 
-  // --- position: follow the rail, height lagging so the ride doesn't pitch ---
-  camPos.set(p.x, p.y + CAM_H, p.z);
+  // --- the cart is a point riding the line ---
+  if (cart) cart.position.copy(p);
+
+  // --- position: sit back along the curve, above it, for a chase view ---
+  const behind = railPoint(t - CHASE_T);
+  camPos.set(behind.x, behind.y + CHASE_UP, behind.z);
   camera.position.x += (camPos.x - camera.position.x) * Math.min(1, dt * 9);
   camera.position.z += (camPos.z - camera.position.z) * Math.min(1, dt * 9);
   camera.position.y += (camPos.y - camera.position.y) * Math.min(1, dt * 3.2);
@@ -978,19 +1045,17 @@ function updateRideCamera(dt) {
   const target = stationAhead();
   _stationAim.set(target.x, target.h + 9.5, target.y);
 
-  const f = railPoint(t + LOOKAHEAD * 5);
-  _trackAim.set(f.x, f.y + CAM_H * 0.5, f.z);
+  // aim through the cart, so it stays framed in the foreground
+  _trackAim.copy(p).setY(p.y + 1.5);
 
-  camAim.copy(_stationAim).lerp(_trackAim, 0.28);
+  camAim.copy(_stationAim).lerp(_trackAim, 0.42);
 
   if (!aimInit) { _aimSmooth.copy(camAim); aimInit = true; }
   _aimSmooth.lerp(camAim, Math.min(1, dt * 1.4));
 
   // world up keeps the horizon level, so there is no roll to feel
-  _probe.position.copy(camera.position);
-  _probe.up.set(0, 1, 0);
-  _probe.lookAt(_aimSmooth);
-  camera.quaternion.slerp(_probe.quaternion, Math.min(1, dt * 1.9));
+  lookQuat(camera.position, _aimSmooth, _qTmp);
+  camera.quaternion.slerp(_qTmp, Math.min(1, dt * 1.9));
 
   camera.fov += (60 - camera.fov) * Math.min(1, dt * 4);
   camera.updateProjectionMatrix();
@@ -1041,16 +1106,19 @@ function release() {
   t = focusStation.t;
 
   const p = railPoint(t);
-  const ahead = railPoint(t + LOOKAHEAD);
-  const probe = new THREE.Object3D();
-  probe.position.set(p.x, p.y + CAM_H, p.z);
-  probe.lookAt(ahead.x, ahead.y + CAM_H * 0.55, ahead.z);
+  const behind = railPoint(t - CHASE_T);
+  const backPos = new THREE.Vector3(behind.x, behind.y + CHASE_UP, behind.z);
+
+  // resume in the chase pose, framed the same way the ride frames itself
+  const nxt = stationAhead();
+  const backAim = new THREE.Vector3(nxt.x, nxt.h + 9.5, nxt.y)
+    .lerp(new THREE.Vector3(p.x, p.y + 1.5, p.z), 0.42);
 
   tween = {
     fromPos: camera.position.clone(),
     fromQuat: camera.quaternion.clone(),
-    toPos: probe.position.clone(),
-    toQuat: probe.quaternion.clone(),
+    toPos: backPos,
+    toQuat: lookQuat(backPos, backAim, new THREE.Quaternion()),
     k: 0,
     dur: reduceMotion ? 0.001 : 0.9,
   };
@@ -1067,10 +1135,8 @@ function updateTween(dt) {
   camera.position.lerpVectors(tween.fromPos, tween.toPos, e);
 
   if (tween.look) {
-    const probe = new THREE.Object3D();
-    probe.position.copy(camera.position);
-    probe.lookAt(tween.look);
-    camera.quaternion.slerpQuaternions(tween.fromQuat, probe.quaternion, e);
+    lookQuat(camera.position, tween.look, _qTmp);
+    camera.quaternion.slerpQuaternions(tween.fromQuat, _qTmp, e);
   } else if (tween.toQuat) {
     camera.quaternion.slerpQuaternions(tween.fromQuat, tween.toQuat, e);
   }
@@ -2016,6 +2082,14 @@ function frame() {
       bar.scale.y += (target - bar.scale.y) * Math.min(1, dt * 3.2);
       bar.position.y = bar.scale.y * 0.5;
     });
+  }
+
+  // the cart pulses gently so the point stays legible against the paper
+  if (cart) {
+    const s = 1 + Math.sin(now * 2.4) * 0.07;
+    cart.scale.setScalar(s);
+    const halo = cart.userData.halo;
+    if (halo) halo.material.opacity = 0.42 + Math.sin(now * 2.4) * 0.18;
   }
 
   updateDrift(dt, now);
