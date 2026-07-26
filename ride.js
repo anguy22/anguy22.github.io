@@ -929,45 +929,68 @@ const camAim = new THREE.Vector3();
 function placeCameraAt(u) {
   const p = railPoint(u);
   camera.position.set(p.x, p.y + CAM_H, p.z);
-  const a = railPoint(u + LOOKAHEAD);
-  camera.lookAt(a.x, a.y + CAM_H * 0.55, a.z);
+
+  // open already facing the first station, not a blank stretch of paper
+  const first = STATIONS.reduce((best, st) => {
+    let d = st.t - u; if (d < 0) d += 1;
+    let bd = best.t - u; if (bd < 0) bd += 1;
+    return d < bd ? st : best;
+  }, STATIONS[0]);
+
+  camera.up.set(0, 1, 0);
+  camera.lookAt(first.x, first.h + 9.5, first.y);
 }
 
 const _probe = new THREE.Object3D();
 const _aimSmooth = new THREE.Vector3();
+const _stationAim = new THREE.Vector3();
+const _trackAim = new THREE.Vector3();
 let aimInit = false;
 
-/* Heading is deliberately lazy. Aiming straight down the tangent makes the
-   camera track every wiggle in the spline, which reads as constant side-to-
-   side jerk; and rolling into turns adds a second axis of it. So: average
-   several points well ahead of us, ease the aim point toward that, and slerp
-   the camera toward the result. Level flight, one orientation, no roll. */
+/** The next station along the curve — never the one we're already on. */
+function stationAhead() {
+  let best = STATIONS[0], bd = Infinity;
+  for (const st of STATIONS) {
+    let d = st.t - t;
+    if (d < 0) d += 1;
+    if (d < 0.02) d += 1;        // standing on it: look through to the next
+    if (d < bd) { bd = d; best = st; }
+  }
+  return best;
+}
+
+/* The camera looks at the content, not down the rail. Aiming along the
+   tangent framed empty paper most of the time, and averaging points along
+   the curve was worse still: the mean of samples on an arc sits inside the
+   arc, which on the return sweep put the aim point behind the camera. So
+   aim at the object we are travelling toward, with a little of the track
+   direction mixed in to keep a sense of motion. */
 function updateRideCamera(dt) {
   const p = railPoint(t);
 
-  // --- position: follow the rail, with height lagging so the ride doesn't pitch ---
+  // --- position: follow the rail, height lagging so the ride doesn't pitch ---
   camPos.set(p.x, p.y + CAM_H, p.z);
   camera.position.x += (camPos.x - camera.position.x) * Math.min(1, dt * 9);
   camera.position.z += (camPos.z - camera.position.z) * Math.min(1, dt * 9);
   camera.position.y += (camPos.y - camera.position.y) * Math.min(1, dt * 3.2);
 
-  // --- heading: mean of several samples ahead, so short kinks cancel out ---
-  const N = 6;
-  camAim.set(0, 0, 0);
-  for (let i = 1; i <= N; i++) {
-    camAim.add(railPoint(t + LOOKAHEAD * i * 0.85));
-  }
-  camAim.divideScalar(N);
-  camAim.y += CAM_H * 0.5;
+  // --- heading: the station we're heading for, softened toward the track ---
+  const target = stationAhead();
+  _stationAim.set(target.x, target.h + 9.5, target.y);
+
+  const f = railPoint(t + LOOKAHEAD * 5);
+  _trackAim.set(f.x, f.y + CAM_H * 0.5, f.z);
+
+  camAim.copy(_stationAim).lerp(_trackAim, 0.28);
 
   if (!aimInit) { _aimSmooth.copy(camAim); aimInit = true; }
-  _aimSmooth.lerp(camAim, Math.min(1, dt * 1.5));
+  _aimSmooth.lerp(camAim, Math.min(1, dt * 1.4));
 
-  // world up keeps the horizon level, so there is no roll to remove
+  // world up keeps the horizon level, so there is no roll to feel
   _probe.position.copy(camera.position);
   _probe.up.set(0, 1, 0);
   _probe.lookAt(_aimSmooth);
-  camera.quaternion.slerp(_probe.quaternion, Math.min(1, dt * 1.8));
+  camera.quaternion.slerp(_probe.quaternion, Math.min(1, dt * 1.9));
 
   camera.fov += (60 - camera.fov) * Math.min(1, dt * 4);
   camera.updateProjectionMatrix();
