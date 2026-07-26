@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="ride.css?v=13">
+  <link rel="stylesheet" href="ride.css?v=14">
 
   <script type="importmap">
   {
@@ -52,7 +52,7 @@
   <div id="gate">
     <div class="gate-card">
       <div class="gate-head">
-        <p class="gate-eyebrow">Sheet 1 of 6 &middot; Plotted Surface</p>
+        <p class="gate-eyebrow">Sheet 1 of 7 &middot; Plotted Surface</p>
         <h1 class="gate-name">Andrew Nguyen</h1>
         <div class="gate-rule"></div>
         <p class="gate-sub">Industrial Engineering &middot; Statistics &middot; Purdue &rsquo;28</p>
@@ -100,7 +100,7 @@
       </div>
       <div class="tb-cell">
         <span class="tb-k">Sheet</span>
-        <span class="tb-v" id="tb-sheet">1 / 6</span>
+        <span class="tb-v" id="tb-sheet">1 / 7</span>
       </div>
     </div>
     <div class="tb-row">
@@ -810,11 +810,223 @@
       </div>
     </div>
 
-    <!-- ---------- SHEET 05 · SOCCER ---------- -->
-    <div class="sheet" id="sheet-soccer" data-station="soccer">
+    <!-- ---------- SHEET 05 · MARKETS ---------- -->
+    <div class="sheet is-dark" id="sheet-markets" data-station="markets">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
         <span class="sheet-num">05</span>
+        <h2 class="sheet-title">Markets</h2>
+        <span class="sheet-coord" data-coord>&mdash;</span>
+      </div>
+      <div class="sheet-body">
+        <p style="font-size:16px">
+          I follow one sector properly rather than everything badly, and it is the one
+          I already work in. Semiconductors are an industrial process before they are a
+          trade &mdash; yield, throughput, capex cycles, bottlenecks. That is the same
+          problem set as the rest of this site, priced.
+        </p>
+
+        <div class="tape-note">
+          <span class="tape-dot"></span>
+          The columns running across the floor outside are a <b>procedural animation</b>,
+          not live quotes. No price is shown against them anywhere on this page.
+        </div>
+
+        <h4>The chain</h4>
+        <p style="font-size:15px;color:var(--ink-soft);margin-top:-4px">
+          Each name below occupies a different link. Demand enters at one end and
+          works its way back up.
+        </p>
+
+        <svg class="chain" viewBox="0 0 640 92" role="img" aria-label="Semiconductor supply chain flow">
+          <defs>
+            <marker id="ch-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+                    markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <g class="chain-flow">
+            <path d="M566 46 L92 46" marker-end="url(#ch-arrow)"/>
+          </g>
+          <g class="chain-node" data-link="demand">
+            <rect x="512" y="24" width="108" height="44" rx="4"/>
+            <text x="566" y="42">DEMAND</text><text class="sub" x="566" y="58">NVDA</text>
+          </g>
+          <g class="chain-node" data-link="litho">
+            <rect x="392" y="24" width="100" height="44" rx="4"/>
+            <text x="442" y="42">LITHO</text><text class="sub" x="442" y="58">ASML</text>
+          </g>
+          <g class="chain-node" data-link="tools">
+            <rect x="252" y="24" width="120" height="44" rx="4"/>
+            <text x="312" y="42">DEP / ETCH</text><text class="sub" x="312" y="58">AMAT &middot; LRCX</text>
+          </g>
+          <g class="chain-node" data-link="control">
+            <rect x="140" y="24" width="92" height="44" rx="4"/>
+            <text x="186" y="42">CONTROL</text><text class="sub" x="186" y="58">KLAC</text>
+          </g>
+          <g class="chain-node" data-link="fab">
+            <rect x="20" y="24" width="100" height="44" rx="4"/>
+            <text x="70" y="42">FAB</text><text class="sub" x="70" y="58">MU &middot; INTC</text>
+          </g>
+        </svg>
+
+        <h4>Coverage</h4>
+        <div class="ticker-list" id="ticker-list">
+
+          <article class="entry is-expandable tk" data-entry data-tk="MU">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">MU</span>
+              <span class="entry-org">Micron Technology</span>
+              <span class="entry-role">Memory &mdash; DRAM and NAND</span>
+              <svg class="spark" data-spark="MU" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">The most <b>cyclical</b> link in the chain &mdash; memory is a commodity, so pricing swings on the gap between bit supply and bit demand rather than on design wins.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: <b>bit growth vs. wafer starts</b>, inventory days, HBM allocation, and whether capex is being cut fast enough on the way down.</span></li>
+                <li class="beat"><span class="beat-t">I spent a summer inside this company modelling R&amp;D process flow, which is a large part of why the sector interests me at all.</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="entry is-expandable tk" data-entry data-tk="INTC">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">INTC</span>
+              <span class="entry-org">Intel</span>
+              <span class="entry-role">Logic, and a foundry in the making</span>
+              <svg class="spark" data-spark="INTC" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">Two businesses wearing one ticker: a products arm that has to defend share, and a <b>foundry</b> that has to win customers it has never had.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: <b>process node execution</b> against its own published schedule, external foundry commitments, and capex measured against free cash flow rather than against ambition.</span></li>
+                <li class="beat"><span class="beat-t">The most execution-dependent name on this list, which cuts both directions.</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="entry is-expandable tk" data-entry data-tk="LRCX">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">LRCX</span>
+              <span class="entry-org">Lam Research</span>
+              <span class="entry-role">Etch &mdash; taking material away</span>
+              <svg class="spark" data-spark="LRCX" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">Sells the tools that cut the structures. Leverage comes from <b>NAND layer counts</b> &mdash; every extra layer is more etch steps on the same wafer.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: total <b>WFE spend</b>, the upgrade-versus-new-tool mix, and how much revenue is exposed to export controls.</span></li>
+                <li class="beat"><span class="beat-t">Equipment names lead the fabs on the way down and lag them on the way back up.</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="entry is-expandable tk" data-entry data-tk="AMAT">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">AMAT</span>
+              <span class="entry-org">Applied Materials</span>
+              <span class="entry-role">Deposition &mdash; putting material down</span>
+              <svg class="spark" data-spark="AMAT" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">The <b>broadest portfolio</b> in equipment, which makes it the closest thing to an index on how much the industry is building.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: leading-edge versus <b>trailing-edge mix</b>, and the services backlog, which is the steadier half of the business.</span></li>
+                <li class="beat"><span class="beat-t">Breadth cuts both ways &mdash; less upside to any one inflection, less damage from missing one.</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="entry is-expandable tk" data-entry data-tk="KLAC">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">KLAC</span>
+              <span class="entry-org">KLA</span>
+              <span class="entry-role">Process control &mdash; finding the defect</span>
+              <svg class="spark" data-spark="KLAC" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">Inspection and metrology. The structural argument is that <b>inspection intensity rises as nodes shrink</b> &mdash; smaller features mean more places to be wrong and more steps worth checking.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: <b>process-control spend as a share of WFE</b>. If that ratio keeps climbing, the thesis is working.</span></li>
+                <li class="beat"><span class="beat-t">This is the yield-engineering problem I find most interesting on its own merits.</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="entry is-expandable tk" data-entry data-tk="ASML">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">ASML</span>
+              <span class="entry-org">ASML</span>
+              <span class="entry-role">Lithography &mdash; the only EUV there is</span>
+              <svg class="spark" data-spark="ASML" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">A genuine <b>monopoly</b> on EUV. Nothing at the leading edge gets printed without a machine from one building in the Netherlands.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: <b>EUV and High&#8209;NA shipment cadence</b>, backlog coverage, and export policy, which is the one input that can change the story without warning.</span></li>
+                <li class="beat"><span class="beat-t">Low unit volume, very high unit price &mdash; a handful of shipments moves a quarter.</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="entry is-expandable tk" data-entry data-tk="NVDA">
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="tk-sym">NVDA</span>
+              <span class="entry-org">NVIDIA</span>
+              <span class="entry-role">Accelerators &mdash; where the demand starts</span>
+              <svg class="spark" data-spark="NVDA" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat"><span class="beat-t">Sits at the far end of the chain, but it is the <b>demand signal</b> everything upstream reacts to &mdash; an order here becomes HBM allocation, then wafer starts, then tool orders.</span></li>
+                <li class="beat"><span class="beat-t">What I watch: less the company itself than <b>how far its demand propagates</b>, and how long the lag runs before it shows up in equipment bookings.</span></li>
+                <li class="beat"><span class="beat-t">Useful to me mostly as an <b>indicator for the other six</b>.</span></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <div class="split" style="margin-top:20px">
+          <div>
+            <h4>How I approach it</h4>
+            <ul style="padding-left:20px;margin:0">
+              <li style="font-size:15px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">One sector, understood properly. I would rather know why a tool order moves than hold thirty names I cannot explain.</li>
+              <li style="font-size:15px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">Follow the <b>physical</b> chain, not the narrative. Wafer starts, layer counts and capex are countable; sentiment is not.</li>
+              <li style="font-size:15px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">Position for the cycle rather than the quarter. This industry has always been cyclical and has never stopped being cyclical.</li>
+              <li style="font-size:15px;line-height:1.55;color:var(--ink-soft)">Write the thesis down first, so being wrong is legible later.</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Context</h4>
+            <div class="pills">
+              <span class="pill hot">Semis only</span>
+              <span class="pill hot">Long horizon</span>
+              <span class="pill">Micron IE intern</span>
+              <span class="pill">WFE cycle</span>
+              <span class="pill">Personal account</span>
+            </div>
+            <p style="margin-top:14px;font-size:13px;color:var(--ink-faint);line-height:1.6">
+              Nothing here is investment advice, a recommendation, or a record of
+              performance. It is a description of what I read and why I find it
+              interesting.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- SHEET 06 · SOCCER ---------- -->
+    <div class="sheet" id="sheet-soccer" data-station="soccer">
+      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
+      <div class="sheet-head">
+        <span class="sheet-num">06</span>
         <h2 class="sheet-title">Pitch Analytics</h2>
         <span class="sheet-coord" data-coord>&mdash;</span>
       </div>
@@ -969,11 +1181,11 @@
       </div>
     </div>
 
-    <!-- ---------- SHEET 06 · CONTACT ---------- -->
+    <!-- ---------- SHEET 07 · CONTACT ---------- -->
     <div class="sheet" id="sheet-contact" data-station="contact">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
-        <span class="sheet-num">06</span>
+        <span class="sheet-num">07</span>
         <h2 class="sheet-title">Contact</h2>
         <span class="sheet-coord" data-coord>&mdash;</span>
       </div>
@@ -1015,7 +1227,7 @@
   <!-- src is assigned by ride.js only if the audio file is actually present -->
   <audio id="ride-audio" preload="auto"></audio>
 
-  <script type="module" src="ride.js?v=13"></script>
+  <script type="module" src="ride.js?v=14"></script>
 
   <script>
     /* If three.js can't be fetched the module never executes and the launch

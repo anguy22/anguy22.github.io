@@ -78,6 +78,7 @@ const BUMPS = [
   { x: 225, y: 150, a:  -7, s: 36 },   // CHICAGO — lakefront plain
   { x: 395, y: 140, a:  17, s: 30 },   // SEOUL   — Namsan
   { x: 300, y:-250, a:  13, s: 32 },   // SF      — the hills
+  { x: 322, y:   9, a:  12, s: 26 },   // MARKETS — a plateau for the floor
 ];
 
 function fieldH(x, y) {
@@ -110,9 +111,17 @@ const STATIONS = [
   { id:'about',   label:'About',           sheet:'02', x:  60, y: -30 },
   { id:'resume',  label:'Resume',          sheet:'03', x: 165, y:  35 },
   { id:'chess',   label:'Chess',           sheet:'04', x: 265, y:  -8 },
-  { id:'soccer',  label:'Pitch Analytics', sheet:'05', x: 375, y:  30 },
-  { id:'contact', label:'Contact',         sheet:'06', x: 470, y:   0 },
+  { id:'markets', label:'Markets',         sheet:'05', x: 322, y:   9 },
+  { id:'soccer',  label:'Pitch Analytics', sheet:'06', x: 375, y:  30 },
+  { id:'contact', label:'Contact',         sheet:'07', x: 470, y:   0 },
 ];
+
+/* The three patches where the paper changes character. Half extents are
+   chosen so the X spans never touch: board 243..287, terminal 294..346,
+   turf 348..408. A fragment can only ever be inside one of them. */
+const ZONE_CHESS = { x: 265, y:  -8, w: 22,   d: 22   };
+const ZONE_MKT   = { x: 320, y:   6, w: 26,   d: 19   };
+const ZONE_PITCH = { x: 378, y:  32, w: 30,   d: 19.5 };
 
 /* A closed circuit: out along the stations, home along the south.
    The between-station points sit near the straight line joining their
@@ -188,7 +197,9 @@ function init() {
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color('#D8CBAA');
-  scene.fog = new THREE.Fog(0xD8CBAA, 150, 430);
+  // matched to the haze ramp in PAPER_FRAG; long enough that the themed
+  // zones are picked out from the far end of the sheet
+  scene.fog = new THREE.Fog(0xD8CBAA, 190, 560);
 
   camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.5, 1200);
 
@@ -206,10 +217,12 @@ function init() {
   buildCart();
   buildStations();
   buildCities();
+  buildTape();
   buildRailNav();
   lighting();
   bindEvents();
   initResumeCards();
+  initTickerCards();
   initPitch();
   primeAudio();          // load the file now, so the launch click can just play it
   fetchLichess();
@@ -285,6 +298,14 @@ const PAPER_FRAG = /* glsl */`
   uniform vec3  uPaper, uPaperLit, uFine, uMed, uHeavy, uAccent, uInkFaint;
   uniform vec3  uCam;
   uniform float uBass;
+  uniform float uTime;
+
+  /* Themed regions of the sheet. xy = centre in world XZ, zw = half extents.
+     The rest of the drawing stays plain engineering paper; these are the only
+     places it changes character. */
+  uniform vec4  uZoneChess;
+  uniform vec4  uZoneMkt;
+  uniform vec4  uZonePitch;
 
   varying vec3  vWorld;
   varying vec3  vNormalW;
@@ -312,6 +333,42 @@ const PAPER_FRAG = /* glsl */`
     vec2 d = fwidth(c);
     vec2 g = abs(fract(c - 0.5) - 0.5) / max(d, vec2(1e-5));
     return 1.0 - smoothstep(0.0, w, min(g.x, g.y));
+  }
+
+  /* ---- zone drawing kit -------------------------------------------------
+     Everything below takes an explicit px (world units per screen pixel)
+     instead of calling fwidth() itself. The zone work happens inside if()
+     blocks, and derivatives taken in non-uniform control flow are undefined
+     in GLSL ES — a quad straddling a zone edge would get a garbage width.
+     px is measured once up in uniform flow and handed down.               */
+
+  float sdBox(vec2 p, vec2 h){
+    vec2 d = abs(p) - h;
+    return min(max(d.x, d.y), 0.0) + length(max(d, vec2(0.0)));
+  }
+  float sdRound(vec2 p, vec2 h, float r){ return sdBox(p, h - r) - r; }
+
+  /* A drawn line of half-width w, softened by exactly one pixel. Because it
+     widens with px, a marking stays visible when it is a long way off
+     instead of dissolving into shimmer. */
+  float strip(float sd, float w, float px){
+    float aa = max(px, 1e-4);
+    return 1.0 - smoothstep(w, w + aa * 1.4, abs(sd));
+  }
+  float dot2(vec2 p, float r, float px){
+    return 1.0 - smoothstep(r, r + max(px, 1e-4) * 1.4, length(p));
+  }
+  float gridA(vec2 q, float scale, float w, float px){
+    vec2 c = q / scale;
+    float d = max(px / scale, 1e-5);
+    vec2 g = abs(fract(c - 0.5) - 0.5) / d;
+    return 1.0 - smoothstep(0.0, w, min(g.x, g.y));
+  }
+  /* Hard two-tone patterns alias into noise once a cell is near pixel size.
+     Collapsing them toward their own average keeps a distant board reading
+     as one calm dark patch rather than a field of sparkle. */
+  float tame(float v, float cell, float px){
+    return mix(0.5, v, 1.0 - smoothstep(0.30, 1.30, px / cell));
   }
 
   void main(){
@@ -344,17 +401,111 @@ const PAPER_FRAG = /* glsl */`
       (1.0 - smoothstep(0.0, axd.x * 2.2, ax.x)), 0.0, 1.0) * fadeMed;
     col = mix(col, uAccent, axis * 0.50);
 
+    /* ---- THEMED ZONES --------------------------------------------------
+       Three patches where the sheet stops being plain graph paper. Edges are
+       crisp with a ruled border rather than a soft fade, so each one reads as
+       a panel taped down onto the drawing. zoneMask is carried to the fog
+       step below to keep them legible from clear across the sheet.        */
+    float px = max(fwidth(p.x), fwidth(p.y));
+    float zoneMask = 0.0;
+
+    // ---- CHESS: a board, 8 squares to a side ----
+    {
+      vec2 lp = p - uZoneChess.xy;
+      float sd = sdBox(lp, uZoneChess.zw);
+      float w  = 1.0 - smoothstep(-1.0, 0.6, sd);
+      if (w > 0.002) {
+        float cell = uZoneChess.z * 0.25;                  // 8 files across
+        float sq = mod(floor(lp.x / cell) + floor(lp.y / cell), 2.0);
+        sq = tame(sq, cell, px);
+        vec3 c = mix(vec3(0.949, 0.918, 0.847), vec3(0.113, 0.101, 0.094), sq);
+        c *= 0.90 + 0.20 * fiber;                          // paper tooth survives
+        c = mix(c, vec3(0.45, 0.40, 0.36), strip(sd + 1.1, 0.30, px) * 0.85);
+        c = mix(c, uAccent, strip(sd + 2.6, 0.34, px) * 0.75);
+        col = mix(col, c, w);
+        zoneMask = max(zoneMask, w);
+      }
+    }
+
+    // ---- MARKETS: a terminal panel, green above the line and red below ----
+    {
+      vec2 lp = p - uZoneMkt.xy;
+      float sd = sdBox(lp, uZoneMkt.zw);
+      float w  = 1.0 - smoothstep(-1.0, 0.6, sd);
+      if (w > 0.002) {
+        vec3 c = vec3(0.043, 0.071, 0.063);
+        float zl = clamp(lp.y / uZoneMkt.w, -1.0, 1.0);
+        c = mix(c, vec3(0.055, 0.129, 0.090), clamp( zl, 0.0, 1.0) * 0.80);
+        c = mix(c, vec3(0.141, 0.055, 0.051), clamp(-zl, 0.0, 1.0) * 0.80);
+
+        c = mix(c, vec3(0.106, 0.267, 0.184), gridA(lp, 3.5,  1.2, px) * 0.55);
+        c = mix(c, vec3(0.184, 0.427, 0.298), gridA(lp, 17.5, 1.5, px) * 0.80);
+        c = mix(c, vec3(0.760, 0.820, 0.730), strip(lp.y, 0.34, px) * 0.60);
+
+        // a scan bar sweeping the panel, so the region reads as live from afar
+        float sx = mix(-uZoneMkt.z, uZoneMkt.z, fract(uTime * 0.085));
+        c += vec3(0.055, 0.150, 0.098) * (1.0 - smoothstep(0.0, 6.0, abs(lp.x - sx)));
+
+        c = mix(c, vec3(0.239, 0.600, 0.404), strip(sd + 1.6, 0.34, px) * 0.9);
+        col = mix(col, c, w);
+        zoneMask = max(zoneMask, w);
+      }
+    }
+
+    // ---- PITCH: mown turf with the markings drawn to FIFA proportions ----
+    {
+      vec2 lp = p - uZonePitch.xy;
+      float sd = sdRound(lp, uZonePitch.zw, 2.5);
+      float w  = 1.0 - smoothstep(-1.0, 0.6, sd);
+      if (w > 0.002) {
+        vec2 hp = uZonePitch.zw - vec2(3.0, 2.0);          // lines inset from the turf
+        float band = hp.x * 0.25;
+        float stripe = tame(mod(floor(lp.x / band), 2.0), band, px);
+        vec3 c = mix(vec3(0.239, 0.427, 0.298), vec3(0.290, 0.502, 0.353), stripe);
+        c *= 0.90 + 0.20 * fbm(p * 3.1);                   // turf mottle
+
+        /* 54 x 35 units stands in for 105 x 68 m, so every real dimension
+           below is metres * 0.514. */
+        float k = hp.x / 52.5;
+        float m = strip(sdBox(lp, hp), 0.32, px);                        // touch + goal lines
+        m = max(m, strip(lp.x, 0.32, px) * (1.0 - step(hp.y, abs(lp.y)))); // halfway
+        m = max(m, strip(length(lp) - 9.15 * k, 0.32, px));               // centre circle
+        m = max(m, dot2(lp, 0.45, px));                                   // centre spot
+
+        for (int s = 0; s < 2; s++) {
+          float sgn = s == 0 ? 1.0 : -1.0;
+          vec2 goal = vec2(sgn * hp.x, 0.0);
+          vec2 pen  = goal - vec2(sgn * 11.0 * k, 0.0);
+          m = max(m, strip(sdBox(lp - goal + vec2(sgn * 16.5 * k * 0.5, 0.0),
+                                 vec2(16.5 * k * 0.5, 20.15 * k)), 0.32, px));
+          m = max(m, strip(sdBox(lp - goal + vec2(sgn * 5.5 * k * 0.5, 0.0),
+                                 vec2(5.5 * k * 0.5, 9.16 * k)), 0.32, px));
+          m = max(m, dot2(lp - pen, 0.45, px));
+          // the D, clipped to the part outside the penalty area
+          float arc = strip(length(lp - pen) - 9.15 * k, 0.32, px);
+          m = max(m, arc * step(abs(lp.x), hp.x - 16.5 * k));
+        }
+        c = mix(c, vec3(0.945, 0.957, 0.925), clamp(m, 0.0, 1.0) * 0.90);
+        c = mix(c, vec3(0.945, 0.957, 0.925), strip(sd + 1.4, 0.28, px) * 0.45);
+        col = mix(col, c, w);
+        zoneMask = max(zoneMask, w);
+      }
+    }
+
     // crease shading from surface orientation
     float slope = 1.0 - clamp(vNormalW.y, 0.0, 1.0);
     col *= 1.0 - slope * 0.32;
 
+    /* Height tinting and topo banding are paper effects — hold them back
+       inside a zone or the tan bleeds into the turf and the terminal. */
+    float pw = 1.0 - zoneMask * 0.85;
     float hN = clamp(vHeight / 30.0, -1.0, 1.0);
-    col = mix(col, col * vec3(0.86, 0.79, 0.66), clamp(-hN, 0.0, 1.0) * 0.40);
-    col = mix(col, mix(col, uPaperLit, 0.35), clamp(hN, 0.0, 1.0) * 0.52);
+    col = mix(col, col * vec3(0.86, 0.79, 0.66), clamp(-hN, 0.0, 1.0) * 0.40 * pw);
+    col = mix(col, mix(col, uPaperLit, 0.35), clamp(hN, 0.0, 1.0) * 0.52 * pw);
 
     // faint topo banding
     float cband = grid(vec2(vHeight, vHeight), 4.0, 1.1);
-    col = mix(col, uInkFaint, cband * 0.05 * fadeMed);
+    col = mix(col, uInkFaint, cband * 0.05 * fadeMed * pw);
 
     vec3 L = normalize(vec3(-0.42, 0.82, -0.38));
     float ndl = clamp(dot(normalize(vNormalW), L), 0.0, 1.0);
@@ -362,7 +513,13 @@ const PAPER_FRAG = /* glsl */`
     col *= (0.58 + 0.52 * ndl) * hemi;
 
     col *= 1.0 + uBass * 0.075;
-    col = mix(col, vec3(0.847, 0.796, 0.667), smoothstep(150.0, 430.0, dist));
+
+    /* The zones are meant to be landmarks — you should pick out the board,
+       the terminal and the pitch from the far end of the sheet and watch
+       them resolve as you close. So haze recedes over a longer run than it
+       used to, and inside a zone it is pulled back further still. */
+    float haze = smoothstep(190.0, 560.0, dist) * (1.0 - zoneMask * 0.55);
+    col = mix(col, vec3(0.847, 0.796, 0.667), haze);
 
     gl_FragColor = vec4(col, 1.0);
   }
@@ -395,6 +552,12 @@ function buildPaper() {
     uInkFaint: { value: C.inkFaint },
     uCam:      { value: new THREE.Vector3() },
     uBass:     { value: 0 },
+    uTime:     { value: 0 },
+    /* xy = centre, zw = half extents. Kept apart from one another in X so no
+       two zones can overlap and fight over the same fragment. */
+    uZoneChess: { value: new THREE.Vector4(ZONE_CHESS.x, ZONE_CHESS.y, ZONE_CHESS.w, ZONE_CHESS.d) },
+    uZoneMkt:   { value: new THREE.Vector4(ZONE_MKT.x,   ZONE_MKT.y,   ZONE_MKT.w,   ZONE_MKT.d) },
+    uZonePitch: { value: new THREE.Vector4(ZONE_PITCH.x, ZONE_PITCH.y, ZONE_PITCH.w, ZONE_PITCH.d) },
   };
 
   const mesh = new THREE.Mesh(geo, new THREE.ShaderMaterial({
@@ -702,7 +865,7 @@ function hitProxy() {
 function buildStations() {
   const builders = {
     about: objAbout, resume: objResume, chess: objChess,
-    soccer: objSoccer, contact: objContact,
+    markets: objMarkets, soccer: objSoccer, contact: objContact,
   };
 
   STATIONS.forEach((st) => {
@@ -914,6 +1077,256 @@ function objSoccer() {
   })));
 
   return g;
+}
+
+/* ============================================================================
+   MARKETS — the semiconductor tape
+   ========================================================================= */
+
+const MKT_UP   = '#3FA36B';
+const MKT_DOWN = '#C0433A';
+const MKT_DIM  = '#16241E';
+
+/* The names I actually follow, and where each one sits in the chain that
+   turns sand into a die. The order is the order of the rows on the floor. */
+const TICKERS = [
+  { sym:'MU',   role:'Memory — DRAM and NAND' },
+  { sym:'INTC', role:'Logic, and a foundry in the making' },
+  { sym:'LRCX', role:'Etch — taking material away' },
+  { sym:'AMAT', role:'Deposition — putting material down' },
+  { sym:'KLAC', role:'Process control — finding the defect' },
+  { sym:'ASML', role:'Lithography — the only EUV there is' },
+  { sym:'NVDA', role:'Accelerators — where the demand starts' },
+];
+
+/* A deterministic walk per ticker. This is a procedural animation, NOT market
+   data — no quote is ever shown against it, precisely so nothing on the page
+   can be mistaken for a real price. seed/rnd keep it identical every load, so
+   the floor looks like a place rather than a fresh shuffle each visit. */
+const SERIES_LEN = 128;
+
+function walk(seed) {
+  let s = seed, v = 0.5;
+  const rnd = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+  const out = [];
+  for (let i = 0; i < SERIES_LEN; i++) {
+    v += (rnd() - 0.5) * 0.22 + (0.5 - v) * 0.06;   // drift back toward the middle
+    v = Math.min(0.97, Math.max(0.03, v));
+    out.push(v);
+  }
+  return out;
+}
+
+TICKERS.forEach((tk, i) => { tk.series = walk(9781 + i * 613); });
+
+/* ---------- the floor: instanced columns marching along X ---------- */
+
+const TAPE_N     = 21;     // columns visible per row at any moment
+const TAPE_SP    = 2.35;   // spacing between them, world units
+const TAPE_SPEED = 1.5;    // world units per second — one column every ~1.6s
+const ROW_GAP    = 4.9;
+
+let tape = null;
+
+function buildTape() {
+  const rows = TICKERS.length;
+  const count = rows * TAPE_N;
+
+  const body = new THREE.InstancedMesh(
+    new THREE.BoxGeometry(1.45, 1, 1.45),
+    new THREE.MeshLambertMaterial({ vertexColors: false }),
+    count
+  );
+  const wick = new THREE.InstancedMesh(
+    new THREE.BoxGeometry(0.2, 1, 0.2),
+    new THREE.MeshLambertMaterial({ color: '#7E8F86' }),
+    count
+  );
+  body.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(count * 3), 3);
+  body.frustumCulled = false;
+  wick.frustumCulled = false;
+  scene.add(body, wick);
+
+  // one plaque per row, hovering over the head of its column of columns
+  const plaques = TICKERS.map((tk, r) => {
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: tickerPlaque(tk.sym, true), transparent: true, depthWrite: false,
+    }));
+    spr.scale.set(7.4, 2.6, 1);
+    spr.userData = {
+      up: tickerPlaque(tk.sym, true),
+      down: tickerPlaque(tk.sym, false),
+      last: null,
+      phase: r * 1.37,
+    };
+    scene.add(spr);
+    return spr;
+  });
+
+  /* The tape starts just inside the left edge of the panel and ends just
+     inside the right, so the run of columns reads as belonging to it. The
+     oldest column does slide off the left edge mid-scroll, which is the
+     correct look for something running off the end of the paper. */
+  tape = { body, wick, plaques, scroll: 0, rows, x0: ZONE_MKT.x - ZONE_MKT.w + 2.5 };
+}
+
+/** Two textures per ticker so direction is a map swap, never a per-frame redraw. */
+function tickerPlaque(sym, up) {
+  const cv = document.createElement('canvas');
+  cv.width = 256; cv.height = 90;
+  const g = cv.getContext('2d');
+  const tone = up ? '#4FBE7E' : '#D9564B';
+
+  g.fillStyle = 'rgba(8,16,13,0.90)';
+  g.fillRect(0, 0, 256, 90);
+  g.strokeStyle = tone; g.lineWidth = 4;
+  g.strokeRect(2, 2, 252, 86);
+
+  g.fillStyle = tone;
+  g.font = '700 46px "Barlow Condensed", Arial, sans-serif';
+  g.textBaseline = 'middle';
+  g.fillText(sym, 18, 46);
+
+  g.beginPath();                                     // the direction caret
+  if (up) { g.moveTo(216, 32); g.lineTo(236, 32); g.lineTo(226, 16); }
+  else    { g.moveTo(216, 58); g.lineTo(236, 58); g.lineTo(226, 74); }
+  g.closePath(); g.fill();
+
+  const tex = new THREE.CanvasTexture(cv);
+  tex.anisotropy = 4;
+  return tex;
+}
+
+const _m4 = new THREE.Matrix4();
+const _cUp = new THREE.Color(MKT_UP);
+const _cDn = new THREE.Color(MKT_DOWN);
+const _cDim = new THREE.Color(MKT_DIM);
+const _cTmp = new THREE.Color();   // scratch: setColorAt runs 154x a frame
+
+function updateTape(dt, now) {
+  if (!tape) return;
+
+  tape.scroll += dt * TAPE_SPEED;
+
+  /* Scrolling trick: slide every column left by the fractional part of a slot,
+     and shift the data index by the whole part. When `off` rolls past 1 the
+     positions snap back one slot at the same instant the data steps forward
+     one sample, and the two cancel — so the tape runs smoothly instead of
+     ticking, without ever reallocating anything. */
+  const frac = tape.scroll / TAPE_SP;
+  const base = Math.floor(frac);
+  const off  = frac - base;
+
+  let i = 0;
+  for (let r = 0; r < tape.rows; r++) {
+    const tk = TICKERS[r];
+    const z = ZONE_MKT.y + (r - (tape.rows - 1) / 2) * ROW_GAP;
+    let head = 0.5, headUp = true;
+
+    for (let c = 0; c < TAPE_N; c++, i++) {
+      const x = tape.x0 + (c - off) * TAPE_SP;
+      const k = (base + c) % SERIES_LEN;
+      const v = tk.series[k];
+      const prev = tk.series[(k + SERIES_LEN - 1) % SERIES_LEN];
+      const up = v >= prev;
+
+      const h = 0.7 + v * 8.2;
+      const g = fieldH(x, z);
+
+      _m4.makeScale(1, h, 1);
+      _m4.setPosition(x, g + h / 2, z);
+      tape.body.setMatrixAt(i, _m4);
+
+      const wh = 0.5 + Math.abs(v - prev) * 9;       // the day's reach past the close
+      _m4.makeScale(1, wh, 1);
+      _m4.setPosition(x, g + h + wh / 2, z);
+      tape.wick.setMatrixAt(i, _m4);
+
+      /* Columns dim toward the back of the tape so the leading edge — the
+         part that is actually moving — is what the eye lands on. */
+      const fade = 0.35 + 0.65 * (c / (TAPE_N - 1));
+      tape.body.setColorAt(i, _cTmp.copy(_cDim).lerp(up ? _cUp : _cDn, fade));
+
+      if (c === TAPE_N - 1) { head = v; headUp = up; }
+    }
+
+    // the plaque rides above the leading column, bobbing on its own phase
+    const spr = tape.plaques[r];
+    const ph = spr.userData.phase;
+    const hx = tape.x0 + (TAPE_N - 1 - off) * TAPE_SP + 5.5 + Math.sin(now * 0.5 + ph) * 1.1;
+    const hz = z + Math.cos(now * 0.37 + ph) * 1.4;
+    spr.position.set(hx, fieldH(hx, hz) + 6.5 + head * 8.2 + Math.sin(now * 0.8 + ph) * 0.7, hz);
+
+    if (spr.userData.last !== headUp) {
+      spr.userData.last = headUp;
+      spr.material.map = headUp ? spr.userData.up : spr.userData.down;
+      spr.material.needsUpdate = true;
+    }
+  }
+
+  tape.body.instanceMatrix.needsUpdate = true;
+  tape.wick.instanceMatrix.needsUpdate = true;
+  tape.body.instanceColor.needsUpdate = true;
+}
+
+/* ---------- MARKETS: the station marker ---------- */
+function objMarkets() {
+  const g = new THREE.Group();
+
+  // a dark disc, so the object reads as a screen even before you are close
+  g.add(new THREE.Mesh(
+    new THREE.CylinderGeometry(6.4, 6.4, 0.5, 48),
+    new THREE.MeshLambertMaterial({ color: '#0E1A15' })
+  ));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.CylinderGeometry(6.4, 6.4, 0.5, 48)),
+    new THREE.LineBasicMaterial({ color: MKT_UP, transparent: true, opacity: 0.8 })
+  ));
+
+  // the zero line across the face
+  const zero = new THREE.Mesh(
+    new THREE.BoxGeometry(12.4, 0.06, 0.12),
+    new THREE.MeshBasicMaterial({ color: '#C8D4C0', transparent: true, opacity: 0.55 })
+  );
+  zero.position.y = 0.28;
+  g.add(zero);
+
+  const bars = [];
+  const N = 13;
+  for (let i = 0; i < N; i++) {
+    const m = new THREE.Mesh(
+      new THREE.BoxGeometry(0.62, 1, 0.62),
+      new THREE.MeshLambertMaterial({ color: MKT_UP })
+    );
+    m.position.set((i - (N - 1) / 2) * 0.92, 0.25, 0);
+    m.userData.i = i;
+    g.add(m);
+    bars.push(m);
+  }
+
+  g.userData.bars = bars;
+  return g;
+}
+
+/** Runs the marker's own little chart, independent of the floor outside. */
+function updateMarketsArt(art, now) {
+  const bars = art.userData.bars;
+  if (!bars) return;
+  const N = bars.length;
+  const shift = now * 1.1;
+
+  for (let i = 0; i < N; i++) {
+    const m = bars[i];
+    const k = Math.floor(shift) + i;
+    const v = TICKERS[0].series[k % SERIES_LEN];
+    const p = TICKERS[0].series[(k + SERIES_LEN - 1) % SERIES_LEN];
+    const h = 0.5 + v * 4.6;
+
+    m.scale.y += (h - m.scale.y) * 0.12;
+    m.position.x = ((i - (shift % 1)) - (N - 1) / 2) * 0.92;
+    m.position.y = 0.25 + m.scale.y / 2;
+    m.material.color.set(v >= p ? MKT_UP : MKT_DOWN);
+  }
 }
 
 /* ---------- CONTACT: a paper plane ---------- */
@@ -1804,11 +2217,11 @@ function updateHUD() {
 
   if (nd < 0.05) {
     hud.station.textContent = near.label;
-    hud.sheet.textContent = `${near.sheet} / 06`;
+    hud.sheet.textContent = `${near.sheet} / 07`;
     hud.crit.textContent = 'Click the object to open';
   } else {
     hud.station.textContent = 'In Transit';
-    hud.sheet.textContent = '— / 06';
+    hud.sheet.textContent = '— / 07';
     hud.crit.textContent = `${(nd * curveLen).toFixed(0)} u to ${near.label}`;
   }
 
@@ -2331,6 +2744,28 @@ function initResumeCards() {
   });
 }
 
+/* Each coverage card carries the SAME series its row is running outside, so
+   the sparkline in the panel and the columns on the floor are one drawing
+   seen twice. Nothing here is a quote; see the note on the sheet. */
+function initTickerCards() {
+  TICKERS.forEach((tk) => {
+    const svg = document.querySelector(`.spark[data-spark="${tk.sym}"]`);
+    const line = svg?.querySelector('polyline');
+    if (!line) return;
+
+    const N = 48;
+    const pts = [];
+    for (let i = 0; i < N; i++) {
+      const v = tk.series[i * 2 % SERIES_LEN];
+      pts.push(`${(i / (N - 1) * 120).toFixed(1)},${(28 - v * 26).toFixed(1)}`);
+    }
+    line.setAttribute('points', pts.join(' '));
+
+    const first = tk.series[0], last = tk.series[(N - 1) * 2 % SERIES_LEN];
+    svg.classList.add(last >= first ? 'is-up' : 'is-down');
+  });
+}
+
 /** Collapse every card in a sheet, so it reopens fresh and re-plays. */
 function collapseCards(sheetEl) {
   sheetEl.querySelectorAll('[data-entry]').forEach((entry) => {
@@ -2379,6 +2814,7 @@ function frame() {
     const s = isHot ? 1.16 : 1.0;
     art.scale.lerp(new THREE.Vector3(s, s, s), Math.min(1, dt * 6));
 
+    if (art.userData.bars) updateMarketsArt(art, now);
     if (art.userData.swim)  art.rotation.z = Math.sin(now * 1.5) * 0.10;
     if (art.userData.glide) {
       art.rotation.z = Math.sin(now * 0.8) * 0.22;
@@ -2413,9 +2849,11 @@ function frame() {
   }
 
   updateDrift(dt, now);
+  updateTape(dt, now);
 
   paperUniforms.uCam.value.copy(camera.position);
   paperUniforms.uBass.value = audioBass;
+  paperUniforms.uTime.value = now;
 
   renderer.render(scene, camera);
 }

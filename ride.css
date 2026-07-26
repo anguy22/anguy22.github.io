@@ -17,6 +17,14 @@
   --accent:       #B8442E;   /* red pencil */
   --accent-soft:  #D4785F;
 
+  /* Expandable-card surfaces. Tokens rather than literals so a sheet can
+     re-theme itself wholesale by redefining them — see .sheet.is-dark. */
+  --card-bg:       rgba(255, 253, 246, 0.42);
+  --card-bg-hover: rgba(255, 253, 246, 0.78);
+  --card-bg-open:  rgba(255, 253, 246, 0.90);
+  --card-glow:     rgba(184, 68, 46, 0.55);
+  --mkt-down:      #E06256;
+
   --sheet-w: 1180px;
   --sheet-h: 820px;
 
@@ -777,7 +785,7 @@ body.is-pointing #webgl { cursor: pointer; }
   margin-bottom: 10px;
   border: 1px solid var(--grid-heavy);
   border-left: 3px solid var(--grid-heavy);
-  background: rgba(255, 253, 246, 0.42);
+  background: var(--card-bg);
   transition: border-color 260ms var(--ease-out), background 260ms var(--ease-out),
               box-shadow 260ms var(--ease-out), transform 260ms var(--ease-out);
 }
@@ -785,15 +793,15 @@ body.is-pointing #webgl { cursor: pointer; }
 .entry.is-expandable:hover {
   border-color: var(--accent-soft);
   border-left-color: var(--accent);
-  background: rgba(255, 253, 246, 0.78);
+  background: var(--card-bg-hover);
   transform: translateX(3px);
 }
 
 .entry.is-expandable.is-open {
   border-color: var(--accent);
   border-left-color: var(--accent);
-  background: rgba(255, 253, 246, 0.9);
-  box-shadow: 0 10px 30px -18px rgba(184, 68, 46, 0.55);
+  background: var(--card-bg-open);
+  box-shadow: 0 10px 30px -18px var(--card-glow);
   transform: none;
 }
 
@@ -1536,4 +1544,157 @@ body.is-pointing #webgl { cursor: pointer; }
   .gate-actions { flex-direction: column; }
   .gate-alt { border-left: 0; border-top: 2px solid var(--ink); padding: 14px; }
   #hint { display: none; }
+}
+
+/* ============================================================
+   MARKETS SHEET
+   The one dark panel in the set. Rather than restyle every
+   component, it redefines the palette tokens for its own
+   subtree — h4, pills, cards, beats and the printed grid all
+   invert on their own, and only the market-specific pieces
+   below need writing.
+   ============================================================ */
+
+.sheet.is-dark {
+  --paper:        #0B1210;
+  --paper-lit:    #14231C;
+  --paper-shade:  #070F0C;
+  --grid-fine:    #153023;
+  --grid-med:     #1B3C2C;
+  --grid-heavy:   #235039;
+  --ink:          #DCE8DE;
+  --ink-soft:     #A6BEAD;
+  --ink-faint:    #6C8A77;
+  --accent:       #4FBE7E;
+  --accent-soft:  #7ED6A2;
+
+  --card-bg:       rgba(22, 44, 34, 0.42);
+  --card-bg-hover: rgba(28, 58, 43, 0.72);
+  --card-bg-open:  rgba(30, 64, 47, 0.86);
+  --card-glow:     rgba(79, 190, 126, 0.45);
+
+  background: linear-gradient(rgba(11, 18, 15, 0.99), rgba(7, 13, 11, 0.99));
+  border-color: #2C6244;
+  box-shadow: 0 40px 110px -30px rgba(0, 0, 0, 0.9);
+}
+
+.sheet.is-dark::before { opacity: 0.42; }
+.sheet.is-dark .sheet-close:hover {
+  background: var(--accent); color: #08120E; border-color: var(--accent);
+}
+
+/* ---- the "this is not a quote" strip ---- */
+.tape-note {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 4px 0 22px;
+  padding: 11px 15px;
+  border: 1px solid var(--grid-heavy);
+  border-left: 3px solid var(--mkt-down);
+  background: rgba(224, 98, 86, 0.07);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+.tape-note b { color: var(--mkt-down); font-weight: 500; }
+.tape-note .tape-dot {
+  flex: 0 0 auto;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--mkt-down);
+  animation: tape-blink 2.4s ease-in-out infinite;
+}
+@keyframes tape-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ---- the supply-chain flow ---- */
+.chain { width: 100%; height: auto; margin: 2px 0 6px; overflow: visible; }
+
+.chain-flow path {
+  fill: none;
+  stroke: var(--grid-heavy);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  color: var(--accent);                 /* the marker inherits this */
+  animation: chain-march 1.4s linear infinite;
+}
+@keyframes chain-march { to { stroke-dashoffset: -20; } }
+
+.chain-node rect {
+  fill: rgba(20, 40, 30, 0.9);
+  stroke: var(--grid-heavy);
+  stroke-width: 1.2;
+}
+.chain-node text {
+  text-anchor: middle;
+  font-family: var(--font-draft);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  fill: var(--ink);
+}
+.chain-node text.sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  fill: var(--accent);
+}
+.chain-node rect { transition: stroke 220ms, fill 220ms; }
+.chain-node:hover rect { stroke: var(--accent); fill: rgba(30, 62, 46, 0.95); }
+
+/* ---- coverage cards ---- */
+.ticker-list { margin-top: 2px; }
+
+.tk .entry-head { align-items: center; }
+
+.tk-sym {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  border: 1px solid var(--grid-heavy);
+  padding: 3px 9px;
+  min-width: 68px;
+  text-align: center;
+}
+.tk .entry-org { font-size: 19px; }
+.tk .entry-role { margin-left: 2px; }
+
+/* the sparkline is the same series its row is running outside */
+.spark {
+  margin-left: auto;
+  width: 120px;
+  height: 30px;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+.spark polyline {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+}
+.spark.is-down polyline { stroke: var(--mkt-down); }
+
+/* draw themselves in when the sheet opens */
+.sheet.is-open .spark polyline { animation: spark-draw 1.5s var(--ease-out) forwards; }
+@keyframes spark-draw { to { stroke-dashoffset: 0; } }
+
+/* ticker beats carry no marginal sketch, so they get the full width */
+.tk .beat { grid-template-columns: 1fr; gap: 0; }
+.tk .beat-t { font-size: 16px; }
+
+@media (max-width: 900px) {
+  .tk .entry-head { flex-wrap: wrap; }
+  .spark { margin-left: 0; width: 100%; }
+  .chain { min-width: 560px; }
+  .sheet.is-dark .sheet-body { overflow-x: auto; }
 }
