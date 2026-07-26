@@ -100,26 +100,29 @@ const STATIONS = [
   { id:'contact', label:'Contact',         sheet:'06', x: 470, y:   0 },
 ];
 
-/* A closed circuit: out along the stations, home along the south. */
+/* A closed circuit: out along the stations, home along the south.
+   The between-station points sit near the straight line joining their
+   neighbours rather than overshooting past them — overshoot is what turns a
+   gentle curve into an S-bend, and S-bends are what the rider feels as jerk. */
 const PATH_XY = [
   [ -55,    0],
-  [  -5,   28],
+  [  -2,  -14],
   [  60,  -30],   // ABOUT
-  [ 112,  -58],
+  [ 112,    2],
   [ 165,   35],   // RESUME
-  [ 216,   58],
+  [ 216,   16],
   [ 265,   -8],   // CHESS
-  [ 322,  -48],
+  [ 322,    9],
   [ 375,   30],   // SOCCER
-  [ 428,   40],
+  [ 428,   19],
   [ 470,    0],   // CONTACT
-  [ 525,  -42],
-  [ 500, -108],
-  [ 400, -142],
-  [ 280, -152],
-  [ 160, -142],
-  [  60, -122],
-  [ -30,  -82],
+  [ 522,  -38],
+  [ 502, -100],
+  [ 404, -140],
+  [ 280, -150],
+  [ 158, -140],
+  [  58, -118],
+  [ -30,  -80],
   [ -72,  -40],
 ];
 
@@ -930,21 +933,41 @@ function placeCameraAt(u) {
   camera.lookAt(a.x, a.y + CAM_H * 0.55, a.z);
 }
 
+const _probe = new THREE.Object3D();
+const _aimSmooth = new THREE.Vector3();
+let aimInit = false;
+
+/* Heading is deliberately lazy. Aiming straight down the tangent makes the
+   camera track every wiggle in the spline, which reads as constant side-to-
+   side jerk; and rolling into turns adds a second axis of it. So: average
+   several points well ahead of us, ease the aim point toward that, and slerp
+   the camera toward the result. Level flight, one orientation, no roll. */
 function updateRideCamera(dt) {
   const p = railPoint(t);
-  const ahead = railPoint(t + LOOKAHEAD);
 
+  // --- position: follow the rail, with height lagging so the ride doesn't pitch ---
   camPos.set(p.x, p.y + CAM_H, p.z);
-  camera.position.lerp(camPos, Math.min(1, dt * 16));
+  camera.position.x += (camPos.x - camera.position.x) * Math.min(1, dt * 9);
+  camera.position.z += (camPos.z - camera.position.z) * Math.min(1, dt * 9);
+  camera.position.y += (camPos.y - camera.position.y) * Math.min(1, dt * 3.2);
 
-  camAim.set(ahead.x, ahead.y + CAM_H * 0.55, ahead.z);
-  camera.lookAt(camAim);
+  // --- heading: mean of several samples ahead, so short kinks cancel out ---
+  const N = 6;
+  camAim.set(0, 0, 0);
+  for (let i = 1; i <= N; i++) {
+    camAim.add(railPoint(t + LOOKAHEAD * i * 0.85));
+  }
+  camAim.divideScalar(N);
+  camAim.y += CAM_H * 0.5;
 
-  // gentle bank into the turns
-  const a = railTangent(t - 0.004);
-  const b = railTangent(t + 0.004);
-  const turn = a.x * b.z - a.z * b.x;
-  camera.rotateZ(THREE.MathUtils.clamp(turn * 22, -0.32, 0.32));
+  if (!aimInit) { _aimSmooth.copy(camAim); aimInit = true; }
+  _aimSmooth.lerp(camAim, Math.min(1, dt * 1.5));
+
+  // world up keeps the horizon level, so there is no roll to remove
+  _probe.position.copy(camera.position);
+  _probe.up.set(0, 1, 0);
+  _probe.lookAt(_aimSmooth);
+  camera.quaternion.slerp(_probe.quaternion, Math.min(1, dt * 1.8));
 
   camera.fov += (60 - camera.fov) * Math.min(1, dt * 4);
   camera.updateProjectionMatrix();
