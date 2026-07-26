@@ -70,6 +70,14 @@ const BUMPS = [
   { x: 445, y: -95, a:  12, s: 30 },
   { x:  10, y:  95, a:   9, s: 32 },
   { x: 250, y:-155, a: -13, s: 40 },
+  /* ground the cities sit on. Each is far enough off the rail that its
+     Gaussian contributes < 0.15 units to the track — the ride does not
+     feel them, but the skylines get real terrain to climb out of. */
+  { x: -90, y: 100, a:  15, s: 34 },   // BOISE   — foothills
+  { x:  60, y: 105, a:  11, s: 30 },   // SEATTLE — Queen Anne rise
+  { x: 225, y: 150, a:  -7, s: 36 },   // CHICAGO — lakefront plain
+  { x: 395, y: 140, a:  17, s: 30 },   // SEOUL   — Namsan
+  { x: 300, y:-250, a:  13, s: 32 },   // SF      — the hills
 ];
 
 function fieldH(x, y) {
@@ -197,6 +205,7 @@ function init() {
   buildRail();
   buildCart();
   buildStations();
+  buildCities();
   buildRailNav();
   lighting();
   bindEvents();
@@ -930,6 +939,317 @@ function objContact() {
   g.scale.setScalar(1.5);
   g.userData.glide = true;
   return g;
+}
+
+/* ============================================================================
+   9b · CITIES ON THE SURFACE
+   Places the surface has actually carried me through, drawn as skylines that
+   grow out of the paper. Every piece is planted at fieldH() of its own
+   footprint rather than on a flat pad, so a block on the uphill side of a
+   hill stands taller than its neighbour downhill — the city follows the
+   curvature instead of hovering over it.
+
+   Each city is built through the same VB() merger the vehicles use: one
+   merged solid + one merged outline, so a forty-piece skyline still costs
+   two draw calls.
+   ========================================================================= */
+
+const CITY_STONE  = '#E4D8BA';   // limestone / pale concrete
+const CITY_SHADE  = '#C2B18C';   // the same, in shadow
+const CITY_GLASS  = '#9FB4C0';   // curtain wall
+const CITY_DARK   = '#6E6353';   // dark steel, Willis / masts
+const CITY_GREEN  = '#5B7F63';   // parkland, evergreens
+const CITY_ORANGE = '#C0512E';   // international orange
+const CITY_BLUE   = '#2F5D8A';   // the Blue
+
+const TAU = Math.PI * 2;
+
+/** A tapered square prism — 4 radial segments makes a cylinder a box that
+    narrows as it rises, which is most of what a skyscraper silhouette is. */
+const taper = (rTop, rBot, h) => new THREE.CylinderGeometry(rTop, rBot, h, 4);
+const boxG  = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+
+/** A thin antenna. High edge angle so the outline pass ignores it. */
+function mast(b, g, dx, dz, base, h, r = 0.16, color = CITY_DARK) {
+  b.add(new THREE.CylinderGeometry(r * 0.45, r, h, 6), color,
+    [dx, g(dx, dz) + base + h / 2, dz], null, null, 70);
+}
+
+/** Ordinary blocks, so the landmarks read as the tall ones. */
+function skyline(b, g, blocks) {
+  blocks.forEach(([dx, dz, w, h, d, tone]) => {
+    b.add(boxG(w, h, d), tone || CITY_STONE,
+      [dx, g(dx, dz) + h / 2, dz], [0, ((dx * 13 + dz * 7) % 7) * 0.08, 0]);
+  });
+}
+
+function evergreen(b, g, dx, dz, h = 6) {
+  const y = g(dx, dz);
+  b.add(new THREE.CylinderGeometry(0.24, 0.3, h * 0.3, 6), CITY_DARK,
+    [dx, y + h * 0.15, dz], null, null, 70);
+  b.add(new THREE.ConeGeometry(h * 0.3, h * 0.85, 7), CITY_GREEN,
+    [dx, y + h * 0.55, dz], null, null, 50);
+}
+
+/* ---------- CHICAGO ---------- */
+function lmChicago(b, g) {
+  // Willis Tower: bundled tubes, dropping away in setbacks
+  const y = g(0, 0);
+  b.add(boxG(11, 27, 11), CITY_DARK, [0, y + 13.5, 0]);
+  b.add(boxG(11, 12, 7.3), CITY_DARK, [0, y + 33, 1.85]);
+  b.add(boxG(7.3, 12, 7.3), CITY_DARK, [-1.85, y + 33, -1.85]);
+  b.add(boxG(3.7, 14, 3.7), CITY_DARK, [0, y + 46, 0]);
+  mast(b, g, -1.0, 0, 53, 11, 0.18);
+  mast(b, g, 1.0, 0, 53, 9.5, 0.18);
+
+  // John Hancock: tapered, X-braced, twin masts.
+  // The braces have to ride the taper — the tower is a 4-segment cylinder
+  // turned 45 degrees, so its face half-width at height fraction f is
+  // circumradius(f) * cos(45).
+  const hy = g(-17, 9);
+  b.add(taper(2.9, 5.0, 33), CITY_GLASS, [-17, hy + 16.5, 9], [0, Math.PI / 4, 0], null, 50);
+  for (let i = 0; i < 3; i++) {
+    const f = (5.5 + i * 9.5) / 33;
+    const yy = hy + 5.5 + i * 9.5;
+    const half = (5.0 + (2.9 - 5.0) * f) * Math.SQRT1_2;
+    const zf = 9 + half + 0.06;
+    b.add(boxG(half * 2, 0.45, 0.45), CITY_DARK, [-17, yy, zf], [0, 0, 0.36], null, 70);
+    b.add(boxG(half * 2, 0.45, 0.45), CITY_DARK, [-17, yy, zf], [0, 0, -0.36], null, 70);
+  }
+  mast(b, g, -18.1, 9, 33, 9, 0.14);
+  mast(b, g, -15.9, 9, 33, 9, 0.14);
+
+  // Cloud Gate
+  const by = g(15, -13);
+  b.add(new THREE.SphereGeometry(3, 18, 12), '#B7C3C9',
+    [15, by + 1.5, -13], null, [1.7, 0.8, 1.05], 80);
+}
+
+/* ---------- SEATTLE ---------- */
+function lmSeattle(b, g) {
+  // Space Needle
+  const y = g(0, 0);
+  b.add(taper(1.2, 3.9, 23), CITY_STONE, [0, y + 11.5, 0], null, null, 50);
+  /* The tripod legs lean IN as they rise. Rotating a Y-aligned box by t about
+     +Z carries its top toward -X, and by t about +X carries it toward +Z — so
+     to pull the top back toward the axis the signs are (-sin a, 0, +cos a). */
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * TAU + 0.5;
+    b.add(boxG(0.7, 22, 0.7), CITY_SHADE,
+      [Math.cos(a) * 3.4, y + 11, Math.sin(a) * 3.4],
+      [-Math.sin(a) * 0.11, 0, Math.cos(a) * 0.11]);
+  }
+  b.add(new THREE.ConeGeometry(5.4, 3.4, 20), CITY_STONE,
+    [0, y + 22.3, 0], [Math.PI, 0, 0], null, 50);     // under-flare
+  b.add(new THREE.CylinderGeometry(5.5, 5.5, 1.9, 20), CITY_GLASS,
+    [0, y + 25, 0], null, null, 50);                  // observation deck
+  b.add(new THREE.TorusGeometry(5.6, 0.32, 6, 22), CITY_ORANGE,
+    [0, y + 25.6, 0], [Math.PI / 2, 0, 0], null, 80); // the halo
+  b.add(new THREE.ConeGeometry(4.4, 3.0, 20), CITY_ORANGE,
+    [0, y + 27.4, 0], null, null, 50);                // roof
+  mast(b, g, 0, 0, 28.8, 9, 0.2);
+
+  // the Great Wheel, out over the water
+  const wy = g(16, -11) + 6.5;
+  b.add(new THREE.TorusGeometry(5.2, 0.28, 6, 26), CITY_SHADE,
+    [16, wy, -11], [0, 0.35, 0], null, 80);
+  for (let i = 0; i < 6; i++) {                       // spokes
+    const a = (i / 6) * Math.PI;
+    b.add(boxG(10.4, 0.16, 0.16), CITY_SHADE, [16, wy, -11], [0, 0.35, a], null, 70);
+  }
+  for (let i = 0; i < 8; i++) {                       // gondolas
+    const a = (i / 8) * TAU;
+    b.add(boxG(0.75, 0.75, 0.75), CITY_ORANGE,
+      [16 + Math.cos(0.35) * Math.cos(a) * 5.2, wy + Math.sin(a) * 5.2,
+       -11 - Math.sin(0.35) * Math.cos(a) * 5.2]);
+  }
+  b.add(boxG(0.5, 7, 0.5), CITY_SHADE, [16, g(16, -11) + 3.5, -12.4], [0.2, 0, 0]);
+  b.add(boxG(0.5, 7, 0.5), CITY_SHADE, [16, g(16, -11) + 3.5, -9.6], [-0.2, 0, 0]);
+
+  evergreen(b, g, -14, -13, 7);
+  evergreen(b, g, -18, -8, 5.5);
+  evergreen(b, g, 22, 12, 6.5);
+}
+
+/* ---------- SEOUL ---------- */
+function lmSeoul(b, g) {
+  // Namsan, with N Seoul Tower on top of it
+  const y = g(0, 0);
+  b.add(new THREE.CylinderGeometry(7, 12.5, 5, 24), CITY_GREEN,
+    [0, y + 2.5, 0], null, null, 60);
+  const t0 = y + 5;
+  b.add(taper(1.3, 2.5, 18), CITY_STONE, [0, t0 + 9, 0], null, null, 50);
+  b.add(new THREE.ConeGeometry(3.7, 4.4, 16), CITY_STONE,
+    [0, t0 + 20, 0], [Math.PI, 0, 0], null, 50);
+  b.add(new THREE.CylinderGeometry(3.5, 3.5, 3.6, 16), CITY_GLASS,
+    [0, t0 + 24, 0], null, null, 50);
+  b.add(new THREE.ConeGeometry(3.6, 2.4, 16), CITY_ORANGE,
+    [0, t0 + 27, 0], null, null, 50);
+  mast(b, g, 0, 0, 5 + 28, 13, 0.2);
+
+  // Lotte World Tower
+  const ly = g(-19, 11);
+  b.add(taper(1.0, 4.0, 43), CITY_GLASS, [-19, ly + 21.5, 11], [0, Math.PI / 4, 0], null, 50);
+  mast(b, g, -19, 11, 43, 7, 0.15);
+
+  // Gwanghwamun — stone base, two tiers of tiled roof
+  const gy = g(15, -15);
+  b.add(boxG(13, 4.5, 6), CITY_SHADE, [15, gy + 2.25, -15]);
+  b.add(boxG(1.8, 3.2, 1.8), CITY_ORANGE, [10.5, gy + 6.1, -15]);
+  b.add(boxG(1.8, 3.2, 1.8), CITY_ORANGE, [19.5, gy + 6.1, -15]);
+  b.add(boxG(12, 0.7, 5.4), CITY_ORANGE, [15, gy + 7.9, -15]);
+  b.add(new THREE.ConeGeometry(9, 2.8, 4), CITY_DARK,
+    [15, gy + 9.6, -15], [0, Math.PI / 4, 0], [1, 1, 0.55], 50);
+  b.add(new THREE.ConeGeometry(6.5, 2.4, 4), CITY_DARK,
+    [15, gy + 12.3, -15], [0, Math.PI / 4, 0], [1, 1, 0.55], 50);
+}
+
+/* ---------- BOISE ---------- */
+function lmBoise(b, g) {
+  // Idaho State Capitol
+  const y = g(0, 0);
+  b.add(boxG(23, 7, 9), CITY_STONE, [0, y + 3.5, 0]);          // wings
+  b.add(boxG(10, 11, 10), CITY_STONE, [0, y + 5.5, 0]);        // centre mass
+  for (let i = 0; i < 4; i++) {                               // portico
+    b.add(new THREE.CylinderGeometry(0.42, 0.42, 6.4, 10), CITY_STONE,
+      [-3.3 + i * 2.2, y + 3.2, 5.4], null, null, 60);
+  }
+  b.add(new THREE.CylinderGeometry(3.6, 3.9, 5, 20), CITY_STONE,
+    [0, y + 13.5, 0], null, null, 50);                        // drum
+  b.add(new THREE.SphereGeometry(3.6, 20, 12, 0, TAU, 0, Math.PI / 2), CITY_STONE,
+    [0, y + 16, 0], null, null, 60);                          // dome
+  b.add(new THREE.CylinderGeometry(0.95, 1.15, 2.2, 12), CITY_STONE,
+    [0, y + 20.6, 0], null, null, 60);                        // lantern
+  b.add(new THREE.ConeGeometry(1.15, 2.0, 12), CITY_ORANGE,
+    [0, y + 22.7, 0], null, null, 50);
+  mast(b, g, 0, 0, 23.7, 3.4, 0.11);
+
+  // the foothills behind town, set back clear of the capitol footprint
+  b.add(new THREE.ConeGeometry(17, 10, 5), '#B9A87F',
+    [-34, g(-34, 28) + 5, 28], [0, 0.4, 0], [1, 1, 0.7], 60);
+  b.add(new THREE.ConeGeometry(13, 7.5, 5), '#B9A87F',
+    [22, g(22, 32) + 3.8, 32], [0, 0.9, 0], [1, 1, 0.7], 60);
+
+  // the Blue
+  const by = g(19, -15);
+  b.add(boxG(17, 0.5, 10.5), CITY_BLUE, [19, by + 0.25, -15]);
+  b.add(boxG(0.35, 0.6, 10.5), CITY_STONE, [19, by + 0.3, -15]);
+  b.add(boxG(3.5, 3.2, 11), CITY_SHADE, [12, by + 1.6, -15]);   // grandstand
+  b.add(boxG(3.5, 2.4, 11), CITY_SHADE, [26, by + 1.2, -15]);
+
+  evergreen(b, g, -14, -12, 5.5);
+  evergreen(b, g, -9, -16, 4.5);
+}
+
+/* ---------- SAN FRANCISCO ---------- */
+function lmSF(b, g) {
+  // Transamerica Pyramid
+  const y = g(0, 0);
+  b.add(new THREE.ConeGeometry(5.2, 38, 4), CITY_STONE,
+    [0, y + 19, 0], [0, Math.PI / 4, 0], null, 50);
+  b.add(boxG(1.5, 13, 3.0), CITY_STONE, [-2.6, y + 15, 0]);     // the wings
+  b.add(boxG(1.5, 13, 3.0), CITY_STONE, [2.6, y + 15, 0]);
+  mast(b, g, 0, 0, 38, 7, 0.16);
+
+  // Golden Gate — two towers, a deck, and a real sampled catenary
+  const bx = -27;
+  const deck = g(bx, 0) + 10;          // a bridge deck is flat; the ground is not
+  const topS = g(bx, -16) + 30;        // each tower rises 30 off its OWN footing,
+  const topN = g(bx, 16) + 30;         // so the cable has to meet it there
+
+  [-16, 16].forEach((dz) => {
+    [-3, 3].forEach((ox) => b.add(boxG(1.5, 30, 1.5), CITY_ORANGE, [bx + ox, g(bx, dz) + 15, dz]));
+    for (let i = 0; i < 4; i++) {
+      b.add(boxG(7.5, 1.1, 1.1), CITY_ORANGE, [bx, g(bx, dz) + 7 + i * 7, dz]);
+    }
+  });
+  b.add(boxG(3.4, 0.8, 50), CITY_ORANGE, [bx, deck, 0]);
+
+  [-3, 3].forEach((ox) => {
+    const cable = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(bx + ox, deck - 0.5, -30),
+      new THREE.Vector3(bx + ox, topS, -16),
+      new THREE.Vector3(bx + ox, deck + 3.5, 0),
+      new THREE.Vector3(bx + ox, topN, 16),
+      new THREE.Vector3(bx + ox, deck - 0.5, 30),
+    ], false, 'catmullrom', 0.4);
+    b.add(new THREE.TubeGeometry(cable, 44, 0.22, 5, false), CITY_ORANGE,
+      null, null, null, 90);
+
+    // hangers, sampled off the cable so they always land on it
+    for (let i = 1; i < 14; i++) {
+      const p = cable.getPointAt(i / 14);
+      if (Math.abs(p.z) > 15.5) continue;             // only in the main span
+      const h = p.y - deck;
+      if (h < 0.6) continue;
+      b.add(boxG(0.14, h, 0.14), CITY_ORANGE, [p.x, deck + h / 2, p.z], null, null, 70);
+    }
+  });
+
+  // Painted Ladies
+  for (let i = 0; i < 4; i++) {
+    const dx = 18 + i * 3.2, dz = 15;
+    const gy = g(dx, dz);
+    const tone = ['#E8D9B4', '#DCC9A2', '#E4D2AE', '#D2BE95'][i];
+    b.add(boxG(2.8, 6.5, 4.5), tone, [dx, gy + 3.25, dz]);
+    b.add(new THREE.ConeGeometry(2.3, 2.2, 4), CITY_SHADE,
+      [dx, gy + 7.6, dz], [0, Math.PI / 4, 0], [1, 1, 0.8], 50);
+  }
+}
+
+const CITIES = [
+  { id:'boise',   name:'Boise',   sub:'43.6N 116.2W',  x: -90, y:  100,
+    label: 34, landmark: lmBoise, blocks: [
+      [-8, -6, 4, 9, 4], [-13, 2, 3.4, 6, 3.4], [8, 6, 4.5, 11, 4.5, CITY_GLASS],
+      [13, -4, 3.6, 7, 3.6], [4, -12, 5, 5.5, 5], [-4, 10, 4, 8, 4, CITY_SHADE],
+    ] },
+  { id:'seattle', name:'Seattle', sub:'47.6N 122.3W',  x:  60, y:  105,
+    label: 42, landmark: lmSeattle, blocks: [
+      [-9, 5, 5, 17, 5, CITY_GLASS], [-15, -2, 4.4, 12, 4.4], [7, 9, 5.2, 21, 5.2, CITY_GLASS],
+      [12, 3, 4.2, 14, 4.2, CITY_SHADE], [-3, 12, 4.6, 9, 4.6], [3, -7, 4, 11, 4],
+      [17, -2, 3.6, 8, 3.6, CITY_GLASS],
+    ] },
+  { id:'chicago', name:'Chicago', sub:'41.9N 87.6W',   x: 225, y:  150,
+    label: 68, landmark: lmChicago, blocks: [
+      [-9, -8, 5.5, 20, 5.5, CITY_GLASS], [9, 6, 6, 24, 6, CITY_SHADE],
+      [-24, -4, 5, 15, 5], [6, 15, 5.4, 18, 5.4, CITY_GLASS],
+      [-10, 16, 4.6, 12, 4.6], [21, -6, 5, 16, 5, CITY_GLASS],
+      [17, 12, 4.2, 10, 4.2, CITY_SHADE], [-20, 14, 4.4, 13, 4.4],
+    ] },
+  { id:'seoul',   name:'Seoul',   sub:'37.6N 127.0E',  x: 395, y:  140,
+    label: 50, landmark: lmSeoul, blocks: [
+      [-11, -8, 4.6, 14, 4.6, CITY_GLASS], [-26, 4, 5, 18, 5, CITY_GLASS],
+      [-13, 20, 4.4, 16, 4.4, CITY_SHADE], [8, 14, 5, 13, 5],
+      [22, 4, 4.6, 17, 4.6, CITY_GLASS], [24, 18, 4, 11, 4],
+      [-24, -12, 4.2, 10, 4.2, CITY_SHADE], [4, 24, 4.8, 15, 4.8, CITY_GLASS],
+    ] },
+  { id:'sf',      name:'San Francisco', sub:'37.8N 122.4W', x: 300, y: -250,
+    label: 48, landmark: lmSF, blocks: [
+      [8, -6, 4.6, 15, 4.6, CITY_GLASS], [13, 4, 5.2, 21, 5.2, CITY_SHADE],
+      [-8, 12, 4.4, 12, 4.4], [5, 8, 4, 17, 4, CITY_GLASS],
+      [-13, 16, 4.2, 9, 4.2, CITY_SHADE], [20, -2, 4, 13, 4, CITY_GLASS],
+    ] },
+];
+
+function buildCities() {
+  CITIES.forEach((def) => {
+    const base = fieldH(def.x, def.y);
+    const g = (dx, dz) => fieldH(def.x + dx, def.y + dz) - base;
+    const b = VB();
+
+    skyline(b, g, def.blocks);
+    def.landmark(b, g);
+
+    const grp = b.build({ city: def.id });
+    grp.position.set(def.x, base, def.y);
+
+    const spr = labelSprite(def.name, def.sub);
+    spr.scale.set(27, 8.4, 1);
+    spr.position.set(0, def.label, 0);
+    grp.add(spr);
+
+    scene.add(grp);
+  });
 }
 
 /* ============================================================================
