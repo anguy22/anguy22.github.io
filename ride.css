@@ -1698,3 +1698,17 @@ body.is-pointing #webgl { cursor: pointer; }
   .chain { min-width: 560px; }
   .sheet.is-dark .sheet-body { overflow-x: auto; }
 }
+
+/* The markets sheet carries company descriptions only — no first-person
+   commentary — so it closes on a plain note rather than a context block. */
+.mkt-foot {
+  margin: 22px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--grid-heavy);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+}
+.sheet .mkt-foot { font-size: 12px; }
