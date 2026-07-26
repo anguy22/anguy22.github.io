@@ -1035,16 +1035,6 @@ body.is-pointing #webgl { cursor: pointer; }
 .entry.is-open .vg-drone .ticks path { animation: vg-pop 400ms 700ms var(--ease-out) backwards; }
 .entry.is-open .vg-drone .t2 { animation-delay: 900ms; }
 
-/* ---- vg-half : time cut in two ---- */
-.vg-half .whole { fill: var(--grid-heavy); stroke: var(--ink); }
-.vg-half .halfbar { fill: var(--accent); stroke: var(--ink); transform-origin: 10px 0; }
-.entry.is-open .vg-half .halfbar { animation: shrink 1.2s 300ms var(--ease-out) backwards; }
-@keyframes shrink { from { transform: scaleX(2); } to { transform: none; } }
-.vg-half .cut { stroke: var(--accent); stroke-dasharray: 3 3; }
-.entry.is-open .vg-half .cut { animation: vg-pulse 1.4s var(--ease-in-out) infinite; }
-.vg-half .lbl { font-size: 7px; fill: var(--ink-faint); }
-.vg-half .scissor { stroke: none; }
-
 /* ---- vg-fleet : four aircraft ---- */
 .vg-fleet .craft path { fill: var(--ink); stroke: none; }
 .vg-fleet .frame { stroke: var(--grid-heavy); stroke-dasharray: 3 3; }
