@@ -2,1028 +2,1049 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <title>anguy.app</title>
-  <meta name="description" content="Andrew Nguyen's personal site: analytics, engineering, probability, optimization, and projects.">
+  <meta name="description" content="Andrew Nguyen — industrial engineering and statistics at Purdue. Analytics, process modeling, and projects, plotted on engineering paper.">
 
   <meta property="og:title" content="anguy.app">
   <meta property="og:description" content="Analytics, engineering, probability, optimization, and projects.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://anguy.app">
-  <meta property="og:image" content="https://anguy.app/preview.jpg?v=2">
+  <meta property="og:image" content="https://anguy.app/preview.jpg?v=3">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="anguy.app">
   <meta name="twitter:description" content="Analytics, engineering, probability, optimization, and projects.">
-  <meta name="twitter:image" content="https://anguy.app/preview.jpg?v=2">
+  <meta name="twitter:image" content="https://anguy.app/preview.jpg?v=3">
+
+  <link rel="icon" href="favicon-clownfish.svg" type="image/svg+xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=189">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="ride.css?v=7">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 
 <body>
 
-  <section id="hero">
-    <canvas id="cityscape"></canvas>
+  <!-- ========== 3D LAYERS ========== -->
+  <div id="webgl"></div>
+  <div id="atmos"></div>
 
-    <div class="bubbles-layer" id="bubbles-layer">
-      <a href="#about" class="bubble bubble-profile" id="bubble-profile" aria-label="About">
-        <i class="fas fa-user"></i>
-        <span class="bubble-label">About</span>
-      </a>
+  <!-- ========== CONTENT PANEL (expands when you select an object) ========== -->
+  <div id="panel" aria-hidden="true">
+    <div id="panel-scrim"></div>
+    <div id="panel-stage"><!-- the selected sheet is moved in here --></div>
+  </div>
 
-      <a href="#projects" class="bubble" id="bubble-projects" aria-label="Resume">
-        <i class="fas fa-file-lines"></i>
-        <span class="bubble-label">Resume</span>
-      </a>
+  <!-- ========== COLD OPEN: TITLE BLOCK ========== -->
+  <div id="gate">
+    <div class="gate-card">
+      <div class="gate-head">
+        <p class="gate-eyebrow">Sheet 1 of 6 &middot; Plotted Surface</p>
+        <h1 class="gate-name">Andrew Nguyen</h1>
+        <div class="gate-rule"></div>
+        <p class="gate-sub">Industrial Engineering &middot; Statistics &middot; Purdue &rsquo;28</p>
+      </div>
 
-      <a href="#lichess-stats" class="bubble" id="bubble-chess" aria-label="Chess">
-        <i class="fas fa-chess-knight"></i>
-        <span class="bubble-label">Chess</span>
-      </a>
+      <dl class="gate-block">
+        <div class="gate-field">
+          <dt>Drawn By</dt>
+          <dd>A. Nguyen</dd>
+        </div>
+        <div class="gate-field">
+          <dt>Scale</dt>
+          <dd>1 : 1</dd>
+        </div>
+        <div class="gate-field">
+          <dt>Projection</dt>
+          <dd>z = f(x,y)</dd>
+        </div>
+        <div class="gate-field">
+          <dt>Revision</dt>
+          <dd>2026&ndash;07</dd>
+        </div>
+      </dl>
 
-      <a href="#pitch-analytics" class="bubble" id="bubble-pitch" aria-label="Purdue Soccer Analytics">
-        <i class="fas fa-futbol"></i>
-        <span class="bubble-label">Soccer</span>
-      </a>
+      <div class="gate-actions">
+        <button id="launch" type="button">
+          Press to Plot <span class="launch-caret">&rarr;</span>
+        </button>
+        <button class="gate-alt" type="button" id="goto-classic">Classic View</button>
+      </div>
 
-      <a href="#contact" class="bubble" id="bubble-contact" aria-label="Contact">
-        <i class="fas fa-envelope"></i>
-        <span class="bubble-label">Contact</span>
-      </a>
+      <p class="gate-audio-note">
+        Drag to travel the curve &middot; Stop at a station to open it
+      </p>
     </div>
+  </div>
 
-    <div class="hero-side-links">
-      <a href="https://github.com/anguy22" target="_blank" rel="noreferrer" aria-label="GitHub">
-        <i class="fab fa-github"></i>
-      </a>
-      <a href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-        <i class="fab fa-linkedin-in"></i>
-      </a>
-      <a href="mailto:nguy1051@purdue.edu" aria-label="Email">
-        <i class="fas fa-envelope"></i>
-      </a>
+  <!-- ========== DRAFTING CHROME ========== -->
+
+  <div id="titleblock" aria-hidden="true">
+    <div class="tb-row">
+      <div class="tb-cell wide">
+        <span class="tb-k">Station</span>
+        <span class="tb-v accent" id="tb-station">Origin</span>
+      </div>
+      <div class="tb-cell">
+        <span class="tb-k">Sheet</span>
+        <span class="tb-v" id="tb-sheet">1 / 6</span>
+      </div>
     </div>
-
-    <div class="hero-dots" role="tablist" aria-label="Distribution selector">
-      <button class="hero-replay" id="hero-replay" type="button" aria-label="Replay animation" title="Replay">
-        <i class="fas fa-arrow-rotate-right"></i>
-      </button>
-      <button class="hero-dot active" type="button" data-dist="normal" aria-label="Normal distribution" title="Normal"></button>
-      <button class="hero-dot" type="button" data-dist="triangular" aria-label="Triangular distribution" title="Triangular"></button>
-      <button class="hero-dot" type="button" data-dist="bimodal" aria-label="Bimodal distribution" title="Bimodal"></button>
-      <button class="hero-dot" type="button" data-dist="uniform" aria-label="Uniform distribution" title="Uniform"></button>
-      <button class="hero-dot" type="button" data-dist="exponential" aria-label="Exponential distribution" title="Exponential"></button>
-      <button class="hero-dot" type="button" data-dist="geometric" aria-label="Geometric distribution" title="Geometric"></button>
-      <button class="hero-dot" type="button" data-dist="lognormal" aria-label="Log-normal distribution" title="Log-normal"></button>
+    <div class="tb-row">
+      <div class="tb-cell">
+        <span class="tb-k">X</span>
+        <span class="tb-v" id="tb-x">0.00</span>
+      </div>
+      <div class="tb-cell">
+        <span class="tb-k">Y</span>
+        <span class="tb-v" id="tb-y">0.00</span>
+      </div>
+      <div class="tb-cell">
+        <span class="tb-k">Z</span>
+        <span class="tb-v" id="tb-z">0.00</span>
+      </div>
     </div>
+    <div class="tb-row">
+      <div class="tb-cell wide">
+        <span class="tb-k">Approach</span>
+        <span class="tb-v" id="tb-crit">&mdash;</span>
+      </div>
+      <div class="tb-cell">
+        <span class="tb-k">Grade</span>
+        <span class="tb-v" id="tb-grade">0%</span>
+      </div>
+    </div>
+    <div class="tb-vel"><div class="tb-vel-fill" id="tb-vel"></div></div>
+  </div>
 
-    <div class="hero-content">
-      <h1>Andrew Nguyen</h1>
-      <div class="hero-rule"></div>
+  <nav id="rail" aria-label="Track stations">
+    <div class="rail-line"></div>
+    <div id="rail-carriage"></div>
+    <!-- station nodes injected by ride.js -->
+  </nav>
 
-      <div class="decrypt-wrap">
-        <span class="decrypt-text" id="decrypt-text"></span>
+  <div id="hint">Drag to travel <span class="hint-arrow">&darr;</span></div>
+
+  <div id="dock-hint">Click to dock</div>
+
+  <button id="audio-toggle" type="button" aria-label="Toggle audio" title="Toggle audio">
+    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-1 7-4.5 7-8.8s-3-7.8-7-8.8z"/></svg>
+    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm18.5-1.9L20.1 5.7 17 8.8l-3.1-3.1-1.4 1.4L15.6 10.2l-3.1 3.1 1.4 1.4 3.1-3.1 3.1 3.1 1.4-1.4-3.1-3.1 3.1-3.1z"/></svg>
+  </button>
+
+  <div id="nowebgl">
+    <div>
+      <p>This site plots itself in 3D and your browser can&rsquo;t start WebGL.</p>
+      <p><a href="classic.html">Open the classic view instead &rarr;</a></p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CONTENT SHEETS
+       ride.js lifts each of these into a CSS3DObject in world space,
+       so this is real DOM living at real coordinates on the surface.
+       ============================================================ -->
+  <div id="sheet-pool" hidden>
+
+    <!-- ---------- SHEET 02 · ABOUT ---------- -->
+    <div class="sheet" id="sheet-about" data-station="about">
+      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
+      <div class="sheet-head">
+        <span class="sheet-num">02</span>
+        <h2 class="sheet-title">About</h2>
+        <span class="sheet-coord" data-coord>&mdash;</span>
+      </div>
+      <div class="sheet-body">
+        <div class="split">
+          <div>
+            <p>hi there.</p>
+            <p>i&rsquo;m andrew. thank you for stopping by, check out my resume and work!</p>
+            <p>i&rsquo;m always looking to learn from others in any field. i find personal joy in the passions and interests of people i meet.</p>
+            <p>here i aim to document my learning, experiences, and work. if we&rsquo;re going to be replaced by ai it might as well be accurate.</p>
+            <p>please get in touch!</p>
+
+            <h4>Interests</h4>
+            <div class="pills">
+              <span class="pill hot">Rapid Chess</span>
+              <span class="pill hot">Soccer</span>
+              <span class="pill">Hiking</span>
+              <span class="pill">Game / Decision Theory</span>
+              <span class="pill">Tech Sector Coverage</span>
+              <span class="pill">Kung Fu Movies</span>
+            </div>
+          </div>
+
+          <div class="facts">
+            <div class="fact">
+              <span class="fact-k">University</span>
+              <span class="fact-v">Purdue University</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k">Studying</span>
+              <span class="fact-v">IE &middot; Stats Minor</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k">Diet Coke or Coke Zero</span>
+              <span class="fact-v">Coke Zero</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k">Current Favorites</span>
+              <span class="fact-v">Ip Man 3 (2015)</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k">&nbsp;</span>
+              <span class="fact-v">JYP/Rain 나로 바꾸자</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k">&nbsp;</span>
+              <span class="fact-v">$INTC</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="scroll-indicator">
-      <i class="fas fa-chevron-down"></i>
-    </div>
-  </section>
+    <!-- ---------- SHEET 03 · RESUME ---------- -->
+    <div class="sheet" id="sheet-resume" data-station="resume">
+      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
+      <div class="sheet-head">
+        <span class="sheet-num">03</span>
+        <h2 class="sheet-title">Resume</h2>
+        <span class="sheet-coord" data-coord>&mdash;</span>
+      </div>
+      <div class="sheet-body">
 
-  <section id="about" class="section animated-about-section">
-    <div class="factory-floor-bg" aria-hidden="true">
-      <div class="factory-floor-grid"></div>
-      <div class="factory-aisle aisle-one"></div>
-      <div class="factory-aisle aisle-two"></div>
-      <div class="factory-conveyor conveyor-one">
-        <span class="factory-package pack-a"></span>
-        <span class="factory-package pack-b"></span>
-        <span class="factory-package pack-c"></span>
-        <span class="factory-package pack-d"></span>
-      </div>
-      <div class="factory-conveyor conveyor-two">
-        <span class="factory-package pack-e"></span>
-        <span class="factory-package pack-f"></span>
-        <span class="factory-package pack-g"></span>
-      </div>
-      <div class="factory-cell cell-one">
-        <div class="cell-base"></div>
-        <div class="cell-arm"><span></span></div>
-        <div class="cell-light"></div>
-      </div>
-      <div class="factory-cell cell-two">
-        <div class="cell-base"></div>
-        <div class="cell-arm"><span></span></div>
-        <div class="cell-light"></div>
-      </div>
-      <div class="factory-cell cell-three">
-        <div class="cell-base"></div>
-        <div class="cell-arm"><span></span></div>
-        <div class="cell-light"></div>
-      </div>
-      <div class="factory-rack rack-one"></div>
-      <div class="factory-rack rack-two"></div>
-      <div class="factory-agv agv-one"><span></span><span></span><span></span></div>
-      <div class="factory-agv agv-two"><span></span><span></span><span></span></div>
-      <div class="factory-scan scan-one"></div>
-      <div class="factory-scan scan-two"></div>
-    </div>
-    <div class="container reveal">
-      <h2 class="section-title">About Me</h2>
+        <h4>Education &amp; Academic Honors</h4>
+        <div class="split">
+          <div>
+            <div class="entry">
+              <div class="entry-head">
+                <span class="entry-org">Purdue University</span>
+                <span class="entry-when">GPA 3.89 / 4.00</span>
+              </div>
+              <p style="margin:6px 0 4px">B.S. Industrial Engineering &middot; Minor in Statistics</p>
+              <p style="font-size:15px;color:var(--ink-faint)">West Lafayette, IN &middot; Est. Graduation May 2028</p>
+            </div>
 
-      <div class="about-grid">
-        <div class="about-text">
-          <p>hi there.</p>
-          <p>i'm andrew. thank you for stopping by, check out my resume and work!</p>
-          <p>i'm always looking to learn from others in any field. i find personal joy in the passions and interests of people i meet.</p>
-          <p>here i aim to document my learning, experiences, and work. if we're going to be replaced by ai it might as well be accurate.</p>
-          <p>please get in touch!</p>
+            <div class="pills">
+              <span class="pill hot">Purdue Presidential Scholar</span>
+              <span class="pill hot">Simplot Foundation Scholar</span>
+              <span class="pill hot">Redinger Family Scholarship</span>
+            </div>
+            <div class="pills">
+              <span class="pill">Semiconductors &amp; Microelectronics</span>
+              <span class="pill">Semiconductor Fabrication</span>
+              <span class="pill">Data Science</span>
+            </div>
+          </div>
+
+          <div>
+            <table class="readout">
+              <thead>
+                <tr><th>Tool</th><th>Stack</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Python</td><td>pandas · scikit-learn · NumPy</td></tr>
+                <tr><td>SQL</td><td>Snowflake · MSSQL · Azure</td></tr>
+                <tr><td>Tableau</td><td>dashboards · reporting</td></tr>
+                <tr><td>Excel</td><td>parametric modeling</td></tr>
+                <tr><td>Claude Code</td><td>agentic tooling</td></tr>
+              </tbody>
+            </table>
+            <div class="pills" style="margin-top:14px">
+              <span class="pill">Operations Research</span>
+              <span class="pill">Database Architecture</span>
+              <span class="pill">Query Logic</span>
+              <span class="pill">Statistical Modeling</span>
+              <span class="pill">Data Visualization</span>
+            </div>
+          </div>
         </div>
 
-        <div class="about-details">
-          <div class="detail-card">
-            <i class="fas fa-graduation-cap"></i>
-            <div>
-              <strong>University</strong>
-              <span>Purdue University</span>
+        <h4>Professional Experience</h4>
+
+        <p class="entry-hint">Open a card &mdash; each line draws itself &rarr;</p>
+
+        <!-- ================= MICRON ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Micron Technology</span>
+            <span class="entry-role">IE Intern &ndash; R&amp;D Process Modeling</span>
+            <span class="entry-when">Boise, ID &middot; May 2026 &ndash; Aug 2026</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+
+              <li class="beat">
+                <span class="vg vg-join" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <g class="lines">
+                      <line x1="12" y1="10"/><line x1="12" y1="30"/><line x1="14" y1="50"/>
+                      <line x1="32" y1="6"/><line x1="30" y1="54"/><line x1="78" y1="12"/>
+                      <line x1="82" y1="32"/><line x1="76" y1="50"/><line x1="52" y1="4"/>
+                    </g>
+                    <g class="nodes">
+                      <circle cx="12" cy="10" r="3"/><circle cx="12" cy="30" r="3"/>
+                      <circle cx="14" cy="50" r="3"/><circle cx="32" cy="6" r="3"/>
+                      <circle cx="30" cy="54" r="3"/><circle cx="78" cy="12" r="3"/>
+                      <circle cx="82" cy="32" r="3"/><circle cx="76" cy="50" r="3"/>
+                      <circle cx="52" cy="4" r="3"/>
+                    </g>
+                    <rect class="floor" x="36" y="22" width="24" height="16" rx="1"/>
+                    <circle class="hub" cx="48" cy="30" r="7"/>
+                  </svg>
+                </span>
+                <span class="beat-t">Built a tool-removal framework joining <b>9</b> disparate datastores
+                  (<b>6000+</b> nodes) targeting <b>1200&nbsp;ft&sup2;</b> of under-utilized fab space.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-model" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <path class="axis" d="M10 52 H88 M10 52 V8"/>
+                    <g class="dots">
+                      <circle cx="20" cy="44" r="2"/><circle cx="30" cy="40" r="2"/>
+                      <circle cx="40" cy="34" r="2"/><circle cx="50" cy="30" r="2"/>
+                      <circle cx="60" cy="22" r="2"/><circle cx="70" cy="19" r="2"/>
+                      <circle cx="80" cy="13" r="2"/>
+                    </g>
+                    <path class="band" d="M18 48 L82 10 L82 20 L18 52 Z"/>
+                    <path class="trend" d="M18 46 C38 40, 56 26, 84 12"/>
+                    <g class="ticks">
+                      <line x1="18" y1="54" x2="18" y2="58"/><line x1="34" y1="54" x2="34" y2="58"/>
+                      <line x1="50" y1="54" x2="50" y2="58"/><line x1="66" y1="54" x2="66" y2="58"/>
+                      <line x1="82" y1="54" x2="82" y2="58"/>
+                    </g>
+                    <rect class="sweep" x="10" y="6" width="4" height="48"/>
+                  </svg>
+                </span>
+                <span class="beat-t">Designed Python scenario modeling logic aggregating fab planning for
+                  <b>1M+</b> datapoints over <b>36-month</b> horizons.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-strategy" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <path class="arw a1" d="M8 48 C30 48, 38 20, 66 16"/>
+                    <path class="arw a2" d="M8 54 C34 56, 50 42, 80 34"/>
+                    <polygon class="head h1" points="66,16 58,12 60,21"/>
+                    <polygon class="head h2" points="80,34 72,31 73,40"/>
+                    <g class="dol">
+                      <text class="d1" x="24" y="28">$</text>
+                      <text class="d2" x="44" y="20">$</text>
+                      <text class="d3" x="62" y="34">$</text>
+                    </g>
+                    <g class="bars">
+                      <rect x="12" y="8" width="5" height="10"/>
+                      <rect x="20" y="4" width="5" height="14"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Published a Tableau + Web GUI reporting structure adopted by
+                  <b>IE Strategy</b> and <b>Budget</b> teams for FY27 R&amp;D planning.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-clock" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <circle class="face" cx="34" cy="30" r="17"/>
+                    <g class="pips">
+                      <line x1="34" y1="15" x2="34" y2="19"/><line x1="49" y1="30" x2="45" y2="30"/>
+                      <line x1="34" y1="45" x2="34" y2="41"/><line x1="19" y1="30" x2="23" y2="30"/>
+                    </g>
+                    <line class="hand" x1="34" y1="30" x2="34" y2="18"/>
+                    <circle class="pin" cx="34" cy="30" r="1.8"/>
+                    <g class="sheets">
+                      <rect class="s1" x="60" y="14" width="17" height="21" rx="1"/>
+                      <rect class="s2" x="65" y="20" width="17" height="21" rx="1"/>
+                      <rect class="s3" x="70" y="26" width="17" height="21" rx="1"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Replaced <b>2</b> repetitive manual processes with auditable data
+                  architectures, saving <b>30&nbsp;hrs/month</b>.</span>
+              </li>
+
+            </ul>
+          </div>
+        </article>
+
+        <!-- ================= PURDUE SOCCER ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Purdue D1 Women&rsquo;s Soccer</span>
+            <span class="entry-role">Predictive Data Analyst</span>
+            <span class="entry-when">West Lafayette, IN &middot; May 2026 &ndash; Present</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+
+              <li class="beat">
+                <span class="vg vg-pitch" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <rect class="field" x="8" y="6" width="80" height="48" rx="1"/>
+                    <line class="half" x1="48" y1="6" x2="48" y2="54"/>
+                    <circle class="centre" cx="48" cy="30" r="9"/>
+                    <rect class="box" x="76" y="18" width="12" height="24"/>
+                    <path class="arw a1" d="M20 46 C40 44, 54 34, 74 30"/>
+                    <path class="arw a2" d="M20 14 C42 18, 56 24, 74 29"/>
+                    <path class="arw a3" d="M32 30 C48 30, 60 29, 73 30"/>
+                    <polygon class="head" points="76,30 68,26 69,34"/>
+                    <circle class="ball" cx="20" cy="30" r="3"/>
+                  </svg>
+                </span>
+                <span class="beat-t">Developed a predictive model framework to evaluate
+                  <b>opponent tendencies</b> and inform match preparation.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-squad" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <g class="crowd">
+                      <circle cx="10" cy="12" r="3"/><circle cx="22" cy="12" r="3"/><circle cx="34" cy="12" r="3"/>
+                      <circle cx="46" cy="12" r="3"/><circle cx="58" cy="12" r="3"/><circle cx="70" cy="12" r="3"/>
+                      <circle cx="82" cy="12" r="3"/>
+                      <circle cx="10" cy="26" r="3"/><circle cx="22" cy="26" r="3"/><circle cx="34" cy="26" r="3"/>
+                      <circle cx="46" cy="26" r="3"/><circle cx="58" cy="26" r="3"/><circle cx="70" cy="26" r="3"/>
+                      <circle cx="82" cy="26" r="3"/>
+                      <circle cx="10" cy="40" r="3"/><circle cx="22" cy="40" r="3"/><circle cx="34" cy="40" r="3"/>
+                      <circle cx="46" cy="40" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="70" cy="40" r="3"/>
+                    </g>
+                    <g class="picked">
+                      <circle cx="22" cy="12" r="4.5"/><circle cx="58" cy="12" r="4.5"/>
+                      <circle cx="34" cy="26" r="4.5"/><circle cx="82" cy="26" r="4.5"/>
+                      <circle cx="46" cy="40" r="4.5"/>
+                    </g>
+                    <g class="plans">
+                      <rect x="8" y="50" width="12" height="8" rx="1"/>
+                      <rect x="24" y="50" width="12" height="8" rx="1"/>
+                      <rect x="40" y="50" width="12" height="8" rx="1"/>
+                      <rect x="56" y="50" width="12" height="8" rx="1"/>
+                      <rect x="72" y="50" width="12" height="8" rx="1"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Translated Big Ten benchmark data across <b>200+</b> athletes into
+                  <b>19</b> player-specific improvement plans.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-cal" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <rect class="pad" x="10" y="8" width="76" height="46" rx="2"/>
+                    <line class="rule" x1="10" y1="19" x2="86" y2="19"/>
+                    <g class="cells">
+                      <rect x="16" y="24" width="9" height="9"/><rect x="29" y="24" width="9" height="9"/>
+                      <rect x="42" y="24" width="9" height="9"/><rect x="55" y="24" width="9" height="9"/>
+                      <rect x="68" y="24" width="9" height="9"/>
+                      <rect x="16" y="38" width="9" height="9"/><rect x="29" y="38" width="9" height="9"/>
+                      <rect x="42" y="38" width="9" height="9"/><rect x="55" y="38" width="9" height="9"/>
+                      <rect x="68" y="38" width="9" height="9"/>
+                    </g>
+                    <g class="marks">
+                      <rect x="29" y="24" width="9" height="9"/><rect x="68" y="24" width="9" height="9"/>
+                      <rect x="29" y="38" width="9" height="9"/><rect x="68" y="38" width="9" height="9"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Standardized <b>twice-weekly</b> scouting, recruiting, and performance
+                  reports for coaching and training staff.</span>
+              </li>
+
+            </ul>
+          </div>
+        </article>
+
+        <!-- ================= SAWTOOTH UAV ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Sawtooth UAV Solutions</span>
+            <span class="entry-role">Co-Founder and Software Lead</span>
+            <span class="entry-when">Boise, ID &middot; Dec 2022 &ndash; Aug 2024</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+
+              <li class="beat">
+                <span class="vg vg-drone" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <path class="path" d="M8 48 C26 12, 48 52, 66 18 S84 22, 90 12"/>
+                    <g class="quad">
+                      <line x1="-6" y1="-4" x2="6" y2="4"/><line x1="-6" y1="4" x2="6" y2="-4"/>
+                      <circle class="r1" cx="-6" cy="-4" r="3.4"/><circle class="r2" cx="6" cy="4" r="3.4"/>
+                      <circle class="r3" cx="-6" cy="4" r="3.4"/><circle class="r4" cx="6" cy="-4" r="3.4"/>
+                      <rect x="-2.4" y="-2" width="4.8" height="4" rx="1"/>
+                    </g>
+                    <g class="ticks">
+                      <path class="t1" d="M74 46 l3 3 l6 -7"/>
+                      <path class="t2" d="M82 52 l3 3 l6 -7"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Managed <b>10</b> end-to-end client relationships and produced
+                  <b>56</b> FPV missions with <b>100%</b> on-time delivery.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-half" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <rect class="whole" x="10" y="14" width="76" height="12" rx="1"/>
+                    <text class="lbl before" x="12" y="10">BEFORE</text>
+                    <rect class="halfbar" x="10" y="38" width="38" height="12" rx="1"/>
+                    <text class="lbl after" x="12" y="34">AFTER</text>
+                    <line class="cut" x1="48" y1="6" x2="48" y2="56"/>
+                    <path class="scissor" d="M44 30 l8 0"/>
+                  </svg>
+                </span>
+                <span class="beat-t">Integrated automation utilities in <b>C</b> and <b>Python</b>,
+                  cutting sortie setup and tracking time <b>in half</b>.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-fleet" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <g class="craft c1"><path d="M0 0 l10 4 l-10 4 l3 -4 Z"/></g>
+                    <g class="craft c2"><path d="M0 0 l10 4 l-10 4 l3 -4 Z"/></g>
+                    <g class="craft c3"><path d="M0 0 l10 4 l-10 4 l3 -4 Z"/></g>
+                    <g class="craft c4"><path d="M0 0 l10 4 l-10 4 l3 -4 Z"/></g>
+                    <path class="frame" d="M8 52 h80"/>
+                  </svg>
+                </span>
+                <span class="beat-t">Designed custom drone frames in <b>SolidWorks</b>, scaling the fleet to
+                  <b>4</b> aircraft across multi-rotor and fixed-wing platforms.</span>
+              </li>
+
+            </ul>
+          </div>
+        </article>
+
+        <!-- ================= DIANA'S ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Diana&rsquo;s Korean Market</span>
+            <span class="entry-role">Weekend cashier and clerk</span>
+            <span class="entry-when">Boise, ID &middot; Dec 2022 &ndash; Aug 2024</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+              <li class="beat">
+                <span class="vg vg-market" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <rect class="till" x="10" y="24" width="34" height="26" rx="2"/>
+                    <rect class="screen" x="14" y="16" width="20" height="10" rx="1"/>
+                    <g class="keys">
+                      <rect x="15" y="32" width="6" height="5"/><rect x="24" y="32" width="6" height="5"/>
+                      <rect x="33" y="32" width="6" height="5"/>
+                      <rect x="15" y="40" width="6" height="5"/><rect x="24" y="40" width="6" height="5"/>
+                      <rect x="33" y="40" width="6" height="5"/>
+                    </g>
+                    <rect class="receipt" x="52" y="10" width="26" height="34" rx="1"/>
+                    <g class="rlines">
+                      <line x1="56" y1="18" x2="72" y2="18"/><line x1="56" y1="24" x2="70" y2="24"/>
+                      <line x1="56" y1="30" x2="73" y2="30"/><line x1="56" y1="36" x2="66" y2="36"/>
+                    </g>
+                    <text class="hangul" x="52" y="56">한국어</text>
+                  </svg>
+                </span>
+                <span class="beat-t">Learned customer service and communication skills in the
+                  <b>Korean language</b>.</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <h4>Extracurricular Involvement</h4>
+
+        <!-- ================= INFORMS ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Purdue INFORMS Chapter</span>
+            <span class="entry-role">Chairperson</span>
+            <span class="entry-when">Aug 2026 &ndash; Present</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+              <li class="beat">
+                <span class="vg vg-network" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <g class="edges">
+                      <line x1="48" y1="30" x2="18" y2="12"/><line x1="48" y1="30" x2="16" y2="42"/>
+                      <line x1="48" y1="30" x2="44" y2="54"/><line x1="48" y1="30" x2="78" y2="16"/>
+                      <line x1="48" y1="30" x2="80" y2="44"/><line x1="48" y1="30" x2="52" y2="6"/>
+                    </g>
+                    <g class="peers">
+                      <circle cx="18" cy="12" r="4"/><circle cx="16" cy="42" r="4"/>
+                      <circle cx="44" cy="54" r="4"/><circle cx="78" cy="16" r="4"/>
+                      <circle cx="80" cy="44" r="4"/><circle cx="52" cy="6" r="4"/>
+                    </g>
+                    <circle class="chair" cx="48" cy="30" r="7"/>
+                  </svg>
+                </span>
+                <span class="beat-t">Leading <b>industry engagement</b> initiatives for the Institute of
+                  Operations Research &amp; Management Science chapter.</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ================= CCL ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Collegiate Chess League</span>
+            <span class="entry-role">Team Captain and Competitor</span>
+            <span class="entry-when">Aug 2024 &ndash; May 2026</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+              <li class="beat">
+                <span class="vg vg-chess" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <g class="board">
+                      <rect x="10" y="8" width="11" height="11"/><rect x="32" y="8" width="11" height="11"/>
+                      <rect x="21" y="19" width="11" height="11"/><rect x="43" y="19" width="11" height="11"/>
+                      <rect x="10" y="30" width="11" height="11"/><rect x="32" y="30" width="11" height="11"/>
+                      <rect x="21" y="41" width="11" height="11"/><rect x="43" y="41" width="11" height="11"/>
+                    </g>
+                    <rect class="frame" x="10" y="8" width="44" height="44"/>
+                    <path class="hop" d="M15.5 46.5 C 20 30, 30 22, 37.5 13.5"/>
+                    <circle class="from" cx="15.5" cy="46.5" r="3"/>
+                    <circle class="to" cx="37.5" cy="13.5" r="4"/>
+                    <g class="elo">
+                      <line class="base" x1="64" y1="50" x2="88" y2="50"/>
+                      <path class="climb" d="M64 48 L70 42 L76 34 L82 24 L88 14"/>
+                      <text class="num" x="64" y="10">2000+</text>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Competed on a <b>6-member</b> team as a <b>2000+ ELO</b> player against
+                  top US universities for team Purdue.</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <h4>Projects</h4>
+
+        <!-- ================= RECRUITING ETL ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Athletic Recruiting Filter &amp; ETL Pipeline</span>
+            <span class="entry-role">The Data Mine at Purdue</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+
+              <li class="beat">
+                <span class="vg vg-funnel" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <g class="mail">
+                      <rect class="m1" x="14" y="4" width="12" height="8" rx="1"/>
+                      <rect class="m2" x="32" y="4" width="12" height="8" rx="1"/>
+                      <rect class="m3" x="50" y="4" width="12" height="8" rx="1"/>
+                      <rect class="m4" x="68" y="4" width="12" height="8" rx="1"/>
+                    </g>
+                    <path class="funnel" d="M12 18 L84 18 L56 40 L56 52 L40 52 L40 40 Z"/>
+                    <g class="drops">
+                      <circle class="p1" cx="48" cy="46" r="2.4"/>
+                      <circle class="p2" cx="48" cy="46" r="2.4"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Engineered a KPI framework scoring <b>200+</b> recruiting emails per week
+                  with rule-based logic.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-strategy" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <path class="arw a1" d="M8 48 C30 48, 38 20, 66 16"/>
+                    <path class="arw a2" d="M8 54 C34 56, 50 42, 80 34"/>
+                    <polygon class="head h1" points="66,16 58,12 60,21"/>
+                    <polygon class="head h2" points="80,34 72,31 73,40"/>
+                    <g class="dol">
+                      <text class="d1" x="24" y="28">15%</text>
+                      <text class="d2" x="48" y="18">TOP</text>
+                    </g>
+                    <g class="bars">
+                      <rect x="12" y="8" width="5" height="10"/>
+                      <rect x="20" y="4" width="5" height="14"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Led a <b>5-member</b> team to build the ETL pipeline and export the
+                  <b>top 15%</b> of recruits, saving <b>40&nbsp;hrs/month</b> of manual review.</span>
+              </li>
+
+              <li class="beat">
+                <span class="vg vg-dash" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <rect class="pane" x="10" y="8" width="76" height="44" rx="2"/>
+                    <line class="rule" x1="10" y1="19" x2="86" y2="19"/>
+                    <path class="spark" d="M16 44 L26 38 L36 40 L46 30 L56 33 L66 22 L80 26"/>
+                    <g class="kpi">
+                      <rect x="16" y="24" width="14" height="6"/>
+                      <rect x="16" y="34" width="10" height="6"/>
+                    </g>
+                    <g class="cols">
+                      <rect class="b1" x="60" y="44" width="5" height="4"/>
+                      <rect class="b2" x="68" y="44" width="5" height="4"/>
+                      <rect class="b3" x="76" y="44" width="5" height="4"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="beat-t">Visualized model performance in <b>Tableau</b> for Purdue Athletics
+                  stakeholders; green-lit for continued implementation.</span>
+              </li>
+
+            </ul>
+          </div>
+        </article>
+
+        <!-- ================= SOLAR PV ================= -->
+        <article class="entry is-expandable" data-entry>
+          <button class="entry-head" type="button" aria-expanded="false">
+            <span class="entry-org">Solar PV Economic Modeling</span>
+            <span class="entry-role">Purdue University</span>
+            <span class="entry-chev" aria-hidden="true"></span>
+          </button>
+          <div class="entry-panel">
+            <ul class="beats">
+              <li class="beat">
+                <span class="vg vg-solar" aria-hidden="true">
+                  <svg viewBox="0 0 96 60">
+                    <circle class="sun" cx="22" cy="18" r="8"/>
+                    <g class="rays">
+                      <line x1="22" y1="4" x2="22" y2="0"/><line x1="36" y1="18" x2="40" y2="18"/>
+                      <line x1="22" y1="32" x2="22" y2="36"/><line x1="8" y1="18" x2="4" y2="18"/>
+                      <line x1="32" y1="8" x2="35" y2="5"/><line x1="12" y1="28" x2="9" y2="31"/>
+                    </g>
+                    <g class="panel">
+                      <rect x="10" y="42" width="26" height="14" rx="1"/>
+                      <line x1="19" y1="42" x2="19" y2="56"/><line x1="28" y1="42" x2="28" y2="56"/>
+                    </g>
+                    <g class="flow">
+                      <rect class="f1" x="48" y="40" width="6" height="12"/>
+                      <rect class="f2" x="58" y="32" width="6" height="20"/>
+                      <rect class="f3" x="68" y="24" width="6" height="28"/>
+                      <rect class="f4" x="78" y="16" width="6" height="36"/>
+                    </g>
+                    <line class="zero" x1="44" y1="52" x2="90" y2="52"/>
+                    <text class="npv" x="46" y="12">NPV &gt; 0</text>
+                  </svg>
+                </span>
+                <span class="beat-t">Built <b>6</b> parametric models projecting <b>40-year</b> DCFs, applying
+                  <b>NPV/IRR</b> benchmarks to classify recommendations.</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- ---------- SHEET 04 · CHESS ---------- -->
+    <div class="sheet" id="sheet-chess" data-station="chess">
+      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
+      <div class="sheet-head">
+        <span class="sheet-num">04</span>
+        <h2 class="sheet-title">Chess</h2>
+        <span class="sheet-coord" data-coord>&mdash;</span>
+      </div>
+      <div class="sheet-body">
+        <p style="font-size:16px">Live from the Lichess API &mdash; the bars extruded off the board out there <em>are</em> these numbers.</p>
+
+        <div class="split">
+          <div>
+            <h4>Ratings</h4>
+            <table class="readout">
+              <thead>
+                <tr><th>Format</th><th class="num">Rating</th><th class="num">Games</th></tr>
+              </thead>
+              <tbody id="chess-ratings">
+                <tr><td colspan="3" class="loading">fetching lichess/an_d22&hellip;</td></tr>
+              </tbody>
+            </table>
+
+            <h4>Record</h4>
+            <table class="readout">
+              <tbody id="chess-record">
+                <tr><td colspan="2" class="loading">&hellip;</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h4>Repertoire</h4>
+            <table class="readout">
+              <thead><tr><th>Opening</th><th>Side</th></tr></thead>
+              <tbody>
+                <tr><td>Goring Gambit</td><td>White</td></tr>
+                <tr><td>Scotch Game</td><td>White</td></tr>
+                <tr><td>Italian Game</td><td>White</td></tr>
+                <tr><td>Caro-Kann</td><td>Black</td></tr>
+                <tr><td>Modern Defense</td><td>Black</td></tr>
+              </tbody>
+            </table>
+
+            <h4>Competitive</h4>
+            <div class="pills">
+              <span class="pill hot">CCL Team Captain</span>
+              <span class="pill hot">2000+ ELO</span>
+              <span class="pill">6-member team</span>
+              <span class="pill">Aug 2024 &ndash; May 2026</span>
+            </div>
+            <p style="margin-top:14px;font-size:15px">
+              <a href="https://lichess.org/@/an_d22" target="_blank" rel="noreferrer">lichess.org/@/an_d22 &rarr;</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- SHEET 05 · SOCCER ---------- -->
+    <div class="sheet" id="sheet-soccer" data-station="soccer">
+      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
+      <div class="sheet-head">
+        <span class="sheet-num">05</span>
+        <h2 class="sheet-title">Pitch Analytics</h2>
+        <span class="sheet-coord" data-coord>&mdash;</span>
+      </div>
+      <div class="sheet-body">
+        <p style="font-size:16px">
+          Purdue D1 Soccer Predictive Analytics &mdash; opponent tendencies, player tracking,
+          and zone-level performance. <b style="color:var(--accent)">Click a zone</b> to read it.
+        </p>
+
+        <div class="pitch-wrap">
+
+          <!-- ============ THE FIELD ============ -->
+          <div class="pitch-figure">
+            <svg class="pitch" viewBox="0 0 520 400" role="group" aria-label="Interactive pitch">
+
+              <!-- turf + mow stripes -->
+              <rect class="turf" x="10" y="10" width="500" height="380" rx="2"/>
+              <g class="mow">
+                <rect x="10"  y="10" width="500" height="47.5"/>
+                <rect x="10" y="105" width="500" height="47.5"/>
+                <rect x="10" y="200" width="500" height="47.5"/>
+                <rect x="10" y="295" width="500" height="47.5"/>
+              </g>
+
+              <!-- markings -->
+              <g class="marks">
+                <rect x="10" y="10" width="500" height="380"/>
+                <line x1="10" y1="200" x2="510" y2="200"/>
+                <circle cx="260" cy="200" r="52"/>
+                <circle class="spot" cx="260" cy="200" r="3"/>
+                <rect x="140" y="10" width="240" height="70"/>
+                <rect x="205" y="10" width="110" height="28"/>
+                <circle class="spot" cx="260" cy="62" r="3"/>
+                <path d="M208 80 A 55 55 0 0 0 312 80"/>
+                <rect x="140" y="320" width="240" height="70"/>
+                <rect x="205" y="362" width="110" height="28"/>
+                <circle class="spot" cx="260" cy="338" r="3"/>
+                <path d="M208 320 A 55 55 0 0 1 312 320"/>
+                <path d="M10 24 A 14 14 0 0 0 24 10"/>
+                <path d="M496 10 A 14 14 0 0 0 510 24"/>
+                <path d="M10 376 A 14 14 0 0 1 24 390"/>
+                <path d="M510 376 A 14 14 0 0 0 496 390"/>
+                <rect class="goal" x="215" y="2" width="90" height="8"/>
+                <rect class="goal" x="215" y="390" width="90" height="8"/>
+              </g>
+
+              <!-- heat blobs, opacity driven by weight -->
+              <g class="heat">
+                <ellipse data-heat="six"    cx="260" cy="45"  rx="86"  ry="42"/>
+                <ellipse data-heat="box"    cx="260" cy="105" rx="128" ry="58"/>
+                <ellipse data-heat="edge"   cx="260" cy="168" rx="132" ry="46"/>
+                <ellipse data-heat="left"   cx="72"  cy="150" rx="60"  ry="104"/>
+                <ellipse data-heat="right"  cx="448" cy="150" rx="60"  ry="104"/>
+                <ellipse data-heat="deep"   cx="260" cy="290" rx="180" ry="80"/>
+              </g>
+
+              <!-- movement arrows, drawn on select -->
+              <g class="runs">
+                <path class="run r1" d="M80 250 C120 190, 180 120, 236 62"/>
+                <path class="run r2" d="M440 250 C400 190, 340 120, 286 62"/>
+                <path class="run r3" d="M260 300 C260 250, 258 190, 260 96"/>
+              </g>
+
+              <!-- the 4-4-2 -->
+              <g class="players">
+                <g class="pl" data-pos="GK"><circle cx="260" cy="360" r="9"/><text x="260" y="363">GK</text></g>
+                <g class="pl" data-pos="LB"><circle cx="80"  cy="300" r="9"/><text x="80"  y="303">LB</text></g>
+                <g class="pl" data-pos="LCB"><circle cx="195" cy="312" r="9"/><text x="195" y="315">CB</text></g>
+                <g class="pl" data-pos="RCB"><circle cx="325" cy="312" r="9"/><text x="325" y="315">CB</text></g>
+                <g class="pl" data-pos="RB"><circle cx="440" cy="300" r="9"/><text x="440" y="303">RB</text></g>
+                <g class="pl" data-pos="LM"><circle cx="80"  cy="205" r="9"/><text x="80"  y="208">LM</text></g>
+                <g class="pl" data-pos="LCM"><circle cx="200" cy="215" r="9"/><text x="200" y="218">CM</text></g>
+                <g class="pl" data-pos="RCM"><circle cx="320" cy="215" r="9"/><text x="320" y="218">CM</text></g>
+                <g class="pl" data-pos="RM"><circle cx="440" cy="205" r="9"/><text x="440" y="208">RM</text></g>
+                <g class="pl" data-pos="LST"><circle cx="205" cy="105" r="9"/><text x="205" y="108">ST</text></g>
+                <g class="pl" data-pos="RST"><circle cx="315" cy="105" r="9"/><text x="315" y="108">ST</text></g>
+              </g>
+
+              <!-- the ball, animated along the selected run -->
+              <circle class="ball" cx="260" cy="300" r="5.5"/>
+
+              <!-- clickable regions, on top of everything -->
+              <g class="zones">
+                <rect class="zone" data-zone="six"   x="205" y="10"  width="110" height="52"/>
+                <path class="zone" data-zone="box"   d="M140,10 L205,10 L205,62 L315,62 L315,10 L380,10 L380,120 L140,120 Z"/>
+                <rect class="zone" data-zone="left"  x="10"  y="10"  width="130" height="230"/>
+                <rect class="zone" data-zone="right" x="380" y="10"  width="130" height="230"/>
+                <rect class="zone" data-zone="edge"  x="140" y="120" width="240" height="120"/>
+                <rect class="zone" data-zone="deep"  x="10"  y="240" width="500" height="150"/>
+              </g>
+            </svg>
+
+            <div class="pitch-legend">
+              <span class="lg"><i class="sw s1"></i>low</span>
+              <span class="lg"><i class="sw s2"></i>med</span>
+              <span class="lg"><i class="sw s3"></i>high</span>
+              <span class="lg-note">shading = relative zone weight</span>
             </div>
           </div>
 
-          <div class="detail-card">
-            <i class="fas fa-glass-water"></i>
-            <div>
-              <strong>Diet Coke or Coke Zero</strong>
-              <span>Coke Zero</span>
+          <!-- ============ THE READOUT ============ -->
+          <aside class="pitch-readout" id="pitch-readout">
+            <div class="ro-head">
+              <span class="ro-kicker" id="ro-kicker">Zone</span>
+              <h3 class="ro-title" id="ro-title">Select a zone</h3>
             </div>
-          </div>
 
-          <div class="detail-card">
-            <i class="fas fa-star"></i>
-            <div>
-              <strong>Current Favorites</strong>
-              <span>Ip Man 3 (2015), JYP/Rain 나로 바꾸자, $INTC</span>
+            <div class="ro-body" id="ro-body">
+              <p class="ro-empty">
+                Six zones, weighted by how much of the model&rsquo;s signal comes from each.
+                Click one on the field to see its numbers and the runs that feed it.
+              </p>
+            </div>
+
+            <div class="ro-bars" id="ro-bars" hidden>
+              <div class="ro-bar"><span class="ro-bk">Weight</span>
+                <span class="ro-track"><i data-bar="weight"></i></span><b data-val="weight">&mdash;</b></div>
+              <div class="ro-bar"><span class="ro-bk">Entries</span>
+                <span class="ro-track"><i data-bar="entries"></i></span><b data-val="entries">&mdash;</b></div>
+              <div class="ro-bar"><span class="ro-bk">Conversion</span>
+                <span class="ro-track"><i data-bar="conv"></i></span><b data-val="conv">&mdash;</b></div>
+            </div>
+          </aside>
+        </div>
+
+        <p style="font-size:13px;color:var(--ink-faint);margin-top:14px">
+          Zone weights are placeholders shaped like the real model output &mdash; swap in
+          the live numbers and both this field and the 3D surface outside re-render from them.
+        </p>
+
+        <div class="split" style="margin-top:18px">
+          <div>
+            <h4>Scope</h4>
+            <ul style="padding-left:20px;margin:0">
+              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">Predictive framework for opponent tendencies and match prep.</li>
+              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">Big Ten benchmark data across 200+ athletes.</li>
+              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">19 player-specific improvement plans delivered.</li>
+              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft)">Twice-weekly standardized reports to coaching and training staff.</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Context</h4>
+            <div class="pills">
+              <span class="pill hot">Big Ten</span>
+              <span class="pill hot">NCAA D1</span>
+              <span class="pill">4-4-2 base shape</span>
+              <span class="pill">200+ athletes</span>
+              <span class="pill">Public historical data</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="lichess-stats" id="lichess-stats">
-        <h3 class="lichess-heading">
-          <i class="fas fa-chess-knight"></i>
-          <span>Live Chess Stats</span>
-          <a href="https://lichess.org/@/an_d22" target="_blank" rel="noreferrer" class="lichess-profile-link">
-            @an_d22 <i class="fas fa-arrow-up-right-from-square"></i>
+    <!-- ---------- SHEET 06 · CONTACT ---------- -->
+    <div class="sheet" id="sheet-contact" data-station="contact">
+      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
+      <div class="sheet-head">
+        <span class="sheet-num">06</span>
+        <h2 class="sheet-title">Contact</h2>
+        <span class="sheet-coord" data-coord>&mdash;</span>
+      </div>
+      <div class="sheet-body">
+        <p style="font-size:20px">Everyone has something to teach that I&rsquo;d like to learn. Please reach me at:</p>
+
+        <div class="contact-row">
+          <a class="contact-link" href="mailto:nguy1051@purdue.edu">
+            <span class="cl-k">Email</span>
+            <span class="cl-v">nguy1051@purdue.edu</span>
           </a>
-        </h3>
-
-        <div class="lichess-rating-grid" id="lichess-ratings">
-          <div class="lichess-card" data-perf="bullet">
-            <div class="lichess-card-icon"><i class="fas fa-bolt"></i></div>
-            <div class="lichess-card-label">Bullet</div>
-            <div class="lichess-card-rating">—</div>
-            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
-          </div>
-          <div class="lichess-card" data-perf="blitz">
-            <div class="lichess-card-icon"><i class="fas fa-fire"></i></div>
-            <div class="lichess-card-label">Blitz</div>
-            <div class="lichess-card-rating">—</div>
-            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
-          </div>
-          <div class="lichess-card" data-perf="rapid">
-            <div class="lichess-card-icon"><i class="fas fa-clock"></i></div>
-            <div class="lichess-card-label">Rapid</div>
-            <div class="lichess-card-rating">—</div>
-            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
-          </div>
-          <div class="lichess-card" data-perf="classical">
-            <div class="lichess-card-icon"><i class="fas fa-hourglass-half"></i></div>
-            <div class="lichess-card-label">Classical</div>
-            <div class="lichess-card-rating">—</div>
-            <div class="lichess-card-meta"><span class="lichess-games">— games</span><span class="lichess-prog"></span></div>
-          </div>
+          <a class="contact-link" href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noreferrer">
+            <span class="cl-k">LinkedIn</span>
+            <span class="cl-v">Connect with me</span>
+          </a>
+          <a class="contact-link" href="https://github.com/anguy22" target="_blank" rel="noreferrer">
+            <span class="cl-k">GitHub</span>
+            <span class="cl-v">View my code</span>
+          </a>
+          <a class="contact-link" href="https://lichess.org/@/an_d22" target="_blank" rel="noreferrer">
+            <span class="cl-k">Lichess</span>
+            <span class="cl-v">an_d22</span>
+          </a>
         </div>
 
-        <div class="lichess-summary" id="lichess-summary">
-          <div class="lichess-summary-stat">
-            <strong id="lichess-total">—</strong>
-            <span>Games</span>
-          </div>
-          <div class="lichess-summary-stat win">
-            <strong id="lichess-wins">—</strong>
-            <span>Wins</span>
-          </div>
-          <div class="lichess-summary-stat loss">
-            <strong id="lichess-losses">—</strong>
-            <span>Losses</span>
-          </div>
-          <div class="lichess-summary-stat draw">
-            <strong id="lichess-draws">—</strong>
-            <span>Draws</span>
-          </div>
-          <div class="lichess-winrate-bar" id="lichess-winrate-bar">
-            <div class="bar-win" id="bar-win"></div>
-            <div class="bar-draw" id="bar-draw"></div>
-            <div class="bar-loss" id="bar-loss"></div>
-          </div>
-        </div>
-
-        <div class="lichess-extras">
-          <div class="lichess-openings">
-            <h4 class="lichess-sub-heading">Favorite Openings</h4>
-            <div class="lichess-opening-list">
-
-              <div class="lichess-opening-item" data-opening="goring-gambit">
-                <button class="lichess-opening-toggle" aria-expanded="false">
-                  <span class="lichess-opening-tag">Goring Gambit</span>
-                  <span class="lichess-opening-pgn">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.c3</span>
-                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
-                </button>
-                <div class="lichess-opening-expand">
-                  <div class="lichess-mini-board" id="board-goring-gambit"></div>
-                  <div class="lichess-board-controls">
-                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
-                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
-                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="lichess-opening-item" data-opening="caro-kann">
-                <button class="lichess-opening-toggle" aria-expanded="false">
-                  <span class="lichess-opening-tag">Caro-Kann Defense</span>
-                  <span class="lichess-opening-pgn">1.e4 c6 2.d4 d5</span>
-                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
-                </button>
-                <div class="lichess-opening-expand">
-                  <div class="lichess-mini-board" id="board-caro-kann"></div>
-                  <div class="lichess-board-controls">
-                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
-                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
-                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="lichess-opening-item" data-opening="italian">
-                <button class="lichess-opening-toggle" aria-expanded="false">
-                  <span class="lichess-opening-tag">Italian Game</span>
-                  <span class="lichess-opening-pgn">1.e4 e5 2.Nf3 Nc6 3.Bc4</span>
-                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
-                </button>
-                <div class="lichess-opening-expand">
-                  <div class="lichess-mini-board" id="board-italian"></div>
-                  <div class="lichess-board-controls">
-                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
-                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
-                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="lichess-opening-item" data-opening="modern">
-                <button class="lichess-opening-toggle" aria-expanded="false">
-                  <span class="lichess-opening-tag">Modern Defense</span>
-                  <span class="lichess-opening-pgn">1.e4 g6 2.d4 Bg7</span>
-                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
-                </button>
-                <div class="lichess-opening-expand">
-                  <div class="lichess-mini-board" id="board-modern"></div>
-                  <div class="lichess-board-controls">
-                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
-                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
-                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="lichess-opening-item" data-opening="scotch">
-                <button class="lichess-opening-toggle" aria-expanded="false">
-                  <span class="lichess-opening-tag">Scotch Game</span>
-                  <span class="lichess-opening-pgn">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4</span>
-                  <i class="fas fa-chevron-down lichess-opening-arrow"></i>
-                </button>
-                <div class="lichess-opening-expand">
-                  <div class="lichess-mini-board" id="board-scotch"></div>
-                  <div class="lichess-board-controls">
-                    <button class="lichess-ctrl-btn" data-action="reset" title="Reset"><i class="fas fa-backward-step"></i></button>
-                    <button class="lichess-ctrl-btn lichess-play-btn" data-action="play" title="Play"><i class="fas fa-play"></i></button>
-                    <button class="lichess-ctrl-btn" data-action="step" title="Next move"><i class="fas fa-forward-step"></i></button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="lichess-ccl">
-            <h4 class="lichess-sub-heading">Purdue CCL Record</h4>
-            <div class="lichess-ccl-record">
-              <div class="lichess-ccl-stat win"><strong>4</strong><span>W</span></div>
-              <div class="lichess-ccl-divider">&ndash;</div>
-              <div class="lichess-ccl-stat loss"><strong>5</strong><span>L</span></div>
-              <div class="lichess-ccl-divider">&ndash;</div>
-              <div class="lichess-ccl-stat draw"><strong>3</strong><span>D</span></div>
-            </div>
-            <div class="lichess-ccl-opponents">
-              <span>vs</span>
-              <span>UT Dallas</span>
-              <span>Arizona State</span>
-              <span>Drexel University</span>
-              <span>Tulane University</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ===== PITCH ANALYTICS ===== -->
-  <section id="pitch-analytics" class="section paper-section">
-    <div class="container reveal">
-      <h2 class="pitch-heading">
-        <i class="fas fa-futbol"></i>
-        <span>Purdue D1 Soccer Predictive Analytics</span>
-      </h2>
-      <p class="pitch-subtitle">Predictive analytics for player tracking, recruiting context, and zone-level performance patterns.</p>
-
-      <div class="pitch-toggle-row">
-        <button class="pitch-toggle-btn active" data-gender="men">Men's</button>
-        <button class="pitch-toggle-btn" data-gender="women">Women's</button>
-      </div>
-
-      <div class="pitch-layout">
-        <div class="pitch-field-wrap">
-          <svg class="pitch-svg" viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg">
-            <!-- field outline -->
-            <rect x="10" y="10" width="480" height="360" fill="none" stroke="#111" stroke-width="2"/>
-            <!-- goal -->
-            <rect x="215" y="1" width="70" height="10" fill="none" stroke="#111" stroke-width="2" rx="1"/>
-            <!-- 6-yard box -->
-            <rect x="165" y="10" width="170" height="45" fill="none" stroke="#111" stroke-width="1.5"/>
-            <!-- penalty area -->
-            <rect x="105" y="10" width="290" height="125" fill="none" stroke="#111" stroke-width="1.5"/>
-            <!-- penalty spot -->
-            <circle cx="250" cy="100" r="3" fill="#111"/>
-            <!-- penalty arc -->
-            <path d="M 185 135 A 75 75 0 0 0 315 135" fill="none" stroke="#111" stroke-width="1.5"/>
-            <!-- center circle arc -->
-            <path d="M 180 370 A 70 70 0 0 1 320 370" fill="none" stroke="#111" stroke-width="1.5"/>
-            <!-- center spot -->
-            <circle cx="250" cy="370" r="3" fill="#111"/>
-            <!-- corner arcs -->
-            <path d="M 10 22 A 12 12 0 0 0 22 10" fill="none" stroke="#111" stroke-width="1"/>
-            <path d="M 478 10 A 12 12 0 0 0 490 22" fill="none" stroke="#111" stroke-width="1"/>
-
-            <!-- clickable zones -->
-            <rect class="pitch-zone" data-zone="six-yard" x="165" y="10" width="170" height="45"/>
-            <path class="pitch-zone" data-zone="penalty-area" d="M105,10 L165,10 L165,55 L335,55 L335,10 L395,10 L395,135 L105,135 Z"/>
-            <rect class="pitch-zone" data-zone="left-wing" x="10" y="10" width="95" height="245"/>
-            <rect class="pitch-zone" data-zone="right-wing" x="395" y="10" width="95" height="245"/>
-            <rect class="pitch-zone" data-zone="edge-of-box" x="105" y="135" width="290" height="120"/>
-            <rect class="pitch-zone" data-zone="deep-half" x="10" y="255" width="480" height="115"/>
-
-            <!-- zone labels (rendered behind zones) -->
-            <text class="pitch-zone-label" x="250" y="38" text-anchor="middle">6-Yard</text>
-            <text class="pitch-zone-label" x="250" y="105" text-anchor="middle">Penalty Area</text>
-            <text class="pitch-zone-label" x="57" y="135" text-anchor="middle">Left</text>
-            <text class="pitch-zone-label" x="57" y="150" text-anchor="middle">Wing</text>
-            <text class="pitch-zone-label" x="443" y="135" text-anchor="middle">Right</text>
-            <text class="pitch-zone-label" x="443" y="150" text-anchor="middle">Wing</text>
-            <text class="pitch-zone-label" x="250" y="200" text-anchor="middle">Edge of Box</text>
-            <text class="pitch-zone-label" x="250" y="318" text-anchor="middle">Deep Midfield</text>
-
-            <!-- formation players (4-4-2 default) -->
-            <circle class="pitch-player" id="pp-gk"  cx="250" cy="355" r="7"/>
-            <circle class="pitch-player" id="pp-lb"  cx="70"  cy="275" r="7"/>
-            <circle class="pitch-player" id="pp-lcb" cx="185" cy="285" r="7"/>
-            <circle class="pitch-player" id="pp-rcb" cx="315" cy="285" r="7"/>
-            <circle class="pitch-player" id="pp-rb"  cx="430" cy="275" r="7"/>
-            <circle class="pitch-player" id="pp-lm"  cx="70"  cy="195" r="7"/>
-            <circle class="pitch-player" id="pp-lcm" cx="195" cy="200" r="7"/>
-            <circle class="pitch-player" id="pp-rcm" cx="305" cy="200" r="7"/>
-            <circle class="pitch-player" id="pp-rm"  cx="430" cy="195" r="7"/>
-            <circle class="pitch-player" id="pp-lst" cx="195" cy="100" r="7"/>
-            <circle class="pitch-player" id="pp-rst" cx="305" cy="100" r="7"/>
-          </svg>
-        </div>
-
-        <div class="pitch-stats-panel" id="pitch-stats-panel">
-          <div class="pitch-stats-empty">
-            <i class="fas fa-mouse-pointer"></i>
-            <p>Click a zone to view statistics</p>
-          </div>
-        </div>
+        <h4>End of Curve</h4>
+        <p style="font-size:15px">
+          Scroll back up to travel the surface in reverse, or jump with the station rail
+          on the left. Prefer a plain page? <a href="classic.html">Classic view &rarr;</a>
+        </p>
+        <p style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--ink-faint);margin-top:20px">
+          &copy; 2026 Andrew Nguyen &middot; Built with diet coke and ai
+        </p>
       </div>
     </div>
-  </section>
 
-  <section id="projects-experiment" class="section paper-section project-paper-section legacy-resume-archive" aria-hidden="true">
-    <div class="container reveal">
-      <div class="paper-kicker">projects</div>
-      <h2 class="section-title">Project Workflows</h2>
-      <p class="paper-lede">Each project opens into the same kind of small workflow animation the resume used, but as its own section instead of one long document.</p>
+  </div>
 
-      <div class="project-workflow-grid">
-        <article class="project-workflow-card is-open" tabindex="0" data-project-card>
-          <h3>Athletic Recruiting Filter &amp; ETL Analytics Pipeline</h3>
-          <p>A practical pipeline for turning messy recruiting emails into ranked, coach-readable outputs.</p>
-          <div class="project-workflow-panel">
-            <div class="workflow-track steps-5">
-              <div class="workflow-step"><div class="mini-visual email-visual-v2"><div class="email-envelope"><div class="email-flap"></div><div class="email-body"><span class="email-from">From: Recruit #10</span><span class="email-line"></span><span class="email-line short"></span></div></div><span class="email-badge">New</span></div><div class="step-label">Email</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual process-visual-v2"><div class="gear-stack"><div class="gear one"></div><div class="gear two"></div></div><div class="parse-chips"><span class="parse-chip">name</span><span class="parse-chip">club</span><span class="parse-chip">stats</span></div></div><div class="step-label">Parse</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual scoring-visual-v2"><div class="score-ring"><b>87</b><small>/ 100</small></div><div class="score-bars"><i style="--w:78%"></i><i style="--w:56%"></i><i style="--w:88%"></i></div></div><div class="step-label">Score</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual model-visual bars-only"><div class="prob-bars"><b style="--h:64%"></b><b style="--h:84%"></b><b style="--h:52%"></b><b style="--h:72%"></b></div><span class="model-tag">Ranked</span></div><div class="step-label">Rank</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual export-visual-v2"><div class="csv-sheet"><span class="csv-row"></span><span class="csv-row"></span><span class="csv-row"></span></div><div class="mini-chart"><b style="--h:42%"></b><b style="--h:70%"></b><b style="--h:88%"></b><b style="--h:58%"></b></div></div><div class="step-label">Export</div></div>
-            </div>
-          </div>
-        </article>
+  <!-- src is assigned by ride.js only if the audio file is actually present -->
+  <audio id="ride-audio" preload="auto"></audio>
 
-        <article class="project-workflow-card" tabindex="0" data-project-card>
-          <h3>Solar PV Economic Modeling &amp; Sensitivity Analysis</h3>
-          <p>An engineering economics model that asks whether the numbers actually support a solar PV investment.</p>
-          <div class="project-workflow-panel">
-            <div class="workflow-track steps-4">
-              <div class="workflow-step"><div class="mini-visual finance-visual-v2"><div class="candles"><i class="up"></i><i class="down"></i><i class="up"></i><i class="up"></i><i class="down"></i><i class="up"></i></div><div class="hist-line"></div><span class="model-tag finance-tag">$ / kWh</span></div><div class="step-label">Inputs</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual model-visual model-band-visual"><div class="axis x"></div><div class="axis y"></div><svg viewBox="0 0 120 72" aria-hidden="true"><path class="band-fill" d="M8 60 L28 56 L48 46 L68 40 L88 26 L112 16 L112 28 L88 36 L68 50 L48 56 L28 64 L8 66 Z"/><path class="trend-line" d="M8 62 C24 60, 42 46, 60 40 S86 22, 112 18"/></svg><div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div><span class="model-tag">DCF</span></div><div class="step-label">Model</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual econ-visual-v2"><div class="econ-chip"><strong>NPV</strong><small>&gt; 0</small></div><div class="econ-chip"><strong>IRR</strong><small>&gt; hurdle</small></div><div class="econ-chip"><strong>MARR</strong><small>8.0%</small></div></div><div class="step-label">Evaluate</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual report-visual-v2"><div class="report-page"><div class="report-line r1"></div><div class="report-line r2"></div><div class="report-line r3"></div><div class="report-line r4"></div></div><span class="report-stamp">Brief</span></div><div class="step-label">Report</div></div>
-            </div>
-          </div>
-        </article>
+  <script type="module" src="ride.js?v=7"></script>
 
-        <article class="project-workflow-card" tabindex="0" data-project-card>
-          <h3>Bridge Regression Mini Project</h3>
-          <p>A bridge-focused regression workflow: define features, fit the model, inspect error, and summarize the result.</p>
-          <div class="project-workflow-panel">
-            <div class="workflow-track steps-4">
-              <div class="workflow-step"><div class="mini-visual bridge-visual"><span class="bridge-deck"></span><span class="bridge-arch"></span><i></i><i></i><i></i></div><div class="step-label">Bridge data</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual table-visual-v2"><div class="tv-header"><span>x1</span><span>x2</span><span>y</span></div><div class="tv-row"><span>12</span><span>4</span><span>31</span></div><div class="tv-row"><span>18</span><span>7</span><span>45</span></div><div class="tv-row"><span>21</span><span>9</span><span>52</span></div></div><div class="step-label">Features</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual regression-visual"><svg viewBox="0 0 120 72" aria-hidden="true"><path d="M10 58 L110 16"></path></svg><span class="r-dot d1"></span><span class="r-dot d2"></span><span class="r-dot d3"></span><span class="r-dot d4"></span></div><div class="step-label">Regression</div></div>
-              <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-              <div class="workflow-step"><div class="mini-visual residual-visual"><b style="--h:60%"></b><b style="--h:34%"></b><b style="--h:76%"></b><b style="--h:42%"></b><span>error check</span></div><div class="step-label">Report</div></div>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="projects" class="section section-alt resume-section">
-    <div class="container reveal">
-      <h2 class="section-title resume-section-title">Resume</h2>
-
-      <div class="resume-document-v2" aria-label="Interactive resume document based on Andrew Nguyen resume PDF">
-        <header class="resume-doc-head">
-          <h3>My Resume</h3>
-          <p>Industrial Engineering &middot; Statistics &middot; Purdue '28</p>
-        </header>
-
-        <div class="resume-doc-block edu-capabilities-block">
-          <h4>EDUCATION &amp; CAPABILITIES</h4>
-          <div class="edu-cap-grid">
-            <div class="edu-cap-info">
-              <div class="edu-cap-school-row">
-                <strong>Purdue University</strong>
-                <span class="edu-cap-gpa">GPA 3.89 / 4.00</span>
-              </div>
-              <p class="edu-cap-degree">B.S. Industrial Engineering &middot; Minor in Statistics</p>
-              <p class="edu-cap-meta">West Lafayette, IN &middot; Est. Graduation May 2028</p>
-
-              <div class="edu-cap-section">
-                <span class="edu-cap-tag-label">Honors</span>
-                <div class="edu-cap-tag-row">
-                  <span class="edu-cap-pill honor"><i class="fas fa-medal"></i>Presidential Scholarship</span>
-                  <span class="edu-cap-pill honor"><i class="fas fa-medal"></i>Simplot Scholarship</span>
-                  <span class="edu-cap-pill honor"><i class="fas fa-medal"></i>Redinger Family Scholarship</span>
-                </div>
-              </div>
-
-              <div class="edu-cap-section">
-                <span class="edu-cap-tag-label">Certifications</span>
-                <div class="edu-cap-tag-row">
-                  <span class="edu-cap-pill cert"><i class="fas fa-microchip"></i>Semiconductors & Microelectronics</span>
-                  <span class="edu-cap-pill cert"><i class="fas fa-microchip"></i>Semiconductor Fabrication</span>
-                  <span class="edu-cap-pill cert"><i class="fas fa-chart-line"></i>Data Science Applications</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="edu-cap-tools">
-              <span class="edu-cap-tag-label">Toolkit</span>
-              <div class="tools-grid">
-                <div class="tool-item" style="--i:0"><i class="fab fa-python"></i><span>Python</span><small>pandas · sklearn · NumPy</small></div>
-                <div class="tool-item" style="--i:1"><i class="fas fa-database"></i><span>SQL</span><small>queries · joins · ETL</small></div>
-                <div class="tool-item" style="--i:2"><i class="fas fa-chart-pie"></i><span>Tableau</span><small>dashboards</small></div>
-                <div class="tool-item" style="--i:3"><i class="fas fa-square-root-variable"></i><span>MATLAB</span><small>modeling</small></div>
-                <div class="tool-item" style="--i:4"><i class="fas fa-file-excel"></i><span>Excel</span><small>analysis</small></div>
-                <div class="tool-item" style="--i:5"><i class="fas fa-compass-drafting"></i><span>CAD</span><small>AutoCAD · drafting</small></div>
-              </div>
-
-              <span class="edu-cap-tag-label coursework-label">Coursework</span>
-              <div class="edu-cap-tag-row coursework-row">
-                <span class="edu-cap-pill course">DoE</span>
-                <span class="edu-cap-pill course">SPC</span>
-                <span class="edu-cap-pill course">Statistical Modeling</span>
-                <span class="edu-cap-pill course">Probabilistic Modeling</span>
-                <span class="edu-cap-pill course">Data Science</span>
-                <span class="edu-cap-pill course">Calculus, Lin Algebra, Diff Equations</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="resume-doc-block">
-          <h4>PROFESSIONAL EXPERIENCE</h4>
-
-          <article class="resume-entry is-expandable" tabindex="0">
-            <div class="resume-entry-head">
-              <div class="resume-entry-title">
-                <strong>Micron Technology</strong>
-                <span>Industrial Engineering Intern – R&amp;D Modeling &amp; Analytics</span>
-              </div>
-              <div class="resume-entry-meta">
-                <span>Boise, ID</span>
-                <span>May 2026 - Aug 2026</span>
-              </div>
-              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle Micron workflow">
-                <span>Workflow</span><i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Wafer fab signals are staged into structured tables, fed into yield-forecast models, and surfaced as decision-ready dashboards for R&amp;D.</p>
-              <div class="workflow-track steps-4">
-                <div class="workflow-step">
-                  <div class="mini-visual fab-visual-v2">
-                    <div class="fab-building">
-                      <div class="fab-roof"></div>
-                      <div class="fab-window"></div><div class="fab-window"></div>
-                      <div class="fab-window"></div><div class="fab-window"></div>
-                      <div class="fab-stack"></div>
-                      <div class="fab-puff"></div>
-                    </div>
-                    <div class="wafer-conveyor">
-                      <span class="wafer-disc"></span>
-                      <span class="wafer-disc"></span>
-                      <span class="wafer-disc"></span>
-                    </div>
-                  </div>
-                  <div class="step-label">Wafer fab</div>
-                  <div class="step-desc">Process signals + wafer output from the fab floor.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual table-visual-v2">
-                    <div class="tv-header">
-                      <span>Lot</span><span>Yield</span><span>Defect</span>
-                    </div>
-                    <div class="tv-row"><span>A-204</span><span>96.2%</span><span class="ok">·</span></div>
-                    <div class="tv-row"><span>A-205</span><span>91.4%</span><span class="warn">·</span></div>
-                    <div class="tv-row"><span>A-206</span><span>97.8%</span><span class="ok">·</span></div>
-                    <div class="tv-row"><span>A-207</span><span>88.7%</span><span class="bad">·</span></div>
-                  </div>
-                  <div class="step-label">Data tables</div>
-                  <div class="step-desc">Lot, yield, and defect rows cleaned for analysis.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual model-visual model-band-visual">
-                    <div class="axis x"></div><div class="axis y"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true">
-                      <path class="band-fill" d="M8 56 L28 48 L48 50 L68 38 L88 24 L112 18 L112 30 L88 38 L68 48 L48 58 L28 56 L8 64 Z"/>
-                      <path class="trend-line" d="M8 60 C28 50, 48 50, 68 40 S96 22, 112 18"/>
-                    </svg>
-                    <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div>
-                    <span class="model-tag">Forecast</span>
-                  </div>
-                  <div class="step-label">Yield models</div>
-                  <div class="step-desc">Forecasts with confidence bands across lots.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual dashboard-visual-v2">
-                    <div class="dash-kpis">
-                      <div class="dash-kpi"><small>Yield</small><strong>94.6%</strong></div>
-                      <div class="dash-kpi"><small>Δ WoW</small><strong>+1.8</strong></div>
-                    </div>
-                    <div class="dash-spark">
-                      <svg viewBox="0 0 100 36" aria-hidden="true">
-                        <polyline points="2,28 14,22 26,24 38,16 50,18 62,10 74,12 86,6 98,8"/>
-                      </svg>
-                    </div>
-                    <div class="dash-bars">
-                      <b style="--h:62%"></b><b style="--h:84%"></b><b style="--h:50%"></b><b style="--h:74%"></b>
-                    </div>
-                  </div>
-                  <div class="step-label">Dashboards</div>
-                  <div class="step-desc">KPIs, trends, and ops views surfaced to R&amp;D.</div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="resume-entry is-expandable" tabindex="0">
-            <div class="resume-entry-head">
-              <div class="resume-entry-title">
-                <strong>Purdue D1 Women’s Soccer</strong>
-                <span>Predictive Data Analyst</span>
-              </div>
-              <div class="resume-entry-meta">
-                <span>West Lafayette, IN</span>
-                <span>May 2026 - Present</span>
-              </div>
-              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle Purdue Soccer workflow">
-                <span>Workflow</span><i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Player tracking, scouting tables, and predictive models distilled into actionable gameplans for the coaching staff.</p>
-              <div class="workflow-track steps-4">
-                <div class="workflow-step">
-                  <div class="mini-visual field-visual-v2">
-                    <div class="pitch-stripes"></div>
-                    <div class="pitch-mid"></div><div class="pitch-center"></div>
-                    <div class="pitch-goal left"></div><div class="pitch-goal right"></div>
-                    <span class="player a"></span><span class="player b"></span><span class="player c"></span><span class="player d"></span>
-                    <span class="ball"></span>
-                  </div>
-                  <div class="step-label">Player tracking</div>
-                  <div class="step-desc">Positioning + opponent tendencies mapped from match feeds.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual table-visual-v2 soccer-table">
-                    <div class="tv-header"><span>#</span><span>Pos</span><span>xG</span></div>
-                    <div class="tv-row"><span>10</span><span>FW</span><span>0.41</span></div>
-                    <div class="tv-row"><span>7</span><span>MF</span><span>0.18</span></div>
-                    <div class="tv-row"><span>4</span><span>DF</span><span>0.04</span></div>
-                    <div class="tv-row"><span>9</span><span>FW</span><span>0.33</span></div>
-                  </div>
-                  <div class="step-label">Scouting tables</div>
-                  <div class="step-desc">Player-by-player benchmark + scouting data.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual model-visual bars-only">
-                    <div class="prob-bars"><b style="--h:76%"></b><b style="--h:58%"></b><b style="--h:88%"></b><b style="--h:46%"></b></div>
-                    <span class="model-tag">Win prob</span>
-                  </div>
-                  <div class="step-label">Predictive models</div>
-                  <div class="step-desc">Win-probability + matchup signals per scenario.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual gameplan-visual-v2">
-                    <div class="tactic-board"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true">
-                      <path class="play-line p1" d="M18 56 C34 44, 50 38, 70 30"/>
-                      <path class="play-line p2" d="M70 30 L94 18"/>
-                      <path class="play-line p3" d="M70 30 L102 50"/>
-                    </svg>
-                    <span class="tactic-dot d1"></span>
-                    <span class="tactic-dot d2"></span>
-                    <span class="tactic-dot d3"></span>
-                  </div>
-                  <div class="step-label">Gameplans</div>
-                  <div class="step-desc">Tactical sets delivered to the coaching staff.</div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="resume-entry is-expandable" tabindex="0">
-            <div class="resume-entry-head">
-              <div class="resume-entry-title">
-                <strong>Sawtooth UAV Solutions</strong>
-                <span>Co-Founder and Entrepreneur</span>
-              </div>
-              <div class="resume-entry-meta">
-                <span>Boise, ID</span>
-                <span>Dec 2022 - Aug 2024</span>
-              </div>
-              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle Sawtooth UAV workflow">
-                <span>Workflow</span><i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Drone missions captured under automated flight routines, then packaged and delivered to clients online.</p>
-              <div class="workflow-track steps-3">
-                <div class="workflow-step">
-                  <div class="mini-visual drone-visual-v2">
-                    <div class="drone-sky"></div>
-                    <div class="drone-body">
-                      <div class="drone-core"></div>
-                      <i class="drone-rotor r1"></i><i class="drone-rotor r2"></i>
-                      <i class="drone-rotor r3"></i><i class="drone-rotor r4"></i>
-                    </div>
-                    <span class="drone-shadow"></span>
-                  </div>
-                  <div class="step-label">Drone missions</div>
-                  <div class="step-desc">FPV aircraft capturing client footage in-flight.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual path-visual-v2">
-                    <div class="path-grid"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true">
-                      <path class="path-route" d="M12 58 C24 20, 52 16, 68 44 S102 52, 108 16"/>
-                    </svg>
-                    <span class="waypoint w1"></span><span class="waypoint w2"></span><span class="waypoint w3"></span>
-                    <span class="path-tag">Auto</span>
-                  </div>
-                  <div class="step-label">Flight paths</div>
-                  <div class="step-desc">Automated routines with mapped waypoints.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual delivery-visual-v2">
-                    <div class="video-window">
-                      <i class="fas fa-play"></i>
-                    </div>
-                    <div class="upload-bar"><b></b></div>
-                    <div class="delivery-chip"><i class="fas fa-circle-check"></i> Delivered</div>
-                  </div>
-                  <div class="step-label">Client delivery</div>
-                  <div class="step-desc">Footage packaged + uploaded for client access.</div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="resume-entry resume-entry-static">
-            <div class="resume-entry-head static-only">
-              <div class="resume-entry-title">
-                <strong>Diana’s Korean Market</strong>
-                <span>Weekend cashier / clerk</span>
-              </div>
-              <div class="resume-entry-meta">
-                <span>Boise, ID</span>
-                <span>Dec 2022 - Aug 2024</span>
-              </div>
-            </div>
-            <p class="resume-entry-note">Developed customer service skills in Korean while serving a diverse customer base as sole weekend cashier/clerk.</p>
-          </article>
-        </div>
-
-        <div class="resume-doc-block">
-          <h4>EXTRACURRICULAR INVOLVEMENT</h4>
-
-          <article class="resume-entry resume-entry-static compact-static">
-            <div class="resume-entry-head static-only">
-              <div class="resume-entry-title">
-                <strong>Collegiate Chess League (CCL)</strong>
-                <span>Team Captain and Competitor</span>
-              </div>
-              <div class="resume-entry-meta">
-                <span>&nbsp;</span>
-                <span>Aug 2024 – May 2026</span>
-              </div>
-            </div>
-            <p class="resume-entry-note">Competed on a 6-member Purdue team as a 2000+ ELO-rated competitor against top US universities.</p>
-          </article>
-
-          <article class="resume-entry resume-entry-static compact-static">
-            <div class="resume-entry-head static-only">
-              <div class="resume-entry-title">
-                <strong>Autodesk</strong>
-                <span>Design &amp; Make Ambassador</span>
-              </div>
-              <div class="resume-entry-meta">
-                <span>&nbsp;</span>
-                <span>Jun 2025 – May 2026</span>
-              </div>
-            </div>
-            <p class="resume-entry-note">Mentored students using AutoCAD software and consulted peers on engineering design assemblies.</p>
-          </article>
-        </div>
-
-        <div class="resume-doc-block">
-          <h4>PROJECTS</h4>
-
-          <article class="resume-entry is-expandable" tabindex="0">
-            <div class="resume-entry-head">
-              <div class="resume-entry-title">
-                <strong>Athletic Recruiting Filter &amp; ETL Analytics Pipeline</strong>
-                <span>Data Mine at Purdue University</span>
-              </div>
-              <div class="resume-entry-meta resume-entry-meta-single">
-                <span>Interactive workflow</span>
-              </div>
-              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle recruiting workflow">
-                <span>Workflow</span><i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Recruit emails are fetched, parsed, scored against a rubric, projected into ranked models, and exported as coach-ready CSV files and graphs.</p>
-              <div class="workflow-track steps-5">
-                <div class="workflow-step">
-                  <div class="mini-visual email-visual-v2">
-                    <div class="email-envelope">
-                      <div class="email-flap"></div>
-                      <div class="email-body">
-                        <span class="email-from">From: Recruit #10</span>
-                        <span class="email-line"></span>
-                        <span class="email-line short"></span>
-                      </div>
-                    </div>
-                    <span class="email-badge">New</span>
-                  </div>
-                  <div class="step-label">Player email</div>
-                  <div class="step-desc">Recruit messages arrive with raw player info.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual process-visual-v2">
-                    <div class="gear-stack">
-                      <div class="gear one"></div><div class="gear two"></div>
-                    </div>
-                    <div class="parse-chips">
-                      <span class="parse-chip">name</span>
-                      <span class="parse-chip">club</span>
-                      <span class="parse-chip">stats</span>
-                    </div>
-                  </div>
-                  <div class="step-label">Fetch &amp; parse</div>
-                  <div class="step-desc">Text parsed, cleaned, and structured into fields.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual scoring-visual-v2">
-                    <div class="score-ring"><b>87</b><small>/ 100</small></div>
-                    <div class="score-bars">
-                      <i style="--w:78%"></i>
-                      <i style="--w:56%"></i>
-                      <i style="--w:88%"></i>
-                    </div>
-                  </div>
-                  <div class="step-label">Algorithm scoring</div>
-                  <div class="step-desc">Rubric-weighted features produce a recruit score.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual model-visual bars-only">
-                    <div class="prob-bars">
-                      <b style="--h:64%"></b><b style="--h:84%"></b><b style="--h:52%"></b><b style="--h:72%"></b>
-                    </div>
-                    <span class="model-tag">Ranked</span>
-                  </div>
-                  <div class="step-label">Models / ranking</div>
-                  <div class="step-desc">Recruits ranked + projected for coach decisions.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual export-visual-v2">
-                    <div class="csv-sheet">
-                      <span class="csv-row"></span>
-                      <span class="csv-row"></span>
-                      <span class="csv-row"></span>
-                    </div>
-                    <div class="mini-chart">
-                      <b style="--h:42%"></b><b style="--h:70%"></b><b style="--h:88%"></b><b style="--h:58%"></b>
-                    </div>
-                  </div>
-                  <div class="step-label">CSV + graphs</div>
-                  <div class="step-desc">Coach-ready files + visual summaries exported.</div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="resume-entry is-expandable" tabindex="0">
-            <div class="resume-entry-head">
-              <div class="resume-entry-title">
-                <strong>Solar PV System Economic Modeling &amp; Sensitivity Analysis</strong>
-                <span>Purdue University</span>
-              </div>
-              <div class="resume-entry-meta resume-entry-meta-single">
-                <span>Interactive workflow</span>
-              </div>
-              <button class="resume-entry-toggle" type="button" aria-expanded="false" aria-label="Toggle solar workflow">
-                <span>Workflow</span><i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <div class="resume-entry-panel">
-              <p class="resume-panel-summary">Six parametric DCF models built from historical cost data, evaluated against NPV/IRR/MARR benchmarks, and summarized into a recommendation-grade technical report.</p>
-              <div class="workflow-track steps-4">
-                <div class="workflow-step">
-                  <div class="mini-visual finance-visual-v2">
-                    <div class="candles">
-                      <i class="up" style="--h:32px"></i>
-                      <i class="down" style="--h:22px"></i>
-                      <i class="up" style="--h:42px"></i>
-                      <i class="up" style="--h:36px"></i>
-                      <i class="down" style="--h:18px"></i>
-                      <i class="up" style="--h:48px"></i>
-                    </div>
-                    <div class="hist-line"></div>
-                    <span class="model-tag finance-tag">$ kWh</span>
-                  </div>
-                  <div class="step-label">Historical data</div>
-                  <div class="step-desc">Past cost &amp; price trends establish base inputs.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual model-visual model-band-visual">
-                    <div class="axis x"></div><div class="axis y"></div>
-                    <svg viewBox="0 0 120 72" aria-hidden="true">
-                      <path class="band-fill" d="M8 60 L28 56 L48 46 L68 40 L88 26 L112 16 L112 28 L88 36 L68 50 L48 56 L28 64 L8 66 Z"/>
-                      <path class="trend-line" d="M8 62 C24 60, 42 46, 60 40 S86 22, 112 18"/>
-                    </svg>
-                    <div class="proj-dot p1"></div><div class="proj-dot p2"></div><div class="proj-dot p3"></div>
-                    <span class="model-tag">DCF 40y</span>
-                  </div>
-                  <div class="step-label">Models / projections</div>
-                  <div class="step-desc">6 parametric DCFs across 40-year horizons.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual econ-visual-v2">
-                    <div class="econ-chip"><strong>NPV</strong><small>&gt; 0</small></div>
-                    <div class="econ-chip"><strong>IRR</strong><small>&gt; hurdle</small></div>
-                    <div class="econ-chip"><strong>MARR</strong><small>8.0%</small></div>
-                    <div class="econ-verdict"><i class="fas fa-circle-check"></i> Recommend</div>
-                  </div>
-                  <div class="step-label">Engineering economics</div>
-                  <div class="step-desc">NPV / IRR / MARR criteria classify the case.</div>
-                </div>
-                <div class="workflow-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="workflow-step">
-                  <div class="mini-visual report-visual-v2">
-                    <div class="report-page">
-                      <div class="report-line r1"></div>
-                      <div class="report-line r2"></div>
-                      <div class="report-line r3"></div>
-                      <div class="report-line r4"></div>
-                      <div class="report-mini-chart">
-                        <b style="--h:50%"></b><b style="--h:78%"></b><b style="--h:34%"></b>
-                      </div>
-                    </div>
-                    <span class="report-stamp">Tech Brief</span>
-                  </div>
-                  <div class="step-label">Technical report</div>
-                  <div class="step-desc">Findings + recommendation packaged for review.</div>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="resume-doc-block resume-interests-v2">
-          <h4>INTERESTS</h4>
-          <p>Rapid Chess | Soccer | Hiking | Game/Decision Theory | Tech Sector Coverage | Kung Fu Movies</p>
-        </div>
-      </div>
-    </div>
-  </section>
-<section id="contact" class="section section-alt">
-    <div class="container reveal">
-      <h2 class="section-title">Contact</h2>
-      <p class="contact-text">Everyone has something to teach that I'd like to learn. Please reach me at:</p>
-
-      <div class="contact-links">
-        <a href="mailto:nguy1051@purdue.edu" class="contact-card">
-          <i class="fas fa-envelope"></i>
-          <strong>Email</strong>
-          <span>nguy1051@purdue.edu</span>
-        </a>
-
-        <a href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noreferrer" class="contact-card">
-          <i class="fab fa-linkedin"></i>
-          <strong>LinkedIn</strong>
-          <span>Connect with me</span>
-        </a>
-
-        <a href="https://github.com/anguy22" target="_blank" rel="noreferrer" class="contact-card">
-          <i class="fab fa-github"></i>
-          <strong>GitHub</strong>
-          <span>View my code</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-      <p>&copy; 2026 Andrew Nguyen. Built with diet coke and ai.</p>
-    </div>
-  </footer>
-
-  <script src="script.js?v=189"></script>
+  <script>
+    /* If three.js can't be fetched the module never executes and the launch
+       button would silently do nothing. Fail over to the classic view. */
+    (function () {
+      var GRACE = 9000;
+      setTimeout(function () {
+        if (window.__rideBooted) return;
+        var g = document.getElementById('gate');
+        if (g) g.classList.add('is-gone');
+        var f = document.getElementById('nowebgl');
+        if (!f) return;
+        f.innerHTML =
+          '<div><p>The 3D engine could not load &mdash; it is fetched from a CDN ' +
+          'that may be blocked or offline.</p>' +
+          '<p><a href="classic.html">Open the classic view instead &rarr;</a></p></div>';
+        f.classList.add('is-live');
+      }, GRACE);
+    })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,16 @@
+# This repo is PUBLIC and publishes to anguy.app.
+# Nothing containing personal contact details should ever land here.
+
+# Resume source documents — these carry phone number, personal email,
+# and home address. The site content is written out by hand instead.
+*.pdf
+*.docx
+
+# Local desktop assets that aren't part of the site
+pexels-*.jpg
+pexels-*.jpeg
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+desktop.ini
