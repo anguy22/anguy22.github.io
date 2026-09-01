@@ -47,10 +47,21 @@ const CHASE_UP = 12.5;    // and how far above the rail
 /* ---- pacing -------------------------------------------------------------
    The ride drives itself. LOOP_SECONDS is the master dial: seconds for one
    full circuit at cruise. Near a station it eases to STATION_SLOW of cruise
-   so you have time to see the object and click it.                        */
-const LOOP_SECONDS = 58.6;
-const STATION_SLOW = 0.34;
-const SLOW_WINDOW  = 0.040;   // t-radius over which the easing happens
+   so you have time to see the object and click it.
+
+   The two dials are deliberately coupled: the speed the cart actually passes
+   a station at is STATION_SLOW / LOOP_SECONDS, so shortening the loop alone
+   scales the crawl and the cruise by the same factor and the ride feels no
+   different. STATION_SLOW is scaled down with it to hold the station pass
+   steady while the transit between stations gets quicker.
+
+   SLOW_WINDOW is the t-radius of each dip. Chess, Markets and Pitch sit only
+   ~0.053 apart in t, so at the old 0.040 their dips overlapped outright and
+   the trio read as one unbroken crawl. At 0.030 the speed comes back to ~97%
+   of cruise between them, without making the approach to a station abrupt. */
+const LOOP_SECONDS = 44;
+const STATION_SLOW = 0.255;
+const SLOW_WINDOW  = 0.030;   // t-radius over which the easing happens
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
