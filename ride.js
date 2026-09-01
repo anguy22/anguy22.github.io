@@ -48,7 +48,7 @@ const CHASE_UP = 12.5;    // and how far above the rail
    The ride drives itself. LOOP_SECONDS is the master dial: seconds for one
    full circuit at cruise. Near a station it eases to STATION_SLOW of cruise
    so you have time to see the object and click it.                        */
-const LOOP_SECONDS = 82;
+const LOOP_SECONDS = 58.6;
 const STATION_SLOW = 0.34;
 const SLOW_WINDOW  = 0.040;   // t-radius over which the easing happens
 
