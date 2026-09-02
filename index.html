@@ -159,7 +159,7 @@
        ============================================================ -->
   <div id="sheet-pool" hidden>
 
-    <!-- ---------- SHEET 02 Â· ABOUT ---------- -->
+    <!-- ---------- SHEET 02 · ABOUT ---------- -->
     <div class="sheet" id="sheet-about" data-station="about">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
@@ -217,7 +217,7 @@
       </div>
     </div>
 
-    <!-- ---------- SHEET 03 Â· RESUME ---------- -->
+    <!-- ---------- SHEET 03 · RESUME ---------- -->
     <div class="sheet" id="sheet-resume" data-station="resume">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
@@ -228,481 +228,551 @@
       <div class="sheet-body">
 
         <h4>Education &amp; Academic Honors</h4>
-        <div class="split">
-          <div>
-            <div class="entry">
-              <div class="entry-head">
-                <span class="entry-org">Purdue University</span>
-                <span class="entry-when">GPA 3.89 / 4.00</span>
-              </div>
-              <p style="margin:6px 0 4px">B.S. Industrial Engineering &middot; Minor in Statistics</p>
-              <p style="font-size:15px;color:var(--ink-faint)">West Lafayette, IN &middot; Est. Graduation May 2028</p>
-            </div>
 
-            <div class="pills">
+        <div class="edu">
+          <div class="edu-main">
+            <div class="edu-school">Purdue University</div>
+            <div class="edu-degree">B.S. Industrial Engineering
+              <span class="edu-minor">&middot; Minor in Statistics</span></div>
+            <div class="edu-where">West Lafayette, IN &middot; Est. graduation May 2028</div>
+
+            <div class="pills stamps">
               <span class="pill hot">Purdue Presidential Scholar</span>
               <span class="pill hot">Simplot Foundation Scholar</span>
               <span class="pill hot">Dr. James Barany Endowed Scholar</span>
               <span class="pill hot">Redinger Scholar</span>
             </div>
+
+            <p class="rowlab">University certifications</p>
             <div class="pills">
               <span class="pill">Semiconductors &amp; Microelectronics</span>
               <span class="pill">Semiconductor Fabrication</span>
-              <span class="pill">Data Science</span>
+              <span class="pill">Data Science Applications</span>
             </div>
           </div>
 
+          <!-- GPA drawn as an instrument dial: the arc sweeps to 3.89/4.00 the
+               first time the sheet is opened, then holds. -->
+          <div class="gpa" data-dial="0.9725">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="gpa-track" cx="50" cy="50" r="40"/>
+              <circle class="gpa-arc" cx="50" cy="50" r="40"/>
+            </svg>
+            <div class="gpa-read">
+              <b data-tally>3.89</b><span class="gpa-of">/ 4.00</span>
+            </div>
+            <span class="gpa-k">Cumulative</span>
+          </div>
+        </div>
+
+        <h4>Tools &amp; Coursework</h4>
+        <div class="split">
           <div>
             <table class="readout">
               <thead>
                 <tr><th>Tool</th><th>Stack</th></tr>
               </thead>
               <tbody>
-                <tr><td>Python</td><td>pandas Â· scikit-learn Â· NumPy</td></tr>
-                <tr><td>SQL</td><td>Snowflake Â· MSSQL Â· Azure</td></tr>
-                <tr><td>Tableau</td><td>dashboards Â· reporting</td></tr>
+                <tr><td>Python</td><td>pandas &middot; scikit-learn &middot; SQLAlchemy</td></tr>
+                <tr><td>SQL</td><td>Snowflake &middot; MSSQL &middot; Azure</td></tr>
+                <tr><td>JMP</td><td>DOE &middot; statistical analysis</td></tr>
+                <tr><td>Tableau</td><td>dashboards &middot; reporting</td></tr>
                 <tr><td>Excel</td><td>parametric modeling</td></tr>
-                <tr><td>Claude Code</td><td>agentic tooling</td></tr>
+                <tr><td>Agentic coding</td><td>Claude Code</td></tr>
               </tbody>
             </table>
-            <div class="pills" style="margin-top:14px">
-              <span class="pill">Operations Research</span>
-              <span class="pill">Database Languages</span>
-              <span class="pill">Query Logic</span>
-              <span class="pill">Statistical Modeling</span>
-              <span class="pill">Data Visualization</span>
+          </div>
+
+          <div>
+            <p class="rowlab">Coursework</p>
+            <div class="pills">
+              <span class="pill">Data Science</span>
+              <span class="pill">Machine Learning</span>
+              <span class="pill">Six Sigma</span>
+              <span class="pill">Manufacturing Process</span>
+              <span class="pill">Design of Experiments</span>
+              <span class="pill">Quality Control</span>
+              <span class="pill">Data Architecture</span>
             </div>
           </div>
         </div>
 
         <h4>Professional Experience</h4>
 
-        <p class="entry-hint">Open a card &mdash; each line draws itself &rarr;</p>
+        <div class="plate-bar">
+          <p class="entry-hint">Open a card &mdash; each line draws itself &middot; hover a figure for its note</p>
+          <button class="plate-all" type="button" data-all aria-expanded="false">Open all</button>
+        </div>
 
-        <!-- ================= MICRON ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Micron Technology</span>
-            <span class="entry-role">IE Intern &ndash; R&amp;D Process Modeling</span>
-            <span class="entry-when">Boise, ID &middot; May 2026 &ndash; Aug 2026</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
+        <div class="plate">
 
-              <li class="beat">
-                <span class="vg vg-join" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <g class="lines">
-                      <line x1="8"  y1="8"/><line x1="6"  y1="28"/><line x1="10" y1="50"/>
-                      <line x1="26" y1="3"/><line x1="24" y1="57"/><line x1="44" y1="2"/>
-                      <line x1="46" y1="58"/><line x1="64" y1="3"/><line x1="66" y1="57"/>
-                      <line x1="86" y1="9"/><line x1="90" y1="30"/><line x1="84" y1="51"/>
-                      <line x1="22" y1="19"/>
-                    </g>
-                    <g class="nodes">
-                      <circle cx="8"  cy="8"  r="2.6"/><circle cx="6"  cy="28" r="2.6"/>
-                      <circle cx="10" cy="50" r="2.6"/><circle cx="26" cy="3"  r="2.6"/>
-                      <circle cx="24" cy="57" r="2.6"/><circle cx="44" cy="2"  r="2.6"/>
-                      <circle cx="46" cy="58" r="2.6"/><circle cx="64" cy="3"  r="2.6"/>
-                      <circle cx="66" cy="57" r="2.6"/><circle cx="86" cy="9"  r="2.6"/>
-                      <circle cx="90" cy="30" r="2.6"/><circle cx="84" cy="51" r="2.6"/>
-                      <circle cx="22" cy="19" r="2.6"/>
-                    </g>
-                    <rect class="floor" x="36" y="22" width="24" height="16" rx="1"/>
-                    <circle class="hub" cx="48" cy="30" r="7"/>
-                  </svg>
-                </span>
-                <span class="beat-t">Built a tool-removal framework joining <b>13</b> disparate datastores
-                  (<b>7000</b> nodes) targeting <b>14,000&nbsp;ft&sup2;</b> of under-utilized fab space.</span>
-              </li>
+          <!-- ================= MICRON ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">Micron Technology</span>
+              <span class="entry-role">Industrial Engineering Intern &mdash; Global R&amp;D Strategy &amp; Budgeting</span>
+              <span class="entry-when">Boise, ID &middot; May 2026 &ndash; Aug 2026</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
 
-              <li class="beat">
-                <span class="vg vg-model" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <path class="axis" d="M10 52 H88 M10 52 V8"/>
-                    <g class="dots">
-                      <circle cx="20" cy="44" r="2"/><circle cx="30" cy="40" r="2"/>
-                      <circle cx="40" cy="34" r="2"/><circle cx="50" cy="30" r="2"/>
-                      <circle cx="60" cy="22" r="2"/><circle cx="70" cy="19" r="2"/>
-                      <circle cx="80" cy="13" r="2"/>
-                    </g>
-                    <path class="band" d="M18 48 L82 10 L82 20 L18 52 Z"/>
-                    <path class="trend" d="M18 46 C38 40, 56 26, 84 12"/>
-                    <g class="ticks">
-                      <line x1="18" y1="54" x2="18" y2="58"/><line x1="34" y1="54" x2="34" y2="58"/>
-                      <line x1="50" y1="54" x2="50" y2="58"/><line x1="66" y1="54" x2="66" y2="58"/>
-                      <line x1="82" y1="54" x2="82" y2="58"/>
-                    </g>
-                    <rect class="sweep" x="10" y="6" width="4" height="48"/>
-                  </svg>
-                </span>
-                <span class="beat-t">Designed <b>ETL</b> scenario modeling logic aggregating
-                  <b>1M+</b> fab-planning datapoints across <b>36-month</b> horizons.</span>
-              </li>
+                <li class="beat">
+                  <span class="vg vg-cleanroom" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <rect class="bay" x="8" y="7" width="80" height="46" rx="1"/>
+                      <g class="tools">
+                        <rect x="14" y="13" width="9" height="8"/><rect x="27" y="13" width="9" height="8"/>
+                        <rect x="40" y="13" width="9" height="8"/><rect x="53" y="13" width="9" height="8"/>
+                        <rect x="66" y="13" width="9" height="8"/>
+                        <rect x="14" y="26" width="9" height="8"/><rect x="27" y="26" width="9" height="8"/>
+                        <rect x="40" y="26" width="9" height="8"/><rect x="53" y="26" width="9" height="8"/>
+                        <rect x="66" y="26" width="9" height="8"/>
+                        <rect x="14" y="39" width="9" height="8"/><rect x="27" y="39" width="9" height="8"/>
+                        <rect x="40" y="39" width="9" height="8"/><rect x="53" y="39" width="9" height="8"/>
+                        <rect x="66" y="39" width="9" height="8"/>
+                      </g>
+                      <g class="flagged">
+                        <rect x="27" y="13" width="9" height="8"/>
+                        <rect x="53" y="26" width="9" height="8"/>
+                        <rect x="14" y="39" width="9" height="8"/>
+                      </g>
+                      <rect class="scan" x="8" y="7" width="3" height="46"/>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Built an integrated R&amp;D tool-review app surfacing candidate fab tool
+                    removals at <b data-tally data-note="Precision of the app's shortlist measured against the manual review process it replaced.">8&times;</b>
+                    the precision of the manual process &mdash; now the budgeting team's register for
+                    <b data-tally data-note="Fab tools carried in the register and reviewed through the app.">~1,500</b> tools across
+                    <b data-tally data-note="Square feet of cleanroom floor the register covers.">152,000&nbsp;ft&sup2;</b> of cleanroom.</span>
+                </li>
 
-              <li class="beat">
-                <span class="vg vg-strategy" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <path class="arw a1" d="M8 48 C30 48, 38 20, 66 16"/>
-                    <path class="arw a2" d="M8 54 C34 56, 50 42, 80 34"/>
-                    <polygon class="head h1" points="66,16 58,12 60,21"/>
-                    <polygon class="head h2" points="80,34 72,31 73,40"/>
-                    <g class="dol">
-                      <text class="d1" x="24" y="28">$</text>
-                      <text class="d2" x="44" y="20">$</text>
-                      <text class="d3" x="62" y="34">$</text>
-                    </g>
-                    <g class="bars">
-                      <rect x="12" y="8" width="5" height="10"/>
-                      <rect x="20" y="4" width="5" height="14"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Published a Tableau and Web GUI reporting <b>ecosystem</b> adopted by
-                  <b>IE Strategy</b> and <b>Budget</b> teams for FY27 R&amp;D planning.</span>
-              </li>
+                <li class="beat">
+                  <span class="vg vg-join" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <g class="lines">
+                        <line x1="8"  y1="8"/><line x1="6"  y1="28"/><line x1="10" y1="50"/>
+                        <line x1="26" y1="3"/><line x1="24" y1="57"/><line x1="44" y1="2"/>
+                        <line x1="46" y1="58"/><line x1="64" y1="3"/><line x1="66" y1="57"/>
+                        <line x1="86" y1="9"/><line x1="90" y1="30"/><line x1="84" y1="51"/>
+                        <line x1="22" y1="19"/>
+                      </g>
+                      <g class="nodes">
+                        <circle cx="8"  cy="8"  r="2.6"/><circle cx="6"  cy="28" r="2.6"/>
+                        <circle cx="10" cy="50" r="2.6"/><circle cx="26" cy="3"  r="2.6"/>
+                        <circle cx="24" cy="57" r="2.6"/><circle cx="44" cy="2"  r="2.6"/>
+                        <circle cx="46" cy="58" r="2.6"/><circle cx="64" cy="3"  r="2.6"/>
+                        <circle cx="66" cy="57" r="2.6"/><circle cx="86" cy="9"  r="2.6"/>
+                        <circle cx="90" cy="30" r="2.6"/><circle cx="84" cy="51" r="2.6"/>
+                        <circle cx="22" cy="19" r="2.6"/>
+                      </g>
+                      <rect class="floor" x="36" y="22" width="24" height="16" rx="1"/>
+                      <circle class="hub" cx="48" cy="30" r="7"/>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Refined the model&rsquo;s ETL logic in <b>SQL</b> and <b>Python</b>, joining
+                    <b data-tally data-note="Separate datastores reconciled into one keyed record per tool.">13</b> datastores and lifting data quality
+                    <b data-tally data-note="Measured improvement in data quality after the join logic was rebuilt.">7%</b> across
+                    <b data-tally data-note="Attributes carried per tool through the pipeline.">22</b> tool attributes.</span>
+                </li>
 
-              <li class="beat">
-                <span class="vg vg-clock" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <circle class="face" cx="34" cy="30" r="17"/>
-                    <g class="pips">
-                      <line x1="34" y1="15" x2="34" y2="19"/><line x1="49" y1="30" x2="45" y2="30"/>
-                      <line x1="34" y1="45" x2="34" y2="41"/><line x1="19" y1="30" x2="23" y2="30"/>
-                    </g>
-                    <line class="hand" x1="34" y1="30" x2="34" y2="18"/>
-                    <circle class="pin" cx="34" cy="30" r="1.8"/>
-                    <g class="sheets">
-                      <rect class="s1" x="60" y="14" width="17" height="21" rx="1"/>
-                      <rect class="s2" x="65" y="20" width="17" height="21" rx="1"/>
-                      <rect class="s3" x="70" y="26" width="17" height="21" rx="1"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Replaced <b>2</b> repetitive manual processes with auditable data
-                  architectures, saving <b>30&nbsp;hrs/month</b>.</span>
-              </li>
+                <li class="beat">
+                  <span class="vg vg-fan" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <path class="rule" d="M13 51 H90 M13 51 V6"/>
+                      <g class="spread">
+                        <path class="s1" d="M15 45 C40 41, 62 27, 88 9"/>
+                        <path class="s2" d="M15 45 C40 43, 62 34, 88 20"/>
+                        <path class="s3" d="M15 45 C40 45, 62 41, 88 31"/>
+                        <path class="s4" d="M15 45 C40 47, 62 47, 88 42"/>
+                      </g>
+                      <g class="yrs">
+                        <line x1="27" y1="51" x2="27" y2="55"/><line x1="39" y1="51" x2="39" y2="55"/>
+                        <line x1="51" y1="51" x2="51" y2="55"/><line x1="63" y1="51" x2="63" y2="55"/>
+                        <line x1="75" y1="51" x2="75" y2="55"/><line x1="87" y1="51" x2="87" y2="55"/>
+                      </g>
+                      <circle class="pivot" cx="15" cy="45" r="2.8"/>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Defined OpEx forecasting logic in <b>SQL</b> and <b>Tableau</b> spanning
+                    <b data-tally data-note="Fiscal years covered by the forecast horizon.">6</b> fiscal years and
+                    <b data-tally data-note="Distinct scenario plans the forecasting logic can run.">25+</b> scenario plans
+                    for global IE Strategy.</span>
+                </li>
 
-            </ul>
-          </div>
-        </article>
+                <li class="beat">
+                  <span class="vg vg-clock" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <circle class="face" cx="34" cy="30" r="17"/>
+                      <g class="pips">
+                        <line x1="34" y1="15" x2="34" y2="19"/><line x1="49" y1="30" x2="45" y2="30"/>
+                        <line x1="34" y1="45" x2="34" y2="41"/><line x1="19" y1="30" x2="23" y2="30"/>
+                      </g>
+                      <line class="hand" x1="34" y1="30" x2="34" y2="18"/>
+                      <circle class="pin" cx="34" cy="30" r="1.8"/>
+                      <g class="sheets">
+                        <rect class="s1" x="60" y="14" width="17" height="21" rx="1"/>
+                        <rect class="s2" x="65" y="20" width="17" height="21" rx="1"/>
+                        <rect class="s3" x="70" y="26" width="17" height="21" rx="1"/>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Saved an estimated
+                    <b data-tally data-note="Analyst hours returned to the team each quarter.">40&nbsp;hrs/quarter</b> with
+                    <b data-tally data-note="Automated tools handed over and taken into routine use.">2</b> automated tools
+                    adopted by the IE Strategy and Budget teams for <b>FY27</b> R&amp;D planning.</span>
+                </li>
 
-        <!-- ================= PURDUE SOCCER ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Purdue D1 Women&rsquo;s Soccer</span>
-            <span class="entry-role">Predictive Data Analyst</span>
-            <span class="entry-when">West Lafayette, IN &middot; May 2026 &ndash; Present</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
+              </ul>
+            </div>
+          </article>
 
-              <li class="beat">
-                <span class="vg vg-pitch" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <rect class="field" x="8" y="6" width="80" height="48" rx="1"/>
-                    <line class="half" x1="48" y1="6" x2="48" y2="54"/>
-                    <circle class="centre" cx="48" cy="30" r="9"/>
-                    <rect class="box" x="76" y="18" width="12" height="24"/>
-                    <path class="arw a1" d="M20 46 C40 44, 54 34, 74 30"/>
-                    <path class="arw a2" d="M20 14 C42 18, 56 24, 74 29"/>
-                    <path class="arw a3" d="M32 30 C48 30, 60 29, 73 30"/>
-                    <polygon class="head" points="76,30 68,26 69,34"/>
-                    <circle class="ball" cx="20" cy="30" r="3"/>
-                  </svg>
-                </span>
-                <span class="beat-t">Developed a predictive model framework to evaluate
-                  <b>opponent tendencies</b> and inform match preparation.</span>
-              </li>
+          <!-- ================= PURDUE SOCCER ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">Purdue D1 Women&rsquo;s Soccer</span>
+              <span class="entry-role">Predictive Data Analyst</span>
+              <span class="entry-when">West Lafayette, IN &middot; May 2026 &ndash; Present</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
 
-              <li class="beat">
-                <span class="vg vg-squad" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <g class="crowd">
-                      <circle cx="10" cy="12" r="3"/><circle cx="22" cy="12" r="3"/><circle cx="34" cy="12" r="3"/>
-                      <circle cx="46" cy="12" r="3"/><circle cx="58" cy="12" r="3"/><circle cx="70" cy="12" r="3"/>
-                      <circle cx="82" cy="12" r="3"/>
-                      <circle cx="10" cy="26" r="3"/><circle cx="22" cy="26" r="3"/><circle cx="34" cy="26" r="3"/>
-                      <circle cx="46" cy="26" r="3"/><circle cx="58" cy="26" r="3"/><circle cx="70" cy="26" r="3"/>
-                      <circle cx="82" cy="26" r="3"/>
-                      <circle cx="10" cy="40" r="3"/><circle cx="22" cy="40" r="3"/><circle cx="34" cy="40" r="3"/>
-                      <circle cx="46" cy="40" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="70" cy="40" r="3"/>
-                    </g>
-                    <g class="picked">
-                      <circle cx="22" cy="12" r="4.5"/><circle cx="58" cy="12" r="4.5"/>
-                      <circle cx="34" cy="26" r="4.5"/><circle cx="82" cy="26" r="4.5"/>
-                      <circle cx="46" cy="40" r="4.5"/>
-                    </g>
-                    <g class="plans">
-                      <rect x="8" y="50" width="12" height="8" rx="1"/>
-                      <rect x="24" y="50" width="12" height="8" rx="1"/>
-                      <rect x="40" y="50" width="12" height="8" rx="1"/>
-                      <rect x="56" y="50" width="12" height="8" rx="1"/>
-                      <rect x="72" y="50" width="12" height="8" rx="1"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Translated Big Ten benchmark data across <b>200+</b> athletes into
-                  <b>19</b> player-specific improvement plans.</span>
-              </li>
+                <li class="beat">
+                  <span class="vg vg-pitch" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <rect class="field" x="8" y="6" width="80" height="48" rx="1"/>
+                      <line class="half" x1="48" y1="6" x2="48" y2="54"/>
+                      <circle class="centre" cx="48" cy="30" r="9"/>
+                      <rect class="box" x="76" y="18" width="12" height="24"/>
+                      <path class="arw a1" d="M20 46 C40 44, 54 34, 74 30"/>
+                      <path class="arw a2" d="M20 14 C42 18, 56 24, 74 29"/>
+                      <path class="arw a3" d="M32 30 C48 30, 60 29, 73 30"/>
+                      <polygon class="head" points="76,30 68,26 69,34"/>
+                      <circle class="ball" cx="20" cy="30" r="3"/>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Built a match-preparation app for the coaching staff, aggregating tactics,
+                    trends and stats across
+                    <b data-tally data-note="Big Ten programs profiled in the app ahead of each fixture.">18</b>
+                    Big Ten teams.</span>
+                </li>
 
-              <li class="beat">
-                <span class="vg vg-cal" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <rect class="pad" x="10" y="8" width="76" height="46" rx="2"/>
-                    <line class="rule" x1="10" y1="19" x2="86" y2="19"/>
-                    <g class="cells">
-                      <rect x="16" y="24" width="9" height="9"/><rect x="29" y="24" width="9" height="9"/>
-                      <rect x="42" y="24" width="9" height="9"/><rect x="55" y="24" width="9" height="9"/>
-                      <rect x="68" y="24" width="9" height="9"/>
-                      <rect x="16" y="38" width="9" height="9"/><rect x="29" y="38" width="9" height="9"/>
-                      <rect x="42" y="38" width="9" height="9"/><rect x="55" y="38" width="9" height="9"/>
-                      <rect x="68" y="38" width="9" height="9"/>
-                    </g>
-                    <g class="marks">
-                      <rect x="29" y="24" width="9" height="9"/><rect x="68" y="24" width="9" height="9"/>
-                      <rect x="29" y="38" width="9" height="9"/><rect x="68" y="38" width="9" height="9"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Standardized <b>twice-weekly</b> scouting, recruiting, and performance
-                  reports for coaching and training staff.</span>
-              </li>
+                <li class="beat">
+                  <span class="vg vg-cal" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <rect class="pad" x="10" y="8" width="76" height="46" rx="2"/>
+                      <line class="rule" x1="10" y1="19" x2="86" y2="19"/>
+                      <g class="cells">
+                        <rect x="16" y="24" width="9" height="9"/><rect x="29" y="24" width="9" height="9"/>
+                        <rect x="42" y="24" width="9" height="9"/><rect x="55" y="24" width="9" height="9"/>
+                        <rect x="68" y="24" width="9" height="9"/>
+                        <rect x="16" y="38" width="9" height="9"/><rect x="29" y="38" width="9" height="9"/>
+                        <rect x="42" y="38" width="9" height="9"/><rect x="55" y="38" width="9" height="9"/>
+                        <rect x="68" y="38" width="9" height="9"/>
+                      </g>
+                      <g class="marks">
+                        <rect x="29" y="24" width="9" height="9"/><rect x="68" y="24" width="9" height="9"/>
+                        <rect x="29" y="38" width="9" height="9"/><rect x="68" y="38" width="9" height="9"/>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Briefed athletics stakeholders, players and coaching staff on the findings
+                    on a <b>weekly</b> basis.</span>
+                </li>
 
-            </ul>
-          </div>
-        </article>
+              </ul>
+            </div>
+          </article>
 
-        <!-- ================= DIANA'S ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Diana&rsquo;s Korean Market</span>
-            <span class="entry-role">Weekend cashier and clerk</span>
-            <span class="entry-when">Boise, ID &middot; Dec 2022 &ndash; Aug 2024</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
-              <li class="beat">
-                <span class="vg vg-market" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <rect class="till" x="10" y="24" width="34" height="26" rx="2"/>
-                    <rect class="screen" x="14" y="16" width="20" height="10" rx="1"/>
-                    <g class="keys">
-                      <rect x="15" y="32" width="6" height="5"/><rect x="24" y="32" width="6" height="5"/>
-                      <rect x="33" y="32" width="6" height="5"/>
-                      <rect x="15" y="40" width="6" height="5"/><rect x="24" y="40" width="6" height="5"/>
-                      <rect x="33" y="40" width="6" height="5"/>
-                    </g>
-                    <rect class="receipt" x="52" y="10" width="26" height="34" rx="1"/>
-                    <g class="rlines">
-                      <line x1="56" y1="18" x2="72" y2="18"/><line x1="56" y1="24" x2="70" y2="24"/>
-                      <line x1="56" y1="30" x2="73" y2="30"/><line x1="56" y1="36" x2="66" y2="36"/>
-                    </g>
-                    <text class="hangul" x="52" y="56">í•œêµ­ì–´</text>
-                  </svg>
-                </span>
-                <span class="beat-t">Served a <b>Korean-speaking</b> customer base as the
-                  <b>sole</b> weekend cashier and clerk.</span>
-              </li>
-            </ul>
-          </div>
-        </article>
+          <!-- ================= THE DATA MINE ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">The Data Mine at Purdue University</span>
+              <span class="entry-role">Undergraduate Data Science Researcher</span>
+              <span class="entry-when">West Lafayette, IN &middot; Jan 2026 &ndash; May 2026</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+
+                <li class="beat">
+                  <span class="vg vg-funnel" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <g class="mail">
+                        <rect class="m1" x="14" y="4" width="12" height="8" rx="1"/>
+                        <rect class="m2" x="32" y="4" width="12" height="8" rx="1"/>
+                        <rect class="m3" x="50" y="4" width="12" height="8" rx="1"/>
+                        <rect class="m4" x="68" y="4" width="12" height="8" rx="1"/>
+                      </g>
+                      <path class="funnel" d="M12 18 L84 18 L56 40 L56 52 L40 52 L40 40 Z"/>
+                      <g class="drops">
+                        <circle class="p1" cx="48" cy="46" r="2.4"/>
+                        <circle class="p2" cx="48" cy="46" r="2.4"/>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Engineered a KPI framework quantifying prospective player strengths across
+                    <b data-tally data-note="Prospect emails scored every week by the rule-based framework.">200+</b>
+                    emails a week with rule-based scoring logic.</span>
+                </li>
+
+                <li class="beat">
+                  <span class="vg vg-strategy" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <path class="arw a1" d="M8 48 C30 48, 38 20, 66 16"/>
+                      <path class="arw a2" d="M8 54 C34 56, 50 42, 80 34"/>
+                      <polygon class="head h1" points="66,16 58,12 60,21"/>
+                      <polygon class="head h2" points="80,34 72,31 73,40"/>
+                      <g class="dol">
+                        <text class="d1" x="22" y="28">15%</text>
+                        <text class="d2" x="46" y="18">TOP</text>
+                      </g>
+                      <g class="bars">
+                        <rect x="12" y="8" width="5" height="10"/>
+                        <rect x="20" y="4" width="5" height="14"/>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Led a
+                    <b data-tally data-note="Researchers on the team, including the lead.">5-member</b> team to build the ETL
+                    pipeline and export the
+                    <b data-tally data-note="Share of the prospect pool carried through to staff review.">top 15%</b> of
+                    recruits, saving an estimated
+                    <b data-tally data-note="Hours of manual staff review returned each month.">20&nbsp;hrs/month</b>
+                    of manual review.</span>
+                </li>
+
+                <li class="beat">
+                  <span class="vg vg-stamp" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <rect class="doc" x="14" y="8" width="40" height="46" rx="1"/>
+                      <g class="dlines">
+                        <line x1="20" y1="18" x2="46" y2="18"/>
+                        <line x1="20" y1="26" x2="42" y2="26"/>
+                        <line x1="20" y1="34" x2="48" y2="34"/>
+                        <line x1="20" y1="42" x2="38" y2="42"/>
+                      </g>
+                      <g class="press">
+                        <circle class="ring1" cx="64" cy="34" r="15"/>
+                        <circle class="ring2" cx="64" cy="34" r="11"/>
+                        <path class="tick" d="M58 34 l4 4.5 l8 -9.5"/>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Greenlit for adoption and continued implementation by the
+                    <b>Purdue Women&rsquo;s Soccer</b> program and the <b>Data Mine</b>.</span>
+                </li>
+
+              </ul>
+            </div>
+          </article>
+
+        </div>
 
         <h4>Extracurricular Involvement</h4>
 
-        <!-- ================= SEMICONDUCTOR STUDENT ALLIANCE ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Semiconductor Student Alliance</span>
-            <span class="entry-role">Student Chairperson</span>
-            <span class="entry-when">Jul 2026 &ndash; Present</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
-              <li class="beat">
-                <span class="vg vg-network" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <g class="edges">
-                      <line x1="48" y1="30" x2="18" y2="12"/><line x1="48" y1="30" x2="16" y2="42"/>
-                      <line x1="48" y1="30" x2="44" y2="54"/><line x1="48" y1="30" x2="78" y2="16"/>
-                      <line x1="48" y1="30" x2="80" y2="44"/><line x1="48" y1="30" x2="52" y2="6"/>
-                    </g>
-                    <g class="peers">
-                      <circle cx="18" cy="12" r="4"/><circle cx="16" cy="42" r="4"/>
-                      <circle cx="44" cy="54" r="4"/><circle cx="78" cy="16" r="4"/>
-                      <circle cx="80" cy="44" r="4"/><circle cx="52" cy="6" r="4"/>
-                    </g>
-                    <circle class="chair" cx="48" cy="30" r="7"/>
-                  </svg>
-                </span>
-                <span class="beat-t">Directing <b>member recruitment</b> and engagement for Purdue&rsquo;s
-                  semiconductor student organization.</span>
-              </li>
-            </ul>
-          </div>
-        </article>
+        <div class="plate">
 
-        <!-- ================= CCL ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Collegiate Chess League</span>
-            <span class="entry-role">Team Captain and Competitor</span>
-            <span class="entry-when">Aug 2024 &ndash; May 2026</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
-              <li class="beat">
-                <span class="vg vg-chess" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <g class="board">
-                      <rect x="10" y="8" width="11" height="11"/><rect x="32" y="8" width="11" height="11"/>
-                      <rect x="21" y="19" width="11" height="11"/><rect x="43" y="19" width="11" height="11"/>
-                      <rect x="10" y="30" width="11" height="11"/><rect x="32" y="30" width="11" height="11"/>
-                      <rect x="21" y="41" width="11" height="11"/><rect x="43" y="41" width="11" height="11"/>
-                    </g>
-                    <rect class="frame" x="10" y="8" width="44" height="44"/>
-                    <path class="hop" d="M15.5 46.5 C 20 30, 30 22, 37.5 13.5"/>
-                    <circle class="from" cx="15.5" cy="46.5" r="3"/>
-                    <circle class="to" cx="37.5" cy="13.5" r="4"/>
-                    <g class="elo">
-                      <line class="base" x1="64" y1="50" x2="88" y2="50"/>
-                      <path class="climb" d="M64 48 L70 42 L76 34 L82 24 L88 14"/>
-                      <text class="num" x="64" y="10">2000+</text>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Competed on a <b>6-member</b> team as a <b>2000+ ELO</b> player against
-                  top US universities for team Purdue.</span>
-              </li>
-            </ul>
-          </div>
-        </article>
+          <!-- ================= SEMICONDUCTOR STUDENT ALLIANCE ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">Semiconductor Student Alliance</span>
+              <span class="entry-role">Student Chairperson</span>
+              <span class="entry-when">Aug 2026 &ndash; Present</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat">
+                  <span class="vg vg-network" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <g class="edges">
+                        <line x1="48" y1="30" x2="18" y2="12"/><line x1="48" y1="30" x2="16" y2="42"/>
+                        <line x1="48" y1="30" x2="44" y2="54"/><line x1="48" y1="30" x2="78" y2="16"/>
+                        <line x1="48" y1="30" x2="80" y2="44"/><line x1="48" y1="30" x2="52" y2="6"/>
+                      </g>
+                      <g class="peers">
+                        <circle cx="18" cy="12" r="4"/><circle cx="16" cy="42" r="4"/>
+                        <circle cx="44" cy="54" r="4"/><circle cx="78" cy="16" r="4"/>
+                        <circle cx="80" cy="44" r="4"/><circle cx="52" cy="6" r="4"/>
+                      </g>
+                      <circle class="chair" cx="48" cy="30" r="7"/>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Directing <b>member recruitment</b> and <b>alumni engagement</b> for
+                    Purdue&rsquo;s semiconductor student organization.</span>
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- ================= CCL ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">Collegiate Chess League</span>
+              <span class="entry-role">Team Captain and Competitor</span>
+              <span class="entry-when">Aug 2024 &ndash; May 2026</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat">
+                  <span class="vg vg-chess" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <g class="board">
+                        <rect x="10" y="8" width="11" height="11"/><rect x="32" y="8" width="11" height="11"/>
+                        <rect x="21" y="19" width="11" height="11"/><rect x="43" y="19" width="11" height="11"/>
+                        <rect x="10" y="30" width="11" height="11"/><rect x="32" y="30" width="11" height="11"/>
+                        <rect x="21" y="41" width="11" height="11"/><rect x="43" y="41" width="11" height="11"/>
+                      </g>
+                      <rect class="frame" x="10" y="8" width="44" height="44"/>
+                      <path class="hop" d="M15.5 46.5 C 20 30, 30 22, 37.5 13.5"/>
+                      <circle class="from" cx="15.5" cy="46.5" r="3"/>
+                      <circle class="to" cx="37.5" cy="13.5" r="4"/>
+                      <g class="elo">
+                        <line class="base" x1="64" y1="50" x2="88" y2="50"/>
+                        <path class="climb" d="M64 48 L70 42 L76 34 L82 24 L88 14"/>
+                        <text class="num" x="64" y="10">2000+</text>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Competed on a
+                    <b data-tally data-note="Players on the Purdue roster for league play.">6-member</b> team as a
+                    <b data-tally data-note="Rapid rating held while competing in the league.">2000+</b> Elo-rated
+                    player against top US universities for Purdue.</span>
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- ================= WONDERLAND + PURDUE IE ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">Wonderland &plus; Purdue IE</span>
+              <span class="entry-role">Lead Mentor</span>
+              <span class="entry-when">Aug 2025 &ndash; May 2026</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+
+                <li class="beat">
+                  <span class="vg vg-lesson" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <rect class="slate" x="8" y="7" width="58" height="42" rx="1"/>
+                      <line class="ledge" x1="6" y1="49" x2="68" y2="49"/>
+                      <path class="swingarc" d="M22 38 A 15 15 0 0 1 52 38"/>
+                      <g class="pend">
+                        <line class="rod" x1="37" y1="15" x2="37" y2="36"/>
+                        <circle class="bob" cx="37" cy="38" r="3.6"/>
+                      </g>
+                      <circle class="pivot" cx="37" cy="15" r="1.6"/>
+                      <g class="glyphs">
+                        <path class="g1" d="M74 16 h12 M80 10 v12"/>
+                        <path class="g2" d="M74 32 h12"/>
+                        <path class="g3" d="M74 42 l6 6 l6 -10"/>
+                      </g>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Organized youth outreach with Purdue IE, building hands-on
+                    <b>physics</b>, <b>math</b> and <b>engineering</b> lessons.</span>
+                </li>
+
+                <li class="beat">
+                  <span class="vg vg-reach" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <g class="leads">
+                        <circle cx="12" cy="16" r="3.8"/><circle cx="12" cy="30" r="3.8"/>
+                        <circle cx="12" cy="44" r="3.8"/>
+                      </g>
+                      <g class="fanout">
+                        <path class="a1" d="M17 16 C34 14, 44 10, 58 9"/>
+                        <path class="a2" d="M17 30 C34 28, 44 24, 58 22"/>
+                        <path class="a3" d="M17 30 C34 32, 44 36, 58 38"/>
+                        <path class="a4" d="M17 44 C34 46, 44 50, 58 51"/>
+                      </g>
+                      <g class="kids">
+                        <circle cx="64" cy="9"  r="2.3"/><circle cx="74" cy="6"  r="2.3"/>
+                        <circle cx="84" cy="10" r="2.3"/><circle cx="64" cy="22" r="2.3"/>
+                        <circle cx="75" cy="19" r="2.3"/><circle cx="85" cy="23" r="2.3"/>
+                        <circle cx="64" cy="38" r="2.3"/><circle cx="75" cy="35" r="2.3"/>
+                        <circle cx="85" cy="39" r="2.3"/><circle cx="64" cy="51" r="2.3"/>
+                        <circle cx="75" cy="48" r="2.3"/><circle cx="85" cy="52" r="2.3"/>
+                      </g>
+                      <text class="tot" x="66" y="31">~60</text>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Led multiple
+                    <b data-tally data-note="Mentors per outreach team, running a session together.">3-person</b> teams
+                    through weekly sessions, reaching
+                    <b data-tally data-note="Elementary students reached across the West Lafayette area.">~60</b>
+                    elementary students around West Lafayette.</span>
+                </li>
+
+              </ul>
+            </div>
+          </article>
+
+        </div>
 
         <h4>Projects</h4>
 
-        <!-- ================= RECRUITING ETL ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Athletic Recruiting Filter &amp; ETL Pipeline</span>
-            <span class="entry-role">The Data Mine at Purdue</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
+        <div class="plate">
 
-              <li class="beat">
-                <span class="vg vg-funnel" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <g class="mail">
-                      <rect class="m1" x="14" y="4" width="12" height="8" rx="1"/>
-                      <rect class="m2" x="32" y="4" width="12" height="8" rx="1"/>
-                      <rect class="m3" x="50" y="4" width="12" height="8" rx="1"/>
-                      <rect class="m4" x="68" y="4" width="12" height="8" rx="1"/>
-                    </g>
-                    <path class="funnel" d="M12 18 L84 18 L56 40 L56 52 L40 52 L40 40 Z"/>
-                    <g class="drops">
-                      <circle class="p1" cx="48" cy="46" r="2.4"/>
-                      <circle class="p2" cx="48" cy="46" r="2.4"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Engineered a KPI framework scoring <b>200+</b> recruiting emails per week
-                  with rule-based logic.</span>
-              </li>
+          <!-- ================= SOLAR PV ================= -->
+          <article class="entry is-expandable" data-entry>
+            <button class="entry-head" type="button" aria-expanded="false">
+              <span class="entry-org">Solar PV Economic Modeling &amp; Sensitivity Analysis</span>
+              <span class="entry-role">Purdue University</span>
+              <span class="entry-chev" aria-hidden="true"></span>
+            </button>
+            <div class="entry-panel">
+              <ul class="beats">
+                <li class="beat">
+                  <span class="vg vg-solar" aria-hidden="true">
+                    <svg viewBox="0 0 96 60">
+                      <circle class="sun" cx="22" cy="18" r="8"/>
+                      <g class="rays">
+                        <line x1="22" y1="4" x2="22" y2="0"/><line x1="36" y1="18" x2="40" y2="18"/>
+                        <line x1="22" y1="32" x2="22" y2="36"/><line x1="8" y1="18" x2="4" y2="18"/>
+                        <line x1="32" y1="8" x2="35" y2="5"/><line x1="12" y1="28" x2="9" y2="31"/>
+                      </g>
+                      <g class="panel">
+                        <rect x="10" y="42" width="26" height="14" rx="1"/>
+                        <line x1="19" y1="42" x2="19" y2="56"/><line x1="28" y1="42" x2="28" y2="56"/>
+                      </g>
+                      <g class="flow">
+                        <rect class="f1" x="48" y="40" width="6" height="12"/>
+                        <rect class="f2" x="58" y="32" width="6" height="20"/>
+                        <rect class="f3" x="68" y="24" width="6" height="28"/>
+                        <rect class="f4" x="78" y="16" width="6" height="36"/>
+                      </g>
+                      <line class="zero" x1="44" y1="52" x2="90" y2="52"/>
+                      <text class="npv" x="46" y="12">NPV &gt; 0</text>
+                    </svg>
+                  </span>
+                  <span class="beat-t">Built
+                    <b data-tally data-note="Parametric Excel models, one per configuration under test.">6</b>
+                    parametric Excel models projecting
+                    <b data-tally data-note="Years of discounted cash flow carried in each projection.">40-year</b>
+                    DCFs, applying <b>NPV/IRR</b> benchmarks to classify recommendations.</span>
+                </li>
+              </ul>
+            </div>
+          </article>
 
-              <li class="beat">
-                <span class="vg vg-strategy" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <path class="arw a1" d="M8 48 C30 48, 38 20, 66 16"/>
-                    <path class="arw a2" d="M8 54 C34 56, 50 42, 80 34"/>
-                    <polygon class="head h1" points="66,16 58,12 60,21"/>
-                    <polygon class="head h2" points="80,34 72,31 73,40"/>
-                    <g class="dol">
-                      <text class="d1" x="24" y="28">15%</text>
-                      <text class="d2" x="48" y="18">TOP</text>
-                    </g>
-                    <g class="bars">
-                      <rect x="12" y="8" width="5" height="10"/>
-                      <rect x="20" y="4" width="5" height="14"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Led a <b>5-member</b> team to build the ETL pipeline and export the
-                  <b>top 15%</b> of recruits, saving <b>40&nbsp;hrs/month</b> of manual review.</span>
-              </li>
+        </div>
 
-              <li class="beat">
-                <span class="vg vg-dash" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <rect class="pane" x="10" y="8" width="76" height="44" rx="2"/>
-                    <line class="rule" x1="10" y1="19" x2="86" y2="19"/>
-                    <path class="spark" d="M16 44 L26 38 L36 40 L46 30 L56 33 L66 22 L80 26"/>
-                    <g class="kpi">
-                      <rect x="16" y="24" width="14" height="6"/>
-                      <rect x="16" y="34" width="10" height="6"/>
-                    </g>
-                    <g class="cols">
-                      <rect class="b1" x="60" y="44" width="5" height="4"/>
-                      <rect class="b2" x="68" y="44" width="5" height="4"/>
-                      <rect class="b3" x="76" y="44" width="5" height="4"/>
-                    </g>
-                  </svg>
-                </span>
-                <span class="beat-t">Visualized model performance in <b>Tableau</b> for Purdue Athletics
-                  stakeholders; green-lit for continued implementation.</span>
-              </li>
+        <h4>Interests</h4>
+        <p class="interests">
+          <span>Rapid Chess</span><span>Soccer</span><span>Hiking</span><span>Game &amp; Decision Theory</span><span>Tech Sector Coverage</span><span>Racquet Sports</span>
+        </p>
 
-            </ul>
-          </div>
-        </article>
-
-        <!-- ================= SOLAR PV ================= -->
-        <article class="entry is-expandable" data-entry>
-          <button class="entry-head" type="button" aria-expanded="false">
-            <span class="entry-org">Solar PV Economic Modeling</span>
-            <span class="entry-role">Purdue University</span>
-            <span class="entry-chev" aria-hidden="true"></span>
-          </button>
-          <div class="entry-panel">
-            <ul class="beats">
-              <li class="beat">
-                <span class="vg vg-solar" aria-hidden="true">
-                  <svg viewBox="0 0 96 60">
-                    <circle class="sun" cx="22" cy="18" r="8"/>
-                    <g class="rays">
-                      <line x1="22" y1="4" x2="22" y2="0"/><line x1="36" y1="18" x2="40" y2="18"/>
-                      <line x1="22" y1="32" x2="22" y2="36"/><line x1="8" y1="18" x2="4" y2="18"/>
-                      <line x1="32" y1="8" x2="35" y2="5"/><line x1="12" y1="28" x2="9" y2="31"/>
-                    </g>
-                    <g class="panel">
-                      <rect x="10" y="42" width="26" height="14" rx="1"/>
-                      <line x1="19" y1="42" x2="19" y2="56"/><line x1="28" y1="42" x2="28" y2="56"/>
-                    </g>
-                    <g class="flow">
-                      <rect class="f1" x="48" y="40" width="6" height="12"/>
-                      <rect class="f2" x="58" y="32" width="6" height="20"/>
-                      <rect class="f3" x="68" y="24" width="6" height="28"/>
-                      <rect class="f4" x="78" y="16" width="6" height="36"/>
-                    </g>
-                    <line class="zero" x1="44" y1="52" x2="90" y2="52"/>
-                    <text class="npv" x="46" y="12">NPV &gt; 0</text>
-                  </svg>
-                </span>
-                <span class="beat-t">Built <b>6</b> parametric models projecting <b>40-year</b> DCFs, applying
-                  <b>NPV/IRR</b> benchmarks to classify recommendations.</span>
-              </li>
-            </ul>
-          </div>
-        </article>
       </div>
     </div>
 
-    <!-- ---------- SHEET 04 Â· CHESS ---------- -->
+    <!-- ---------- SHEET 04 · CHESS ---------- -->
     <div class="sheet" id="sheet-chess" data-station="chess">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
@@ -761,7 +831,7 @@
       </div>
     </div>
 
-    <!-- ---------- SHEET 05 Â· MARKETS ---------- -->
+    <!-- ---------- SHEET 05 · MARKETS ---------- -->
     <div class="sheet is-dark" id="sheet-markets" data-station="markets">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
@@ -938,7 +1008,7 @@
       </div>
     </div>
 
-    <!-- ---------- SHEET 06 Â· SOCCER ---------- -->
+    <!-- ---------- SHEET 06 · SOCCER ---------- -->
     <div class="sheet" id="sheet-soccer" data-station="soccer">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">
@@ -1097,7 +1167,7 @@
       </div>
     </div>
 
-    <!-- ---------- SHEET 07 Â· CONTACT ---------- -->
+    <!-- ---------- SHEET 07 · CONTACT ---------- -->
     <div class="sheet" id="sheet-contact" data-station="contact">
       <button class="sheet-close" type="button" aria-label="Close">&times;</button>
       <div class="sheet-head">

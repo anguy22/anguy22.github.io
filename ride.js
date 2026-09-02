@@ -21,6 +21,12 @@ window.__rideBooted = true;
    1 · PALETTE + CONSTANTS
    ========================================================================= */
 
+/* The sheet is drawn the way a plate actually gets inked: the printed grid is
+   the palest thing on it, the lettering sits mid-weight, and the plotted line
+   is the darkest mark on the page because it is the one thing the draftsman
+   went over in ink. Hue carries none of that hierarchy — value does. Keeping
+   the whole apparatus on one brown-black ramp is what makes it read as ink on
+   papyrus rather than as a chart with a highlight colour. */
 const C = {
   paper:      new THREE.Color('#E8DCC0'),
   paperLit:   new THREE.Color('#F2E9D6'),
@@ -30,8 +36,8 @@ const C = {
   ink:        new THREE.Color('#2B2622'),
   inkSoft:    new THREE.Color('#5A5048'),
   inkFaint:   new THREE.Color('#8A7D6E'),
-  accent:     new THREE.Color('#B8442E'),
-  accentSoft: new THREE.Color('#D4785F'),
+  accent:     new THREE.Color('#1E1A17'),   // the inked plot — darkest on the sheet
+  accentSoft: new THREE.Color('#6E6155'),   // graphite wash, for haloes and fills
 };
 
 const RAIL_H    = 3.2;    // rail floats this far above the surface
@@ -228,6 +234,7 @@ function init() {
   buildCart();
   buildStations();
   buildCities();
+  buildWaves();
   buildTape();
   buildRailNav();
   lighting();
@@ -665,9 +672,12 @@ function axisLabel(letter, color) {
 }
 
 function buildAxes() {
-  const AX = C.accent;                        // X — red pencil
-  const AY = new THREE.Color('#3E6B52');      // Y — green pencil
-  const AZ = new THREE.Color('#2F5D8A');      // Z — blue pencil
+  /* Three axes, one ink. They separate by weight rather than hue — X full
+     strength, Y and Z stepped back — so the sheet stays monochrome and the
+     letterheads at the ends do the actual identifying. */
+  const AX = C.accent;                        // X — full-strength ink
+  const AY = new THREE.Color('#3B342D');      // Y — one step back
+  const AZ = new THREE.Color('#544A40');      // Z — two steps back
 
   const X0 = -170, X1 = 585;
   const Y0 = -285, Y1 = 205;
@@ -713,15 +723,15 @@ function buildAxes() {
   head(AZ, new THREE.Vector3(0, h0 + Z1 + 3, 0), [0, 0, 0]);
 
   // ---- letters ----
-  const lx = axisLabel('X', '#B8442E');
+  const lx = axisLabel('X', '#1E1A17');
   lx.position.set(X1 - 16, fieldH(X1, 0) + 12, 0);
   scene.add(lx);
 
-  const ly = axisLabel('Y', '#3E6B52');
+  const ly = axisLabel('Y', '#3B342D');
   ly.position.set(0, fieldH(0, Y1) + 12, Y1 - 16);
   scene.add(ly);
 
-  const lz = axisLabel('Z', '#2F5D8A');
+  const lz = axisLabel('Z', '#544A40');
   lz.position.set(0, h0 + Z1 + 12, 0);
   scene.add(lz);
 
@@ -823,7 +833,7 @@ function labelSprite(text, sub) {
   g.textBaseline = 'middle';
   g.fillText(text.toUpperCase(), 26, 58);
 
-  g.fillStyle = '#B8442E';
+  g.fillStyle = '#5A5048';
   g.font = '400 26px "Roboto Mono", monospace';
   g.fillText(sub.toUpperCase(), 26, 118);
 
@@ -1677,6 +1687,165 @@ function buildCities() {
 }
 
 /* ============================================================================
+   9c · THE THREE PLOTS
+
+   The graph apparatus — grid, axes, rail, cart — is all one ink, so colour
+   on the sheet itself means what it means on a graphing calculator: which
+   plot you are looking at. There are exactly three — Y₁ red, Y₂ green, Y₃
+   blue — and they take the sheet one at a time, in order, over and over.
+
+   A plot is not a static curve. It is a wave packet: a Gaussian envelope
+   sliding along the band while the carrier oscillates underneath it, so the
+   thing you watch is an actual disturbance travelling through the paper. To
+   give it volume rather than leaving it a wire, each plot is a band of
+   parallel traces swept across a width, with a cosine falloff at the edges —
+   near enough to a surface to read as a swell, still plainly drawn.
+
+   Each pass is planted fresh in front of wherever the rider happens to be,
+   which is what keeps them arriving as you travel instead of sitting in
+   fixed places waiting to be found.
+   ========================================================================= */
+
+const WAVE_PENS = ['#C0392B', '#2F7D4F', '#2F5D8A'];   // Y₁ Y₂ Y₃
+
+const WAVE_LINES = 11;     // parallel traces making up one band
+const WAVE_SEGS  = 150;    // samples along each trace
+const WAVE_SPAN  = 210;    // how far the band runs, world units
+const WAVE_WIDTH = 46;     // how wide the band is, across its travel
+const WAVE_AMP   = 17;     // crest height — these are meant to be seen
+const WAVE_LIFT  = 13;     // how high the band's baseline floats
+const WAVE_K     = 3.2;    // carrier cycles inside the packet envelope
+const WAVE_SIGMA = 0.15;   // packet width, as a fraction of the span
+const WAVE_PASS  = 9.0;    // seconds one plot holds the sheet
+
+let waveBands = [];
+let waveTurn  = 0;
+let wavePassT = 0;
+
+function buildWaves() {
+  waveBands = WAVE_PENS.map((pen) => {
+    const group = new THREE.Group();
+    const traces = [];
+
+    for (let n = 0; n < WAVE_LINES; n++) {
+      const arr = new Float32Array((WAVE_SEGS + 1) * 3);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+
+      const mat = new THREE.LineBasicMaterial({
+        color: new THREE.Color(pen), transparent: true, opacity: 0,
+      });
+
+      group.add(new THREE.Line(geo, mat));
+      traces.push({ arr, geo, mat });
+    }
+
+    group.visible = false;
+    scene.add(group);
+
+    return {
+      group, traces,
+      ox: 0, oz: 0,     // band origin
+      dx: 1, dz: 0,     // along the band
+      nx: 0, nz: 1,     // across it
+      phase: 0,
+    };
+  });
+
+  placeWave(waveBands[0]);
+  waveBands[0].group.visible = true;
+
+  /* Seed the buffers before the first render either way — an unfilled band is
+     151 points parked at the origin. Under reduced motion the frame loop never
+     advances the pass, so start it mid-crossing and let it stand still. */
+  if (reduceMotion) wavePassT = WAVE_PASS * 0.5;
+  updateWaves(0, 0);
+}
+
+/** Plant a band on fresh ground, out in front of wherever the rider is. */
+function placeWave(band) {
+  const at = cart ? cart.position : new THREE.Vector3();
+  const tan = railTangent(t);
+
+  // ahead of the rider, offset to one side, so the pass crosses the view
+  const fwd = 70 + Math.random() * 90;
+  const side = (Math.random() - 0.5) * 150;
+
+  const cx = at.x + tan.x * fwd - tan.z * side;
+  const cz = at.z + tan.z * fwd + tan.x * side;
+
+  // the band runs roughly across the direction of travel, ±35°
+  const base = Math.atan2(tan.x, -tan.z);
+  const ang = base + (Math.random() - 0.5) * 1.22;
+
+  band.dx = Math.cos(ang);
+  band.dz = Math.sin(ang);
+  band.nx = -band.dz;
+  band.nz = band.dx;
+
+  band.ox = cx - band.dx * WAVE_SPAN * 0.5;
+  band.oz = cz - band.dz * WAVE_SPAN * 0.5;
+  band.phase = Math.random() * TAU;
+}
+
+/* One plot at a time, in order, each for WAVE_PASS seconds. The packet
+   crosses the band over the pass; the opacity ramp hides the ends of the
+   band so a plot arrives and leaves rather than being switched on. */
+function updateWaves(dt, now) {
+  wavePassT += dt;
+
+  if (wavePassT >= WAVE_PASS) {
+    wavePassT -= WAVE_PASS;
+    waveBands[waveTurn].group.visible = false;
+    waveTurn = (waveTurn + 1) % waveBands.length;
+
+    const next = waveBands[waveTurn];
+    placeWave(next);
+    next.group.visible = true;
+  }
+
+  const band = waveBands[waveTurn];
+  const k = wavePassT / WAVE_PASS;                    // 0..1 through the pass
+
+  // the packet enters one end and leaves the other
+  const centre = -0.15 + k * 1.3;
+
+  // fade in over the first eighth, out over the last fifth
+  const fade = Math.min(1, k / 0.12) * Math.min(1, (1 - k) / 0.2);
+
+  for (let n = 0; n < WAVE_LINES; n++) {
+    const { arr, geo, mat } = band.traces[n];
+
+    // -1..1 across the band, and a cosine falloff so the edges taper
+    const q = WAVE_LINES === 1 ? 0 : (n / (WAVE_LINES - 1)) * 2 - 1;
+    const across = q * WAVE_WIDTH * 0.5;
+    const taper = Math.cos(q * Math.PI * 0.5);
+
+    for (let i = 0; i <= WAVE_SEGS; i++) {
+      const u = i / WAVE_SEGS;
+      const d = u * WAVE_SPAN;
+
+      const x = band.ox + band.dx * d + band.nx * across;
+      const z = band.oz + band.dz * d + band.nz * across;
+
+      // gaussian packet riding along the band, carrier underneath
+      const s = (u - centre) / WAVE_SIGMA;
+      const env = Math.exp(-0.5 * s * s);
+      const h = env * Math.sin((u - centre) * WAVE_K * TAU + band.phase);
+
+      const j = i * 3;
+      arr[j]     = x;
+      arr[j + 1] = fieldH(x, z) + WAVE_LIFT + h * WAVE_AMP * taper;
+      arr[j + 2] = z;
+    }
+
+    geo.attributes.position.needsUpdate = true;
+    geo.computeBoundingSphere();
+    mat.opacity = fade * (0.34 + 0.5 * taper);
+  }
+}
+
+/* ============================================================================
    10 · STATION RAIL NAV
    ========================================================================= */
 
@@ -1910,6 +2079,7 @@ function openPanel(st) {
   // move the sheet into the panel stage
   $('#panel-stage').appendChild(el);
   el.classList.add('is-open');
+  tallySheetChrome(el);        // figures outside the cards count on arrival
 
   const co = el.querySelector('[data-coord]');
   if (co) co.textContent = `X ${st.x.toFixed(0)}  ·  Y ${st.y.toFixed(0)}  ·  Z ${st.h.toFixed(1)}`;
@@ -2495,7 +2665,7 @@ function protoChessPawn() {
 }
 
 function protoDrone() {
-  const b = VB();                                     // Sawtooth UAV
+  const b = VB();                                     // the drone years
   b.add(new THREE.BoxGeometry(0.85, 0.4, 0.85), HULL_D);
   [[-1.3, -1.3], [1.3, 1.3], [-1.3, 1.3], [1.3, -1.3]].forEach(([x, z]) => {
     b.add(new THREE.BoxGeometry(0.16, 0.12, 1.9), HULL_D, [x / 2, 0, z / 2], [0, Math.atan2(x, z), 0]);
@@ -2739,20 +2909,146 @@ function selectZone(id) {
    from zero — every figure here is straight off the resume.
    ========================================================================= */
 
+/* ---------- the resume plate: counters, notes, open-all ----------
+
+   Figures on the resume tick up rather than arriving finished. Only the
+   numeric run inside the element is rewritten, so the surrounding text is
+   untouched and "~1,500 tools" counts through "~1,203 tools" and lands back
+   on itself — no second copy of the string to keep in sync.               */
+
+const TALLY_MS = 900;
+
+function runTally(el) {
+  // the element's own text is the source of truth; cache it before the first
+  // frame overwrites it, so a re-open counts to the same place
+  const full = el.dataset.tallyText || (el.dataset.tallyText = el.textContent);
+  const m = full.match(/\d[\d,]*(?:\.\d+)?/);
+  if (!m) return;
+
+  const raw = m[0];
+  const target = parseFloat(raw.replace(/,/g, ''));
+  if (!isFinite(target)) return;
+
+  const head = full.slice(0, m.index);
+  const tail = full.slice(m.index + raw.length);
+  const decimals = (raw.split('.')[1] || '').length;
+  const grouped = raw.includes(',');
+
+  if (reduceMotion) { el.textContent = full; return; }
+
+  const fmt = (v) => {
+    let s = v.toFixed(decimals);
+    if (grouped) {
+      const [i, d] = s.split('.');
+      s = i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (d ? `.${d}` : '');
+    }
+    return s;
+  };
+
+  // a re-open supersedes any count still in flight on this element
+  const gen = (el.__tallyGen = (el.__tallyGen || 0) + 1);
+  const t0 = performance.now();
+
+  const step = (now) => {
+    if (el.__tallyGen !== gen) return;
+    const k = Math.min(1, (now - t0) / TALLY_MS);
+    el.textContent = head + fmt(target * (1 - Math.pow(1 - k, 3))) + tail;
+    if (k < 1) requestAnimationFrame(step);
+    else el.textContent = full;                       // land exactly on the source
+  };
+  requestAnimationFrame(step);
+}
+
+/** Count every figure on a sheet that is NOT inside a collapsed card. */
+function tallySheetChrome(sheetEl) {
+  sheetEl.querySelectorAll('[data-tally]').forEach((b) => {
+    if (!b.closest('.entry-panel')) runTally(b);
+  });
+}
+
+function setCard(entry, open) {
+  entry.classList.toggle('is-open', open);
+  entry.querySelector('.entry-head')?.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+  const panel = entry.querySelector('.entry-panel');
+  if (panel) panel.style.maxHeight = open ? `${panel.scrollHeight}px` : '';
+
+  if (open) entry.querySelectorAll('[data-tally]').forEach(runTally);
+  else entry.__noteReset?.();
+}
+
+/* Every figure carrying a note gets keyboard focus and writes into one notes
+   block at the foot of its own card. A block per card rather than a floating
+   tooltip: it never has to be positioned, it never covers the line you are
+   reading, and it reads like the notes field on a drawing. */
+function wireCardNotes(entry, panel) {
+  const cited = entry.querySelectorAll('.beat-t b[data-note]');
+  if (!cited.length) return;
+
+  const IDLE = 'Point at any figure for what it counts.';
+
+  const note = document.createElement('div');
+  note.className = 'beat-note';
+  note.innerHTML = '<span class="beat-note-k">Note</span>' +
+                   '<span class="beat-note-v is-idle"></span>';
+  panel.appendChild(note);
+
+  const slot = note.querySelector('.beat-note-v');
+  slot.textContent = IDLE;
+
+  const show = (b) => {
+    cited.forEach((o) => o.classList.toggle('is-cited', o === b));
+    slot.textContent = b.dataset.note;
+    slot.classList.remove('is-idle');
+  };
+  const reset = () => {
+    cited.forEach((o) => o.classList.remove('is-cited'));
+    slot.textContent = IDLE;
+    slot.classList.add('is-idle');
+  };
+
+  cited.forEach((b) => {
+    b.tabIndex = 0;
+    b.addEventListener('mouseenter', () => show(b));
+    b.addEventListener('mouseleave', reset);
+    b.addEventListener('focus', () => show(b));
+    b.addEventListener('blur', reset);
+  });
+
+  entry.__noteReset = reset;
+}
+
 function initResumeCards() {
   document.querySelectorAll('[data-entry]').forEach((entry) => {
     const head = entry.querySelector('.entry-head');
-    if (!head) return;
+    const panel = entry.querySelector('.entry-panel');
+    if (!head || !panel) return;
+
+    wireCardNotes(entry, panel);
 
     head.addEventListener('click', (e) => {
       e.stopPropagation();
-      const open = entry.classList.toggle('is-open');
-      head.setAttribute('aria-expanded', open ? 'true' : 'false');
-
-      const panel = entry.querySelector('.entry-panel');
-      if (panel) panel.style.maxHeight = open ? `${panel.scrollHeight}px` : '';
+      setCard(entry, !entry.classList.contains('is-open'));
     });
   });
+
+  document.querySelectorAll('[data-all]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const sheet = btn.closest('.sheet');
+      if (!sheet) return;
+
+      const entries = [...sheet.querySelectorAll('[data-entry]')];
+      const opening = !entries.every((en) => en.classList.contains('is-open'));
+      entries.forEach((en) => setCard(en, opening));
+      syncAllButton(btn, opening);
+    });
+  });
+}
+
+function syncAllButton(btn, opened) {
+  btn.textContent = opened ? 'Close all' : 'Open all';
+  btn.setAttribute('aria-expanded', opened ? 'true' : 'false');
 }
 
 /* Each coverage card carries the SAME series its row is running outside, so
@@ -2784,7 +3080,9 @@ function collapseCards(sheetEl) {
     entry.querySelector('.entry-head')?.setAttribute('aria-expanded', 'false');
     const p = entry.querySelector('.entry-panel');
     if (p) p.style.maxHeight = '';
+    entry.__noteReset?.();
   });
+  sheetEl.querySelectorAll('[data-all]').forEach((b) => syncAllButton(b, false));
 }
 
 /* ============================================================================
@@ -2809,6 +3107,10 @@ function frame() {
   } else if (tween) {
     updateTween(dt);
   }
+
+  // the plots keep running whether or not the ride is moving; a frozen wave
+  // beside a stopped cart would read as a paused video rather than a page
+  if (!reduceMotion) updateWaves(dt, now);
 
   // ---- object animation ----
   Object.values(stationGroups).forEach((grp) => {

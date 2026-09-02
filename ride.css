@@ -1142,6 +1142,394 @@ body.is-pointing #webgl { cursor: pointer; }
 .entry.is-open .vg-solar .npv { animation: vg-pop 420ms 800ms var(--ease-out) backwards; }
 
 /* ============================================================
+   RESUME PLATE
+   The resume sheet is the one page on the site that is read
+   rather than flown past, so it gets its own drafting furniture:
+   a rail the roles hang off, an instrument dial for the GPA, and
+   a notes block that answers whichever figure you point at.
+   ============================================================ */
+
+/* ---- education header ---- */
+
+.edu {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 30px;
+  align-items: start;
+}
+
+.edu-school {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.15;
+}
+.edu-degree {
+  font-size: 18px;
+  color: var(--ink-soft);
+  letter-spacing: 0.03em;
+  margin-top: 3px;
+}
+.edu-minor { color: var(--ink-faint); }
+.edu-where {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 7px;
+}
+
+/* small mono caption above a pill row */
+.rowlab {
+  font-family: var(--font-mono);
+  font-size: 9px !important;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint) !important;
+  margin: 16px 0 7px !important;
+}
+
+/* honours land like a rubber stamp rather than fading in */
+.stamps .pill { animation: none; }
+.sheet.is-open .stamps .pill {
+  animation: stamp-in 520ms var(--ease-out) backwards;
+}
+.sheet.is-open .stamps .pill:nth-child(1) { animation-delay: 160ms; }
+.sheet.is-open .stamps .pill:nth-child(2) { animation-delay: 250ms; }
+.sheet.is-open .stamps .pill:nth-child(3) { animation-delay: 340ms; }
+.sheet.is-open .stamps .pill:nth-child(4) { animation-delay: 430ms; }
+@keyframes stamp-in {
+  0%   { opacity: 0; transform: scale(1.7) rotate(-5deg); }
+  70%  { opacity: 1; transform: scale(0.97) rotate(0.6deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ---- GPA as an instrument dial ---- */
+
+.gpa {
+  position: relative;
+  width: 128px;
+  flex: none;
+  text-align: center;
+}
+.gpa svg { width: 128px; height: 128px; display: block; }
+.gpa-track {
+  fill: none;
+  stroke: var(--grid-med);
+  stroke-width: 6;
+}
+.gpa-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  /* start the sweep at twelve o'clock; box stated explicitly so the origin
+     resolves against the viewBox rather than the path's own bounds */
+  transform: rotate(-90deg);
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  /* r=40 -> circumference 251.33; 3.89/4.00 leaves 6.9 undrawn */
+  stroke-dasharray: 251.33;
+  stroke-dashoffset: 251.33;
+}
+.sheet.is-open .gpa-arc {
+  animation: gpa-sweep 1500ms 300ms var(--ease-out) forwards;
+}
+@keyframes gpa-sweep { to { stroke-dashoffset: 6.9; } }
+
+.gpa-read {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  right: 0;
+  line-height: 1;
+}
+.gpa-read b {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.gpa-of {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+.gpa-k {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 6px;
+}
+
+/* ---- the rail the roles hang off ---- */
+
+.plate-bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.plate-bar .entry-hint { margin: 0 !important; }
+
+.plate-all {
+  flex: none;
+  appearance: none;
+  border: 1px solid var(--ink-faint);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  cursor: pointer;
+  transition: border-color 200ms, color 200ms, background 200ms;
+}
+.plate-all:hover { border-color: var(--accent); color: var(--accent); }
+.plate-all:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.plate { position: relative; padding-left: 30px; }
+
+/* the rail itself — a dashed centreline, the way a section is marked up */
+.plate::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 16px;
+  bottom: 16px;
+  border-left: 1px dashed var(--grid-heavy);
+}
+
+.plate .entry.is-expandable { position: relative; }
+
+/* one station marker per role, sitting on the rail */
+.plate .entry.is-expandable::before {
+  content: "";
+  position: absolute;
+  left: -25px;
+  top: 20px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--grid-heavy);
+  background: var(--paper-lit);
+  transition: border-color 260ms var(--ease-out), background 260ms var(--ease-out),
+              box-shadow 260ms var(--ease-out), transform 260ms var(--ease-out);
+}
+/* the card slides 3px on hover; pull the marker back so it stays on the rail */
+.plate .entry.is-expandable:hover::before {
+  border-color: var(--accent);
+  transform: translateX(-3px);
+}
+.plate .entry.is-expandable.is-open::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(184, 68, 46, 0.15);
+  transform: none;
+}
+
+/* ---- figures you can interrogate ---- */
+
+.beat-t b[data-note] {
+  cursor: help;
+  border-bottom: 1px dotted var(--accent-soft);
+  transition: background 180ms, border-color 180ms;
+}
+.beat-t b[data-note]:hover,
+.beat-t b[data-note].is-cited {
+  background: rgba(184, 68, 46, 0.11);
+  border-bottom-color: var(--accent);
+}
+.beat-t b[data-note]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+/* counting digits must not reflow the line as they tick */
+.beat-t b[data-tally], .gpa-read b { font-variant-numeric: tabular-nums; }
+
+/* ---- the notes block at the foot of an open card ---- */
+
+.beat-note {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  margin: 0 15px;
+  /* padding rather than a bottom margin: the panel sizes itself from
+     scrollHeight, which does not count a trailing margin */
+  padding: 10px 0 14px;
+  border-top: 1px solid var(--grid-heavy);
+  min-height: 32px;
+}
+.beat-note-k {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.beat-note-v {
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.beat-note-v.is-idle { color: var(--ink-faint); font-style: normal; }
+
+/* ---- interests footer ---- */
+
+.interests {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 10px !important;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft) !important;
+  margin: 0 !important;
+}
+.interests span {
+  padding: 3px 13px;
+  border-right: 1px solid var(--grid-heavy);
+}
+.interests span:first-child { padding-left: 0; }
+.interests span:last-child { border-right: 0; }
+
+/* ============================================================
+   FIVE MORE SKETCHES
+   ============================================================ */
+
+/* ---- vg-cleanroom : the fab floor, scanned for removals ---- */
+.vg-cleanroom .bay { stroke: var(--ink); fill: rgba(255,253,246,.5); --len: 250; }
+.vg-cleanroom .tools rect { fill: var(--grid-heavy); stroke: none; opacity: .5; }
+.entry.is-open .vg-cleanroom .tools rect { opacity: .5; animation: vg-pop 360ms var(--ease-out) backwards; }
+.entry.is-open .vg-cleanroom .tools rect:nth-child(3n)   { animation-delay: 90ms; }
+.entry.is-open .vg-cleanroom .tools rect:nth-child(3n+1) { animation-delay: 180ms; }
+.vg-cleanroom .flagged rect { fill: none; stroke: var(--accent); stroke-width: 1.8; }
+.entry.is-open .vg-cleanroom .flagged rect {
+  animation: flag-mark 2.8s var(--ease-in-out) infinite;
+}
+.entry.is-open .vg-cleanroom .flagged rect:nth-child(2) { animation-delay: .18s; }
+.entry.is-open .vg-cleanroom .flagged rect:nth-child(3) { animation-delay: .36s; }
+@keyframes flag-mark { 0%, 40% { opacity: 0; } 55%, 92% { opacity: 1; } 100% { opacity: 0; } }
+.vg-cleanroom .scan { fill: rgba(184,68,46,.20); stroke: none; }
+.entry.is-open .vg-cleanroom .scan { animation: scan-sweep 2.8s var(--ease-in-out) infinite; }
+@keyframes scan-sweep {
+  0%   { opacity: 0; transform: translateX(0); }
+  8%   { opacity: 1; }
+  70%  { opacity: 1; transform: translateX(77px); }
+  100% { opacity: 0; transform: translateX(77px); }
+}
+
+/* ---- vg-fan : one origin, many futures ---- */
+.vg-fan .rule { stroke: var(--ink-faint); }
+.vg-fan .yrs line { stroke: var(--ink-faint); }
+.vg-fan .spread path { stroke: var(--accent); stroke-width: 1.5; --len: 120; }
+.vg-fan .s2 { stroke: rgba(184,68,46,.72); }
+.vg-fan .s3 { stroke: rgba(184,68,46,.52); }
+.vg-fan .s4 { stroke: rgba(184,68,46,.34); }
+.entry.is-open .vg-fan .spread path {
+  stroke-dasharray: var(--len, 120);
+  animation: vg-draw 820ms var(--ease-out) backwards;
+}
+.entry.is-open .vg-fan .s2 { animation-delay: 130ms; }
+.entry.is-open .vg-fan .s3 { animation-delay: 260ms; }
+.entry.is-open .vg-fan .s4 { animation-delay: 390ms; }
+.vg-fan .pivot { fill: var(--accent); stroke: var(--ink); }
+.entry.is-open .vg-fan .pivot { animation: vg-pop 380ms var(--ease-out) backwards; }
+
+/* ---- vg-stamp : the approval coming down ---- */
+/* neither class carries an "a", so the shared auto-draw rule skips them —
+   the outline is drawn explicitly instead */
+.vg-stamp .doc { stroke: var(--ink); fill: rgba(255,253,246,.8); }
+.entry.is-open .vg-stamp .doc {
+  stroke-dasharray: 180;
+  animation: vg-draw 820ms var(--ease-out) backwards;
+}
+.vg-stamp .dlines line { stroke: var(--grid-heavy); }
+.entry.is-open .vg-stamp .dlines line { animation: vg-slide 400ms var(--ease-out) backwards; }
+.entry.is-open .vg-stamp .dlines line:nth-child(2) { animation-delay: 80ms; }
+.entry.is-open .vg-stamp .dlines line:nth-child(3) { animation-delay: 160ms; }
+.entry.is-open .vg-stamp .dlines line:nth-child(4) { animation-delay: 240ms; }
+.vg-stamp .press {
+  transform-box: view-box;
+  transform-origin: 64px 34px;
+}
+.vg-stamp .ring1, .vg-stamp .ring2 { stroke: var(--accent); stroke-width: 1.7; }
+.vg-stamp .tick { stroke: var(--accent); stroke-width: 2.6; }
+.entry.is-open .vg-stamp .press {
+  animation: stamp-press 780ms 420ms var(--ease-out) backwards;
+}
+@keyframes stamp-press {
+  0%   { opacity: 0; transform: scale(2.3) rotate(-14deg); }
+  60%  { opacity: 1; transform: scale(0.9) rotate(2deg); }
+  80%  { transform: scale(1.05) rotate(-1deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ---- vg-lesson : the slate, and a pendulum that keeps swinging ---- */
+.vg-lesson .slate { stroke: var(--ink); fill: rgba(43,38,34,.055); --len: 210; }
+.vg-lesson .ledge { stroke: var(--ink); }
+.vg-lesson .swingarc { stroke: var(--grid-heavy); stroke-dasharray: 3 3 !important; animation: none !important; }
+.vg-lesson .pivot { fill: var(--ink); stroke: none; }
+.vg-lesson .rod { stroke: var(--ink); }
+.vg-lesson .bob { fill: var(--accent); stroke: var(--ink); }
+.vg-lesson .pend {
+  transform-box: view-box;
+  transform-origin: 37px 15px;
+}
+.entry.is-open .vg-lesson .pend { animation: swing 2.8s var(--ease-in-out) infinite; }
+@keyframes swing {
+  0%, 100% { transform: rotate(-27deg); }
+  50%      { transform: rotate(27deg); }
+}
+.vg-lesson .glyphs path { stroke: var(--accent); stroke-width: 1.7; }
+.entry.is-open .vg-lesson .glyphs path { animation: vg-pop 400ms var(--ease-out) backwards; }
+.entry.is-open .vg-lesson .g2 { animation-delay: 140ms; }
+.entry.is-open .vg-lesson .g3 { animation-delay: 280ms; }
+
+/* ---- vg-reach : three mentors, sixty kids ---- */
+.vg-reach .leads circle { fill: var(--accent); stroke: var(--ink); }
+.entry.is-open .vg-reach .leads circle { animation: vg-pop 380ms var(--ease-out) backwards; }
+.entry.is-open .vg-reach .leads circle:nth-child(2) { animation-delay: 100ms; }
+.entry.is-open .vg-reach .leads circle:nth-child(3) { animation-delay: 200ms; }
+.vg-reach .fanout path { stroke: var(--grid-heavy); --len: 55; }
+.vg-reach .kids circle { fill: rgba(255,253,246,.9); stroke: var(--ink-faint); }
+.entry.is-open .vg-reach .kids circle { animation: vg-pop 340ms 420ms var(--ease-out) backwards; }
+.entry.is-open .vg-reach .kids circle:nth-child(3n)   { animation-delay: 540ms; }
+.entry.is-open .vg-reach .kids circle:nth-child(3n+1) { animation-delay: 660ms; }
+.vg-reach .tot {
+  fill: var(--accent);
+  font-size: 12px;
+  paint-order: stroke;
+  stroke: var(--paper-lit);
+  stroke-width: 3.5;
+}
+.entry.is-open .vg-reach .tot { animation: vg-pop 460ms 860ms var(--ease-out) backwards; }
+
+/* ---- reduced motion: keep the drawings, drop the perpetual loops ---- */
+@media (prefers-reduced-motion: reduce) {
+  .sheet.is-open .gpa-arc { animation: none; stroke-dashoffset: 6.9; }
+  .sheet.is-open .stamps .pill { animation: none; }
+  .entry.is-open .vg-cleanroom .scan,
+  .entry.is-open .vg-cleanroom .flagged rect,
+  .entry.is-open .vg-lesson .pend { animation: none; }
+  .entry.is-open .vg-cleanroom .flagged rect { opacity: 1; }
+}
+
+/* ============================================================
    INTERACTIVE PITCH
    ============================================================ */
 
