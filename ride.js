@@ -3419,10 +3419,10 @@ function initResumeDeck() {
 
   sheet.querySelectorAll('.tile[data-dive]').forEach((tile) => {
     tile.addEventListener('click', () => openDive(tile.dataset.dive));
-    tile.addEventListener('mouseenter', () => hold('tile'));
-    tile.addEventListener('mouseleave', () => release('tile'));
-    tile.addEventListener('focus', () => hold('tile'));
-    tile.addEventListener('blur', () => release('tile'));
+    tile.addEventListener('mouseenter', () => holdReel('tile'));
+    tile.addEventListener('mouseleave', () => releaseReel('tile'));
+    tile.addEventListener('focus', () => holdReel('tile'));
+    tile.addEventListener('blur', () => releaseReel('tile'));
   });
 
   sheet.querySelectorAll('[data-deep-close]').forEach((b) => {
@@ -3453,7 +3453,7 @@ function buildFilmStrip() {
     b.className = 'dot';
     b.textContent = s.dataset.slide;
     b.setAttribute('aria-label', `Slide ${n + 1}: ${s.dataset.slide}`);
-    b.addEventListener('click', () => { stop(); showSlide(n, n > deck.i ? 'fwd' : 'bwd'); });
+    b.addEventListener('click', () => { stopReel(); showSlide(n, n > deck.i ? 'fwd' : 'bwd'); });
     strip.appendChild(b);
     deck.dots.push(b);
   });
@@ -3494,7 +3494,7 @@ function showSlide(n, dir) {
 }
 
 function nudge(step) {
-  stop();
+  stopReel();
   showSlide(deck.i + step, step > 0 ? 'fwd' : 'bwd');
 }
 
@@ -3532,7 +3532,7 @@ function stopDeck() {
   deck.raf = 0;
 }
 
-function stop() {
+function stopReel() {
   deck.playing = false;
   syncPlayButton();
 }
@@ -3551,9 +3551,10 @@ function syncPlayButton() {
   b.setAttribute('aria-label', deck.playing ? 'Pause the reel' : 'Play the reel');
 }
 
-/* A hold is temporary and lifts itself; a stop is a handover. */
-function hold(k) { deck.holds.add(k); }
-function release(k) { deck.holds.delete(k); }
+/* A hold is temporary and lifts itself; a stop is a handover. Named apart
+   from the ride's own release(), which lets the camera go. */
+function holdReel(k) { deck.holds.add(k); }
+function releaseReel(k) { deck.holds.delete(k); }
 
 /* ---- throwing the reel by hand ---- */
 
@@ -3596,13 +3597,13 @@ function wireSlideNotes(slide) {
     cited.forEach((o) => o.classList.toggle('is-cited', o === b));
     slot.textContent = b.dataset.note;
     slot.classList.remove('is-idle');
-    hold('note');
+    holdReel('note');
   };
   const reset = () => {
     cited.forEach((o) => o.classList.remove('is-cited'));
     slot.textContent = IDLE;
     slot.classList.add('is-idle');
-    release('note');
+    releaseReel('note');
   };
 
   cited.forEach((b) => {
@@ -3654,7 +3655,7 @@ function openDive(key) {
   }, art);
 
   const step = spec.build(root, read) || (() => {});
-  hold('dive');
+  holdReel('dive');
 
   wrap.hidden = false;
   requestAnimationFrame(() => wrap.classList.add('is-on'));
@@ -3697,7 +3698,7 @@ function closeDive() {
 
   const back = dive.from;
   dive = null;
-  release('dive');
+  releaseReel('dive');
   back?.focus?.();
   return true;
 }
