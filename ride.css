@@ -765,21 +765,7 @@ body.is-pointing #webgl { cursor: pointer; }
 }
 .entry li::marker { color: var(--accent); }
 
-/* plain (non-expandable) heads, e.g. Education */
-.entry:not(.is-expandable) .entry-head {
-  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-}
-
 /* ---- expandable experience cards ---- */
-
-.entry-hint {
-  font-family: var(--font-mono);
-  font-size: 10px !important;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint) !important;
-  margin: 0 0 12px !important;
-}
 
 .entry.is-expandable {
   margin-bottom: 10px;
@@ -891,642 +877,1078 @@ body.is-pointing #webgl { cursor: pointer; }
   white-space: nowrap;
 }
 
-/* ---- the sketch frame ---- */
-.vg {
-  display: block;
-  width: 104px;
-  height: 62px;
-  color: var(--ink);
-}
-.vg svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-.vg text {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  fill: var(--accent);
-  stroke: none;
-  letter-spacing: 0.06em;
-}
-
-/* nothing animates until the card is open */
-.vg * { opacity: 0; }
-.entry.is-open .vg * { opacity: 1; }
-
-/* shared helpers -------------------------------------------- */
-@keyframes vg-draw   { from { stroke-dashoffset: var(--len, 140); } to { stroke-dashoffset: 0; } }
-@keyframes vg-pop    { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: none; } }
-@keyframes vg-rise   { 0% { opacity: 0; transform: translateY(10px); }
-                       35% { opacity: 1; }
-                       100% { opacity: 0; transform: translateY(-16px); } }
-@keyframes vg-pulse  { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
-@keyframes vg-spin   { to { transform: rotate(360deg); } }
-@keyframes vg-slide  { from { transform: translateX(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-.entry.is-open .vg [class*="a"],
-.entry.is-open .vg .lines line,
-.entry.is-open .vg .trend,
-.entry.is-open .vg .spark,
-.entry.is-open .vg .hop,
-.entry.is-open .vg .climb,
-.entry.is-open .vg .path {
-  stroke-dasharray: var(--len, 160);
-  animation: vg-draw 900ms var(--ease-out) forwards;
-}
-
-/* ---- vg-join : datastores converging ---- */
-.vg-join .lines line { x2: 48px; y2: 30px; stroke: var(--grid-heavy); --len: 60; }
-.entry.is-open .vg-join .nodes circle { animation: vg-pop 420ms var(--ease-out) backwards; }
-.entry.is-open .vg-join .nodes circle:nth-child(2n) { animation-delay: 90ms; }
-.entry.is-open .vg-join .nodes circle:nth-child(3n) { animation-delay: 170ms; }
-.vg-join .floor { stroke: var(--accent-soft); stroke-dasharray: 3 3; }
-.vg-join .hub { fill: var(--accent); stroke: var(--ink); }
-.entry.is-open .vg-join .hub { animation: vg-pop 520ms 500ms var(--ease-out) backwards; }
-
-/* ---- vg-model : scatter resolving into a trend ---- */
-.vg-model .axis { stroke: var(--ink-faint); }
-.vg-model .band { fill: rgba(184,68,46,.14); stroke: none; }
-.vg-model .trend { stroke: var(--accent); stroke-width: 2; --len: 110; }
-.vg-model .ticks line { stroke: var(--ink-faint); }
-.vg-model .sweep { fill: rgba(184,68,46,.28); stroke: none; }
-.entry.is-open .vg-model .dots circle { fill: var(--ink); stroke: none; animation: vg-pop 380ms var(--ease-out) backwards; }
-.entry.is-open .vg-model .dots circle:nth-child(2) { animation-delay: 60ms; }
-.entry.is-open .vg-model .dots circle:nth-child(3) { animation-delay: 120ms; }
-.entry.is-open .vg-model .dots circle:nth-child(4) { animation-delay: 180ms; }
-.entry.is-open .vg-model .dots circle:nth-child(5) { animation-delay: 240ms; }
-.entry.is-open .vg-model .dots circle:nth-child(6) { animation-delay: 300ms; }
-.entry.is-open .vg-model .dots circle:nth-child(7) { animation-delay: 360ms; }
-.entry.is-open .vg-model .sweep { animation: model-sweep 2.6s 900ms var(--ease-in-out) infinite; }
-@keyframes model-sweep { 0% { transform: translateX(0); opacity: .5; }
-                         70% { transform: translateX(74px); opacity: .5; }
-                         100% { transform: translateX(74px); opacity: 0; } }
-
-/* ---- vg-strategy : dollars + battlefield arrows ---- */
-.vg-strategy .arw { stroke: var(--accent); stroke-width: 2; --len: 90; }
-.vg-strategy .a2 { animation-delay: 220ms !important; }
-.vg-strategy .head { fill: var(--accent); stroke: none; }
-.entry.is-open .vg-strategy .head { animation: vg-pop 300ms 820ms var(--ease-out) backwards; }
-.entry.is-open .vg-strategy .h2 { animation-delay: 1040ms; }
-.vg-strategy .dol text { font-size: 15px; fill: var(--accent); font-weight: 700; }
-.entry.is-open .vg-strategy .dol text { animation: vg-rise 2.4s var(--ease-out) infinite; }
-.entry.is-open .vg-strategy .d2 { animation-delay: .7s; }
-.entry.is-open .vg-strategy .d3 { animation-delay: 1.4s; }
-.vg-strategy .bars rect { fill: var(--ink); stroke: none; }
-.entry.is-open .vg-strategy .bars rect { animation: vg-pop 420ms 400ms var(--ease-out) backwards; }
-
-/* ---- vg-clock : hours given back ---- */
-.vg-clock .face { stroke: var(--ink); }
-.vg-clock .pips line { stroke: var(--ink-faint); }
-.vg-clock .pin { fill: var(--ink); stroke: none; }
-.vg-clock .hand { stroke: var(--accent); stroke-width: 2; transform-origin: 34px 30px; }
-.entry.is-open .vg-clock .hand { animation: vg-spin 1.1s linear infinite; }
-.vg-clock .sheets rect { stroke: var(--grid-heavy); fill: rgba(255,253,246,.8); }
-.entry.is-open .vg-clock .sheets rect { animation: sheet-away 2.6s var(--ease-in-out) infinite backwards; }
-.entry.is-open .vg-clock .s2 { animation-delay: .3s; }
-.entry.is-open .vg-clock .s3 { animation-delay: .6s; }
-@keyframes sheet-away { 0% { opacity: 1; transform: none; }
-                        60% { opacity: 1; transform: none; }
-                        100% { opacity: 0; transform: translate(18px,-14px) rotate(14deg); } }
-
-/* ---- vg-pitch : attacking arrows ---- */
-.vg-pitch .field, .vg-pitch .box { stroke: var(--ink-faint); }
-.vg-pitch .half, .vg-pitch .centre { stroke: var(--grid-heavy); }
-.vg-pitch .arw { stroke: var(--accent); stroke-width: 2; --len: 70; }
-.vg-pitch .a2 { animation-delay: 200ms !important; }
-.vg-pitch .a3 { animation-delay: 400ms !important; }
-.vg-pitch .head { fill: var(--accent); stroke: none; }
-.entry.is-open .vg-pitch .head { animation: vg-pop 280ms 1s var(--ease-out) backwards; }
-.vg-pitch .ball { fill: var(--ink); stroke: none; }
-.entry.is-open .vg-pitch .ball { animation: vg-pulse 1.6s var(--ease-in-out) infinite; }
-
-/* ---- vg-squad : cohort, then the picked few ---- */
-.vg-squad .crowd circle { fill: none; stroke: var(--grid-heavy); }
-.vg-squad .picked circle { fill: var(--accent); stroke: var(--ink); }
-.entry.is-open .vg-squad .picked circle { animation: vg-pop 420ms var(--ease-out) backwards; }
-.entry.is-open .vg-squad .picked circle:nth-child(2) { animation-delay: 140ms; }
-.entry.is-open .vg-squad .picked circle:nth-child(3) { animation-delay: 280ms; }
-.entry.is-open .vg-squad .picked circle:nth-child(4) { animation-delay: 420ms; }
-.entry.is-open .vg-squad .picked circle:nth-child(5) { animation-delay: 560ms; }
-.vg-squad .plans rect { stroke: var(--accent-soft); fill: rgba(184,68,46,.1); }
-.entry.is-open .vg-squad .plans rect { animation: vg-slide 420ms 700ms var(--ease-out) backwards; }
-
-/* ---- vg-cal : twice weekly ---- */
-.vg-cal .pad { stroke: var(--ink-faint); fill: rgba(255,253,246,.6); }
-.vg-cal .rule { stroke: var(--ink); }
-.vg-cal .cells rect { stroke: var(--grid-heavy); }
-.vg-cal .marks rect { fill: var(--accent); stroke: none; }
-.entry.is-open .vg-cal .marks rect { animation: vg-pulse 1.8s var(--ease-in-out) infinite; }
-.entry.is-open .vg-cal .marks rect:nth-child(2) { animation-delay: .25s; }
-.entry.is-open .vg-cal .marks rect:nth-child(3) { animation-delay: .5s; }
-.entry.is-open .vg-cal .marks rect:nth-child(4) { animation-delay: .75s; }
-
-/* ---- vg-drone : mission path ---- */
-.vg-drone .path { stroke: var(--grid-heavy); stroke-dasharray: 4 3; --len: 200; }
-.vg-drone .quad { stroke: var(--ink); }
-.vg-drone .quad rect { fill: var(--ink); }
-.vg-drone .quad circle { fill: rgba(184,68,46,.2); }
-.entry.is-open .vg-drone .quad {
-  offset-path: path("M8 48 C26 12, 48 52, 66 18 S84 22, 90 12");
-  offset-rotate: 0deg;
-  animation: fly 4s var(--ease-in-out) infinite;
-}
-@keyframes fly { 0% { offset-distance: 0%; } 100% { offset-distance: 100%; } }
-.vg-drone .ticks path { stroke: var(--accent); stroke-width: 2; }
-.entry.is-open .vg-drone .ticks path { animation: vg-pop 400ms 700ms var(--ease-out) backwards; }
-.entry.is-open .vg-drone .t2 { animation-delay: 900ms; }
-
-/* ---- vg-fleet : four aircraft ---- */
-.vg-fleet .craft path { fill: var(--ink); stroke: none; }
-.vg-fleet .frame { stroke: var(--grid-heavy); stroke-dasharray: 3 3; }
-.vg-fleet .c1 { transform: translate(14px, 10px); }
-.vg-fleet .c2 { transform: translate(34px, 22px); }
-.vg-fleet .c3 { transform: translate(54px, 34px); }
-.vg-fleet .c4 { transform: translate(74px, 22px); }
-.entry.is-open .vg-fleet .craft { animation: vg-pop 420ms var(--ease-out) backwards; }
-.entry.is-open .vg-fleet .c2 { animation-delay: 180ms; }
-.entry.is-open .vg-fleet .c3 { animation-delay: 360ms; }
-.entry.is-open .vg-fleet .c4 { animation-delay: 540ms; }
-
-/* ---- vg-market : till + receipt ---- */
-.vg-market .till, .vg-market .screen { stroke: var(--ink); fill: rgba(255,253,246,.7); }
-.vg-market .keys rect { fill: var(--grid-heavy); stroke: none; }
-.entry.is-open .vg-market .keys rect { animation: vg-pulse 2s var(--ease-in-out) infinite; }
-.entry.is-open .vg-market .keys rect:nth-child(2n) { animation-delay: .3s; }
-.entry.is-open .vg-market .keys rect:nth-child(3n) { animation-delay: .6s; }
-.vg-market .receipt { stroke: var(--ink-faint); fill: rgba(255,253,246,.9); }
-.vg-market .rlines line { stroke: var(--grid-heavy); }
-.vg-market .hangul { font-size: 11px; fill: var(--accent); }
-.entry.is-open .vg-market .hangul { animation: vg-pop 500ms 400ms var(--ease-out) backwards; }
-
-/* ---- vg-network : chapter outreach ---- */
-.vg-network .edges line { stroke: var(--grid-heavy); }
-.vg-network .peers circle { fill: rgba(255,253,246,.9); stroke: var(--ink); }
-.vg-network .chair { fill: var(--accent); stroke: var(--ink); }
-.entry.is-open .vg-network .peers circle { animation: vg-pop 420ms var(--ease-out) backwards; }
-.entry.is-open .vg-network .peers circle:nth-child(2) { animation-delay: 110ms; }
-.entry.is-open .vg-network .peers circle:nth-child(3) { animation-delay: 220ms; }
-.entry.is-open .vg-network .peers circle:nth-child(4) { animation-delay: 330ms; }
-.entry.is-open .vg-network .peers circle:nth-child(5) { animation-delay: 440ms; }
-.entry.is-open .vg-network .peers circle:nth-child(6) { animation-delay: 550ms; }
-.entry.is-open .vg-network .chair { animation: vg-pulse 2s var(--ease-in-out) infinite; }
-
-/* ---- vg-chess : the knight's L, and the climb ---- */
-.vg-chess .board rect { fill: var(--grid-heavy); stroke: none; opacity: .55; }
-.entry.is-open .vg-chess .board rect { opacity: .55; }
-.vg-chess .frame { stroke: var(--ink); }
-.vg-chess .hop { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 3; --len: 60; }
-.vg-chess .from { fill: var(--ink); stroke: none; }
-.vg-chess .to { fill: var(--accent); stroke: var(--ink); }
-.entry.is-open .vg-chess .to { animation: vg-pop 400ms 800ms var(--ease-out) backwards; }
-.vg-chess .base { stroke: var(--ink-faint); }
-.vg-chess .climb { stroke: var(--accent); stroke-width: 2; --len: 60; }
-.vg-chess .num { fill: var(--accent); font-size: 10px; }
-.entry.is-open .vg-chess .num { animation: vg-pop 420ms 900ms var(--ease-out) backwards; }
-
-/* ---- vg-funnel : screening the inbox ---- */
-.vg-funnel .mail rect { fill: rgba(255,253,246,.9); stroke: var(--ink-faint); }
-.entry.is-open .vg-funnel .mail rect { animation: mail-drop 2.4s var(--ease-in-out) infinite backwards; }
-.entry.is-open .vg-funnel .m2 { animation-delay: .3s; }
-.entry.is-open .vg-funnel .m3 { animation-delay: .6s; }
-.entry.is-open .vg-funnel .m4 { animation-delay: .9s; }
-@keyframes mail-drop { 0% { opacity: 0; transform: translateY(-10px); }
-                       20% { opacity: 1; transform: none; }
-                       60% { opacity: 1; transform: translateY(10px); }
-                       100% { opacity: 0; transform: translateY(18px) scale(.7); } }
-.vg-funnel .funnel { stroke: var(--ink); fill: rgba(184,68,46,.08); }
-.vg-funnel .drops circle { fill: var(--accent); stroke: none; }
-.entry.is-open .vg-funnel .drops circle { animation: drip 2.4s 1.1s var(--ease-in) infinite backwards; }
-.entry.is-open .vg-funnel .p2 { animation-delay: 1.9s; }
-@keyframes drip { 0% { opacity: 0; transform: translateY(-4px); }
-                  30% { opacity: 1; }
-                  100% { opacity: 0; transform: translateY(12px); } }
-
-/* ---- vg-dash : the reporting layer ---- */
-.vg-dash .pane { stroke: var(--ink); fill: rgba(255,253,246,.7); }
-.vg-dash .rule { stroke: var(--ink); }
-.vg-dash .spark { stroke: var(--accent); stroke-width: 2; --len: 110; }
-.vg-dash .kpi rect { fill: var(--grid-heavy); stroke: none; }
-.entry.is-open .vg-dash .kpi rect { animation: vg-slide 420ms 500ms var(--ease-out) backwards; }
-.vg-dash .cols rect { fill: var(--accent); stroke: none; transform-origin: center bottom; }
-.entry.is-open .vg-dash .cols rect { animation: grow 900ms var(--ease-out) backwards; }
-.entry.is-open .vg-dash .b1 { --h: 2.4; animation-delay: 600ms; }
-.entry.is-open .vg-dash .b2 { --h: 1.4; animation-delay: 720ms; }
-.entry.is-open .vg-dash .b3 { --h: 3.0; animation-delay: 840ms; }
-@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(var(--h, 2)); } }
-.entry.is-open .vg-dash .cols rect { transform: scaleY(var(--h, 2)); }
-
-/* ---- vg-solar : sun to cash flow ---- */
-.vg-solar .sun { stroke: var(--accent); fill: rgba(184,68,46,.16); }
-.vg-solar .rays line { stroke: var(--accent); }
-.entry.is-open .vg-solar .rays line { animation: vg-pulse 2s var(--ease-in-out) infinite; }
-.entry.is-open .vg-solar .rays line:nth-child(2n) { animation-delay: .35s; }
-.vg-solar .panel rect { fill: rgba(147,166,178,.35); stroke: var(--ink); }
-.vg-solar .panel line { stroke: var(--ink); }
-.vg-solar .zero { stroke: var(--ink); }
-.vg-solar .flow rect { fill: var(--accent); stroke: none; transform-origin: center bottom; }
-.entry.is-open .vg-solar .flow rect { animation: rise-bar 700ms var(--ease-out) backwards; }
-.entry.is-open .vg-solar .f1 { animation-delay: 200ms; }
-.entry.is-open .vg-solar .f2 { animation-delay: 340ms; }
-.entry.is-open .vg-solar .f3 { animation-delay: 480ms; }
-.entry.is-open .vg-solar .f4 { animation-delay: 620ms; }
-@keyframes rise-bar { from { transform: scaleY(0); } to { transform: none; } }
-.vg-solar .npv { fill: var(--accent); font-size: 9px; }
-.entry.is-open .vg-solar .npv { animation: vg-pop 420ms 800ms var(--ease-out) backwards; }
-
 /* ============================================================
-   RESUME PLATE
-   The resume sheet is the one page on the site that is read
-   rather than flown past, so it gets its own drafting furniture:
-   a rail the roles hang off, an instrument dial for the GPA, and
-   a notes block that answers whichever figure you point at.
+   SHARED DRAWING HELPERS
+   Used by the resume heroes and by the deep dives. Kept general
+   on purpose — a figure asks for a draw, a pop or a pulse and
+   supplies its own --len / --delay.
    ============================================================ */
 
-/* ---- education header ---- */
+@keyframes vg-draw  { from { stroke-dashoffset: var(--len, 140); } to { stroke-dashoffset: 0; } }
+@keyframes vg-pop   { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: none; } }
+@keyframes vg-rise  { 0% { opacity: 0; transform: translateY(10px); }
+                      35% { opacity: 1; }
+                      100% { opacity: 0; transform: translateY(-16px); } }
+@keyframes vg-pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes vg-spin  { to { transform: rotate(360deg); } }
+@keyframes vg-slide { from { transform: translateX(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes vg-fade  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vg-grow  { from { transform: scaleY(0); } to { transform: none; } }
 
-.edu {
+/* ============================================================
+   RESUME DECK
+   The resume is the one station that is not a page. It runs as
+   a reel of landscape plates — an instrument panel of the
+   academic record, then one plate per role — and it advances
+   itself until somebody touches it, at which point it stops and
+   hands over. Every figure on it is off the resume.
+   ============================================================ */
+
+/* The deck needs the whole window; every other sheet keeps the
+   shared card. #panel.is-wide is set by openPanel for .is-deck. */
+#panel.is-wide #panel-stage {
+  width: min(1720px, 96vw);
+  max-height: 94vh;
+}
+
+.sheet.is-deck {
+  height: min(94vh, 1000px);
+  max-height: none;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ---- transport bar ---- */
+
+.deck-bar {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.4vw, 22px);
+  padding: clamp(12px, 1.8vh, 20px) clamp(58px, 4vw, 76px) clamp(10px, 1.4vh, 15px) clamp(20px, 2.2vw, 34px);
+  border-bottom: 2px solid var(--ink);
+  flex: 0 0 auto;
+}
+
+.deck-bar .sheet-title { font-size: clamp(24px, 2.6vh, 34px); }
+
+.deck-slug {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-left: clamp(10px, 1.2vw, 18px);
+  border-left: 1px solid var(--grid-heavy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deck-transport {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+}
+
+.dk-btn {
+  width: 28px;
+  height: 24px;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 30px;
-  align-items: start;
+  place-items: center;
+  border: 1px solid var(--ink-faint);
+  background: rgba(255, 253, 246, 0.5);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 160ms, color 160ms, background 160ms;
+}
+.dk-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--paper-lit); }
+.dk-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dk-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.dk-play svg { fill: currentColor; stroke: none; }
+.dk-play .ic-play  { display: none; }
+.dk-play:not(.is-playing) .ic-pause { display: none; }
+.dk-play:not(.is-playing) .ic-play  { display: block; }
+
+.dk-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-left: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.dk-count b { color: var(--accent); font-weight: 500; }
+.dk-count i { font-style: normal; padding: 0 2px; }
+
+.deck-bar .sheet-coord { margin-left: 0; align-self: center; }
+
+/* the reel's own clock, run by ride.js so a pause is exact */
+.deck-prog {
+  flex: 0 0 auto;
+  height: 2px;
+  background: var(--grid-fine);
+  position: relative;
+  z-index: 2;
+}
+.deck-prog i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+}
+
+/* ---- the reel ---- */
+
+.deck-view {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.deck-reel { position: absolute; inset: 0; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.1vh, 14px);
+  padding: clamp(12px, 2vh, 24px) clamp(20px, 2.4vw, 40px) clamp(8px, 1.2vh, 16px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 420ms var(--ease-out),
+              transform 640ms var(--ease-out),
+              visibility 0s 640ms;
+}
+
+/* Direction is on the reel, so a slide only ever declares where it
+   rests: off to one side waiting, off to the other on the way out. */
+.deck-reel[data-dir="fwd"] .slide            { transform: translateX(7%); }
+.deck-reel[data-dir="fwd"] .slide.is-leaving { transform: translateX(-7%); }
+.deck-reel[data-dir="bwd"] .slide            { transform: translateX(-7%); }
+.deck-reel[data-dir="bwd"] .slide.is-leaving { transform: translateX(7%); }
+
+/* the plate on screen sits square, whichever way the reel is running — and
+   this has to out-weigh the directional rules above, not just follow them */
+.deck-reel[data-dir] .slide.is-live { transform: none; }
+
+.slide.is-live,
+.slide.is-leaving { visibility: visible; transition-delay: 0s; }
+
+.slide.is-live {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- film strip ---- */
+
+.deck-dots {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 0 clamp(20px, 2.4vw, 40px) clamp(10px, 1.4vh, 16px);
+  border-top: 1px solid var(--grid-heavy);
+  padding-top: clamp(8px, 1.2vh, 13px);
+}
+
+.dot {
+  flex: 1 1 0;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  border-top: 2px solid var(--grid-heavy);
+  padding: 7px 4px 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 200ms, border-color 200ms;
+}
+.dot:hover { color: var(--ink); border-top-color: var(--ink-soft); }
+.dot:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.dot.is-on { color: var(--accent); border-top-color: var(--accent); border-top-width: 3px; padding-top: 6px; }
+
+/* ============================================================
+   SLIDE 1 · THE INSTRUMENT PANEL
+   ============================================================ */
+
+.edu-band {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: clamp(8px, 1.2vh, 14px);
+  border-bottom: 1px solid var(--ink-faint);
+  flex: 0 0 auto;
 }
 
 .edu-school {
-  font-size: 26px;
+  font-size: clamp(24px, 3.2vh, 38px);
   font-weight: 700;
-  letter-spacing: 0.05em;
-  line-height: 1.15;
+  letter-spacing: 0.06em;
+  margin: 0;
+  line-height: 1;
 }
-.edu-degree {
-  font-size: 18px;
+/* Every one of these targets a <p>, and the shared `.sheet p` rule is a class
+   plus an element — more specific than a bare class. Scoping each to the deck
+   is what lets the deck's own metrics win. */
+.is-deck .edu-degree {
+  font-size: clamp(14px, 1.9vh, 19px);
   color: var(--ink-soft);
-  letter-spacing: 0.03em;
-  margin-top: 3px;
+  letter-spacing: 0.04em;
+  margin: 5px 0 0;
 }
 .edu-minor { color: var(--ink-faint); }
+
 .edu-where {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  margin-top: 7px;
+  margin: 0;
+  white-space: nowrap;
 }
 
-/* small mono caption above a pill row */
-.rowlab {
+.edu-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(0, 3.1fr);
+  gap: clamp(16px, 2vw, 34px);
+  padding-top: clamp(8px, 1.4vh, 16px);
+}
+
+/* ---- left rail ---- */
+
+.edu-rail {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.8vh, 20px);
+  min-width: 0;
+  min-height: 0;
+}
+
+.is-deck .rowlab {
   font-family: var(--font-mono);
-  font-size: 9px !important;
-  letter-spacing: 0.22em;
+  font-size: 9px;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--ink-faint) !important;
-  margin: 16px 0 7px !important;
+  color: var(--ink-faint);
+  margin: 0 0 7px;
 }
 
-/* honours land like a rubber stamp rather than fading in */
-.stamps .pill { animation: none; }
-.sheet.is-open .stamps .pill {
-  animation: stamp-in 520ms var(--ease-out) backwards;
-}
-.sheet.is-open .stamps .pill:nth-child(1) { animation-delay: 160ms; }
-.sheet.is-open .stamps .pill:nth-child(2) { animation-delay: 250ms; }
-.sheet.is-open .stamps .pill:nth-child(3) { animation-delay: 340ms; }
-.sheet.is-open .stamps .pill:nth-child(4) { animation-delay: 430ms; }
-@keyframes stamp-in {
-  0%   { opacity: 0; transform: scale(1.7) rotate(-5deg); }
-  70%  { opacity: 1; transform: scale(0.97) rotate(0.6deg); }
-  100% { opacity: 1; transform: none; }
-}
-
-/* ---- GPA as an instrument dial ---- */
-
+/* the GPA dial — the arc sweeps once, the first time the reel lands here */
 .gpa {
   position: relative;
-  width: 128px;
-  flex: none;
-  text-align: center;
+  width: clamp(110px, 15vh, 150px);
+  align-self: center;
+  flex: 0 0 auto;
 }
-.gpa svg { width: 128px; height: 128px; display: block; }
-.gpa-track {
-  fill: none;
-  stroke: var(--grid-med);
-  stroke-width: 6;
-}
+.gpa svg { width: 100%; height: auto; display: block; }
+.gpa-track { fill: none; stroke: var(--grid-heavy); stroke-width: 6; opacity: 0.6; }
 .gpa-arc {
   fill: none;
   stroke: var(--accent);
   stroke-width: 6;
   stroke-linecap: round;
-  /* start the sweep at twelve o'clock; box stated explicitly so the origin
-     resolves against the viewBox rather than the path's own bounds */
   transform: rotate(-90deg);
-  transform-box: view-box;
   transform-origin: 50% 50%;
-  /* r=40 -> circumference 251.33; 3.89/4.00 leaves 6.9 undrawn */
-  stroke-dasharray: 251.33;
-  stroke-dashoffset: 251.33;
+  stroke-dasharray: 251.3;
+  stroke-dashoffset: 251.3;
 }
-.sheet.is-open .gpa-arc {
-  animation: gpa-sweep 1500ms 300ms var(--ease-out) forwards;
-}
+.slide.is-live .gpa-arc { animation: gpa-sweep 1.5s 320ms var(--ease-out) forwards; }
 @keyframes gpa-sweep { to { stroke-dashoffset: 6.9; } }
 
 .gpa-read {
   position: absolute;
-  top: 46px;
-  left: 0;
-  right: 0;
-  line-height: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
 }
 .gpa-read b {
-  display: block;
   font-family: var(--font-mono);
-  font-size: 26px;
+  font-size: clamp(22px, 3vh, 30px);
   font-weight: 500;
-  color: var(--accent);
+  line-height: 1;
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
 }
 .gpa-of {
-  display: block;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--ink-faint);
-  margin-top: 4px;
 }
 .gpa-k {
   display: block;
+  text-align: center;
+  margin-top: 7px;
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  margin-top: 6px;
 }
 
-/* ---- the rail the roles hang off ---- */
-
-.plate-bar {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 12px;
-}
-.plate-bar .entry-hint { margin: 0 !important; }
-
-.plate-all {
-  flex: none;
-  appearance: none;
-  border: 1px solid var(--ink-faint);
-  background: transparent;
-  color: var(--ink-soft);
+/* scholarships, pressed on one after another */
+.stamps { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.stamps li {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
+  font-size: clamp(9px, 1.15vh, 10.5px);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 6px 11px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 6px 8px;
+  line-height: 1.3;
+  background: rgba(184, 68, 46, 0.05);
+}
+.slide.is-live .stamps li { animation: stamp-in 620ms var(--ease-out) backwards; }
+.slide.is-live .stamps li:nth-child(1) { animation-delay: 480ms; }
+.slide.is-live .stamps li:nth-child(2) { animation-delay: 590ms; }
+.slide.is-live .stamps li:nth-child(3) { animation-delay: 700ms; }
+.slide.is-live .stamps li:nth-child(4) { animation-delay: 810ms; }
+@keyframes stamp-in {
+  0%   { opacity: 0; transform: scale(1.5) rotate(-2.5deg); }
+  70%  { opacity: 1; transform: scale(0.97) rotate(0.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* the interests sit down here rather than in a band of their own: on a plate
+   the incidental notes go in the margin, not across the bottom */
+.off-clock { margin-top: auto; }
+.off-clock .pill { font-size: 8.5px; }
+
+/* ---- the tiles ---- */
+
+.edu-panel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.2vh, 14px);
+  min-width: 0;
+  min-height: 0;
+}
+
+.panel-lab { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.is-deck .panel-lab .rowlab { margin: 0; }
+.panel-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.tiles {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(7px, 0.9vw, 12px);
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  padding: clamp(9px, 1.3vh, 14px) clamp(10px, 0.9vw, 14px);
+  min-width: 0;
+  border: 1px solid var(--ink-faint);
+  background: var(--card-bg);
+  color: var(--ink);
+  font-family: inherit;
   cursor: pointer;
-  transition: border-color 200ms, color 200ms, background 200ms;
+  overflow: hidden;
+  transition: background 200ms, border-color 200ms, transform 260ms var(--ease-out);
 }
-.plate-all:hover { border-color: var(--accent); color: var(--accent); }
-.plate-all:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tile-rest { cursor: default; border-style: dashed; background: transparent; }
 
-.plate { position: relative; padding-left: 30px; }
-
-/* the rail itself — a dashed centreline, the way a section is marked up */
-.plate::before {
-  content: "";
-  position: absolute;
-  left: 9px;
-  top: 16px;
-  bottom: 16px;
-  border-left: 1px dashed var(--grid-heavy);
-}
-
-.plate .entry.is-expandable { position: relative; }
-
-/* one station marker per role, sitting on the rail */
-.plate .entry.is-expandable::before {
-  content: "";
-  position: absolute;
-  left: -25px;
-  top: 20px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  border: 1.5px solid var(--grid-heavy);
-  background: var(--paper-lit);
-  transition: border-color 260ms var(--ease-out), background 260ms var(--ease-out),
-              box-shadow 260ms var(--ease-out), transform 260ms var(--ease-out);
-}
-/* the card slides 3px on hover; pull the marker back so it stays on the rail */
-.plate .entry.is-expandable:hover::before {
+button.tile:hover,
+button.tile:focus-visible {
+  background: var(--card-bg-open);
   border-color: var(--accent);
-  transform: translateX(-3px);
+  transform: translateY(-2px);
+  outline: none;
 }
-.plate .entry.is-expandable.is-open::before {
-  background: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(184, 68, 46, 0.15);
-  transform: none;
+button.tile:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+
+.tile-name {
+  font-size: clamp(14px, 1.85vh, 18px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+.tile-sub {
+  font-family: var(--font-mono);
+  font-size: clamp(8.5px, 1.05vh, 9.5px);
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  line-height: 1.4;
 }
 
-/* ---- figures you can interrogate ---- */
+.tile-run {
+  margin-top: auto;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-top: 1px solid var(--accent-soft);
+  padding-top: 4px;
+  opacity: 0.5;
+  transition: opacity 200ms;
+}
+button.tile:hover .tile-run,
+button.tile:focus-visible .tile-run { opacity: 1; }
 
+/* every tile carries a live thumbnail of the dive behind its text */
+.tile-glyph {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 56%;
+  aspect-ratio: 1;
+  opacity: 0.16;
+  pointer-events: none;
+  transition: opacity 240ms;
+}
+button.tile:hover .tile-glyph { opacity: 0.3; }
+.tile-glyph svg { width: 100%; height: 100%; fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.tile-glyph svg .f { fill: var(--accent); stroke: none; }
+
+.tile-rest .pills { margin: 6px 0 0; }
+.tile-rest .pill { font-size: 8.5px; white-space: normal; }
+
+.edu-foot {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(14px, 1.6vw, 26px);
+  padding-top: clamp(8px, 1.2vh, 14px);
+  border-top: 1px solid var(--grid-heavy);
+}
+.is-deck .edu-foot .pills { margin: 0; }
+
+/* ============================================================
+   SLIDES 2-8 · THE ROLE PLATES
+   Same rhythm every time — identity, one big drawing, the lines,
+   a strip of figures — so only the drawing has to be learned.
+   ============================================================ */
+
+.plate-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: clamp(7px, 1.1vh, 13px);
+  border-bottom: 1px solid var(--ink-faint);
+}
+
+.plate-org {
+  font-size: clamp(20px, 2.9vh, 34px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin: 0;
+  line-height: 1.05;
+}
+.is-deck .plate-role {
+  font-size: clamp(13px, 1.75vh, 18px);
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  margin: 4px 0 0;
+}
+.is-deck .plate-when {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+.is-deck .plate-when i { font-style: normal; padding: 0 7px; color: var(--grid-heavy); }
+
+.plate-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(18px, 2.4vw, 40px);
+  align-items: center;
+  padding: clamp(8px, 1.4vh, 18px) 0;
+}
+
+/* ---- the drawing ---- */
+
+.hero {
+  margin: 0;
+  min-width: 0;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+}
+.hero svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  display: block;
+  overflow: visible;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* nothing on a drawing exists until its slide is up */
+.hero svg > * { opacity: 0; }
+.slide.is-live .hero svg > * { opacity: 1; }
+
+.hero .cap {
+  fill: var(--ink-faint);
+  stroke: none;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+}
+.hero .cap.right { text-anchor: end; }
+
+/* ---- the lines ---- */
+
+.slide .beats { padding: 0; min-width: 0; display: grid; gap: clamp(6px, 0.9vh, 12px); }
+.slide .beat {
+  display: block;
+  padding: 0 0 0 clamp(14px, 1.2vw, 20px);
+  border-bottom: 0;
+  border-left: 2px solid var(--grid-heavy);
+  transition: border-color 240ms;
+}
+.slide .beat:hover { border-left-color: var(--accent-soft); }
+.slide.is-live .beat { animation: vg-slide 560ms var(--ease-out) backwards; }
+.slide.is-live .beat:nth-child(1) { animation-delay: 220ms; }
+.slide.is-live .beat:nth-child(2) { animation-delay: 340ms; }
+.slide.is-live .beat:nth-child(3) { animation-delay: 460ms; }
+.slide.is-live .beat:nth-child(4) { animation-delay: 580ms; }
+
+.slide .beat-t { font-size: clamp(13px, 1.85vh, 18px); line-height: 1.55; }
+
+/* figures you can interrogate; the rest are just emphasis */
 .beat-t b[data-note] {
-  cursor: help;
   border-bottom: 1px dotted var(--accent-soft);
-  transition: background 180ms, border-color 180ms;
+  cursor: help;
+  transition: background 160ms, color 160ms;
 }
 .beat-t b[data-note]:hover,
 .beat-t b[data-note].is-cited {
-  background: rgba(184, 68, 46, 0.11);
-  border-bottom-color: var(--accent);
+  background: rgba(184, 68, 46, 0.13);
+  color: var(--accent);
 }
 .beat-t b[data-note]:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+  border-radius: 1px;
 }
-/* counting digits must not reflow the line as they tick */
-.beat-t b[data-tally], .gpa-read b { font-variant-numeric: tabular-nums; }
 
-/* ---- the notes block at the foot of an open card ---- */
+/* ---- the figure strip ---- */
 
-.beat-note {
-  display: flex;
-  align-items: baseline;
-  gap: 11px;
-  margin: 0 15px;
-  /* padding rather than a bottom margin: the panel sizes itself from
-     scrollHeight, which does not count a trailing margin */
-  padding: 10px 0 14px;
+.plate-foot {
+  flex: 0 0 auto;
   border-top: 1px solid var(--grid-heavy);
-  min-height: 32px;
+  padding-top: clamp(7px, 1.1vh, 13px);
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 34px);
 }
-.beat-note-k {
-  flex: none;
+
+.stats { display: flex; gap: clamp(16px, 2.2vw, 40px); flex: 0 0 auto; }
+.st { display: flex; flex-direction: column; gap: 2px; }
+.st b {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.22em;
+  font-size: clamp(16px, 2.3vh, 24px);
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.st span {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
-.beat-note-v {
-  font-size: 14.5px;
+.slide.is-live .st { animation: vg-pop 460ms var(--ease-out) backwards; }
+.slide.is-live .st:nth-child(1) { animation-delay: 700ms; }
+.slide.is-live .st:nth-child(2) { animation-delay: 790ms; }
+.slide.is-live .st:nth-child(3) { animation-delay: 880ms; }
+.slide.is-live .st:nth-child(4) { animation-delay: 970ms; }
+
+/* the note the cited figures write into */
+.is-deck .slide-note {
+  margin: 0 0 0 auto;
+  text-align: right;
+  max-width: 44ch;
+  font-size: 12.5px;
   line-height: 1.45;
   color: var(--ink-soft);
   font-style: italic;
+  border-right: 2px solid var(--accent-soft);
+  padding-right: 11px;
+  transition: color 180ms;
 }
-.beat-note-v.is-idle { color: var(--ink-faint); font-style: normal; }
-
-/* ---- interests footer ---- */
-
-.interests {
-  display: flex;
-  flex-wrap: wrap;
-  font-family: var(--font-mono);
-  font-size: 10px !important;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-soft) !important;
-  margin: 0 !important;
-}
-.interests span {
-  padding: 3px 13px;
-  border-right: 1px solid var(--grid-heavy);
-}
-.interests span:first-child { padding-left: 0; }
-.interests span:last-child { border-right: 0; }
+.is-deck .slide-note.is-idle { color: var(--ink-faint); font-style: normal; }
 
 /* ============================================================
-   FIVE MORE SKETCHES
+   THE SEVEN DRAWINGS
    ============================================================ */
 
-/* ---- vg-cleanroom : the fab floor, scanned for removals ---- */
-.vg-cleanroom .bay { stroke: var(--ink); fill: rgba(255,253,246,.5); --len: 250; }
-.vg-cleanroom .tools rect { fill: var(--grid-heavy); stroke: none; opacity: .5; }
-.entry.is-open .vg-cleanroom .tools rect { opacity: .5; animation: vg-pop 360ms var(--ease-out) backwards; }
-.entry.is-open .vg-cleanroom .tools rect:nth-child(3n)   { animation-delay: 90ms; }
-.entry.is-open .vg-cleanroom .tools rect:nth-child(3n+1) { animation-delay: 180ms; }
-.vg-cleanroom .flagged rect { fill: none; stroke: var(--accent); stroke-width: 1.8; }
-.entry.is-open .vg-cleanroom .flagged rect {
-  animation: flag-mark 2.8s var(--ease-in-out) infinite;
-}
-.entry.is-open .vg-cleanroom .flagged rect:nth-child(2) { animation-delay: .18s; }
-.entry.is-open .vg-cleanroom .flagged rect:nth-child(3) { animation-delay: .36s; }
-@keyframes flag-mark { 0%, 40% { opacity: 0; } 55%, 92% { opacity: 1; } 100% { opacity: 0; } }
-.vg-cleanroom .scan { fill: rgba(184,68,46,.20); stroke: none; }
-.entry.is-open .vg-cleanroom .scan { animation: scan-sweep 2.8s var(--ease-in-out) infinite; }
+/* ---- hero-fab : the cleanroom register, scanned ---- */
+.hero-fab .shell { stroke: var(--ink); fill: rgba(255, 253, 246, 0.45); }
+.hero-fab .bays line { stroke: var(--grid-heavy); stroke-dasharray: 3 4; }
+.hero-fab .tools rect { fill: var(--grid-heavy); stroke: none; opacity: 0.45; }
+.slide.is-live .hero-fab .tools rect { animation: vg-pop 340ms var(--ease-out) backwards; }
+.hero-fab .flags rect { fill: none; stroke: var(--accent); stroke-width: 2; }
+.slide.is-live .hero-fab .flags rect { animation: flag-mark 3.4s 900ms var(--ease-out) infinite backwards; }
+@keyframes flag-mark { 0%, 22% { opacity: 0; } 34%, 88% { opacity: 1; } 100% { opacity: 0; } }
+.hero-fab .scan { fill: rgba(184, 68, 46, 0.18); stroke: none; }
+.slide.is-live .hero-fab .scan { animation: scan-sweep 3.4s var(--ease-in-out) infinite; }
 @keyframes scan-sweep {
-  0%   { opacity: 0; transform: translateX(0); }
+  0%   { transform: translateX(0);    opacity: 0; }
   8%   { opacity: 1; }
-  70%  { opacity: 1; transform: translateX(77px); }
-  100% { opacity: 0; transform: translateX(77px); }
+  84%  { transform: translateX(399px); opacity: 1; }
+  100% { transform: translateX(399px); opacity: 0; }
+}
+.hero-fab .legend rect { fill: var(--grid-heavy); stroke: none; opacity: 0.45; }
+.hero-fab .legend rect.lit { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 1; }
+.hero-fab .legend text {
+  fill: var(--ink-faint); stroke: none;
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.hero-fab .area {
+  fill: var(--accent); stroke: none; text-anchor: end;
+  font-family: var(--font-mono); font-size: 11px;
 }
 
-/* ---- vg-fan : one origin, many futures ---- */
-.vg-fan .rule { stroke: var(--ink-faint); }
-.vg-fan .yrs line { stroke: var(--ink-faint); }
-.vg-fan .spread path { stroke: var(--accent); stroke-width: 1.5; --len: 120; }
-.vg-fan .s2 { stroke: rgba(184,68,46,.72); }
-.vg-fan .s3 { stroke: rgba(184,68,46,.52); }
-.vg-fan .s4 { stroke: rgba(184,68,46,.34); }
-.entry.is-open .vg-fan .spread path {
-  stroke-dasharray: var(--len, 120);
-  animation: vg-draw 820ms var(--ease-out) backwards;
+/* ---- hero-pitch : the eighteen, and the shape ---- */
+.hero-pitch .turf { fill: #DDE3CB; stroke: none; }
+.hero-pitch .marks rect, .hero-pitch .marks circle, .hero-pitch .marks line {
+  stroke: rgba(255, 255, 255, 0.72); fill: none;
 }
-.entry.is-open .vg-fan .s2 { animation-delay: 130ms; }
-.entry.is-open .vg-fan .s3 { animation-delay: 260ms; }
-.entry.is-open .vg-fan .s4 { animation-delay: 390ms; }
-.vg-fan .pivot { fill: var(--accent); stroke: var(--ink); }
-.entry.is-open .vg-fan .pivot { animation: vg-pop 380ms var(--ease-out) backwards; }
+.hero-pitch .marks .spot { fill: rgba(255, 255, 255, 0.72); stroke: none; }
+.hero-pitch .opps rect { fill: var(--grid-heavy); stroke: none; opacity: 0.5; }
+.slide.is-live .hero-pitch .opps rect { animation: vg-pop 300ms var(--ease-out) backwards; }
+.hero-pitch .opps rect.lit { fill: var(--accent); opacity: 1; }
+.hero-pitch .shape circle { fill: rgba(255, 253, 246, 0.92); stroke: var(--ink); }
+.slide.is-live .hero-pitch .shape circle { animation: vg-pop 380ms 400ms var(--ease-out) backwards; }
+.hero-pitch .target { fill: rgba(184, 68, 46, 0.1); stroke: var(--accent-soft); stroke-dasharray: 3 3; }
+.hero-pitch .runs path { stroke: var(--accent); stroke-width: 1.5; --len: 320; }
+.hero-pitch .r3 { stroke-dasharray: 320; opacity: .75; }
+.slide.is-live .hero-pitch .runs path { stroke-dasharray: 320; animation: vg-draw 1.1s 500ms var(--ease-out) backwards; }
+.slide.is-live .hero-pitch .r2 { animation-delay: 700ms; }
+.slide.is-live .hero-pitch .r3 { animation-delay: 900ms; }
+.hero-pitch .head { fill: var(--accent); stroke: none; }
+.slide.is-live .hero-pitch .head { animation: vg-pop 300ms 1.7s var(--ease-out) backwards; }
+.hero-pitch .ball { fill: var(--ink); stroke: none; }
+.slide.is-live .hero-pitch .ball { animation: ball-roll 3.6s 1s var(--ease-in-out) infinite backwards; }
+@keyframes ball-roll {
+  0%   { transform: none; opacity: 1; }
+  60%  { transform: translate(278px, -10px); opacity: 1; }
+  76%  { transform: translate(278px, -10px); opacity: 0; }
+  100% { transform: none; opacity: 0; }
+}
+.hero-pitch .weeks rect { fill: var(--accent); stroke: none; }
+.slide.is-live .hero-pitch .weeks rect { animation: vg-pulse 2.6s var(--ease-in-out) infinite backwards; }
 
-/* ---- vg-stamp : the approval coming down ---- */
-/* neither class carries an "a", so the shared auto-draw rule skips them —
-   the outline is drawn explicitly instead */
-.vg-stamp .doc { stroke: var(--ink); fill: rgba(255,253,246,.8); }
-.entry.is-open .vg-stamp .doc {
-  stroke-dasharray: 180;
-  animation: vg-draw 820ms var(--ease-out) backwards;
+/* ---- hero-sift : two hundred in, fifteen percent out ---- */
+.hero-sift .inbox rect { fill: rgba(255, 253, 246, 0.9); stroke: var(--ink-faint); stroke-width: 1; }
+.slide.is-live .hero-sift .inbox rect { animation: mail-in 3s var(--ease-out) infinite backwards; }
+@keyframes mail-in {
+  0%   { opacity: 0; transform: translate(-14px, 0); }
+  16%  { opacity: 1; transform: none; }
+  74%  { opacity: 1; transform: none; }
+  88%  { opacity: 0; transform: translate(22px, 0); }
+  100% { opacity: 0; }
 }
-.vg-stamp .dlines line { stroke: var(--grid-heavy); }
-.entry.is-open .vg-stamp .dlines line { animation: vg-slide 400ms var(--ease-out) backwards; }
-.entry.is-open .vg-stamp .dlines line:nth-child(2) { animation-delay: 80ms; }
-.entry.is-open .vg-stamp .dlines line:nth-child(3) { animation-delay: 160ms; }
-.entry.is-open .vg-stamp .dlines line:nth-child(4) { animation-delay: 240ms; }
-.vg-stamp .press {
-  transform-box: view-box;
-  transform-origin: 64px 34px;
+.hero-sift .gate { stroke: var(--ink); fill: rgba(255, 253, 246, 0.55); }
+.hero-sift .gk {
+  fill: var(--ink); stroke: none; text-anchor: middle;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em;
 }
-.vg-stamp .ring1, .vg-stamp .ring2 { stroke: var(--accent); stroke-width: 1.7; }
-.vg-stamp .tick { stroke: var(--accent); stroke-width: 2.6; }
-.entry.is-open .vg-stamp .press {
-  animation: stamp-press 780ms 420ms var(--ease-out) backwards;
+.hero-sift .rules line { stroke: var(--grid-heavy); stroke-dasharray: 2 3; }
+.hero-sift .rulehits rect { fill: rgba(184, 68, 46, 0.28); stroke: none; }
+.slide.is-live .hero-sift .rulehits rect { animation: rule-fill 3s var(--ease-out) infinite backwards; }
+.slide.is-live .hero-sift .rulehits rect:nth-child(2) { animation-delay: 220ms; }
+.slide.is-live .hero-sift .rulehits rect:nth-child(3) { animation-delay: 440ms; }
+.slide.is-live .hero-sift .rulehits rect:nth-child(4) { animation-delay: 660ms; }
+@keyframes rule-fill { 0% { width: 0; } 40%, 88% { width: 112px; } 100% { width: 0; } }
+.hero-sift .funnel { stroke: var(--ink); fill: rgba(184, 68, 46, 0.08); }
+.hero-sift .drip circle { fill: var(--accent); stroke: none; }
+.slide.is-live .hero-sift .drip circle { animation: drip-down 2.4s var(--ease-in) infinite backwards; }
+@keyframes drip-down {
+  0%   { opacity: 0; transform: translateY(-6px); }
+  20%  { opacity: 1; }
+  70%  { opacity: 1; transform: translateY(30px); }
+  100% { opacity: 0; transform: translateY(30px); }
 }
-@keyframes stamp-press {
-  0%   { opacity: 0; transform: scale(2.3) rotate(-14deg); }
-  60%  { opacity: 1; transform: scale(0.9) rotate(2deg); }
-  80%  { transform: scale(1.05) rotate(-1deg); }
-  100% { opacity: 1; transform: none; }
+.hero-sift .tray { stroke: var(--accent); fill: rgba(184, 68, 46, 0.12); }
+.hero-sift .trayk {
+  fill: var(--accent); stroke: none; text-anchor: middle;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+}
+.hero-sift .handoff { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 250; }
+.slide.is-live .hero-sift .handoff { --len: 250; animation: vg-draw 1.2s 900ms var(--ease-out) backwards; }
+.hero-sift .head { fill: var(--accent); stroke: none; }
+.slide.is-live .hero-sift .head { animation: vg-pop 300ms 2s var(--ease-out) backwards; }
+
+/* ---- hero-web : the chair, the members, the alumni ---- */
+.hero-web .orbit { stroke: var(--grid-heavy); stroke-dasharray: 3 5; fill: none; }
+.hero-web .spokes line { stroke: var(--grid-heavy); }
+.slide.is-live .hero-web .spokes line { --len: 120; stroke-dasharray: 120; animation: vg-draw 900ms var(--ease-out) backwards; }
+.hero-web .members circle { fill: rgba(255, 253, 246, 0.95); stroke: var(--ink); }
+.slide.is-live .hero-web .members circle { animation: vg-pop 420ms 400ms var(--ease-out) backwards; }
+.hero-web .alumni circle { fill: none; stroke: var(--accent); stroke-dasharray: 2 2; }
+.slide.is-live .hero-web .alumni circle { animation: vg-pop 420ms 800ms var(--ease-out) backwards; }
+.hero-web .chair { fill: var(--accent); stroke: var(--ink); stroke-width: 1.6; }
+.slide.is-live .hero-web .chair { animation: vg-pulse 2.4s var(--ease-in-out) infinite; }
+.hero-web .chairk {
+  fill: var(--paper-lit); stroke: none; text-anchor: middle;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+}
+.hero-web .ringk {
+  fill: var(--ink-faint); stroke: none; text-anchor: middle;
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em;
 }
 
-/* ---- vg-lesson : the slate, and a pendulum that keeps swinging ---- */
-.vg-lesson .slate { stroke: var(--ink); fill: rgba(43,38,34,.055); --len: 210; }
-.vg-lesson .ledge { stroke: var(--ink); }
-.vg-lesson .swingarc { stroke: var(--grid-heavy); stroke-dasharray: 3 3 !important; animation: none !important; }
-.vg-lesson .pivot { fill: var(--ink); stroke: none; }
-.vg-lesson .rod { stroke: var(--ink); }
-.vg-lesson .bob { fill: var(--accent); stroke: var(--ink); }
-.vg-lesson .pend {
-  transform-box: view-box;
-  transform-origin: 37px 15px;
+/* ---- hero-board : the knight's route, and the climb ---- */
+.hero-board .board rect { fill: var(--grid-heavy); stroke: none; opacity: 0.42; }
+.hero-board .frame { stroke: var(--ink); fill: none; }
+.hero-board .route { stroke: var(--accent); stroke-width: 2.2; --len: 420; }
+.slide.is-live .hero-board .route { stroke-dasharray: 420; animation: vg-draw 2.2s 400ms var(--ease-out) backwards; }
+.hero-board .stops circle { fill: var(--paper-lit); stroke: var(--accent); stroke-width: 1.8; }
+.slide.is-live .hero-board .stops circle { animation: vg-pop 320ms var(--ease-out) backwards; }
+.hero-board .elo .ax { stroke: var(--ink-faint); }
+.hero-board .elo .climb { stroke: var(--accent); stroke-width: 2.2; --len: 230; }
+.slide.is-live .hero-board .climb { stroke-dasharray: 230; animation: vg-draw 1.5s 700ms var(--ease-out) backwards; }
+.hero-board .num {
+  fill: var(--accent); stroke: none; text-anchor: end;
+  font-family: var(--font-mono); font-size: 14px;
 }
-.entry.is-open .vg-lesson .pend { animation: swing 2.8s var(--ease-in-out) infinite; }
-@keyframes swing {
-  0%, 100% { transform: rotate(-27deg); }
-  50%      { transform: rotate(27deg); }
+.slide.is-live .hero-board .num { animation: vg-pop 460ms 2s var(--ease-out) backwards; }
+.hero-board .axk {
+  fill: var(--ink-faint); stroke: none;
+  font-family: var(--font-mono); font-size: 7.5px; letter-spacing: 0.14em;
 }
-.vg-lesson .glyphs path { stroke: var(--accent); stroke-width: 1.7; }
-.entry.is-open .vg-lesson .glyphs path { animation: vg-pop 400ms var(--ease-out) backwards; }
-.entry.is-open .vg-lesson .g2 { animation-delay: 140ms; }
-.entry.is-open .vg-lesson .g3 { animation-delay: 280ms; }
+.hero-board .axk.right { text-anchor: end; }
+.hero-board .seats rect { fill: none; stroke: var(--ink-faint); }
+.hero-board .seats rect.lit { fill: var(--accent); stroke: var(--accent); }
+.slide.is-live .hero-board .seats rect { animation: vg-pop 300ms var(--ease-out) backwards; }
 
-/* ---- vg-reach : three mentors, sixty kids ---- */
-.vg-reach .leads circle { fill: var(--accent); stroke: var(--ink); }
-.entry.is-open .vg-reach .leads circle { animation: vg-pop 380ms var(--ease-out) backwards; }
-.entry.is-open .vg-reach .leads circle:nth-child(2) { animation-delay: 100ms; }
-.entry.is-open .vg-reach .leads circle:nth-child(3) { animation-delay: 200ms; }
-.vg-reach .fanout path { stroke: var(--grid-heavy); --len: 55; }
-.vg-reach .kids circle { fill: rgba(255,253,246,.9); stroke: var(--ink-faint); }
-.entry.is-open .vg-reach .kids circle { animation: vg-pop 340ms 420ms var(--ease-out) backwards; }
-.entry.is-open .vg-reach .kids circle:nth-child(3n)   { animation-delay: 540ms; }
-.entry.is-open .vg-reach .kids circle:nth-child(3n+1) { animation-delay: 660ms; }
-.vg-reach .tot {
-  fill: var(--accent);
-  font-size: 12px;
-  paint-order: stroke;
-  stroke: var(--paper-lit);
-  stroke-width: 3.5;
+/* ---- hero-teach : the slate that keeps swinging, and the reach ---- */
+.hero-teach .slate { stroke: var(--ink); fill: rgba(43, 38, 34, 0.07); }
+.hero-teach .ledge { stroke: var(--ink); }
+.hero-teach .swingarc { stroke: var(--grid-heavy); stroke-dasharray: 3 4; }
+.hero-teach .pivot { fill: var(--ink); stroke: none; }
+.hero-teach .rod { stroke: var(--ink); }
+.hero-teach .bob { fill: var(--accent); stroke: var(--ink); }
+.hero-teach .pend { transform-origin: 108px 46px; }
+.slide.is-live .hero-teach .pend { animation: swing 3s var(--ease-in-out) infinite; }
+@keyframes swing { 0%, 100% { transform: rotate(-26deg); } 50% { transform: rotate(26deg); } }
+.hero-teach .glyphs path { stroke: var(--accent); stroke-width: 1.8; }
+.slide.is-live .hero-teach .glyphs path { animation: vg-pop 400ms var(--ease-out) backwards; }
+.slide.is-live .hero-teach .g2 { animation-delay: 150ms; }
+.slide.is-live .hero-teach .g3 { animation-delay: 300ms; }
+.hero-teach .leads circle { fill: var(--accent); stroke: var(--ink); }
+.slide.is-live .hero-teach .leads circle { animation: vg-pop 380ms 300ms var(--ease-out) backwards; }
+.hero-teach .fan path { stroke: var(--grid-heavy); --len: 130; }
+.slide.is-live .hero-teach .fan path { stroke-dasharray: 130; animation: vg-draw 900ms 500ms var(--ease-out) backwards; }
+.hero-teach .kids circle { fill: rgba(255, 253, 246, 0.9); stroke: var(--ink-faint); stroke-width: 1; }
+.slide.is-live .hero-teach .kids circle { animation: vg-pop 320ms var(--ease-out) backwards; }
+.hero-teach .tot {
+  fill: var(--accent); stroke: none; text-anchor: end;
+  font-family: var(--font-mono); font-size: 15px;
+  paint-order: stroke; stroke: var(--paper-lit); stroke-width: 4;
 }
-.entry.is-open .vg-reach .tot { animation: vg-pop 460ms 860ms var(--ease-out) backwards; }
+.slide.is-live .hero-teach .tot { animation: vg-pop 460ms 1.4s var(--ease-out) backwards; }
+.hero-teach .sessions rect { fill: var(--accent); stroke: none; }
+.slide.is-live .hero-teach .sessions rect { animation: vg-pulse 2.8s var(--ease-in-out) infinite backwards; }
 
-/* ---- reduced motion: keep the drawings, drop the perpetual loops ---- */
+/* ---- hero-dcf : forty years, and where it crosses ---- */
+.hero-dcf .sun { stroke: var(--accent); fill: rgba(184, 68, 46, 0.16); }
+.hero-dcf .rays line { stroke: var(--accent); }
+.slide.is-live .hero-dcf .rays line { animation: vg-pulse 2.4s var(--ease-in-out) infinite backwards; }
+.slide.is-live .hero-dcf .rays line:nth-child(2n) { animation-delay: 0.4s; }
+.hero-dcf .zero { stroke: var(--ink); }
+.hero-dcf .ax { stroke: var(--ink-faint); }
+.hero-dcf .bars rect { stroke: none; transform-box: fill-box; transform-origin: 50% var(--o, 0%); }
+.hero-dcf .bars rect.neg { fill: var(--mkt-down); }
+.hero-dcf .bars rect.pos { fill: var(--accent); }
+.slide.is-live .hero-dcf .bars rect { animation: vg-grow 500ms var(--ease-out) backwards; }
+.hero-dcf .cum { stroke: var(--ink); stroke-width: 2; fill: none; --len: 380; }
+.slide.is-live .hero-dcf .cum { stroke-dasharray: 380; animation: vg-draw 2s 900ms var(--ease-out) backwards; }
+.hero-dcf .pb { stroke: var(--ink); stroke-dasharray: 3 3; }
+.slide.is-live .hero-dcf .payback { animation: vg-fade 500ms 2.4s var(--ease-out) backwards; }
+.hero-dcf .pbk {
+  fill: var(--ink); stroke: none; text-anchor: middle;
+  font-family: var(--font-mono); font-size: 7.5px; letter-spacing: 0.16em;
+}
+.hero-dcf .npv {
+  fill: var(--accent); stroke: none; text-anchor: end;
+  font-family: var(--font-mono); font-size: 12px;
+}
+.slide.is-live .hero-dcf .npv { animation: vg-pop 460ms 2.6s var(--ease-out) backwards; }
+.hero-dcf .axk {
+  fill: var(--ink-faint); stroke: none;
+  font-family: var(--font-mono); font-size: 7.5px; letter-spacing: 0.14em;
+}
+.hero-dcf .axk.right { text-anchor: end; }
+.hero-dcf .tornado rect { fill: var(--accent); stroke: none; transform-box: fill-box; transform-origin: var(--tx, 0%) 50%; }
+.slide.is-live .hero-dcf .tornado rect { animation: tor-grow 600ms var(--ease-out) backwards; }
+@keyframes tor-grow { from { transform: scaleX(0); } to { transform: none; } }
+.hero-dcf .tornado line { stroke: var(--ink); }
+.hero-dcf .tornado text {
+  fill: var(--ink-faint); stroke: none;
+  font-family: var(--font-mono); font-size: 7px; letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   DEEP DIVE
+   A tile press pushes the reel back and takes the stage. The
+   figure is drawn by ride.js from real numbers — the sampling,
+   the fit and the control limits are computed, not keyframed —
+   then the stage hands itself back.
+   ============================================================ */
+
+.deep {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  opacity: 0;
+  transition: opacity 380ms var(--ease-out);
+}
+.deep.is-on { opacity: 1; }
+.deep[hidden] { display: none; }
+
+.deep-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(232, 220, 192, 0.9);
+  backdrop-filter: blur(4px) saturate(0.85);
+  -webkit-backdrop-filter: blur(4px) saturate(0.85);
+  cursor: zoom-out;
+}
+
+/* the reel is still there, just pushed back behind the dive */
+.sheet.is-deck:has(.deep.is-on) .deck-view { filter: saturate(0.45); }
+
+.deep-stage {
+  position: relative;
+  margin: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: clamp(6px, 1vh, 14px);
+  padding: clamp(16px, 2.6vh, 30px) clamp(24px, 3vw, 48px) clamp(12px, 1.8vh, 22px);
+  min-height: 0;
+  transform: scale(0.97);
+  transition: transform 460ms var(--ease-out);
+}
+.deep.is-on .deep-stage { transform: none; }
+
+.deep-cap { display: flex; align-items: baseline; gap: clamp(10px, 1.4vw, 20px); flex-wrap: wrap; }
+.deep-k {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 4px 8px;
+}
+.deep-t {
+  font-size: clamp(19px, 2.7vh, 30px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin: 0;
+  line-height: 1;
+}
+.is-deck .deep-s {
+  font-size: clamp(12px, 1.6vh, 16px);
+  color: var(--ink-soft);
+  margin: 0;
+  flex: 1 1 320px;
+  min-width: 0;
+  line-height: 1.45;
+}
+
+.deep-art { min-height: 0; display: flex; align-items: center; justify-content: center; }
+.deep-art svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: block;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* the running commentary under the figure — rewritten as it plays */
+.is-deck .deep-read {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 1.35vh, 12px);
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  min-height: 1.4em;
+  border-top: 1px solid var(--grid-heavy);
+  padding-top: clamp(6px, 1vh, 11px);
+}
+.is-deck .deep-read b { color: var(--accent); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.deep-close {
+  position: absolute;
+  top: clamp(12px, 1.8vh, 20px);
+  right: clamp(14px, 1.6vw, 24px);
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 180ms, color 180ms;
+}
+.deep-close:hover { background: var(--accent); color: var(--paper-lit); border-color: var(--accent); }
+
+/* how long the stage keeps itself; hovering the figure holds it open */
+.deep-timer { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--grid-fine); }
+.deep-timer i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; }
+
+/* ---- one vocabulary, seven figures ---- */
+
+.dv .ax   { stroke: var(--ink-faint); }
+.dv .gl   { stroke: var(--grid-med); stroke-dasharray: 2 4; }
+.dv .box  { stroke: var(--ink); fill: rgba(255, 253, 246, 0.72); }
+.dv .box.ghost { fill: none; stroke: var(--grid-heavy); stroke-dasharray: 3 4; }
+.dv .mk   { fill: var(--ink); stroke: none; }
+.dv .mk.b { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.dv .mk.hi{ fill: var(--accent); }
+.dv .bar  { fill: var(--accent); stroke: none; }
+.dv .bar.dim { fill: var(--grid-heavy); }
+.dv .ln   { stroke: var(--ink); stroke-width: 2; fill: none; }
+.dv .ln.hi { stroke: var(--accent); }
+.dv .fill { fill: rgba(184, 68, 46, 0.16); stroke: none; }
+.dv .lb {
+  stroke: none; fill: var(--ink-faint);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+}
+.dv .lb.hi { fill: var(--accent); }
+.dv .lb.ink { fill: var(--ink); }
+.dv .lb.mid { text-anchor: middle; }
+.dv .lb.end { text-anchor: end; }
+.dv .lb.big { font-size: 16px; }
+.dv .key {
+  stroke: none; fill: var(--ink);
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.04em;
+}
+.dv .key.faint { fill: var(--ink-faint); }
+.dv .key.hi { fill: var(--accent); }
+.dv .key.mid { text-anchor: middle; }
+.dv .key.end { text-anchor: end; }
+
+/* ============================================================
+   REDUCED MOTION
+   The drawings still draw; the loops that never end do not run.
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  .sheet.is-open .gpa-arc { animation: none; stroke-dashoffset: 6.9; }
-  .sheet.is-open .stamps .pill { animation: none; }
-  .entry.is-open .vg-cleanroom .scan,
-  .entry.is-open .vg-cleanroom .flagged rect,
-  .entry.is-open .vg-lesson .pend { animation: none; }
-  .entry.is-open .vg-cleanroom .flagged rect { opacity: 1; }
+  .slide { transition: opacity 200ms linear, visibility 0s 200ms; }
+  .deck-reel[data-dir] .slide,
+  .deck-reel[data-dir] .slide.is-leaving,
+  .deck-reel[data-dir] .slide.is-live { transform: none; }
+
+  .slide.is-live .gpa-arc { animation: none; stroke-dashoffset: 6.9; }
+  .slide.is-live .stamps li,
+  .slide.is-live .beat,
+  .slide.is-live .st { animation: none; }
+
+  .slide.is-live .hero-fab .scan,
+  .slide.is-live .hero-fab .flags rect,
+  .slide.is-live .hero-pitch .ball,
+  .slide.is-live .hero-pitch .weeks rect,
+  .slide.is-live .hero-sift .inbox rect,
+  .slide.is-live .hero-sift .rulehits rect,
+  .slide.is-live .hero-sift .drip circle,
+  .slide.is-live .hero-web .chair,
+  .slide.is-live .hero-teach .pend,
+  .slide.is-live .hero-teach .sessions rect,
+  .slide.is-live .hero-dcf .rays line { animation: none; }
+
+  .slide.is-live .hero-fab .flags rect,
+  .slide.is-live .hero-sift .inbox rect,
+  .slide.is-live .hero-sift .drip circle { opacity: 1; }
+  .slide.is-live .hero-fab .scan { opacity: 0; }
+  .slide.is-live .hero-sift .rulehits rect { width: 112px; }
+}
+
+/* ============================================================
+   NARROW AND SHORT WINDOWS
+   The reel is built for landscape. Below that it stops trying to
+   be one and lets each plate stack and scroll.
+   ============================================================ */
+
+@media (max-width: 1000px), (max-height: 560px) {
+  #panel.is-wide #panel-stage { width: 94vw; max-height: 92vh; }
+  .sheet.is-deck { height: 92vh; }
+
+  .slide { overflow-y: auto; }
+  .plate-body,
+  .edu-grid { grid-template-columns: 1fr; align-items: start; }
+  .tiles { grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; }
+  .edu-foot { grid-template-columns: 1fr; }
+  .hero { max-height: 34vh; }
+
+  .plate-head, .edu-band { flex-wrap: wrap; }
+  .is-deck .plate-when, .edu-where { text-align: left; align-items: flex-start; }
+
+  .plate-foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .stats { flex-wrap: wrap; }
+  .is-deck .slide-note { margin: 0; text-align: left; border-right: 0;
+    border-left: 2px solid var(--accent-soft); padding: 0 0 0 11px; }
+
+  .deck-slug { display: none; }
+  .dot { font-size: 0; padding-top: 5px; }
+  .dot.is-on { padding-top: 4px; }
 }
 
 /* ============================================================
@@ -1803,9 +2225,7 @@ body.is-pointing #webgl { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   .entry.is-open .beat,
-  .entry.is-open::after,
-  .vg * { animation: none !important; }
-  .entry.is-open .vg * { opacity: 1 !important; }
+  .entry.is-open::after { animation: none !important; }
 }
 
 /* data readout table (chess ratings etc) */

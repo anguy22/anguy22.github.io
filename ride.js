@@ -239,8 +239,9 @@ function init() {
   buildRailNav();
   lighting();
   bindEvents();
-  initResumeCards();
+  initExpandableCards();
   initTickerCards();
+  initResumeDeck();
   initPitch();
   primeAudio();          // load the file now, so the launch click can just play it
   fetchLichess();
@@ -2081,6 +2082,9 @@ function openPanel(st) {
   el.classList.add('is-open');
   tallySheetChrome(el);        // figures outside the cards count on arrival
 
+  // the resume runs as a reel and wants the whole window; the rest keep the card
+  panel.classList.toggle('is-wide', el.classList.contains('is-deck'));
+
   const co = el.querySelector('[data-coord]');
   if (co) co.textContent = `X ${st.x.toFixed(0)}  ·  Y ${st.y.toFixed(0)}  ·  Z ${st.h.toFixed(1)}`;
 
@@ -2088,13 +2092,17 @@ function openPanel(st) {
   panel.setAttribute('aria-hidden', 'false');
   el.querySelector('.sheet-close')?.focus?.();
 
+  if (el.id === 'sheet-resume') startDeck();
+
   void pool; // pool is only the parking lot; nothing to do with it here
 }
 
 function closePanel() {
   const panel = $('#panel');
   if (!panel) return;
+  stopDeck();
   panel.classList.remove('is-open');
+  panel.classList.remove('is-wide');
   panel.setAttribute('aria-hidden', 'true');
 
   // park the sheet back in the pool so only one lives on the stage
@@ -2128,7 +2136,9 @@ function bindEvents() {
   });
 
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && (mode === 'focused' || mode === 'focusing')) release();
+    if (e.key !== 'Escape') return;
+    if (closeDive()) return;               // a dive is over the reel; drop that first
+    if (mode === 'focused' || mode === 'focusing') release();
   });
 
   $('#panel-scrim').addEventListener('click', release);
@@ -2904,17 +2914,18 @@ function selectZone(id) {
 }
 
 /* ============================================================================
-   18c · RESUME INTERACTIONS
-   Each experience is an expandable card. Opening one counts its metrics up
-   from zero — every figure here is straight off the resume.
+   18c · EXPANDABLE CARDS + COUNTERS
+   Shared machinery: a card that opens, and a figure that counts itself up
+   on the way in. The coverage sheet uses the cards; the resume deck uses
+   the counters.
    ========================================================================= */
 
-/* ---------- the resume plate: counters, notes, open-all ----------
+/* ---------- counting a figure up ----------
 
-   Figures on the resume tick up rather than arriving finished. Only the
-   numeric run inside the element is rewritten, so the surrounding text is
-   untouched and "~1,500 tools" counts through "~1,203 tools" and lands back
-   on itself — no second copy of the string to keep in sync.               */
+   Figures tick up rather than arriving finished. Only the numeric run inside
+   the element is rewritten, so the surrounding text is untouched and
+   "~1,500 tools" counts through "~1,203 tools" and lands back on itself —
+   no second copy of the string to keep in sync.                           */
 
 const TALLY_MS = 900;
 
@@ -2959,10 +2970,11 @@ function runTally(el) {
   requestAnimationFrame(step);
 }
 
-/** Count every figure on a sheet that is NOT inside a collapsed card. */
+/** Count every figure that is not waiting on something else to reveal it —
+    a collapsed card, or a slide the reel has not reached yet. */
 function tallySheetChrome(sheetEl) {
   sheetEl.querySelectorAll('[data-tally]').forEach((b) => {
-    if (!b.closest('.entry-panel')) runTally(b);
+    if (!b.closest('.entry-panel, .slide')) runTally(b);
   });
 }
 
@@ -2974,57 +2986,13 @@ function setCard(entry, open) {
   if (panel) panel.style.maxHeight = open ? `${panel.scrollHeight}px` : '';
 
   if (open) entry.querySelectorAll('[data-tally]').forEach(runTally);
-  else entry.__noteReset?.();
 }
 
-/* Every figure carrying a note gets keyboard focus and writes into one notes
-   block at the foot of its own card. A block per card rather than a floating
-   tooltip: it never has to be positioned, it never covers the line you are
-   reading, and it reads like the notes field on a drawing. */
-function wireCardNotes(entry, panel) {
-  const cited = entry.querySelectorAll('.beat-t b[data-note]');
-  if (!cited.length) return;
-
-  const IDLE = 'Point at any figure for what it counts.';
-
-  const note = document.createElement('div');
-  note.className = 'beat-note';
-  note.innerHTML = '<span class="beat-note-k">Note</span>' +
-                   '<span class="beat-note-v is-idle"></span>';
-  panel.appendChild(note);
-
-  const slot = note.querySelector('.beat-note-v');
-  slot.textContent = IDLE;
-
-  const show = (b) => {
-    cited.forEach((o) => o.classList.toggle('is-cited', o === b));
-    slot.textContent = b.dataset.note;
-    slot.classList.remove('is-idle');
-  };
-  const reset = () => {
-    cited.forEach((o) => o.classList.remove('is-cited'));
-    slot.textContent = IDLE;
-    slot.classList.add('is-idle');
-  };
-
-  cited.forEach((b) => {
-    b.tabIndex = 0;
-    b.addEventListener('mouseenter', () => show(b));
-    b.addEventListener('mouseleave', reset);
-    b.addEventListener('focus', () => show(b));
-    b.addEventListener('blur', reset);
-  });
-
-  entry.__noteReset = reset;
-}
-
-function initResumeCards() {
+function initExpandableCards() {
   document.querySelectorAll('[data-entry]').forEach((entry) => {
     const head = entry.querySelector('.entry-head');
     const panel = entry.querySelector('.entry-panel');
     if (!head || !panel) return;
-
-    wireCardNotes(entry, panel);
 
     head.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -3080,10 +3048,1542 @@ function collapseCards(sheetEl) {
     entry.querySelector('.entry-head')?.setAttribute('aria-expanded', 'false');
     const p = entry.querySelector('.entry-panel');
     if (p) p.style.maxHeight = '';
-    entry.__noteReset?.();
   });
   sheetEl.querySelectorAll('[data-all]').forEach((b) => syncAllButton(b, false));
 }
+/* ============================================================================
+   18d · THE RESUME DECK
+
+   The resume is the one station that is not a page. It runs as a reel of
+   landscape plates that advances itself and stops the moment anybody touches
+   it. Two kinds of touch, deliberately different:
+
+     a HOLD  — pointing at a tile or a cited figure, or standing in front of
+               a deep dive. The clock freezes and starts again on its own
+               when you look away.
+     a STOP  — pressing a control, a key or dragging. The reel hands over
+               and stays handed over until play is pressed.
+
+   Repetitive geometry inside the drawings is stamped here rather than typed
+   into the markup: sixty children, eighty fab tools, forty years of cash
+   flow. The markup carries the drawing; this carries the fill.
+   ========================================================================= */
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** Terse SVG builder. `text` sets the node's text content, everything else
+    is an attribute, and undefined values are skipped so callers can pass
+    optional geometry without guarding each one. */
+function sv(tag, attrs, parent) {
+  const n = document.createElementNS(SVG_NS, tag);
+  for (const k in attrs) {
+    const v = attrs[k];
+    if (v === undefined || v === null) continue;
+    if (k === 'text') n.textContent = v;
+    else n.setAttribute(k, v);
+  }
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+/* The dives sample, fit and chart real numbers. Seeding the generator keeps
+   them real without making them different every time — the control chart
+   alarms on the same point, and the classifier lands on the same accuracy. */
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Box–Muller, so a normal in these figures is an actual normal. */
+function gauss(r) {
+  let u = 0, v = 0;
+  while (u === 0) u = r();
+  while (v === 0) v = r();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+/** 0 before `a`, 1 after `b`, smoothly eased between. */
+const ramp = (t, a, b) => {
+  const k = clamp01((t - a) / (b - a));
+  return k * k * (3 - 2 * k);
+};
+const lerp = (a, b, k) => a + (b - a) * k;
+const fx = (v, n = 1) => v.toFixed(n);
+
+/* ============================================================================
+   18d.1 · STAMPING THE DRAWINGS
+   ========================================================================= */
+
+function stampHeroes() {
+  stampFab();
+  stampPitch();
+  stampSift();
+  stampWeb();
+  stampBoard();
+  stampTeach();
+  stampDcf();
+}
+
+/** Delay a CSS entrance without a stylesheet rule per element. */
+const delay = (n, ms) => { n.style.animationDelay = `${ms}ms`; return n; };
+
+/* ---- the fab floor: five bays, eighty tools, seven flagged ---- */
+function stampFab() {
+  const fig = document.querySelector('.hero-fab');
+  if (!fig) return;
+  const bays = fig.querySelector('.bays');
+  const tools = fig.querySelector('.tools');
+  const flags = fig.querySelector('.flags');
+  const rows = 5, cols = 16, rowH = 212 / rows;
+
+  for (let i = 1; i < rows; i++) {
+    sv('line', { x1: 18, y1: 20 + i * rowH, x2: 422, y2: 20 + i * rowH }, bays);
+  }
+
+  // seven cells the review shortlists, spread so no bay reads as untouched
+  const flagged = new Set([3, 19, 26, 41, 55, 62, 74]);
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const n = r * cols + c;
+      const x = 26 + c * 24.5, y = 20 + r * rowH + 11;
+      delay(sv('rect', { x, y, width: 18, height: 20 }, tools), n * 7);
+      if (flagged.has(n)) {
+        delay(sv('rect', { x: x - 2.5, y: y - 2.5, width: 23, height: 25 }, flags),
+              900 + (n % 7) * 120);
+      }
+    }
+  }
+}
+
+/* ---- the pitch: eighteen programmes, one shape, twelve briefings ---- */
+function stampPitch() {
+  const fig = document.querySelector('.hero-pitch');
+  if (!fig) return;
+
+  const opps = fig.querySelector('.opps');
+  const nOpp = +opps.dataset.oppTicks;
+  for (let i = 0; i < nOpp; i++) {
+    const r = sv('rect', { x: 196 + i * 12.56, y: 6, width: 9, height: 8 }, opps);
+    if (i % 3 === 0) r.setAttribute('class', 'lit');
+    delay(r, i * 34);
+  }
+
+  // a 4-4-2 read off the scouting side, attacking right
+  const shape = fig.querySelector('.shape');
+  const spots = [
+    [44, 136],
+    [102, 58], [102, 108], [102, 164], [102, 214],
+    [178, 62], [178, 114], [178, 158], [178, 210],
+    [258, 98], [258, 174],
+  ];
+  spots.forEach(([cx, cy], i) => delay(sv('circle', { cx, cy, r: 6 }, shape), 400 + i * 45));
+
+  const wk = fig.querySelector('.weeks');
+  const nWk = +wk.dataset.weekTicks;
+  for (let i = 0; i < nWk; i++) {
+    delay(sv('rect', { x: 132 + i * 14.3, y: 254, width: 9, height: 8 }, wk), i * 130);
+  }
+}
+
+/* ---- the inbox, the gate, and the fifteen percent ---- */
+function stampSift() {
+  const fig = document.querySelector('.hero-sift');
+  if (!fig) return;
+
+  const inbox = fig.querySelector('.inbox');
+  for (let r = 0; r < 7; r++) {
+    for (let c = 0; c < 3; c++) {
+      delay(sv('rect', { x: 18 + c * 38, y: 26 + r * 20, width: 30, height: 14, rx: 1 }, inbox),
+            ((r * 3 + c) % 21) * 130);
+    }
+  }
+
+  const drip = fig.querySelector('.drip');
+  for (let i = 0; i < 3; i++) {
+    delay(sv('circle', { cx: 361, cy: 148, r: 2.6 }, drip), 900 + i * 800);
+  }
+}
+
+/* ---- the chair, eight members, fourteen alumni ---- */
+function stampWeb() {
+  const fig = document.querySelector('.hero-web');
+  if (!fig) return;
+  const CX = 220, CY = 152;
+  const spokes = fig.querySelector('.spokes');
+  const members = fig.querySelector('.members');
+  const alumni = fig.querySelector('.alumni');
+
+  // both rings are offset off vertical so nothing sits under its own label
+  const mem = [];
+  for (let i = 0; i < 8; i++) {
+    const a = (-90 + 22.5 + i * 45) * Math.PI / 180;
+    const x = CX + Math.cos(a) * 62, y = CY + Math.sin(a) * 62;
+    mem.push([x, y]);
+    delay(sv('line', { x1: CX, y1: CY, x2: x, y2: y }, spokes), i * 70);
+    delay(sv('circle', { cx: x, cy: y, r: 6 }, members), 400 + i * 60);
+  }
+
+  for (let i = 0; i < 14; i++) {
+    const a = (-90 + 12.9 + i * (360 / 14)) * Math.PI / 180;
+    const x = CX + Math.cos(a) * 112, y = CY + Math.sin(a) * 112;
+    const from = mem[Math.round(i * 8 / 14) % 8];
+    delay(sv('line', { x1: from[0], y1: from[1], x2: x, y2: y }, spokes), 500 + i * 45);
+    delay(sv('circle', { cx: x, cy: y, r: 4.5 }, alumni), 800 + i * 50);
+  }
+}
+
+/* ---- the board, the route, the ladder, the roster ---- */
+function stampBoard() {
+  const fig = document.querySelector('.hero-board');
+  if (!fig) return;
+
+  const board = fig.querySelector('.board');
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      if ((r + c) % 2 === 0) continue;
+      sv('rect', { x: 18 + c * 27, y: 22 + r * 27, width: 27, height: 27 }, board);
+    }
+  }
+
+  // the same squares the route path visits, so the stops sit on the line
+  const stops = fig.querySelector('.stops');
+  const squares = [[1, 7], [2, 5], [4, 6], [5, 4], [3, 3], [4, 1], [6, 2], [7, 0]];
+  squares.forEach(([c, r], i) => {
+    delay(sv('circle', { cx: 31.5 + c * 27, cy: 35.5 + r * 27, r: 5 }, stops), 500 + i * 260);
+  });
+
+  const seats = fig.querySelector('.seats');
+  for (let i = 0; i < +seats.dataset.seats; i++) {
+    const s = sv('rect', { x: 262 + i * 24, y: 250, width: 18, height: 22 }, seats);
+    if (i === 0) s.setAttribute('class', 'lit');   // the captain's board
+    delay(s, 900 + i * 90);
+  }
+}
+
+/* ---- three mentors, sixty children, fourteen weeks ---- */
+function stampTeach() {
+  const fig = document.querySelector('.hero-teach');
+  if (!fig) return;
+
+  const leads = fig.querySelector('.leads');
+  const seats = [44, 104, 164];
+  seats.forEach((y, i) => delay(sv('circle', { cx: 228, cy: y, r: 6 }, leads), 300 + i * 110));
+
+  const fan = fig.querySelector('.fan');
+  seats.forEach((y, i) => {
+    [-34, 34].forEach((dy, j) => {
+      delay(sv('path', { d: `M234 ${y} C262 ${y}, 272 ${y + dy}, 292 ${y + dy}` }, fan),
+            500 + (i * 2 + j) * 70);
+    });
+  });
+
+  const kids = fig.querySelector('.kids');
+  const n = +kids.dataset.dotField;
+  for (let i = 0; i < n; i++) {
+    const c = i % 10, r = (i / 10) | 0;
+    delay(sv('circle', { cx: 298 + c * 13, cy: 34 + r * 23, r: 3.5 }, kids), 700 + i * 14);
+  }
+
+  const sess = fig.querySelector('.sessions');
+  for (let i = 0; i < +sess.dataset.weekTicks; i++) {
+    delay(sv('rect', { x: 260 + i * 11.6, y: 189, width: 8, height: 8 }, sess), i * 110);
+  }
+}
+
+/* ---- forty years of cash flow, and what actually moves it ----
+
+   The bars are the annual flows, the line is the cumulative discounted
+   position, and the payback marker is placed where that line changes sign —
+   computed here rather than eyeballed, so the drawing and the arithmetic
+   cannot drift apart. */
+function stampDcf() {
+  const fig = document.querySelector('.hero-dcf');
+  if (!fig) return;
+  const YRS = 40, X0 = 90, XW = 332, ZERO = 150, RATE = 0.06;
+  const step = XW / YRS;
+
+  const cf = [];
+  for (let i = 0; i < YRS; i++) {
+    cf.push(i === 0 ? -40 : i === 1 ? -12 : 11.2 * Math.pow(0.994, i));
+  }
+
+  const cum = [];
+  let run = 0;
+  cf.forEach((v, i) => { run += v / Math.pow(1 + RATE, i); cum.push(run); });
+
+  const maxAbs = Math.max(...cf.map(Math.abs));
+  const barK = 52 / maxAbs;
+
+  const bars = fig.querySelector('.bars');
+  cf.forEach((v, i) => {
+    const h = Math.max(1.5, Math.abs(v) * barK);
+    const up = v >= 0;
+    const r = sv('rect', {
+      x: X0 + i * step, y: up ? ZERO - h : ZERO,
+      width: Math.max(3, step - 2.4), height: h,
+      class: up ? 'pos' : 'neg',
+    }, bars);
+    r.style.setProperty('--o', up ? '100%' : '0%');
+    delay(r, 200 + i * 26);
+  });
+
+  // the cumulative line gets its own scale; it travels much further than a bar
+  const lo = Math.min(...cum), hi = Math.max(...cum);
+  const cy = (v) => 202 - ((v - lo) / (hi - lo)) * 150;
+  fig.querySelector('.cum').setAttribute(
+    'd', cum.map((v, i) => `${i ? 'L' : 'M'}${fx(X0 + i * step + step / 2)} ${fx(cy(v))}`).join(' '));
+
+  const cross = cum.findIndex((v) => v >= 0);
+  const px = X0 + cross * step + step / 2;
+  const pb = fig.querySelector('.payback');
+  pb.querySelector('.pb').setAttribute('x1', fx(px));
+  pb.querySelector('.pb').setAttribute('x2', fx(px));
+  pb.querySelector('.pbk').setAttribute('x', fx(px));
+
+  /* Sensitivity, ranked. One-at-a-time sweeps: the ordering is the
+     deliverable, so the bars are drawn widest-first by construction. */
+  const tor = fig.querySelector('.tornado');
+  const drivers = [
+    ['PPA PRICE', 46, 38], ['CAPEX', 34, 30], ['DISCOUNT RATE', 27, 21],
+    ['DEGRADATION', 17, 15], ['O&M', 12, 10], ['ITC', 8, 6],
+  ];
+  const TCX = 220;
+  drivers.forEach(([name, wl, wr], k) => {
+    const y = 256 + k * 6.4;
+    sv('text', { x: 18, y: y + 5, text: name }, tor);
+    const l = sv('rect', { x: TCX - wl, y, width: wl, height: 5 }, tor);
+    const r = sv('rect', { x: TCX, y, width: wr, height: 5 }, tor);
+    l.style.setProperty('--tx', '100%');
+    r.style.setProperty('--tx', '0%');
+    delay(l, 400 + k * 90);
+    delay(r, 440 + k * 90);
+  });
+  sv('line', { x1: TCX, y1: 252, x2: TCX, y2: 296 }, tor);
+}
+
+/* ---- the thumbnail behind each tile: the dive, at a glance ---- */
+const TILE_GLYPHS = {
+  sql: '<path d="M8 10a10 4 0 1 0 20 0a10 4 0 1 0-20 0M8 10v8a10 4 0 0 0 20 0v-8M8 18v8a10 4 0 0 0 20 0v-8"/>',
+  python: '<path d="M14 8 L6 20 L14 32M26 8 L34 20 L26 32"/><path class="f" d="M17 26h6v3h-6z"/><path d="M17 12h6M17 18h6"/>',
+  prob: '<path d="M4 32 C12 32, 12 8, 20 8 C28 8, 28 32, 36 32"/><path class="f" d="M16 20h3v12h-3zM21 15h3v17h-3zM26 22h3v10h-3z"/>',
+  tableau: '<path d="M4 6h14v14H4zM22 6h14v9H22zM4 24h14v10H4zM22 19h14v15H22z"/>',
+  doe: '<path d="M12 12 L28 12 L28 28 L12 28 Z M6 18 L22 18 L22 34 L6 34 Z M12 12 L6 18 M28 12 L22 18 M28 28 L22 34"/>',
+  sigma: '<path d="M4 20h32"/><path d="M4 28 L10 24 L15 30 L20 22 L25 26 L30 6 L36 24"/><circle class="f" cx="30" cy="6" r="3"/>',
+  ml: '<path d="M6 34 L34 8"/><path class="f" d="M9 12h3v3H9zM15 8h3v3h-3zM14 17h3v3h-3zM23 26h3v3h-3zM29 22h3v3h-3zM26 32h3v3h-3z"/>',
+};
+
+function stampTileGlyphs() {
+  document.querySelectorAll('.tile-glyph[data-glyph]').forEach((g) => {
+    const d = TILE_GLYPHS[g.dataset.glyph];
+    if (d) g.innerHTML = `<svg viewBox="0 0 40 40" aria-hidden="true">${d}</svg>`;
+  });
+}
+
+/* ============================================================================
+   18d.2 · THE REEL
+   ========================================================================= */
+
+const DECK_HOLD = 10500;     // ms a plate holds before the reel moves on
+const DRAG_THROW = 60;       // px of drag that counts as a throw
+
+const deck = {
+  sheet: null, reel: null, prog: null, slides: [], dots: [],
+  i: 0, playing: true, t: 0, last: 0, raf: 0, live: false,
+  holds: new Set(),          // named, so an unbalanced pair cannot wedge it
+};
+
+function initResumeDeck() {
+  const sheet = document.getElementById('sheet-resume');
+  if (!sheet) return;
+
+  deck.sheet = sheet;
+  deck.reel = sheet.querySelector('#deck-reel');
+  deck.prog = sheet.querySelector('#deck-prog');
+  deck.slides = [...sheet.querySelectorAll('.slide')];
+  if (!deck.slides.length) return;
+
+  stampHeroes();
+  stampTileGlyphs();
+  buildFilmStrip();
+  deck.slides.forEach(wireSlideNotes);
+
+  sheet.querySelector('[data-dk="prev"]').addEventListener('click', () => nudge(-1));
+  sheet.querySelector('[data-dk="next"]').addEventListener('click', () => nudge(1));
+  sheet.querySelector('[data-dk="play"]').addEventListener('click', togglePlay);
+
+  sheet.querySelectorAll('.tile[data-dive]').forEach((tile) => {
+    tile.addEventListener('click', () => openDive(tile.dataset.dive));
+    tile.addEventListener('mouseenter', () => hold('tile'));
+    tile.addEventListener('mouseleave', () => release('tile'));
+    tile.addEventListener('focus', () => hold('tile'));
+    tile.addEventListener('blur', () => release('tile'));
+  });
+
+  sheet.querySelectorAll('[data-deep-close]').forEach((b) => {
+    b.addEventListener('click', closeDive);
+  });
+  sheet.querySelector('.deep-stage').addEventListener('mouseenter', () => diveHold(true));
+  sheet.querySelector('.deep-stage').addEventListener('mouseleave', () => diveHold(false));
+
+  wireDrag(sheet.querySelector('.deck-view'));
+
+  addEventListener('keydown', (e) => {
+    if (!deck.live || diveOpen()) return;
+    if (e.target.closest?.('input, textarea')) return;
+    if (e.key === 'ArrowRight') { nudge(1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { nudge(-1); e.preventDefault(); }
+    else if (e.key === ' ' && !e.target.closest?.('button')) { togglePlay(); e.preventDefault(); }
+  });
+
+  showSlide(0, 'fwd');
+}
+
+/** One label per plate, sized to the strip: a film edge, not a row of dots. */
+function buildFilmStrip() {
+  const strip = deck.sheet.querySelector('#deck-dots');
+  deck.slides.forEach((s, n) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'dot';
+    b.textContent = s.dataset.slide;
+    b.setAttribute('aria-label', `Slide ${n + 1}: ${s.dataset.slide}`);
+    b.addEventListener('click', () => { stop(); showSlide(n, n > deck.i ? 'fwd' : 'bwd'); });
+    strip.appendChild(b);
+    deck.dots.push(b);
+  });
+  deck.sheet.querySelector('#dk-n').textContent = deck.slides.length;
+}
+
+function showSlide(n, dir) {
+  const N = deck.slides.length;
+  const next = ((n % N) + N) % N;
+  const cur = deck.slides[deck.i];
+
+  if (cur && next !== deck.i) {
+    cur.classList.remove('is-live');
+    cur.classList.add('is-leaving');
+    // the class has to come off again or the plate never returns to its side
+    setTimeout(() => cur.classList.remove('is-leaving'), 700);
+  }
+
+  deck.reel.dataset.dir = dir;
+  deck.i = next;
+
+  const slide = deck.slides[next];
+  slide.classList.remove('is-leaving');
+  slide.classList.add('is-live');
+
+  // the figures on a plate count up as it arrives, not when the sheet opened
+  slide.querySelectorAll('[data-tally]').forEach(runTally);
+
+  deck.sheet.querySelector('#deck-slug').textContent = slide.dataset.kicker || slide.dataset.slide;
+  deck.sheet.querySelector('#dk-i').textContent = next + 1;
+  deck.dots.forEach((d, k) => {
+    d.classList.toggle('is-on', k === next);
+    d.setAttribute('aria-current', k === next ? 'true' : 'false');
+  });
+
+  deck.t = 0;
+  paintProgress(0);
+}
+
+function nudge(step) {
+  stop();
+  showSlide(deck.i + step, step > 0 ? 'fwd' : 'bwd');
+}
+
+/* ---- the clock ---- */
+
+function paintProgress(k) {
+  if (deck.prog) deck.prog.style.width = `${k * 100}%`;
+}
+
+function deckTick(now) {
+  deck.raf = requestAnimationFrame(deckTick);
+  const dt = now - (deck.last || now);
+  deck.last = now;
+
+  if (!deck.playing || deck.holds.size) return;
+
+  deck.t += dt;
+  if (deck.t >= DECK_HOLD) showSlide(deck.i + 1, 'fwd');
+  else paintProgress(deck.t / DECK_HOLD);
+}
+
+function startDeck() {
+  deck.live = true;
+  deck.playing = !reduceMotion;
+  deck.holds.clear();
+  syncPlayButton();
+  showSlide(0, 'fwd');
+  if (!deck.raf) { deck.last = 0; deck.raf = requestAnimationFrame(deckTick); }
+}
+
+function stopDeck() {
+  deck.live = false;
+  closeDive();
+  cancelAnimationFrame(deck.raf);
+  deck.raf = 0;
+}
+
+function stop() {
+  deck.playing = false;
+  syncPlayButton();
+}
+
+function togglePlay() {
+  deck.playing = !deck.playing;
+  if (deck.playing) deck.t = 0;
+  syncPlayButton();
+}
+
+function syncPlayButton() {
+  const b = deck.sheet?.querySelector('[data-dk="play"]');
+  if (!b) return;
+  b.classList.toggle('is-playing', deck.playing);
+  b.setAttribute('aria-pressed', deck.playing ? 'true' : 'false');
+  b.setAttribute('aria-label', deck.playing ? 'Pause the reel' : 'Play the reel');
+}
+
+/* A hold is temporary and lifts itself; a stop is a handover. */
+function hold(k) { deck.holds.add(k); }
+function release(k) { deck.holds.delete(k); }
+
+/* ---- throwing the reel by hand ---- */
+
+function wireDrag(view) {
+  if (!view) return;
+  let id = null, x0 = 0;
+
+  view.addEventListener('pointerdown', (e) => {
+    if (e.button || e.target.closest('button, a, [data-note]')) return;
+    id = e.pointerId; x0 = e.clientX;
+    view.setPointerCapture(id);
+  });
+
+  const end = (e) => {
+    if (id === null || e.pointerId !== id) return;
+    const dx = e.clientX - x0;
+    view.releasePointerCapture?.(id);
+    id = null;
+    if (Math.abs(dx) > DRAG_THROW) nudge(dx < 0 ? 1 : -1);
+  };
+
+  view.addEventListener('pointerup', end);
+  view.addEventListener('pointercancel', end);
+}
+
+/* ---- the note a cited figure writes into ----
+
+   A block at the foot of the plate rather than a floating tooltip: it never
+   has to be positioned, it never covers the line being read, and it reads
+   like the notes field on a drawing. */
+function wireSlideNotes(slide) {
+  const cited = slide.querySelectorAll('.beat-t b[data-note]');
+  const slot = slide.querySelector('[data-note-slot]');
+  if (!cited.length || !slot) return;
+
+  const IDLE = slot.textContent;
+  slot.classList.add('is-idle');
+
+  const show = (b) => {
+    cited.forEach((o) => o.classList.toggle('is-cited', o === b));
+    slot.textContent = b.dataset.note;
+    slot.classList.remove('is-idle');
+    hold('note');
+  };
+  const reset = () => {
+    cited.forEach((o) => o.classList.remove('is-cited'));
+    slot.textContent = IDLE;
+    slot.classList.add('is-idle');
+    release('note');
+  };
+
+  cited.forEach((b) => {
+    b.tabIndex = 0;
+    b.addEventListener('mouseenter', () => show(b));
+    b.addEventListener('mouseleave', reset);
+    b.addEventListener('focus', () => show(b));
+    b.addEventListener('blur', reset);
+  });
+}
+
+/* ============================================================================
+   18d.3 · DEEP DIVES
+
+   A tile press pushes the reel back and takes the stage. Every figure here
+   is computed rather than keyframed — the sampling really samples, the
+   classifier really counts its mistakes, the control chart really breaches
+   its own limit — because a drawing of statistics that is only a drawing is
+   the one thing this page should not be.
+   ========================================================================= */
+
+const DV_W = 1000, DV_H = 460;
+const DIVE_LINGER = 2800;     // ms the finished figure stands before it leaves
+
+let dive = null;
+
+function diveOpen() { return !!dive; }
+function diveHold(on) { if (dive) dive.held = on; }
+
+function openDive(key) {
+  const spec = DIVES[key];
+  if (!spec || !deck.sheet) return;
+  closeDive();
+
+  const wrap = deck.sheet.querySelector('#deep');
+  const art = deck.sheet.querySelector('#deep-art');
+  const read = deck.sheet.querySelector('#deep-read');
+
+  deck.sheet.querySelector('#deep-k').textContent = spec.k;
+  deck.sheet.querySelector('#deep-t').textContent = spec.t;
+  deck.sheet.querySelector('#deep-s').textContent = spec.s;
+
+  art.textContent = '';
+  read.textContent = '';
+  const root = sv('svg', {
+    viewBox: `0 0 ${DV_W} ${DV_H}`,
+    preserveAspectRatio: 'xMidYMid meet',
+    class: `dv dv-${key}`,
+  }, art);
+
+  const step = spec.build(root, read) || (() => {});
+  hold('dive');
+
+  wrap.hidden = false;
+  requestAnimationFrame(() => wrap.classList.add('is-on'));
+
+  dive = { step, dur: spec.dur, t: 0, last: 0, raf: 0, held: false, from: document.activeElement };
+
+  if (reduceMotion) { step(spec.dur); return; }   // draw it arrived, and hold
+  dive.raf = requestAnimationFrame(diveTick);
+}
+
+function diveTick(now) {
+  if (!dive) return;
+  dive.raf = requestAnimationFrame(diveTick);
+
+  const dt = now - (dive.last || now);
+  dive.last = now;
+  if (dive.held) return;                          // standing in front of it holds it
+
+  dive.t += dt;
+  dive.step(Math.min(dive.t, dive.dur));
+
+  const total = dive.dur + DIVE_LINGER;
+  const bar = deck.sheet.querySelector('#deep-timer');
+  if (bar) bar.style.transform = `scaleX(${Math.max(0, 1 - dive.t / total)})`;
+  if (dive.t >= total) closeDive();
+}
+
+/** @returns true if there was a dive to close — Escape uses this to decide
+    whether it is closing the figure or the whole sheet. */
+function closeDive() {
+  if (!dive) return false;
+  cancelAnimationFrame(dive.raf);
+
+  const wrap = deck.sheet.querySelector('#deep');
+  wrap.classList.remove('is-on');
+  setTimeout(() => {
+    wrap.hidden = true;
+    deck.sheet.querySelector('#deep-art').textContent = '';
+  }, 400);
+
+  const back = dive.from;
+  dive = null;
+  release('dive');
+  back?.focus?.();
+  return true;
+}
+
+/* ---------------------------------------------------------------------------
+   SQL — thirteen stores, one keyed record
+   ------------------------------------------------------------------------ */
+function dvSql(root, read) {
+  const CX = 500, CY = 216;
+  const TW = 300, TH = 176, TX = CX - TW / 2, TY = CY - TH / 2;
+
+  const NAMES = ['SNOWFLAKE', 'MSSQL', 'AZURE SQL', 'ERP', 'TOOL MASTER', 'COST CTR',
+                 'BAY MAP', 'FAB OPS', 'CAPEX', 'MAINT', 'VENDOR', 'FLOOR PLAN', 'FY PLAN'];
+  const N = NAMES.length;
+
+  const gEdge = sv('g', {}, root);
+  const gChord = sv('g', {}, root);
+  const gNode = sv('g', {}, root);
+  const gTok = sv('g', {}, root);
+
+  const nodes = NAMES.map((name, i) => {
+    const a = (-90 + i * (360 / N)) * Math.PI / 180;
+    const x = CX + Math.cos(a) * 402, y = CY + Math.sin(a) * 192;
+    const g = sv('g', {}, gNode);
+    g.style.opacity = 0;
+
+    // a store, drawn the way a store is always drawn
+    sv('path', { class: 'box', d: `M${x - 22} ${y - 11} v22 a22 6 0 0 0 44 0 v-22 z` }, g);
+    sv('ellipse', { class: 'box', cx: x, cy: y - 11, rx: 22, ry: 6 }, g);
+    sv('path', { d: `M${x - 22} ${y} a22 6 0 0 0 44 0` }, g);
+
+    const right = Math.cos(a) > -0.15;
+    sv('text', {
+      class: 'key faint', x: right ? x + 28 : x - 28, y: y + 4,
+      'text-anchor': right ? 'start' : 'end', text: name,
+    }, g);
+
+    const e = sv('line', { class: 'gl', x1: x, y1: y, x2: CX, y2: CY }, gEdge);
+    e.style.opacity = 0;
+    const len = Math.hypot(x - CX, y - CY);
+    e.setAttribute('stroke-dasharray', len);
+    e.setAttribute('stroke-dashoffset', len);
+
+    const tok = sv('rect', { class: 'bar', x: -5, y: -3.5, width: 10, height: 7 }, gTok);
+    tok.style.opacity = 0;
+
+    return { x, y, g, e, len, tok };
+  });
+
+  // chords around the ring: the sources talk to each other, not just to the join
+  const chords = nodes.map((n, i) => {
+    const m = nodes[(i + 1) % N];
+    const mx = (n.x + m.x) / 2, my = (n.y + m.y) / 2;
+    const c = sv('path', {
+      class: 'gl',
+      d: `M${fx(n.x)} ${fx(n.y)} Q${fx(CX + (mx - CX) * 1.22)} ${fx(CY + (my - CY) * 1.22)} ${fx(m.x)} ${fx(m.y)}`,
+    }, gChord);
+    c.style.opacity = 0;
+    return c;
+  });
+
+  // the join result, laid over everything the lines were doing
+  const tbl = sv('g', {}, root);
+  tbl.style.opacity = 0;
+  sv('rect', { class: 'box', x: TX, y: TY, width: TW, height: TH, style: 'fill:var(--paper-lit)' }, tbl);
+  sv('line', { class: 'ax', x1: TX, y1: TY + 24, x2: TX + TW, y2: TY + 24 }, tbl);
+
+  const COLS = [['TOOL_ID', 12], ['BAY', 92], ['ATTR', 140], ['COST_CTR', 194], ['FY', 264]];
+  const head = sv('g', {}, tbl);
+  head.style.opacity = 0;
+  COLS.forEach(([c, dx]) => sv('text', { class: 'key hi', x: TX + dx, y: TY + 17, text: c }, head));
+
+  const CELLS = [
+    ['TL-0412', 'B3', '22/22', 'CC-8810', 'FY27'],
+    ['TL-0517', 'B1', '22/22', 'CC-8810', 'FY27'],
+    ['TL-0620', 'B4', '22/22', 'CC-9142', 'FY28'],
+    ['TL-0733', 'B2', '22/22', 'CC-9142', 'FY27'],
+    ['TL-0861', 'B5', '22/22', 'CC-8810', 'FY29'],
+    ['TL-0904', 'B3', '22/22', 'CC-7705', 'FY28'],
+  ];
+  const rows = CELLS.map((cells, j) => {
+    const g = sv('g', {}, tbl);
+    g.style.opacity = 0;
+    const y = TY + 24 + j * 25;
+    if (j) sv('line', { class: 'gl', x1: TX + 8, y1: y, x2: TX + TW - 8, y2: y }, g);
+    cells.forEach((v, c) => sv('text', { class: 'key', x: TX + COLS[c][1], y: y + 17, text: v }, g));
+    return g;
+  });
+
+  const QUERY =
+    'SELECT t.tool_id, b.bay, c.cost_ctr, f.fy, t.attrs  ' +
+    'FROM tool_master t  JOIN bay_map b USING (tool_id)  ' +
+    'JOIN cost_ctr c USING (tool_id)  LEFT JOIN fy_plan f USING (tool_id)';
+
+  return (t) => {
+    nodes.forEach((n, i) => {
+      n.g.style.opacity = ramp(t, i * 62, i * 62 + 320);
+      const k = ramp(t, 620 + i * 52, 1420 + i * 52);
+      n.e.style.opacity = k;
+      n.e.setAttribute('stroke-dashoffset', fx(n.len * (1 - k)));
+
+      // a key rides each edge into the join, over and over, while it runs
+      const start = 1700 + i * 88;
+      if (t < start || t > 7400) { n.tok.style.opacity = 0; return; }
+      const p = ((t - start) % 1500) / 1500;
+      n.tok.style.opacity = p < 0.88 ? 1 : 0;
+      n.tok.setAttribute('transform',
+        `translate(${fx(lerp(n.x, CX, p))} ${fx(lerp(n.y, CY, p))})`);
+    });
+
+    chords.forEach((c, i) => { c.style.opacity = ramp(t, 1400 + i * 55, 1900 + i * 55) * 0.55; });
+
+    tbl.style.opacity = ramp(t, 2000, 2500);
+    head.style.opacity = ramp(t, 2300, 2700);
+    rows.forEach((r, j) => { r.style.opacity = ramp(t, 2800 + j * 340, 3200 + j * 340); });
+
+    if (t < 6600) {
+      const n = Math.max(0, Math.floor((t - 2500) / 10));
+      read.textContent = QUERY.slice(0, n) + (n < QUERY.length && (t | 0) % 700 < 350 ? '_' : '');
+    } else {
+      read.innerHTML =
+        'joined on <b>tool_id</b> &middot; <b>13</b> sources &middot; <b>22</b> attributes per tool ' +
+        '&middot; <b>~1,500</b> tools &middot; data quality <b>+7%</b>';
+    }
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   PROBABILITY — whatever the shape is, the mean goes normal
+
+   An exponential is drawn from on the left. Thirty draws are averaged, the
+   average is dropped into the histogram on the right, and that repeats five
+   hundred times. Nothing about the right-hand shape is drawn in advance.
+   ------------------------------------------------------------------------ */
+function dvProb(root, read) {
+  const R = rng(731);
+  const N = 30, TRIALS = 520, MU = 1, SD = 1;
+  const SE = SD / Math.sqrt(N);
+  const BASE = 384, TOP = 108;
+
+  /* --- the population, sampled hard enough to show its own shape --- */
+  const SBINS = 24, SHI = 4.5, SW = SHI / SBINS;
+  const scount = new Array(SBINS).fill(0);
+  for (let i = 0; i < 6000; i++) {
+    const v = -Math.log(1 - R());
+    const b = Math.min(SBINS - 1, (v / SW) | 0);
+    scount[b]++;
+  }
+  const smax = Math.max(...scount);
+
+  const SX = 70, SWID = 230;
+  sv('text', { class: 'lb', x: SX, y: 76, text: 'POPULATION — EXPONENTIAL, SKEWED' }, root);
+  sv('line', { class: 'ax', x1: SX, y1: BASE, x2: SX + SWID, y2: BASE }, root);
+  const sbars = scount.map((c, i) => {
+    const h = (c / smax) * (BASE - TOP);
+    const r = sv('rect', { class: 'bar dim', x: SX + i * (SWID / SBINS), y: BASE - h,
+                           width: SWID / SBINS - 1.5, height: h }, root);
+    r.style.opacity = 0;
+    return { el: r, h };
+  });
+  sv('text', { class: 'key faint', x: SX, y: BASE + 20, text: 'x' }, root);
+  sv('text', { class: 'key faint end', x: SX + SWID, y: BASE + 20, text: '4.5' }, root);
+
+  /* --- every trial mean, computed once, revealed over time --- */
+  const means = [];
+  for (let k = 0; k < TRIALS; k++) {
+    let s = 0;
+    for (let i = 0; i < N; i++) s += -Math.log(1 - R());
+    means.push(s / N);
+  }
+
+  const MBINS = 30, MLO = MU - 4.2 * SE, MHI = MU + 4.2 * SE, MW = (MHI - MLO) / MBINS;
+  const MX = 400, MWID = 550, MBW = MWID / MBINS;
+  const peak = (1 / (SE * Math.sqrt(2 * Math.PI))) * TRIALS * MW;
+  const yK = (BASE - TOP) / (peak * 1.16);
+
+  sv('text', { class: 'lb', x: MX, y: 76, text: `MEAN OF ${N} DRAWS — REPEATED ${TRIALS}×` }, root);
+
+  const bands = sv('g', {}, root);
+  const mkBand = (k) => {
+    const b = sv('rect', {
+      class: 'fill',
+      x: MX + ((MU - k * SE) - MLO) / MW * MBW, y: TOP,
+      width: (2 * k * SE) / MW * MBW, height: BASE - TOP,
+    }, bands);
+    b.style.opacity = 0;
+    return b;
+  };
+  const band2 = mkBand(2), band1 = mkBand(1);
+
+  sv('line', { class: 'ax', x1: MX, y1: BASE, x2: MX + MWID, y2: BASE }, root);
+  const mbars = [];
+  for (let i = 0; i < MBINS; i++) {
+    mbars.push(sv('rect', { class: 'bar', x: MX + i * MBW, y: BASE, width: MBW - 1.8, height: 0 }, root));
+  }
+
+  const curve = sv('path', { class: 'ln hi' }, root);
+  const pts = [];
+  for (let i = 0; i <= 120; i++) {
+    const x = MLO + (i / 120) * (MHI - MLO);
+    const d = Math.exp(-((x - MU) ** 2) / (2 * SE * SE)) / (SE * Math.sqrt(2 * Math.PI));
+    pts.push(`${i ? 'L' : 'M'}${fx(MX + ((x - MLO) / MW) * MBW)} ${fx(BASE - d * TRIALS * MW * yK)}`);
+  }
+  curve.setAttribute('d', pts.join(' '));
+  const clen = curve.getTotalLength ? curve.getTotalLength() : 900;
+  curve.setAttribute('stroke-dasharray', clen);
+  curve.setAttribute('stroke-dashoffset', clen);
+
+  const l1 = sv('text', { class: 'lb hi mid', x: MX + MWID / 2, y: TOP - 12, text: '±1σ ≈ 68%' }, root);
+  const l2 = sv('text', { class: 'lb mid', x: MX + MWID / 2 + 200, y: TOP - 12, text: '±2σ ≈ 95%' }, root);
+  l1.style.opacity = 0; l2.style.opacity = 0;
+
+  sv('text', { class: 'key faint mid', x: MX + ((MU - MLO) / MW) * MBW, y: BASE + 20, text: 'μ = 1.00' }, root);
+
+  // draws falling out of the population and into the mean
+  const gDrop = sv('g', {}, root);
+  const drops = [];
+  for (let i = 0; i < 7; i++) {
+    const d = sv('circle', { class: 'mk hi', cx: 0, cy: 0, r: 3.5 }, gDrop);
+    d.style.opacity = 0;
+    drops.push({ el: d, x0: SX + 20 + (i * 31) % (SWID - 40), off: i * 210 });
+  }
+
+  const T0 = 1200, T1 = 7600;
+
+  return (t) => {
+    sbars.forEach((b, i) => { b.el.style.opacity = ramp(t, 200 + i * 26, 560 + i * 26); });
+
+    const done = Math.round(clamp01((t - T0) / (T1 - T0)) * TRIALS);
+    const counts = new Array(MBINS).fill(0);
+    let sum = 0, sq = 0;
+    for (let k = 0; k < done; k++) {
+      const v = means[k];
+      sum += v; sq += v * v;
+      const b = Math.floor((v - MLO) / MW);
+      if (b >= 0 && b < MBINS) counts[b]++;
+    }
+    counts.forEach((c, i) => {
+      const h = c * yK;
+      mbars[i].setAttribute('y', fx(BASE - h));
+      mbars[i].setAttribute('height', fx(h));
+    });
+
+    drops.forEach((d) => {
+      if (t < T0 || t > T1) { d.el.style.opacity = 0; return; }
+      const p = ((t - T0 + d.off) % 1400) / 1400;
+      d.el.style.opacity = p < 0.85 ? 1 : 0;
+      d.el.setAttribute('cx', fx(lerp(d.x0, MX + MWID / 2, p)));
+      d.el.setAttribute('cy', fx(lerp(BASE - 40, BASE - 60, p) - Math.sin(p * Math.PI) * 90));
+    });
+
+    curve.setAttribute('stroke-dashoffset', fx(clen * (1 - ramp(t, 6800, 8400))));
+    band2.style.opacity = ramp(t, 8500, 9200) * 0.55;
+    band1.style.opacity = ramp(t, 9200, 9900);
+    l1.style.opacity = ramp(t, 9300, 9900);
+    l2.style.opacity = ramp(t, 8700, 9300);
+
+    if (done > 1) {
+      const m = sum / done;
+      const s = Math.sqrt(Math.max(0, sq / done - m * m));
+      read.innerHTML =
+        `n = <b>${N}</b> per trial &middot; trials = <b>${done}</b> &middot; ` +
+        `mean of means = <b>${fx(m, 3)}</b> &middot; observed sd = <b>${fx(s, 3)}</b> ` +
+        `&middot; predicted σ/√n = <b>${fx(SE, 3)}</b>`;
+    }
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   PYTHON — read, clean, join, fit, write
+   ------------------------------------------------------------------------ */
+function dvPython(root, read) {
+  const LINES = [
+    'df = pd.read_sql(Q, engine)',
+    'df = df.dropna(subset=KEYS)',
+    'df = df.merge(bays, on="tool_id")',
+    'model.fit(df[X], df["removable"])',
+    'df.to_sql("tool_register", engine)',
+  ];
+  const AT = [200, 2600, 4800, 7000, 9200];
+  const R = rng(4801);
+
+  sv('rect', { class: 'box ghost', x: 46, y: 52, width: 384, height: 196 }, root);
+  const code = LINES.map((_, i) =>
+    sv('text', { class: 'key', x: 64, y: 88 + i * 34, text: '' }, root));
+  LINES.forEach((_, i) => sv('text', { class: 'key faint', x: 46, y: 88 + i * 34, text: `${i + 1}` }, root));
+
+  /* --- the frame it is all happening to --- */
+  const GX = 468, GY = 52, GW = 486, ROWS = 9, RH = 26, CW = 486 / 7;
+  sv('rect', { class: 'box', x: GX, y: GY, width: GW, height: 30 + ROWS * RH }, root);
+  sv('line', { class: 'ax', x1: GX, y1: GY + 30, x2: GX + GW, y2: GY + 30 }, root);
+
+  const HEAD = ['tool_id', 'bay', 'cost_ctr', 'fy', 'attrs', 'floor', 'vendor'];
+  const cols = HEAD.map((h, c) => {
+    const g = sv('g', {}, root);
+    sv('text', { class: 'key hi', x: GX + 10 + c * CW, y: GY + 20, text: h }, g);
+    if (c >= 5) g.style.opacity = 0;
+    return g;
+  });
+
+  const rows = [];
+  for (let r = 0; r < ROWS; r++) {
+    const g = sv('g', {}, root);
+    g.style.opacity = 0;
+    const y = GY + 30 + r * RH;
+    if (r) sv('line', { class: 'gl', x1: GX + 6, y1: y, x2: GX + GW - 6, y2: y }, root);
+    const cells = HEAD.map((_, c) => {
+      const v = c === 0 ? `TL-0${400 + r * 57}` :
+                c === 1 ? `B${1 + (r % 5)}` :
+                c === 2 ? `CC-${7700 + ((r * 311) % 1600)}` :
+                c === 3 ? `FY2${7 + (r % 3)}` :
+                c === 4 ? `${18 + (r % 5)}/22` :
+                c === 5 ? `F${2 + (r % 3)}` : `V-${20 + r}`;
+      const el = sv('text', { class: 'key', x: GX + 10 + c * CW, y: y + 18, text: v }, g);
+      if (c >= 5) el.style.opacity = 0;
+      return el;
+    });
+    // three rows arrive short of a key and do not survive the dropna
+    const nulls = r === 2 || r === 5 || r === 7;
+    if (nulls) { cells[2].textContent = 'NaN'; cells[3].textContent = 'NaN'; }
+    rows.push({ g, cells, nulls });
+  }
+
+  const counter = sv('text', { class: 'lb end', x: GX + GW, y: 40, text: '' }, root);
+
+  /* --- the fit, drawn from points that are actually fitted --- */
+  const FX0 = 62, FY0 = 282, FW = 356, FH = 128;
+  const fit = sv('g', {}, root);
+  fit.style.opacity = 0;
+  sv('rect', { class: 'box ghost', x: 46, y: 266, width: 384, height: 160 }, fit);
+  sv('line', { class: 'ax', x1: FX0, y1: FY0 + FH, x2: FX0 + FW, y2: FY0 + FH }, fit);
+  sv('line', { class: 'ax', x1: FX0, y1: FY0, x2: FX0, y2: FY0 + FH }, fit);
+
+  const xs = [], ys = [];
+  const dots = [];
+  for (let i = 0; i < 26; i++) {
+    const x = i / 25, y = 0.16 + 0.68 * x + gauss(R) * 0.07;
+    xs.push(x); ys.push(y);
+    const d = sv('circle', { class: 'mk', cx: FX0 + x * FW, cy: FY0 + FH - y * FH, r: 3 }, fit);
+    d.style.opacity = 0;
+    dots.push(d);
+  }
+  const mx = xs.reduce((a, b) => a + b) / xs.length;
+  const my = ys.reduce((a, b) => a + b) / ys.length;
+  let sxy = 0, sxx = 0;
+  xs.forEach((x, i) => { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) ** 2; });
+  const b1 = sxy / sxx, b0 = my - b1 * mx;
+  const line = sv('line', {
+    class: 'ln hi',
+    x1: FX0, y1: FY0 + FH - b0 * FH,
+    x2: FX0 + FW, y2: FY0 + FH - (b0 + b1) * FH,
+  }, fit);
+  const llen = Math.hypot(FW, b1 * FH);
+  line.setAttribute('stroke-dasharray', llen);
+  line.setAttribute('stroke-dashoffset', llen);
+  sv('text', { class: 'key faint', x: FX0 + 8, y: FY0 + 16, text: 'removable ~ f(age, util, spend)' }, fit);
+
+  /* --- and out the other side --- */
+  const tray = sv('g', {}, root);
+  tray.style.opacity = 0;
+  sv('rect', { class: 'box', x: 468, y: 342, width: 486, height: 76 }, tray);
+  sv('path', { class: 'box', d: 'M840 356 v34 a34 9 0 0 0 68 0 v-34 z' }, tray);
+  sv('ellipse', { class: 'box', cx: 874, cy: 356, rx: 34, ry: 9 }, tray);
+  sv('text', { class: 'key hi', x: 492, y: 375, text: 'tool_register' }, tray);
+  sv('text', { class: 'key faint', x: 492, y: 396, text: '1,394 rows written' }, tray);
+  const flyers = [];
+  for (let i = 0; i < 5; i++) {
+    const f = sv('rect', { class: 'bar', x: 0, y: -4, width: 22, height: 8 }, tray);
+    f.style.opacity = 0;
+    flyers.push(f);
+  }
+
+  const type = (el, s, t, at) => {
+    const n = Math.max(0, Math.floor((t - at) / 26));
+    el.textContent = s.slice(0, n);
+  };
+
+  return (t) => {
+    LINES.forEach((s, i) => type(code[i], s, t, AT[i]));
+
+    rows.forEach((r, i) => {
+      r.g.style.opacity = ramp(t, 700 + i * 90, 1000 + i * 90);
+      if (r.nulls) {
+        const flash = t > 3000 && t < 3900 && (t | 0) % 400 < 200;
+        r.cells[2].setAttribute('class', flash ? 'key hi' : 'key');
+        r.cells[3].setAttribute('class', flash ? 'key hi' : 'key');
+        if (t > 4000) r.g.style.opacity = 1 - ramp(t, 4000, 4400);
+      }
+    });
+
+    const wide = ramp(t, 5400, 6100);
+    cols.forEach((g, c) => { if (c >= 5) g.style.opacity = wide; });
+    rows.forEach((r) => r.cells.forEach((el, c) => { if (c >= 5) el.style.opacity = wide; }));
+
+    const nRows = t < 4000 ? Math.round(ramp(t, 700, 2100) * 1500)
+                           : Math.round(lerp(1500, 1394, ramp(t, 4000, 4400)));
+    const nCols = Math.round(lerp(20, 22, wide));
+    counter.textContent = t > 700 ? `${nRows.toLocaleString()} rows × ${nCols} cols` : '';
+
+    fit.style.opacity = ramp(t, 7200, 7700);
+    dots.forEach((d, i) => { d.style.opacity = ramp(t, 7500 + i * 22, 7800 + i * 22); });
+    line.setAttribute('stroke-dashoffset', fx(llen * (1 - ramp(t, 8300, 9000))));
+
+    tray.style.opacity = ramp(t, 9400, 9900);
+    flyers.forEach((f, i) => {
+      const start = 9800 + i * 190;
+      if (t < start) { f.style.opacity = 0; return; }
+      const p = ((t - start) % 900) / 900;
+      f.style.opacity = p < 0.85 ? 1 : 0;
+      f.setAttribute('transform', `translate(${fx(lerp(500, 848, p))} ${fx(lerp(372, 372, p))})`);
+    });
+
+    if (t > 10200) {
+      read.innerHTML = 'pandas &middot; scikit-learn &middot; SQLAlchemy &mdash; ' +
+        `<b>1,500</b> rows in, <b>106</b> dropped on a missing key, <b>22</b> attributes out, ` +
+        `slope <b>${fx(b1, 2)}</b> back into the register`;
+    } else if (t > 700) {
+      let phase = 0;
+      AT.forEach((a, i) => { if (t >= a) phase = i; });
+      read.textContent = ['reading…', 'dropping rows short of a key…', 'joining the bay map…',
+                          'fitting…', 'writing back…'][phase];
+    }
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   TABLEAU — the same sixty marks, four times over
+
+   Nothing is redrawn between views. The marks that were a scatter are the
+   marks that become the bars, the line and then the panes, which is the
+   whole point of a shelf.
+   ------------------------------------------------------------------------ */
+function dvTableau(root, read) {
+  const R = rng(9155);
+  const M = 60;
+
+  const frames = [];
+  const mkFrame = (x, y, w, h, title) => {
+    const g = sv('g', {}, root);
+    g.style.opacity = 0;
+    sv('rect', { class: 'box', x, y, width: w, height: h }, g);
+    sv('line', { class: 'ax', x1: x, y1: y + 22, x2: x + w, y2: y + 22 }, g);
+    sv('text', { class: 'key hi', x: x + 10, y: y + 15, text: title }, g);
+    frames.push(g);
+    return g;
+  };
+  const pA = mkFrame(72, 84, 420, 166, 'REMOVALS BY BAY');
+  const pB = mkFrame(516, 84, 412, 166, 'SPEND, FY24–FY29');
+  const pC = mkFrame(72, 272, 420, 148, 'UTILISATION');
+  const pD = mkFrame(516, 272, 412, 148, 'AGAINST PLAN');
+  void pA; void pB; void pC;
+
+  const kpis = [];
+  [['TOOLS', '1,500'], ['REVIEWED', '1,500'], ['FLAGGED', '218'], ['ΔOPEX', '−6.4%']]
+    .forEach(([k, v], i) => {
+      const g = sv('g', {}, pD);
+      g.style.opacity = 0;
+      const x = 530 + (i % 2) * 200, y = 306 + ((i / 2) | 0) * 58;
+      sv('rect', { class: 'box ghost', x, y, width: 184, height: 46 }, g);
+      sv('text', { class: 'key faint', x: x + 12, y: y + 17, text: k }, g);
+      sv('text', { class: 'lb big ink', x: x + 12, y: y + 38, text: v }, g);
+      kpis.push(g);
+    });
+
+  const marks = [];
+  for (let i = 0; i < M; i++) {
+    marks.push(sv('rect', { class: 'bar', x: 0, y: 0, width: 9, height: 9 }, root));
+  }
+
+  /* --- four shelves, one set of marks --- */
+  const scatter = [], bars = [], line = [], dash = [], filt = [];
+  for (let i = 0; i < M; i++) scatter.push([120 + R() * 780, 96 + R() * 300]);
+
+  const HEIGHTS = [11, 9, 8, 7, 7, 6, 6, 6];
+  let k = 0;
+  HEIGHTS.forEach((h, b) => {
+    for (let j = 0; j < h; j++) bars.push([148 + b * 96, 372 - j * 13]);
+    k += h;
+  });
+  void k;
+
+  for (let i = 0; i < M; i++) {
+    const x = 120 + (i / (M - 1)) * 780;
+    line.push([x, 300 - Math.sin(i / M * Math.PI * 1.5) * 150 - (i / M) * 60]);
+  }
+
+  // pane A takes 24 marks as six columns, B takes 16 on a series, C is a 5×4 grid
+  const AH = [5, 4, 4, 4, 4, 3];
+  AH.forEach((h, b) => { for (let j = 0; j < h; j++) dash.push([104 + b * 66, 236 - j * 15]); });
+  for (let i = 0; i < 16; i++) {
+    dash.push([534 + i * 25, 226 - Math.sin(i / 15 * Math.PI) * 88 - i * 2]);
+  }
+  for (let i = 0; i < 20; i++) dash.push([100 + (i % 5) * 82, 312 + ((i / 5) | 0) * 26]);
+
+  const FH = [3, 4, 5, 4, 5, 3];
+  FH.forEach((h, b) => { for (let j = 0; j < h; j++) filt.push([104 + b * 66, 236 - j * 15]); });
+  for (let i = 0; i < 16; i++) {
+    filt.push([534 + i * 25, 226 - Math.cos(i / 15 * Math.PI * 0.9) * 70 - i * 3]);
+  }
+  for (let i = 0; i < 20; i++) filt.push([100 + (i % 5) * 82, 312 + ((i / 5) | 0) * 26]);
+
+  const chip = sv('g', {}, root);
+  chip.style.opacity = 0;
+  sv('rect', { class: 'box', x: 72, y: 40, width: 214, height: 28, style: 'fill:var(--paper-lit)' }, chip);
+  sv('text', { class: 'key hi', x: 84, y: 59, text: 'fy = FY27   ✕' }, chip);
+
+  const move = (from, to, e) => marks.forEach((m, i) => {
+    m.setAttribute('x', fx(lerp(from[i][0], to[i][0], e)));
+    m.setAttribute('y', fx(lerp(from[i][1], to[i][1], e)));
+  });
+
+  return (t) => {
+    marks.forEach((m, i) => { m.style.opacity = ramp(t, i * 16, i * 16 + 300); });
+
+    if (t < 1400) move(scatter, scatter, 0);
+    else if (t < 3400) move(scatter, bars, ramp(t, 1500, 3200));
+    else if (t < 5200) move(bars, line, ramp(t, 3500, 5000));
+    else if (t < 7400) move(line, dash, ramp(t, 5300, 7000));
+    else move(dash, filt, ramp(t, 7600, 8900));
+
+    frames.forEach((g, i) => { g.style.opacity = ramp(t, 5500 + i * 130, 6100 + i * 130); });
+    kpis.forEach((g, i) => { g.style.opacity = ramp(t, 6500 + i * 120, 7000 + i * 120); });
+    chip.style.opacity = ramp(t, 7500, 7900);
+
+    read.textContent =
+      t < 1500 ? 'sixty marks, no shelf' :
+      t < 3500 ? 'drop bay on columns — the marks stack' :
+      t < 5300 ? 'drop fiscal year on columns — the same marks, ordered' :
+      t < 7500 ? 'four panes on one sheet, still the same sixty marks' :
+                 'one filter, and every pane answers at once';
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   JMP / DOE — eight runs, three factors
+
+   The eight responses come out of a model with a real A×B interaction, and
+   the effect estimates on the right are computed from those eight numbers.
+   ------------------------------------------------------------------------ */
+function dvDoe(root, read) {
+  const R = rng(2038);
+  const CX = 250, CY = 232;
+  const P = (a, b, c) => [CX + (a - b) * 104, CY + (a + b) * 50 - c * 92];
+
+  const runs = [];
+  for (let i = 0; i < 8; i++) {
+    const A = i & 1 ? 1 : -1, B = i & 2 ? 1 : -1, C = i & 4 ? 1 : -1;
+    const y = 52 + 7.5 * A + 3.2 * B - 1.4 * C + 4.6 * A * B + gauss(R) * 0.5;
+    runs.push({ A, B, C, y, p: P(A, B, C) });
+  }
+  const eff = (f) => {
+    const hi = runs.filter((r) => f(r) > 0), lo = runs.filter((r) => f(r) < 0);
+    return hi.reduce((s, r) => s + r.y, 0) / hi.length - lo.reduce((s, r) => s + r.y, 0) / lo.length;
+  };
+  const eA = eff((r) => r.A), eB = eff((r) => r.B), eC = eff((r) => r.C), eAB = eff((r) => r.A * r.B);
+
+  sv('text', { class: 'lb', x: 72, y: 62, text: '2³ FULL FACTORIAL — 8 RUNS' }, root);
+
+  const gE = sv('g', {}, root);
+  const edges = [];
+  for (let i = 0; i < 8; i++) {
+    for (const bit of [1, 2, 4]) {
+      const j = i ^ bit;
+      if (j < i) continue;
+      const e = sv('line', {
+        class: 'ax', x1: runs[i].p[0], y1: runs[i].p[1], x2: runs[j].p[0], y2: runs[j].p[1],
+      }, gE);
+      const len = Math.hypot(runs[j].p[0] - runs[i].p[0], runs[j].p[1] - runs[i].p[1]);
+      e.setAttribute('stroke-dasharray', len);
+      e.setAttribute('stroke-dashoffset', len);
+      edges.push({ el: e, len });
+    }
+  }
+
+  // standard (Yates) order, so the corners light the way the run sheet reads
+  const corners = runs.map((r) => {
+    const g = sv('g', {}, root);
+    g.style.opacity = 0;
+    sv('circle', { class: 'mk hi', cx: r.p[0], cy: r.p[1], r: 6 }, g);
+    sv('text', {
+      class: 'key ink', x: r.p[0] + (r.A > 0 ? 12 : -12), y: r.p[1] - 10,
+      'text-anchor': r.A > 0 ? 'start' : 'end', text: fx(r.y),
+    }, g);
+    return g;
+  });
+
+  /* --- main effects, from the eight numbers just plotted --- */
+  const gM = sv('g', {}, root);
+  gM.style.opacity = 0;
+  sv('text', { class: 'lb', x: 540, y: 62, text: 'MAIN EFFECTS' }, gM);
+  const big = Math.max(Math.abs(eA), Math.abs(eB), Math.abs(eC));
+  const ys = runs.map((r) => r.y);
+  const ylo = Math.min(...ys) - 1, yhi = Math.max(...ys) + 1;
+  const my = (v, top, h) => top + h - ((v - ylo) / (yhi - ylo)) * h;
+
+  [['A', eA, (r) => r.A], ['B', eB, (r) => r.B], ['C', eC, (r) => r.C]].forEach(([nm, e, f], i) => {
+    const x = 540 + i * 140, w = 108, top = 84, h = 120;
+    sv('rect', { class: 'box ghost', x, y: top, width: w, height: h }, gM);
+    const hi = runs.filter((r) => f(r) > 0), lo = runs.filter((r) => f(r) < 0);
+    const yl = lo.reduce((s, r) => s + r.y, 0) / lo.length;
+    const yh = hi.reduce((s, r) => s + r.y, 0) / hi.length;
+    const cls = Math.abs(e) === big ? 'ln hi' : 'ln';
+    sv('line', { class: cls, x1: x + 18, y1: my(yl, top, h), x2: x + w - 18, y2: my(yh, top, h) }, gM);
+    sv('circle', { class: 'mk', cx: x + 18, cy: my(yl, top, h), r: 4 }, gM);
+    sv('circle', { class: 'mk', cx: x + w - 18, cy: my(yh, top, h), r: 4 }, gM);
+    sv('text', { class: 'key faint', x: x + 8, y: top + h + 16, text: '−1' }, gM);
+    sv('text', { class: 'key faint end', x: x + w - 8, y: top + h + 16, text: '+1' }, gM);
+    sv('text', { class: `key ${Math.abs(e) === big ? 'hi' : ''}`, x: x + 8, y: top - 8,
+                 text: `${nm}  ${e > 0 ? '+' : ''}${fx(e)}` }, gM);
+  });
+
+  /* --- and the reason the main effects are not the whole story --- */
+  const gI = sv('g', {}, root);
+  gI.style.opacity = 0;
+  sv('text', { class: 'lb hi', x: 540, y: 268, text: `A×B INTERACTION  ${eAB > 0 ? '+' : ''}${fx(eAB)}` }, gI);
+  sv('rect', { class: 'box ghost', x: 540, y: 284, width: 388, height: 128 }, gI);
+  [-1, 1].forEach((bLevel, i) => {
+    const at = (a) => {
+      const sel = runs.filter((r) => r.A === a && r.B === bLevel);
+      return sel.reduce((s, r) => s + r.y, 0) / sel.length;
+    };
+    const y1 = 284 + 128 - ((at(-1) - ylo) / (yhi - ylo)) * 108 - 10;
+    const y2 = 284 + 128 - ((at(1) - ylo) / (yhi - ylo)) * 108 - 10;
+    sv('line', { class: i ? 'ln hi' : 'ln', x1: 576, y1, x2: 892, y2 }, gI);
+    sv('circle', { class: 'mk', cx: 576, cy: y1, r: 4 }, gI);
+    sv('circle', { class: 'mk', cx: 892, cy: y2, r: 4 }, gI);
+    sv('text', { class: 'key faint', x: 900, y: y2 + 4, text: `B=${bLevel > 0 ? '+1' : '−1'}` }, gI);
+  });
+
+  return (t) => {
+    edges.forEach((e, i) => {
+      const k = ramp(t, 100 + i * 60, 700 + i * 60);
+      e.el.setAttribute('stroke-dashoffset', fx(e.len * (1 - k)));
+    });
+    corners.forEach((g, i) => { g.style.opacity = ramp(t, 1200 + i * 260, 1600 + i * 260); });
+    gM.style.opacity = ramp(t, 3800, 4400);
+    gI.style.opacity = ramp(t, 6400, 7000);
+
+    read.innerHTML =
+      t < 3800 ? 'eight runs, every corner of the design space' :
+      t < 6400 ? `effect A <b>${eA > 0 ? '+' : ''}${fx(eA)}</b> &middot; B <b>${eB > 0 ? '+' : ''}${fx(eB)}</b> &middot; C <b>${fx(eC)}</b>` :
+      `A×B <b>${eAB > 0 ? '+' : ''}${fx(eAB)}</b> &mdash; the lines are not parallel, so A cannot be set without knowing B`;
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   SIX SIGMA — the chart notices before anybody does
+   ------------------------------------------------------------------------ */
+function dvSigma(root, read) {
+  const R = rng(6606);
+  const MU = 50, SD0 = 1.6, SD1 = 0.95, USL = 56, LSL = 44;
+  const X0 = 96, XW = 840, N = 30;
+  const dx = XW / (N - 1);
+  const yOf = (v) => 236 - (v - MU) * (150 / (5 * SD0));
+
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    let v;
+    if (i < 18) v = MU + gauss(R) * SD0;
+    else if (i < 24) v = MU + 3.4 + gauss(R) * SD0;    // the shift
+    else v = MU + gauss(R) * SD1;                      // after the correction
+    pts.push(v);
+  }
+  pts[21] = MU + 3 * SD0 + 0.9;                        // the point that trips the rule
+  const breach = 21;
+
+  sv('text', { class: 'lb', x: X0, y: 62, text: 'X̄ CHART — SUBGROUP MEANS' }, root);
+  sv('line', { class: 'ax', x1: X0, y1: yOf(MU), x2: X0 + XW, y2: yOf(MU) }, root);
+  sv('text', { class: 'key faint', x: X0 + XW + 8, y: yOf(MU) + 4, text: 'CL' }, root);
+
+  const mkLimit = (v, label) => {
+    const g = sv('g', {}, root);
+    sv('line', { class: 'gl', x1: X0, y1: yOf(v), x2: X0 + XW, y2: yOf(v) }, g);
+    sv('text', { class: 'key faint', x: X0 + XW + 8, y: yOf(v) + 4, text: label }, g);
+    return g;
+  };
+  const ucl0 = mkLimit(MU + 3 * SD0, 'UCL'), lcl0 = mkLimit(MU - 3 * SD0, 'LCL');
+  const ucl1 = mkLimit(MU + 3 * SD1, 'UCL'), lcl1 = mkLimit(MU - 3 * SD1, 'LCL');
+  ucl1.style.opacity = 0; lcl1.style.opacity = 0;
+
+  const path = sv('path', { class: 'ln' }, root);
+  const dots = pts.map((v, i) => {
+    const c = sv('circle', { class: 'mk', cx: X0 + i * dx, cy: yOf(v), r: 4.5 }, root);
+    c.style.opacity = 0;
+    return c;
+  });
+  const ring = sv('circle', { class: 'mk b', cx: X0 + breach * dx, cy: yOf(pts[breach]), r: 12,
+                              style: 'stroke:var(--accent);stroke-width:2.4' }, root);
+  ring.style.opacity = 0;
+
+  const alarm = sv('g', {}, root);
+  alarm.style.opacity = 0;
+  sv('line', { class: 'ln hi', x1: X0 + breach * dx, y1: yOf(pts[breach]) - 18, x2: X0 + breach * dx - 40, y2: 96 }, alarm);
+  sv('text', { class: 'lb hi end', x: X0 + breach * dx - 46, y: 92, text: 'RULE 1 — 1 POINT BEYOND 3σ' }, alarm);
+
+  const fixed = sv('g', {}, root);
+  fixed.style.opacity = 0;
+  sv('line', { class: 'gl', x1: X0 + 23.5 * dx, y1: 96, x2: X0 + 23.5 * dx, y2: 300,
+               style: 'stroke:var(--accent)' }, fixed);
+  sv('text', { class: 'lb hi', x: X0 + 23.5 * dx + 8, y: 92, text: 'CORRECTED' }, fixed);
+
+  const caps = sv('g', {}, root);
+  caps.style.opacity = 0;
+  sv('text', { class: 'lb', x: X0, y: 348, text: 'CAPABILITY' }, caps);
+  const bar = (label, y, before, after) => {
+    sv('text', { class: 'key faint', x: X0, y: y + 4, text: label }, caps);
+    sv('rect', { class: 'bar dim', x: X0 + 90, y: y - 8, width: before * 100, height: 12 }, caps);
+    const b = sv('rect', { class: 'bar', x: X0 + 90, y: y - 8, width: 0, height: 12 }, caps);
+    const v = sv('text', { class: 'key hi', x: X0 + 90 + after * 100 + 10, y: y + 4, text: '' }, caps);
+    return { b, v, after };
+  };
+  const cpB = (USL - LSL) / (6 * SD0), cpA = (USL - LSL) / (6 * SD1);
+  const rows = [bar('Cp', 378, cpB, cpA), bar('Cpk', 404, cpB, cpA)];
+
+  return (t) => {
+    const shown = Math.floor(clamp01((t - 600) / 4600) * 24) + (t > 7000 ? Math.floor(clamp01((t - 7000) / 1800) * 6) : 0);
+    dots.forEach((d, i) => { d.style.opacity = i < shown ? 1 : 0; });
+    const n = Math.min(pts.length, shown);
+    path.setAttribute('d', pts.slice(0, n)
+      .map((v, i) => `${i ? 'L' : 'M'}${fx(X0 + i * dx)} ${fx(yOf(v))}`).join(' '));
+
+    if (t > 4300) {
+      ring.style.opacity = (t | 0) % 800 < 400 || t > 6200 ? 1 : 0.25;
+      alarm.style.opacity = ramp(t, 4300, 4800);
+      dots[breach].setAttribute('class', 'mk hi');
+    }
+    fixed.style.opacity = ramp(t, 6400, 6900);
+
+    const swap = ramp(t, 7200, 7900);
+    ucl1.style.opacity = swap; lcl1.style.opacity = swap;
+    ucl0.style.opacity = 1 - swap * 0.75; lcl0.style.opacity = 1 - swap * 0.75;
+
+    caps.style.opacity = ramp(t, 9000, 9500);
+    const g = ramp(t, 9300, 10600);
+    rows.forEach((r) => {
+      r.b.setAttribute('width', fx(lerp(cpB, r.after, g) * 100));
+      r.v.textContent = fx(lerp(cpB, r.after, g), 2);
+    });
+
+    read.innerHTML =
+      t < 4300 ? 'in control — every point inside the limits, no run, no trend' :
+      t < 6400 ? 'a point past the upper limit: the chart is asking a question, not answering one' :
+      t < 9000 ? 'cause found and removed; the process comes back centred and tighter' :
+      `σ <b>${fx(SD0, 2)}</b> → <b>${fx(SD1, 2)}</b> &middot; Cp <b>${fx(cpB, 2)}</b> → <b>${fx(cpA, 2)}</b> ` +
+      `&middot; spec ${LSL}–${USL}`;
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   MACHINE LEARNING — fit it, then check it on data it has not seen
+
+   The boundary really is swept, the accuracy at each angle really is
+   counted, and the reported test accuracy is the one the chosen boundary
+   gets on the held-out points.
+   ------------------------------------------------------------------------ */
+function dvMl(root, read) {
+  const R = rng(15551);
+  const PX = 110, PY = 64, PW = 820, PH = 340;
+  const sx = (x) => PX + ((x + 4) / 8) * PW;
+  const sy = (y) => PY + PH - ((y + 3) / 6) * PH;
+
+  const pt = (cls) => {
+    const cx = cls ? 1.15 : -1.15, cy = cls ? 0.62 : -0.62;
+    return { x: cx + gauss(R) * 0.92, y: cy + gauss(R) * 0.9, c: cls };
+  };
+  const train = [], test = [];
+  for (let i = 0; i < 90; i++) train.push(pt(i % 2));
+  for (let i = 0; i < 60; i++) test.push(pt(i % 2));
+
+  // one sweep of the boundary, scored honestly, and the best angle kept
+  const score = (deg, set) => {
+    const a = deg * Math.PI / 180, nx = -Math.sin(a), ny = Math.cos(a);
+    let ok = 0;
+    set.forEach((p) => { if (((p.x * nx + p.y * ny) > 0 ? 1 : 0) === p.c) ok++; });
+    return ok;
+  };
+  let bestDeg = 15, bestOk = -1;
+  for (let d = 15; d <= 165; d += 1.5) {
+    const ok = score(d, train);
+    if (ok > bestOk) { bestOk = ok; bestDeg = d; }
+  }
+  const testOk = score(bestDeg, test);
+
+  sv('rect', { class: 'box ghost', x: PX, y: PY, width: PW, height: PH }, root);
+  sv('text', { class: 'key faint', x: PX + 10, y: PY + 20, text: 'two features, two classes' }, root);
+
+  const trainDots = train.map((p) => {
+    const c = sv('circle', { class: p.c ? 'mk hi' : 'mk', cx: sx(p.x), cy: sy(p.y), r: 5 }, root);
+    c.style.opacity = 0;
+    return c;
+  });
+
+  const bound = sv('line', { class: 'ln hi' }, root);
+  bound.style.opacity = 0;
+
+  const gTest = sv('g', {}, root);
+  const testDots = test.map((p) => {
+    const c = sv('circle', { class: 'mk b', cx: sx(p.x), cy: sy(p.y), r: 5.5 }, gTest);
+    c.style.opacity = 0;
+    return c;
+  });
+  const misses = test.map((p) => {
+    const a = bestDeg * Math.PI / 180, nx = -Math.sin(a), ny = Math.cos(a);
+    const wrong = ((p.x * nx + p.y * ny) > 0 ? 1 : 0) !== p.c;
+    if (!wrong) return null;
+    const c = sv('circle', { class: 'mk b', cx: sx(p.x), cy: sy(p.y), r: 12,
+                             style: 'stroke:var(--accent);stroke-width:2.4' }, root);
+    c.style.opacity = 0;
+    return c;
+  });
+
+  const setBound = (deg) => {
+    const a = deg * Math.PI / 180;
+    const L = 9;
+    bound.setAttribute('x1', fx(sx(-Math.cos(a) * L)));
+    bound.setAttribute('y1', fx(sy(-Math.sin(a) * L)));
+    bound.setAttribute('x2', fx(sx(Math.cos(a) * L)));
+    bound.setAttribute('y2', fx(sy(Math.sin(a) * L)));
+  };
+  setBound(bestDeg);
+
+  return (t) => {
+    trainDots.forEach((d, i) => { d.style.opacity = ramp(t, i * 14, i * 14 + 260); });
+
+    let deg = bestDeg, live = bestOk;
+    if (t < 5600) {
+      bound.style.opacity = ramp(t, 1500, 1800);
+      const k = clamp01((t - 1600) / 3200);
+      deg = 15 + k * 150;
+      if (t > 4900) deg = lerp(deg, bestDeg, ramp(t, 4900, 5600));   // settle on the best
+      live = score(deg, train);
+      setBound(deg);
+    }
+
+    testDots.forEach((d, i) => { d.style.opacity = ramp(t, 5900 + i * 18, 6200 + i * 18); });
+    misses.forEach((m) => { if (m) m.style.opacity = ramp(t, 7600, 8100); });
+
+    read.innerHTML =
+      t < 1600 ? 'ninety labelled points — the training set' :
+      t < 5600 ? `sweeping the boundary &middot; angle <b>${fx(deg, 0)}°</b> &middot; ` +
+                 `training accuracy <b>${fx(live / train.length * 100, 1)}%</b>` :
+      t < 7600 ? `fitted at <b>${fx(bestDeg, 0)}°</b> &middot; training accuracy ` +
+                 `<b>${fx(bestOk / train.length * 100, 1)}%</b> &mdash; now sixty points it has never seen` :
+      `held-out accuracy <b>${fx(testOk / test.length * 100, 1)}%</b> ` +
+      `(<b>${test.length - testOk}</b> of ${test.length} wrong) &mdash; the number that counts`;
+  };
+}
+
+const DIVES = {
+  sql: {
+    k: 'SQL', t: 'Thirteen stores, one record',
+    s: 'The register the budgeting team works from is a join. Every source arrives keyed on the tool, and one row per tool comes out the other side.',
+    dur: 9500, build: dvSql,
+  },
+  python: {
+    k: 'Python', t: 'Read, clean, join, fit, write',
+    s: 'The pipeline behind the register: pull it, drop what is short of a key, widen it against the bay map, fit against it, put it back.',
+    dur: 11500, build: dvPython,
+  },
+  prob: {
+    k: 'Probability', t: 'Whatever the shape, the mean goes normal',
+    s: 'The population on the left is badly skewed. Average thirty draws from it, five hundred times, and the averages fall into a normal anyway.',
+    dur: 11000, build: dvProb,
+  },
+  tableau: {
+    k: 'Tableau', t: 'The same sixty marks, four times over',
+    s: 'A view is not a chart type, it is where the marks are asked to stand. Nothing is redrawn between these — the shelves move, the marks follow.',
+    dur: 10800, build: dvTableau,
+  },
+  doe: {
+    k: 'JMP · DOE', t: 'Eight runs, three factors',
+    s: 'A full factorial visits every corner of the design space. The effects on the right are arithmetic on the eight numbers on the left.',
+    dur: 10500, build: dvDoe,
+  },
+  sigma: {
+    k: 'Six Sigma', t: 'The chart notices before anybody does',
+    s: 'A process drifts. The control limits were set from its own behaviour, so the drift trips a rule before anyone downstream sees a defect.',
+    dur: 11000, build: dvSigma,
+  },
+  ml: {
+    k: 'Machine Learning', t: 'Fit it, then check it on data it has not seen',
+    s: 'Sweep a boundary, count the mistakes, keep the best one. Then the only number worth reporting: how it does on points held back from the fit.',
+    dur: 11000, build: dvMl,
+  },
+};
+
 
 /* ============================================================================
    19 · FRAME
