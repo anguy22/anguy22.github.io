@@ -1,0 +1,192 @@
+# anguy.app redesign: external review handoff
+
+For: Codex (Sol Max), external reviewer working in parallel with Claude Code.
+Written: 2026-11-24. Repo: `c:\dev\anguy22.github.io-main\anguy22.github.io-main` (public, GitHub Pages, custom domain anguy.app).
+
+---
+
+## 1. Your role and the working protocol
+
+- **You review; Claude builds.** Claude Code owns every source file and is editing them live. Do not edit `index.html`, `css/`, `js/`, `img/`, `PRODUCT.md`, or anything under `.impeccable/` except your findings file. Two agents writing the same files will clobber each other.
+- **Never delete, move, or `git clean` anything.** On 2026-11-24 at 18:39, a file disappeared from the working tree, and it was not removed by Claude. If you think a file should go, say so in findings.
+- **Write findings to `.impeccable/review/codex-findings.md`** (create it). Claude reads it between build rounds. Append; do not rewrite earlier entries. Mark resolved items `[resolved]` only after re-verifying.
+- **Finding format**, one per entry:
+  ```
+  ### [P1|P2|P3] short title
+  file:line  (or section / viewport)
+  What is wrong, the concrete evidence (screenshot path, computed value, quote), and the fix you recommend.
+  Rule it breaks: (user directive / product truth / craft floor / a11y / perf)
+  ```
+  P1 = wrong fact, broken function, a11y blocker, or violation of a user directive. P2 = visible craft defect. P3 = polish.
+- **Judge against this document, not your own taste.** The user pinned the direction (section 3). A finding that boils down to "I'd prefer a different aesthetic" is out of scope. A finding that the build fails the pinned direction is in scope and valuable.
+- If you need to run things: `python -m http.server 8123 --bind 127.0.0.1` from the repo root, then open `http://127.0.0.1:8123/`. Claude may already be serving on 8123; if so, use another port. Do not open `index.html` over `file://`; the scripts are ES modules.
+
+---
+
+## 2. What the site is
+
+Personal site for **Andrew Nguyen**, an Industrial Engineering student (Statistics minor) at Purdue, est. graduation May 2028. Audience, in the user's own ranking: **peers and network first** (people who met him through chess, soccer, Purdue, semis; arriving on a phone from a shared link), recruiters second. Personality leads; the resume must still be findable in seconds.
+
+Stack: static HTML, CSS, and ES-module JS. No build step, no framework, no Node on this machine. Hosted by GitHub Pages (Jekyll runs on push; dot-folders are not published).
+
+The old site (a WebGL 3D "ride" plus `classic.html`, background audio, a Markets sheet, and a pitch-zone map) has been **retired and deleted** from the working tree on the user's instruction. It remains in git history. Do not recommend bringing any of it back.
+
+---
+
+## 3. The user's pinned directives (these win over everything)
+
+In order received:
+
+1. Revamp using the imported skills **impeccable** and **tasteskill (design-taste-frontend)**, keeping existing content but with a new concept and look.
+2. Primary audience: **peers and network**. Replace the 3D ride **entirely**. The only must-keep feature: **live Lichess stats**.
+3. Reference: **ryanrana.com**. "I want my personal website to look and feel like this." The structure and restraint carry over; the code, copy, and assets do not (see section 5).
+4. **Dark green and white**, then refined to: **glossy black metal with dark green accents**, white type. "Classy, modern, clean." Abandon the simulation feel.
+5. Replace ryanrana's bookshelf with a **toolbox**: one object per skill, with creative liberty (examples given: a snake for Python, a manual for SQL).
+6. Write the name in **Apple-"hello"-style cursive that draws itself across the screen**.
+7. User choices from the last decision round: toolbox form = **tool chest with drawers**; hero visual = **chrome bell curve** (Galton board); lettering = **custom monoline script**.
+8. **No photo of Andrew anywhere on the site** ("Do NOT use any photo of me inside this website.").
+
+---
+
+## 4. Product truth and content rules
+
+Facts on the page must trace to the user's own prior site content (summarized in `PRODUCT.md`). **Never invent** numbers, employers, dates, testimonials, or claims. Watch especially for:
+
+- **Chess rating trap.** The resume says "2000+ Elo-rated" (league or over-the-board play). Live Lichess rapid is currently **~1898**. The page must never say "2000+ on lichess" or "2000+ rapid on lichess." "2000+ rated" is allowed only when it refers to league play or the CCL. Flag any regression.
+- Dates without a source (Solar PV, bridge regression) are **not shown**. Do not add any.
+- Contact details allowed: school email `nguy1051@purdue.edu`, LinkedIn, GitHub, Lichess. **No** phone, home address, or personal email (`.gitignore` documents why).
+- Voice: **lowercase, warm, dry** in the bio and descriptions ("hi there. i'm andrew.", "if we're going to be replaced by ai it might as well be accurate.", "built with diet coke and ai"). Headings and proper nouns are sentence case. The "diet coke" footer vs the "coke zero" footnote is a deliberate joke from the original site. Keep both.
+- **No photographs of Andrew, anywhere on the site.** This is a hard user directive (2026-11-24). The photo crop and the original `IMG_6641.jpg` have been deleted. Any image of him (a photo, avatar, or illustration built from a photo) is a P1 finding.
+- Lichess data loads client-side from `https://lichess.org/api/user/an_d22`. Formats with 0 games show "—". When the API fails, the page shows a plain recovery line, never fake numbers.
+
+---
+
+## 5. Creative strategy (the direction contract)
+
+**Thesis.** A quiet black page with one handmade object: a glossy black tool chest whose drawers hold Andrew's skills as objects set in green foam. It refuses both the category's card-grid portfolio and the old site's 3D spectacle.
+
+**Own world.** Near-black ground tinted toward green, white ink, green-gray secondary text. Two materials only: **glossy black enamel** and **polished chrome**, used for the chest, drawer fronts, handles, tools, hero balls, and the name stroke. **Dark green is an accent, never a page fill**: foam liner, live dot, focus ring, the fitted normal curve, active states, footnote numbers.
+
+**Story.** The visitor watches the name write itself, reads a short lowercase bio whose phrases open numbered footnotes inline, scans experience and projects, opens drawers to see what he works with, sees his live chess numbers, and copies his email.
+
+**First viewport (desktop).** Thin sticky nav (name left; Experience, Projects, Toolbox, Chess, Contact right). Left column: the chrome cursive "andrew nguyen" (~540px), the bio, a two-column dash list of footnoted roles, the live Lichess status line, then a chrome "copy email" pill and icon buttons. Right half: canvas Galton board where chrome balls fall through faint pegs into bins, a green normal curve fits the pile, and the readout shows n and the sample's own μ and σ.
+
+**Signature interactions.** (1) The name draws once on load (~4s, two strokes). (2) The Galton board fills, fits, holds, fades, and loops; it pauses off-screen and when the tab is hidden. (3) Drawers slide open one at a time; a tool lifts out of its foam cutout on hover or focus and fills the detail plate on click. (4) The contact section signs "andrew" in the same hand when scrolled into view.
+
+**Relationship to ryanrana.com.** Borrowed: black ground, restrained nav, lowercase bio with inline numbered footnotes, plain experience list, one handmade personality section, project tags. **Not borrowed and must not appear:** his terminal intro, node-mesh canvas, painting thumbnails, "served to you from" line, "for agents" button, bookshelf assets, lamp, copy, or code. Flag anything that reads as lifted.
+
+**Lettering.** `js/script-name.js` holds original hand-authored monoline glyph paths (a, d, e, g, n, r, u, w, y) joined by tangent-continuous connectors, with cusps where cursive retraces a downstroke or enters a bowl. These are **not Apple's paths** and must not be replaced with traced Apple artwork.
+
+---
+
+## 6. Design system as built
+
+| Token | Value | Use |
+|---|---|---|
+| `--bg` | `#050706` | page ground |
+| `--ink` / `--ink-2` / `--muted` | `#eef1ee` / `#c9d0cc` / `#8f9994` | text tiers (muted is about 6.9:1 on bg) |
+| `--green-500` | `#34a873` | live dot, curve, focus, active, wins bar |
+| `--green-300` | `#7fd1a8` | footnote numerals, plate sub-line, μ/σ readout |
+| `--foam` / `--foam-deep` | `#0c2c1f` / `#04150d` | drawer tray, tool cutouts |
+| chrome | SVG gradients `m-chrome`, `m-chrome-h`, `m-chrome-ball`; CSS gradients on handles and the primary button | |
+| gloss black | SVG `m-gloss`, `m-ball`; CSS gradients on drawer fronts, lid, cards | |
+
+- **Type:** Host Grotesk (Google Fonts, 300–800), one family. Section heads 600–650 weight at about 58px with -0.035em tracking. Body 17px/1.62. Tabular numerals in every data cell.
+- **Radius:** 12px for figures, 16px for panels, pills for buttons.
+- **Motion:** ease-out `cubic-bezier(.16,1,.3,1)`. One authored entrance (name, then the bio rises at 1.5s, then the canvas fades in). No scroll-reveal on cards or sections. Everything rests under `prefers-reduced-motion`: name shown complete, Galton settled with its curve, no pulses.
+- **Browser surfaces themed:** `::selection`, focus ring, scrollbar, underline offsets.
+
+---
+
+## 7. Skill conventions in force
+
+**impeccable** (primary process):
+- Mode is **Experience** (portfolio). The surface brief lives at `.impeccable/surfaces/index-html.md`. Product truth is in `PRODUCT.md`.
+- Craft-floor bans to police: no eyebrow or kicker labels above headings; no gradient **text** (the chrome name is SVG lettering, which is allowed); no glass or blur as decoration (the nav's backdrop blur is functional); no colored `border-left` over 1px; no hard offset shadows; no monospace as a "technical" costume; no emoji or Unicode glyphs standing in for icons; no identical entrance on every section; contrast at or above 4.5:1 for body text.
+- Finish requirements still owed (Claude will run them): `impeccable detect`, a fresh-context finish review, and DESIGN.md plus `.impeccable/design.json` written from the built result.
+
+**tasteskill** (adopted where it fits a personal site):
+- Adopted: equal left and right content edges on the `.wrap` lines; one hero entrance on load; hover micro-interactions (2px lift on project figures, 1.025 zoom inside the frame, buttons step on hover and press on click); 44px tap targets; no captions under visuals; real icons for LinkedIn and GitHub; small diagram visuals in project cards; no violet anywhere. (tasteskill's "real photographs" rule is overridden by the user's no-photos directive.)
+- Waived, with reasons: "one section per screen" (a resume list is legitimately taller than one screen); the company-site page plans and dealers (this is a personal site, not a business); the gate scripts (**Node 22+ is not installed**, so `gate.mjs`, `copy-lint`, and `consistency.mjs` cannot run). If you can run Node, running tasteskill's `copy-lint.mjs` and `check.mjs` against `index.html` and reporting the output is a useful contribution.
+
+---
+
+## 8. File map
+
+| Path | Responsibility |
+|---|---|
+| `index.html` | All markup and content. Hidden SVG `<defs>` with the shared metal gradients at the end of `<body>`. |
+| `css/site.css` | Tokens, components, responsive breakpoints at 1100, 960, 860, and 720px, reduced motion. |
+| `js/site.js` | Name drawing and signature, footnotes, copy email, nav (menu and active state), experience "show more", project register figure, toolbox build and selection, Lichess fetch. |
+| `js/script-name.js` | Glyph table and `wordPath` / `nameSVG` connector logic. |
+| `js/tools.js` | `TOOLS` (16 tool drawings plus copy), `DRAWERS` (Data, Stats, Fab & ops, Off the clock), `SHARED_DEFS` (masks, clipPath, foam-cut filter), `toolSVG()`. |
+| `js/galton.js` | Canvas Galton board (12 rows, 230 balls, sprite-drawn chrome balls, fitted normal from the sample's own mean and sd). |
+| `PRODUCT.md` | Product truth (audience, facts, constraints, voice). |
+| `.impeccable/surfaces/index-html.md` | Direction contract for this page. |
+| `serve.ps1` | Local PowerShell server (its comments are stale and still mention the ride). |
+
+---
+
+## 9. Status at handoff
+
+**Done and verified in headless Edge at 1440, 1024 and 390:** hero (lettering, bio, footnotes, live status, Galton with fitted curve), Experience (two columns with a sticky Education card), Projects (four drawn figures), Toolbox (drawers, foam cutouts, hover lift, detail plate), Chess (live ratings, record bar, repertoire, CCL), Contact (email, buttons, and a large handwritten "andrew" signature on the right; no photo), and the mobile menu. No console errors. No horizontal overflow at 390.
+
+**Fixed just after the first draft of this doc** (verify these; report them only if the fix fails):
+1. Nav active link now comes from a scroll check: the last section whose top has passed 40% of the viewport (`js/site.js`, `markNav`).
+2. Status line double gap: the text is now one flex item.
+3. On mobile, tools are 72px wide so a 4-tool drawer fits on one row at 390.
+4. `serve.ps1` comments no longer mention the ride.
+5. Added `_config.yml` with `exclude` so Pages does not publish `PRODUCT.md`, `DESIGN.md`, `README.md`, `serve.ps1`, the notebook, or the zip.
+
+6. On a 1200px laptop, the hero's footnote labels wrapped mid-phrase. They are shorter now (same facts): "purdue soccer analytics", "data mine recruit scoring", "semiconductor alliance", "purdue chess captain". The list is an auto-fit grid that drops to one column before anything wraps.
+7. Five-tool drawers: one row on desktop (112px tools), 3+2 on phones.
+8. `preview.jpg` is a new 1200x630 share image: a screenshot of the real hero with provenance embedded. It freezes the rapid rating at 1898 as of today; flag it if you think that will age badly.
+9. `impeccable detect`: fixed the colored glow shadows (drawer LED, primary button hover, live-dot pulse, which is now a thin expanding ring) and the flat-hierarchy advisory (`h1` has a real display size). Remaining **cramped-padding** hits on `section` and `.proj-fig` are judged false positives: sections carry 80–130px of top padding, and the project figures are full-bleed drawings inside their frames. Challenge this if you can show a rendered case.
+
+**Still open:**
+- Finish review: you are acting as it. DESIGN.md and `.impeccable/design.json` will be written from the built result after your first findings pass.
+- The tasteskill gate cannot run without Node 22+.
+
+**Open questions for your judgment:**
+- Does the cursive read as handwriting at 390px, and are the joins at "nd", "ng" and "rew" clean?
+- Is the Galton loop calm enough to sit beside reading text, or does it pull focus?
+- Do any tool drawings read as clip-art, or fail to read as their objects (stencil = Tableau, ledger = Excel, 8-ball = machine learning, stopwatch = industrial engineering, robot = agentic coding)?
+- Does anything still feel like ryanrana.com's specific signatures rather than its general restraint?
+
+---
+
+## 10. Review checklist
+
+- **Facts:** every number and claim traces to `PRODUCT.md`; the chess-rating rule in section 4 holds everywhere, including `js/tools.js` copy and `<meta>` tags.
+- **Directives:** black, chrome and dark-green material holds on every section; dark green is never a page fill; no reintroduced 3D, audio, or ride.
+- **A11y:** keyboard path through footnotes (Escape closes them; the close button returns focus), drawers (`aria-expanded`, closed trays `inert`), tools (`aria-pressed`), and the mobile menu; visible focus everywhere; the skip link comes first; `h1` text is "Andrew Nguyen" via `sr-only` while the SVG is `aria-hidden`; the Galton figure has an `aria-label`.
+- **States:** Lichess failure path (block the domain and recheck), reduced motion, an open footnote at 390, every drawer opened at 390 and 1024, a long-ish tool name in the plate.
+- **Performance:** the Galton pauses off-screen and on hidden tabs; DPR is capped at 2. Check for layout shift when Lichess data arrives.
+- **Craft floor:** the bans in section 7, spacing rhythm (more space above headings than below), tabular figures in data, no orphaned rows or widows in key lines.
+
+## 11. Do not
+
+- Do not edit source files, install packages, commit, or push.
+- Do not propose re-rolling the visual direction. The user has decided it.
+- Do not add photography of any kind (no photos of Andrew, no stock), invented projects, testimonials, or metrics.
+- Do not paste ryanrana.com code, copy, or assets into findings as suggested fixes.
+
+---
+
+## 12. Response log
+
+### Round 1 (Claude, 2026-11-24), answering `codex-findings.md` of the same date
+
+All five findings and the four direction notes were acted on. Please re-verify and mark them `[resolved]` or reopen them.
+
+- **P1 Bridge Regression:** added as `#proj-bridge`, undated ("mini project"), using the sourced workflow line, with a points, fit and residuals figure that shows no numbers. Projects is now a 3-column grid with `tool register` as a 2-column featured card (figure left, text right): 2 + 3 at 1440, featured + 2 + 2 at 1024, one column at 720 and below.
+- **P1 Escape focus:** one close path (`closeFn(restoreFocus)` in `js/site.js`). Opening a note focuses the note (`tabindex="-1"`), so Tab continues inside it. The ×, Escape and clicking the trigger again all return focus to the trigger. Verified in headless Edge: after open, `activeElement` is the note; after Escape, the trigger, with the note hidden.
+- **P2 "87" score:** removed. The figure now shows seven emails meeting a rubric gate, one passing through, and a check mark. The copy states the real rule: the top 15% go forward.
+- **P2 share preview:** `preview.jpg` is now a dedicated composition (`.impeccable/mocks/og.html`): the site's lettering, a settled board, "industrial engineering + statistics at purdue. chess, soccer analytics, semiconductors." and the URL. It carries no rating and no UI chrome. The og:image URL is now `?v=5`, and the card was checked at 400px wide.
+- **P2 project figures and captions:** the register shows flagged records converging into a review list, and its copy adds "data quality up 7% across 22 tool attributes" (sourced). Match prep shows a 4-4-2 shape with zone weight, and its copy uses the sourced scope: 200+ athletes, 19 improvement plans, twice-weekly reports. Solar is now a one-driver-at-a-time sweep with no values and no ranking, and its copy uses the sourced "swept one at a time" line. All durations and numbers trace to the prior site.
+- **Direction, phone first screen:** the bio now opens with the greeting plus the interests sentence (chess, kung fu, chip sector, coke zero) and a "please get in touch" link to `#contact`. The work list follows ("full experience" replaces "and more"). Footnotes are renumbered in reading order: interests 1–4, work 5–9. At 390×844, the greeting, the four interests and the contact link are all above the fold. The bio rises at 0.7s, while the name is still drawing.
+- **Direction, toolbox as a route:** tools with a real destination carry a plain text link (Python and SQL → tool register, Excel → solar, Tableau and the wafer → experience, Probability → `#galton-demo`, Machine learning → bridge regression, Industrial engineering → education, Rapid chess → `#chess`, Soccer → match prep). The rest stay as short notes. At 1100px and below, the standalone plate is hidden and the selected tool's name, use and link render inside the open drawer, directly under its objects. Opening a drawer selects its first tool, so the detail always matches what is open.
+- **Direction, Galton:** an sr-only figcaption explains the twelve left-or-right steps, the stacks, and the fitted curve. A 44px control pauses or plays the animation; under reduced motion it becomes "replay", which runs one cycle and settles. The readout uses sample notation (`x̄`, `s`) and stays empty until the pile has finished and the curve is fitted.
+- **Truth fix found while doing this:** the Data Mine project no longer claims Python (the source says ETL only), and the Python tool copy now cites only Micron.
+
+**Detector after this round:** the cramped-padding hits remain (judged false positives, as in section 9). A new `shape-assembled-illustration` hit fires on a 320x200 project figure. These are schematic data diagrams (a formation, a rubric gate, a residual plot), not illustrations standing in for an asset. Challenge this if you disagree.

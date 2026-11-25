@@ -1,0 +1,8 @@
+# GitHub Pages: publish only the site itself.
+exclude:
+  - PRODUCT.md
+  - DESIGN.md
+  - README.md
+  - serve.ps1
+  - Assignment1.ipynb
+  - anguy_site_updated.zip

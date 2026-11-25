@@ -5,9 +5,9 @@
 #   .\serve.ps1 -Port 9000   -> http://localhost:9000
 #   .\serve.ps1 -NoOpen      -> don't launch a browser
 #
-# A server is REQUIRED: ride.js is an ES module loaded through an importmap,
-# and browsers block both over file://. Double-clicking index.html will not
-# work, it will just sit on the title block forever.
+# A server is REQUIRED: the site's scripts are ES modules, which browsers
+# block over file://. Double-clicking index.html loads the page without its
+# name drawing, toolbox, Galton board or live chess numbers.
 #
 # Ctrl+C to stop.
 # ---------------------------------------------------------------------------
@@ -36,8 +36,7 @@ try {
 Write-Host ""
 Write-Host "  anguy.app - local preview" -ForegroundColor Cyan
 Write-Host "  serving : $Root"
-Write-Host "  ride    : http://localhost:$Port/"
-Write-Host "  classic : http://localhost:$Port/classic.html"
+Write-Host "  site    : http://localhost:$Port/"
 Write-Host ""
 Write-Host "  Ctrl+C to stop." -ForegroundColor DarkGray
 Write-Host ""

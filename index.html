@@ -1,1393 +1,417 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-  <title>anguy.app</title>
-  <meta name="description" content="Andrew Nguyen â€” industrial engineering and statistics at Purdue. Analytics, process modeling, and projects, plotted on engineering paper.">
-
-  <meta property="og:title" content="anguy.app">
-  <meta property="og:description" content="Analytics, engineering, probability, optimization, and projects.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Andrew Nguyen</title>
+  <meta name="description" content="Andrew Nguyen studies industrial engineering and statistics at Purdue. Fab tools at Micron, match prep for Purdue soccer, competitive chess.">
+  <meta name="theme-color" content="#050706">
+  <meta property="og:title" content="Andrew Nguyen">
+  <meta property="og:description" content="Industrial engineering and statistics at Purdue. Chess, soccer analytics, semiconductors.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://anguy.app">
-  <meta property="og:image" content="https://anguy.app/preview.jpg?v=3">
-
+  <meta property="og:image" content="https://anguy.app/preview.jpg?v=5">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="anguy.app">
-  <meta name="twitter:description" content="Analytics, engineering, probability, optimization, and projects.">
-  <meta name="twitter:image" content="https://anguy.app/preview.jpg?v=3">
-
   <link rel="icon" href="favicon-clownfish.svg" type="image/svg+xml">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="ride.css?v=17">
-
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-    }
-  }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css?v=1">
+  <script>document.documentElement.classList.add('js')</script>
 </head>
-
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-  <!-- ========== 3D LAYERS ========== -->
-  <div id="webgl"></div>
-  <div id="atmos"></div>
-
-  <!-- ========== CONTENT PANEL (expands when you select an object) ========== -->
-  <div id="panel" aria-hidden="true">
-    <div id="panel-scrim"></div>
-    <div id="panel-stage"><!-- the selected sheet is moved in here --></div>
+<header class="nav" id="nav">
+  <div class="wrap nav-row">
+    <a class="nav-name" href="#top">Andrew Nguyen</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+      <span class="nav-toggle-bars" aria-hidden="true"></span><span class="sr-only">Menu</span>
+    </button>
+    <nav class="nav-links" id="nav-links" aria-label="Sections">
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#toolbox">Toolbox</a>
+      <a href="#chess">Chess</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </div>
+</header>
 
-  <!-- ========== COLD OPEN: TITLE BLOCK ========== -->
-  <div id="gate">
-    <div class="gate-card">
-      <div class="gate-head">
-        <p class="gate-eyebrow">Sheet 1 of 7 &middot; Plotted Surface</p>
-        <h1 class="gate-name">Andrew Nguyen</h1>
-        <div class="gate-rule"></div>
-        <p class="gate-sub">Industrial Engineering &middot; Statistics &middot; Purdue &rsquo;28</p>
-      </div>
+<main id="main">
 
-      <dl class="gate-block">
-        <div class="gate-field">
-          <dt>Drawn By</dt>
-          <dd>A. Nguyen</dd>
-        </div>
-        <div class="gate-field">
-          <dt>Scale</dt>
-          <dd>1 : 1</dd>
-        </div>
-        <div class="gate-field">
-          <dt>Projection</dt>
-          <dd>z = f(x,y)</dd>
-        </div>
-        <div class="gate-field">
-          <dt>Revision</dt>
-          <dd>2026&ndash;07</dd>
-        </div>
-      </dl>
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1 class="name">
+          <span class="sr-only">Andrew Nguyen</span>
+          <svg class="name-svg" id="name-svg" aria-hidden="true" focusable="false"></svg>
+        </h1>
 
-      <div class="gate-actions">
-        <button id="launch" type="button">
-          Press to Plot <span class="launch-caret">&rarr;</span>
-        </button>
-        <button class="gate-alt" type="button" id="goto-classic">Classic View</button>
-      </div>
+        <div class="bio" data-rise>
+          <p class="bio-lead">hi there. i&rsquo;m andrew, an industrial engineering student at purdue with a minor in statistics. off the clock i play <button class="fn" type="button" aria-expanded="false" aria-controls="fn-1">rapid chess<sup>1</sup></button>, watch <button class="fn" type="button" aria-expanded="false" aria-controls="fn-2">kung fu movies<sup>2</sup></button>, hike, follow <button class="fn" type="button" aria-expanded="false" aria-controls="fn-3">the chip sector<sup>3</sup></button> and drink <button class="fn" type="button" aria-expanded="false" aria-controls="fn-4">coke zero<sup>4</sup></button>. <a href="#contact">please get in touch</a>.</p>
 
-      <p class="gate-audio-note">
-        Drag to travel the curve &middot; Stop at a station to open it
-      </p>
-    </div>
-  </div>
-
-  <!-- ========== DRAFTING CHROME ========== -->
-
-  <div id="titleblock" aria-hidden="true">
-    <div class="tb-row">
-      <div class="tb-cell wide">
-        <span class="tb-k">Station</span>
-        <span class="tb-v accent" id="tb-station">Origin</span>
-      </div>
-      <div class="tb-cell">
-        <span class="tb-k">Sheet</span>
-        <span class="tb-v" id="tb-sheet">1 / 7</span>
-      </div>
-    </div>
-    <div class="tb-row">
-      <div class="tb-cell">
-        <span class="tb-k">X</span>
-        <span class="tb-v" id="tb-x">0.00</span>
-      </div>
-      <div class="tb-cell">
-        <span class="tb-k">Y</span>
-        <span class="tb-v" id="tb-y">0.00</span>
-      </div>
-      <div class="tb-cell">
-        <span class="tb-k">Z</span>
-        <span class="tb-v" id="tb-z">0.00</span>
-      </div>
-    </div>
-    <div class="tb-row">
-      <div class="tb-cell wide">
-        <span class="tb-k">Approach</span>
-        <span class="tb-v" id="tb-crit">&mdash;</span>
-      </div>
-      <div class="tb-cell">
-        <span class="tb-k">Grade</span>
-        <span class="tb-v" id="tb-grade">0%</span>
-      </div>
-    </div>
-    <div class="tb-vel"><div class="tb-vel-fill" id="tb-vel"></div></div>
-  </div>
-
-  <nav id="rail" aria-label="Track stations">
-    <div class="rail-line"></div>
-    <div id="rail-carriage"></div>
-    <!-- station nodes injected by ride.js -->
-  </nav>
-
-  <div id="hint">Drag to travel <span class="hint-arrow">&darr;</span></div>
-
-  <div id="dock-hint">Click to dock</div>
-
-  <button id="audio-toggle" type="button" aria-label="Toggle audio" title="Toggle audio">
-    <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-1 7-4.5 7-8.8s-3-7.8-7-8.8z"/></svg>
-    <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm18.5-1.9L20.1 5.7 17 8.8l-3.1-3.1-1.4 1.4L15.6 10.2l-3.1 3.1 1.4 1.4 3.1-3.1 3.1 3.1 1.4-1.4-3.1-3.1 3.1-3.1z"/></svg>
-  </button>
-
-  <div id="nowebgl">
-    <div>
-      <p>This site plots itself in 3D and your browser can&rsquo;t start WebGL.</p>
-      <p><a href="classic.html">Open the classic view instead &rarr;</a></p>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       CONTENT SHEETS
-       Parked here until needed. Selecting a station's object moves
-       that sheet onto #panel-stage, where it expands over the scene.
-       ============================================================ -->
-  <div id="sheet-pool" hidden>
-
-    <!-- ---------- SHEET 02 · ABOUT ---------- -->
-    <div class="sheet" id="sheet-about" data-station="about">
-      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
-      <div class="sheet-head">
-        <span class="sheet-num">02</span>
-        <h2 class="sheet-title">About</h2>
-        <span class="sheet-coord" data-coord>&mdash;</span>
-      </div>
-      <div class="sheet-body">
-        <div class="split">
-          <div>
-            <p>hi there.</p>
-            <p>i&rsquo;m andrew. thank you for stopping by, check out my resume and work!</p>
-            <p>i&rsquo;m always looking to learn from others in any field. i find personal joy in the passions and interests of people i meet.</p>
-            <p>here i aim to document my learning, experiences, and work. if we&rsquo;re going to be replaced by ai it might as well be accurate.</p>
-            <p>please get in touch!</p>
-
-            <h4>Interests</h4>
-            <div class="pills">
-              <span class="pill hot">Rapid Chess</span>
-              <span class="pill hot">Soccer</span>
-              <span class="pill">Hiking</span>
-              <span class="pill">Game / Decision Theory</span>
-              <span class="pill">Tech Sector Coverage</span>
-              <span class="pill">Kung Fu Movies</span>
-            </div>
+          <div class="fn-slot">
+            <div class="fn-card" id="fn-1" tabindex="-1" hidden><span class="fn-n">1</span><p>2000+ rated in league play. my live lichess numbers are <a href="#chess">a little further down</a>.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-2" tabindex="-1" hidden><span class="fn-n">2</span><p>current favorite: <em>ip man 3</em> (2015).</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-3" tabindex="-1" hidden><span class="fn-n">3</span><p>current favorite ticker: $INTC. current favorite song: JYP / Rain, &lsquo;나로 바꾸자&rsquo;.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-4" tabindex="-1" hidden><span class="fn-n">4</span><p>diet coke or coke zero? coke zero.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
           </div>
 
-          <div class="facts">
-            <div class="fact">
-              <span class="fact-k">University</span>
-              <span class="fact-v">Purdue University</span>
-            </div>
-            <div class="fact">
-              <span class="fact-k">Studying</span>
-              <span class="fact-v">IE &middot; Stats Minor</span>
-            </div>
-            <div class="fact">
-              <span class="fact-k">Diet Coke or Coke Zero</span>
-              <span class="fact-v">Coke Zero</span>
-            </div>
-            <div class="fact">
-              <span class="fact-k">Current Favorites</span>
-              <span class="fact-v">Ip Man 3 (2015)</span>
-            </div>
-            <div class="fact">
-              <span class="fact-k">&nbsp;</span>
-              <span class="fact-v">JYP/Rain ë‚˜ë¡œ ë°”ê¾¸ìž</span>
-            </div>
-            <div class="fact">
-              <span class="fact-k">&nbsp;</span>
-              <span class="fact-v">$INTC</span>
-            </div>
+          <p>some of what i&rsquo;ve worked on:</p>
+          <ul class="dash-list">
+            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-5">tool budgeting at micron<sup>5</sup></button></li>
+            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-6">purdue soccer analytics<sup>6</sup></button></li>
+            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-7">data mine recruit scoring<sup>7</sup></button></li>
+            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-8">semiconductor alliance<sup>8</sup></button></li>
+            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-9">purdue chess captain<sup>9</sup></button></li>
+            <li><a href="#experience">full experience</a></li>
+          </ul>
+
+          <div class="fn-slot">
+            <div class="fn-card" id="fn-5" tabindex="-1" hidden><span class="fn-n">5</span><p><strong>Micron Technology, Boise.</strong> built an r&amp;d tool-review app that flags fab tools for removal at 8&times; the precision of the manual process. it&rsquo;s now the register for ~1,500 tools. summer 2026.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-6" tabindex="-1" hidden><span class="fn-n">6</span><p><strong>Purdue D1 Women&rsquo;s Soccer.</strong> a match-prep app covering tactics, trends and stats across 18 big ten teams, briefed to the staff every week. may 2026 to now.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-7" tabindex="-1" hidden><span class="fn-n">7</span><p><strong>The Data Mine.</strong> rule-based scoring for 200+ recruit emails a week. i led a 5-person team on the etl pipeline. spring 2026.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-8" tabindex="-1" hidden><span class="fn-n">8</span><p><strong>Semiconductor Student Alliance.</strong> student chair, running recruitment and alumni engagement. aug 2026 to now.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+            <div class="fn-card" id="fn-9" tabindex="-1" hidden><span class="fn-n">9</span><p><strong>Collegiate Chess League.</strong> team captain and 2000+ rated player against top us universities. aug 2024 to may 2026.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
+          </div>
+
+          <p>i&rsquo;m always looking to learn from others in any field, and i find personal joy in the passions of people i meet. here i document my learning, experiences, and work. if we&rsquo;re going to be replaced by ai it might as well be accurate.</p>
+
+          <p class="status"><span class="live-dot" aria-hidden="true"></span><span><span id="hero-rating">lichess an_d22</span> &middot; west lafayette, in</span></p>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="button" data-copy-email>copy email</button>
+            <a class="icon-btn" href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" aria-label="LinkedIn" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+            <a class="icon-btn" href="https://github.com/anguy22" aria-label="GitHub" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.69.82.57A12 12 0 0 0 12 .3"/></svg>
+            </a>
+            <a class="icon-btn" href="https://lichess.org/@/an_d22" aria-label="Lichess profile" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21h11v-2.2c0-1.6-.9-2.7-1.9-3.8-1-1.1-1.7-2.3-1.7-3.6 0-.6.4-1 .9-.8l2.2 1.2c.7.4 1.5.1 1.8-.6l.6-1.3c.3-.6.1-1.3-.4-1.7L14.6 4.6c-.9-.7-2-1.1-3.1-1.1H10l.5-1.6L8.6 3.4C6.4 5 5 7.6 5 10.4c0 2.2.9 3.7 2 5.1.7.9 1 1.7 1 2.6V19H7v2z"/></svg>
+            </a>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ---------- SHEET 03 · RESUME ----------
-         Not a page but a reel. The resume runs as a deck of landscape slides:
-         one dashboard of the academic record, then one plate per role. The
-         reel advances itself and stops the moment anyone touches it.
-
-         Repetitive geometry inside the hero figures — tool grids, dot fields,
-         cash-flow bars — is stamped out by ride.js from the data-* hints, so
-         the markup here stays the drawing and not the fill.
-         ------------------------------------------------------------------ -->
-    <div class="sheet is-deck" id="sheet-resume" data-station="resume">
-      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
-
-      <!-- ============ TRANSPORT BAR ============ -->
-      <div class="deck-bar">
-        <span class="sheet-num">03</span>
-        <h2 class="sheet-title">Resume</h2>
-        <span class="deck-slug" id="deck-slug">Education</span>
-
-        <div class="deck-transport">
-          <button class="dk-btn" type="button" data-dk="prev" aria-label="Previous slide">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 L5 8 L10.5 13"/></svg>
+      <figure class="hero-figure" id="galton-demo">
+        <canvas id="galton" aria-hidden="true"></canvas>
+        <figcaption class="sr-only">A Galton board. Each ball takes twelve left-or-right steps through a field of pegs, and the stacks show where the balls land. The green line is a normal curve fitted to the sample, and the readout gives the sample size, mean and standard deviation.</figcaption>
+        <div class="galton-readout">
+          <button class="g-ctrl" id="g-ctrl" type="button" aria-label="Pause the animation">
+            <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1"/><rect x="9.4" y="3" width="2.6" height="10" rx="1"/></svg>
+            <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.6-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5z"/></svg>
+            <svg class="i-replay" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3a5 5 0 1 1-4.6 3.1l1.4.6A3.5 3.5 0 1 0 8 4.5V7L4.5 3.8 8 .5V3z"/></svg>
           </button>
-          <button class="dk-btn dk-play is-playing" type="button" data-dk="play"
-                  aria-label="Pause the reel" aria-pressed="true">
-            <svg class="ic-pause" viewBox="0 0 16 16" aria-hidden="true">
-              <rect x="4" y="3" width="3" height="10"/><rect x="9" y="3" width="3" height="10"/>
-            </svg>
-            <svg class="ic-play" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M5 3 L13 8 L5 13 Z"/>
-            </svg>
-          </button>
-          <button class="dk-btn" type="button" data-dk="next" aria-label="Next slide">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 L11 8 L5.5 13"/></svg>
-          </button>
-          <span class="dk-count"><b id="dk-i">1</b><i>/</i><span id="dk-n">8</span></span>
+          <span class="g-text" aria-hidden="true"><span id="g-n">n = 0</span><span id="g-stats"></span></span>
         </div>
-
-        <span class="sheet-coord" data-coord>&mdash;</span>
-      </div>
-
-      <div class="deck-prog"><i id="deck-prog"></i></div>
-
-      <!-- ============ THE REEL ============ -->
-      <div class="deck-view">
-        <div class="deck-reel" id="deck-reel">
-
-          <!-- ================================================================
-               SLIDE 1 · EDUCATION — the instrument panel
-               ============================================================= -->
-          <section class="slide slide-edu" data-slide="Education" data-kicker="Academic Record">
-
-            <header class="edu-band">
-              <div class="edu-id">
-                <h3 class="edu-school">Purdue University</h3>
-                <p class="edu-degree">B.S. Industrial Engineering
-                  <span class="edu-minor">&middot; Minor in Statistics</span></p>
-              </div>
-              <div class="edu-where">
-                <span>West Lafayette, IN</span>
-                <span>Est. graduation May 2028</span>
-              </div>
-            </header>
-
-            <div class="edu-grid">
-
-              <!-- ---- left rail: the dial and the stamps ---- -->
-              <div class="edu-rail">
-                <div class="gpa" data-dial="0.9725">
-                  <svg viewBox="0 0 100 100" aria-hidden="true">
-                    <circle class="gpa-track" cx="50" cy="50" r="40"/>
-                    <circle class="gpa-arc" cx="50" cy="50" r="40"/>
-                  </svg>
-                  <div class="gpa-read">
-                    <b data-tally>3.89</b><span class="gpa-of">/ 4.00</span>
-                  </div>
-                  <span class="gpa-k">Cumulative</span>
-                </div>
-
-                <div class="honors">
-                  <p class="rowlab">Scholarships</p>
-                  <ul class="stamps">
-                    <li>Purdue Presidential Scholar</li>
-                    <li>Simplot Foundation Scholar</li>
-                    <li>Dr. James Barany Endowed Scholar</li>
-                    <li>Redinger Scholar</li>
-                  </ul>
-                </div>
-
-                <div class="off-clock">
-                  <p class="rowlab">Off the clock</p>
-                  <div class="pills">
-                    <span class="pill">Rapid Chess</span>
-                    <span class="pill">Soccer</span>
-                    <span class="pill">Hiking</span>
-                    <span class="pill">Game &amp; Decision Theory</span>
-                    <span class="pill">Tech Sector Coverage</span>
-                    <span class="pill">Racquet Sports</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ---- the panel: every tile runs ---- -->
-              <div class="edu-panel">
-                <div class="panel-lab">
-                  <span class="rowlab">Instrument Panel</span>
-                  <span class="panel-hint">Click a tile &mdash; it takes the screen</span>
-                </div>
-
-                <div class="tiles" id="skill-tiles">
-
-                  <button class="tile" type="button" data-dive="sql">
-                    <span class="tile-glyph" data-glyph="sql" aria-hidden="true"></span>
-                    <span class="tile-name">SQL</span>
-                    <span class="tile-sub">Snowflake &middot; MSSQL &middot; Azure</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <button class="tile" type="button" data-dive="python">
-                    <span class="tile-glyph" data-glyph="python" aria-hidden="true"></span>
-                    <span class="tile-name">Python</span>
-                    <span class="tile-sub">pandas &middot; scikit-learn &middot; SQLAlchemy</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <button class="tile" type="button" data-dive="prob">
-                    <span class="tile-glyph" data-glyph="prob" aria-hidden="true"></span>
-                    <span class="tile-name">Probability</span>
-                    <span class="tile-sub">distributions &middot; the CLT</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <button class="tile" type="button" data-dive="tableau">
-                    <span class="tile-glyph" data-glyph="tableau" aria-hidden="true"></span>
-                    <span class="tile-name">Tableau</span>
-                    <span class="tile-sub">dashboards &middot; reporting</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <button class="tile" type="button" data-dive="doe">
-                    <span class="tile-glyph" data-glyph="doe" aria-hidden="true"></span>
-                    <span class="tile-name">JMP &middot; DOE</span>
-                    <span class="tile-sub">factorial designs</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <button class="tile" type="button" data-dive="sigma">
-                    <span class="tile-glyph" data-glyph="sigma" aria-hidden="true"></span>
-                    <span class="tile-name">Six Sigma</span>
-                    <span class="tile-sub">SPC &middot; capability</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <button class="tile" type="button" data-dive="ml">
-                    <span class="tile-glyph" data-glyph="ml" aria-hidden="true"></span>
-                    <span class="tile-name">Machine Learning</span>
-                    <span class="tile-sub">classification &middot; validation</span>
-                    <span class="tile-run">Run</span>
-                  </button>
-
-                  <div class="tile tile-rest">
-                    <span class="tile-name">Also on the bench</span>
-                    <div class="pills">
-                      <span class="pill">Excel &mdash; parametric modeling</span>
-                      <span class="pill">Agentic coding &mdash; Claude Code</span>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="edu-foot">
-                  <div>
-                    <p class="rowlab">University certifications</p>
-                    <div class="pills">
-                      <span class="pill hot">Semiconductors &amp; Microelectronics</span>
-                      <span class="pill hot">Semiconductor Fabrication</span>
-                      <span class="pill hot">Data Science Applications</span>
-                    </div>
-                  </div>
-                  <div>
-                    <p class="rowlab">Coursework</p>
-                    <div class="pills">
-                      <span class="pill">Data Science</span>
-                      <span class="pill">Machine Learning</span>
-                      <span class="pill">Six Sigma</span>
-                      <span class="pill">Manufacturing Process</span>
-                      <span class="pill">Design of Experiments</span>
-                      <span class="pill">Quality Control</span>
-                      <span class="pill">Data Architecture</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 2 · MICRON
-               ============================================================= -->
-          <section class="slide" data-slide="Micron Technology" data-kicker="Experience 01">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">Micron Technology</h3>
-                <p class="plate-role">Industrial Engineering Intern &mdash; Global R&amp;D Strategy &amp; Budgeting</p>
-              </div>
-              <p class="plate-when">Boise, ID<i>&middot;</i>May 2026 &ndash; Aug 2026</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-fab">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <!-- cleanroom shell -->
-                  <rect class="shell" x="18" y="20" width="404" height="212" rx="2"/>
-                  <text class="cap" x="26" y="14">CLEANROOM &mdash; TOOL REGISTER</text>
-
-                  <!-- bay aisles and tool cells are stamped by ride.js -->
-                  <g class="bays" data-fab-bays="5"></g>
-                  <g class="tools" data-fab-tools="1"></g>
-                  <g class="flags"></g>
-
-                  <rect class="scan" x="18" y="20" width="5" height="212"/>
-
-                  <!-- footer legend -->
-                  <g class="legend">
-                    <rect x="18" y="252" width="12" height="10"/>
-                    <text x="38" y="261">carried in register</text>
-                    <rect class="lit" x="180" y="252" width="12" height="10"/>
-                    <text x="200" y="261">flagged for review</text>
-                  </g>
-                  <text class="area" x="422" y="261">152,000 ft&sup2;</text>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Built an integrated R&amp;D tool-review app surfacing candidate fab tool
-                    removals at <b data-note="Precision of the app&rsquo;s shortlist measured against the manual review process it replaced.">8&times;</b>
-                    the precision of the manual process &mdash; now the budgeting team&rsquo;s register for
-                    <b data-note="Fab tools carried in the register and reviewed through the app.">~1,500</b> tools across
-                    <b data-note="Square feet of cleanroom floor the register covers.">152,000&nbsp;ft&sup2;</b> of cleanroom.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Refined the model&rsquo;s ETL logic in <b class="lit">SQL</b> and <b class="lit">Python</b>, joining
-                    <b data-note="Separate datastores reconciled into one keyed record per tool.">13</b> datastores and lifting data quality
-                    <b data-note="Measured improvement in data quality after the join logic was rebuilt.">7%</b> across
-                    <b data-note="Attributes carried per tool through the pipeline.">22</b> tool attributes.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Defined OpEx forecasting logic in <b class="lit">SQL</b> and <b class="lit">Tableau</b> spanning
-                    <b data-note="Fiscal years covered by the forecast horizon.">6</b> fiscal years and
-                    <b data-note="Distinct scenario plans the forecasting logic can run.">25+</b> scenario plans
-                    for global IE Strategy.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Saved an estimated
-                    <b data-note="Analyst hours returned to the team each quarter.">40&nbsp;hrs/quarter</b> with
-                    <b data-note="Automated tools handed over and taken into routine use.">2</b> automated tools
-                    adopted by the IE Strategy and Budget teams for <b class="lit">FY27</b> R&amp;D planning.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b data-tally>8&times;</b><span>shortlist precision</span></div>
-                <div class="st"><b data-tally>~1,500</b><span>tools in register</span></div>
-                <div class="st"><b data-tally>13</b><span>datastores joined</span></div>
-                <div class="st"><b data-tally>40</b><span>hrs saved / quarter</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 3 · PURDUE SOCCER
-               ============================================================= -->
-          <section class="slide" data-slide="Purdue Soccer" data-kicker="Experience 02">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">Purdue D1 Women&rsquo;s Soccer</h3>
-                <p class="plate-role">Predictive Data Analyst</p>
-              </div>
-              <p class="plate-when">West Lafayette, IN<i>&middot;</i>May 2026 &ndash; Present</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-pitch">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <text class="cap" x="18" y="14">BIG TEN &mdash; OPPONENT PROFILES</text>
-                  <g class="opps" data-opp-ticks="18"></g>
-
-                  <rect class="turf" x="18" y="30" width="404" height="212" rx="2"/>
-                  <g class="marks">
-                    <rect x="18" y="30" width="404" height="212"/>
-                    <line x1="220" y1="30" x2="220" y2="242"/>
-                    <circle cx="220" cy="136" r="38"/>
-                    <circle class="spot" cx="220" cy="136" r="2.5"/>
-                    <rect x="18" y="76" width="58" height="120"/>
-                    <rect x="18" y="106" width="24" height="60"/>
-                    <rect x="364" y="76" width="58" height="120"/>
-                    <rect x="398" y="106" width="24" height="60"/>
-                  </g>
-
-                  <rect class="target" x="330" y="92" width="80" height="88"/>
-
-                  <g class="runs">
-                    <path class="r1" d="M96 210 C170 198, 258 158, 336 126"/>
-                    <path class="r2" d="M96 62 C170 82, 258 112, 336 140"/>
-                    <path class="r3" d="M150 136 C220 133, 280 131, 336 133"/>
-                  </g>
-                  <polygon class="head" points="346,133 334,128 335,139"/>
-                  <circle class="ball" cx="96" cy="136" r="3.6"/>
-
-                  <g class="shape" data-pitch-shape="1"></g>
-
-                  <text class="cap" x="18" y="262">WEEKLY BRIEF</text>
-                  <g class="weeks" data-week-ticks="12"></g>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Built a match-preparation app for the coaching staff, aggregating tactics,
-                    trends and stats across
-                    <b data-note="Big Ten programs profiled in the app ahead of each fixture.">18</b>
-                    Big Ten teams.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Briefed athletics stakeholders, players and coaching staff on the findings
-                    on a <b class="lit">weekly</b> basis.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b data-tally>18</b><span>Big Ten programs</span></div>
-                <div class="st"><b>Weekly</b><span>briefing cadence</span></div>
-                <div class="st"><b>Live</b><span>still running</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 4 · THE DATA MINE
-               ============================================================= -->
-          <section class="slide" data-slide="The Data Mine" data-kicker="Experience 03">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">The Data Mine at Purdue University</h3>
-                <p class="plate-role">Undergraduate Data Science Researcher</p>
-              </div>
-              <p class="plate-when">West Lafayette, IN<i>&middot;</i>Jan 2026 &ndash; May 2026</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-sift">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <text class="cap" x="18" y="14">200+ PROSPECT EMAILS / WEEK</text>
-                  <g class="inbox" data-mail-grid="1"></g>
-
-                  <!-- the scoring rail -->
-                  <g class="rail">
-                    <rect class="gate" x="150" y="46" width="140" height="128" rx="2"/>
-                    <text class="gk" x="220" y="66">KPI SCORING</text>
-                    <g class="rules">
-                      <line x1="164" y1="84"  x2="276" y2="84"/>
-                      <line x1="164" y1="104" x2="276" y2="104"/>
-                      <line x1="164" y1="124" x2="276" y2="124"/>
-                      <line x1="164" y1="144" x2="276" y2="144"/>
-                    </g>
-                    <g class="rulehits">
-                      <rect x="164" y="79"  width="0" height="10"/>
-                      <rect x="164" y="99"  width="0" height="10"/>
-                      <rect x="164" y="119" width="0" height="10"/>
-                      <rect x="164" y="139" width="0" height="10"/>
-                    </g>
-                  </g>
-
-                  <!-- the funnel and the tray -->
-                  <path class="funnel" d="M300 46 L422 46 L376 118 L376 150 L346 150 L346 118 Z"/>
-                  <g class="drip" data-drip="1"></g>
-                  <rect class="tray" x="316" y="164" width="90" height="34" rx="2"/>
-                  <text class="trayk" x="361" y="185">TOP 15%</text>
-
-                  <!-- the hand-off -->
-                  <path class="handoff" d="M150 220 L400 220"/>
-                  <polygon class="head" points="410,220 396,214 396,226"/>
-                  <text class="cap" x="18" y="224">STAFF REVIEW</text>
-                  <text class="cap right" x="422" y="244">20 HRS/MONTH RETURNED</text>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Engineered a KPI framework quantifying prospective player strengths across
-                    <b data-note="Prospect emails scored every week by the rule-based framework.">200+</b>
-                    emails a week with rule-based scoring logic.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Led a
-                    <b data-note="Researchers on the team, including the lead.">5-member</b> team to build the ETL
-                    pipeline and export the
-                    <b data-note="Share of the prospect pool carried through to staff review.">top 15%</b> of
-                    recruits, saving an estimated
-                    <b data-note="Hours of manual staff review returned each month.">20&nbsp;hrs/month</b>
-                    of manual review.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Greenlit for adoption and continued implementation by the
-                    <b class="lit">Purdue Women&rsquo;s Soccer</b> program and the <b class="lit">Data Mine</b>.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b data-tally>200+</b><span>emails scored / week</span></div>
-                <div class="st"><b data-tally>5</b><span>on the team</span></div>
-                <div class="st"><b data-tally>15%</b><span>carried forward</span></div>
-                <div class="st"><b data-tally>20</b><span>hrs saved / month</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 5 · SEMICONDUCTOR STUDENT ALLIANCE
-               ============================================================= -->
-          <section class="slide" data-slide="Semiconductor Alliance" data-kicker="Involvement 01">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">Semiconductor Student Alliance</h3>
-                <p class="plate-role">Student Chairperson</p>
-              </div>
-              <p class="plate-when">Purdue University<i>&middot;</i>Aug 2026 &ndash; Present</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-web">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <text class="cap" x="18" y="14">CHAIR &mdash; RECRUITMENT AND ALUMNI</text>
-
-                  <circle class="orbit o1" cx="220" cy="152" r="62"/>
-                  <circle class="orbit o2" cx="220" cy="152" r="112"/>
-
-                  <g class="spokes" data-web-spokes="1"></g>
-                  <g class="members" data-web-members="1"></g>
-                  <g class="alumni"  data-web-alumni="1"></g>
-
-                  <circle class="chair" cx="220" cy="152" r="17"/>
-                  <text class="chairk" x="220" y="157">SSA</text>
-
-                  <text class="ringk" x="220" y="82">MEMBERS</text>
-                  <text class="ringk" x="220" y="32">ALUMNI</text>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Directing <b class="lit">member recruitment</b> and <b class="lit">alumni engagement</b>
-                    for Purdue&rsquo;s semiconductor student organization.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">The same industry the fab work sits in &mdash; the register at
-                    <b class="lit">Micron</b> and the coursework in
-                    <b class="lit">semiconductor fabrication</b> are the two ends of it.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b>Chair</b><span>student leadership</span></div>
-                <div class="st"><b>Aug 2026</b><span>took the seat</span></div>
-                <div class="st"><b>Live</b><span>still running</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 6 · COLLEGIATE CHESS LEAGUE
-               ============================================================= -->
-          <section class="slide" data-slide="Collegiate Chess" data-kicker="Involvement 02">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">Collegiate Chess League</h3>
-                <p class="plate-role">Team Captain and Competitor</p>
-              </div>
-              <p class="plate-when">Purdue University<i>&middot;</i>Aug 2024 &ndash; May 2026</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-board">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <text class="cap" x="18" y="14">KNIGHT ROUTE</text>
-                  <g class="board" data-board="1"></g>
-                  <rect class="frame" x="18" y="22" width="216" height="216"/>
-                  <path class="route"
-                        d="M58.5 224.5 L85.5 170.5 L139.5 197.5 L166.5 143.5 L112.5 116.5 L139.5 62.5 L193.5 89.5 L220.5 35.5"/>
-                  <g class="stops" data-route-stops="1"></g>
-
-                  <text class="cap" x="262" y="14">RATING</text>
-                  <g class="elo">
-                    <line class="ax" x1="262" y1="200" x2="422" y2="200"/>
-                    <line class="ax" x1="262" y1="200" x2="262" y2="44"/>
-                    <path class="climb" d="M262 192 L288 178 L314 160 L340 132 L366 104 L392 78 L418 58"/>
-                    <text class="num" x="422" y="46">2000+</text>
-                    <text class="axk" x="262" y="214">Aug 2024</text>
-                    <text class="axk right" x="422" y="214">May 2026</text>
-                  </g>
-
-                  <text class="cap" x="262" y="240">ROSTER</text>
-                  <g class="seats" data-seats="6"></g>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Competed on a
-                    <b data-note="Players on the Purdue roster for league play.">6-member</b> team as a
-                    <b data-note="Rapid rating held while competing in the league.">2000+</b> Elo-rated
-                    player against top US universities for Purdue.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Captained the roster &mdash; board order, match preparation and the
-                    <b class="lit">opening repertoire</b> carried into league play.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b data-tally>2000+</b><span>rapid Elo</span></div>
-                <div class="st"><b data-tally>6</b><span>on the roster</span></div>
-                <div class="st"><b>Captain</b><span>board order and prep</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 7 · WONDERLAND + PURDUE IE
-               ============================================================= -->
-          <section class="slide" data-slide="Wonderland + IE" data-kicker="Involvement 03">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">Wonderland &plus; Purdue IE</h3>
-                <p class="plate-role">Lead Mentor</p>
-              </div>
-              <p class="plate-when">West Lafayette, IN<i>&middot;</i>Aug 2025 &ndash; May 2026</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-teach">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <text class="cap" x="18" y="14">THE LESSON</text>
-                  <rect class="slate" x="18" y="22" width="180" height="130" rx="2"/>
-                  <line class="ledge" x1="14" y1="152" x2="202" y2="152"/>
-                  <path class="swingarc" d="M74 118 A 34 34 0 0 1 142 118"/>
-                  <g class="pend">
-                    <line class="rod" x1="108" y1="46" x2="108" y2="112"/>
-                    <circle class="bob" cx="108" cy="116" r="8"/>
-                  </g>
-                  <circle class="pivot" cx="108" cy="46" r="3"/>
-                  <g class="glyphs">
-                    <path class="g1" d="M32 44 h22 M43 33 v22"/>
-                    <path class="g2" d="M32 76 h22 M32 86 h22"/>
-                    <path class="g3" d="M32 116 l9 10 l13 -20"/>
-                  </g>
-
-                  <text class="cap" x="222" y="14">THE REACH</text>
-                  <g class="leads" data-teach-leads="3"></g>
-                  <g class="fan" data-teach-fan="1"></g>
-                  <g class="kids" data-dot-field="60"></g>
-                  <text class="tot" x="422" y="180">~60</text>
-
-                  <text class="cap" x="18" y="196">WEEKLY SESSIONS &mdash; 3 MENTORS PER TEAM</text>
-                  <g class="sessions" data-week-ticks="14"></g>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Organized youth outreach with Purdue IE, building hands-on
-                    <b class="lit">physics</b>, <b class="lit">math</b> and <b class="lit">engineering</b> lessons.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Led multiple
-                    <b data-note="Mentors per outreach team, running a session together.">3-person</b> teams
-                    through weekly sessions, reaching
-                    <b data-note="Elementary students reached across the West Lafayette area.">~60</b>
-                    elementary students around West Lafayette.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b data-tally>~60</b><span>students reached</span></div>
-                <div class="st"><b data-tally>3</b><span>mentors per team</span></div>
-                <div class="st"><b>Weekly</b><span>session cadence</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-          <!-- ================================================================
-               SLIDE 8 · SOLAR PV
-               ============================================================= -->
-          <section class="slide" data-slide="Solar PV" data-kicker="Project 01">
-            <header class="plate-head">
-              <div>
-                <h3 class="plate-org">Solar PV Economic Modeling &amp; Sensitivity Analysis</h3>
-                <p class="plate-role">Purdue University</p>
-              </div>
-              <p class="plate-when">Parametric Excel<i>&middot;</i>NPV &middot; IRR</p>
-            </header>
-
-            <div class="plate-body">
-
-              <figure class="hero hero-dcf">
-                <svg viewBox="0 0 440 300" aria-hidden="true">
-                  <text class="cap" x="18" y="14">40-YEAR DISCOUNTED CASH FLOW</text>
-
-                  <g class="array">
-                    <circle class="sun" cx="46" cy="44" r="13"/>
-                    <g class="rays">
-                      <line x1="46" y1="20" x2="46" y2="12"/><line x1="70" y1="44" x2="78" y2="44"/>
-                      <line x1="46" y1="68" x2="46" y2="76"/><line x1="22" y1="44" x2="14" y2="44"/>
-                      <line x1="63" y1="27" x2="69" y2="21"/><line x1="29" y1="61" x2="23" y2="67"/>
-                    </g>
-                  </g>
-
-                  <g class="chart">
-                    <line class="zero" x1="86" y1="150" x2="422" y2="150"/>
-                    <line class="ax" x1="86" y1="42" x2="86" y2="212"/>
-                    <g class="bars" data-dcf-bars="40"></g>
-                    <path class="cum"/>
-                    <g class="payback">
-                      <line class="pb" x1="0" y1="42" x2="0" y2="212"/>
-                      <text class="pbk" x="0" y="36">PAYBACK</text>
-                    </g>
-                    <text class="npv" x="422" y="60">NPV &gt; 0</text>
-                    <text class="axk" x="86" y="226">YR 0</text>
-                    <text class="axk right" x="422" y="226">YR 40</text>
-                  </g>
-
-                  <text class="cap" x="18" y="250">SENSITIVITY &mdash; 6 PARAMETRIC MODELS</text>
-                  <g class="tornado" data-tornado="1"></g>
-                </svg>
-              </figure>
-
-              <ul class="beats">
-                <li class="beat">
-                  <span class="beat-t">Built
-                    <b data-note="Parametric Excel models, one per configuration under test.">6</b>
-                    parametric Excel models projecting
-                    <b data-note="Years of discounted cash flow carried in each projection.">40-year</b>
-                    DCFs, applying <b class="lit">NPV/IRR</b> benchmarks to classify recommendations.</span>
-                </li>
-                <li class="beat">
-                  <span class="beat-t">Swept the drivers one at a time to see which ones actually move the
-                    answer &mdash; the <b class="lit">sensitivity</b> ranking is the deliverable, not the
-                    single point estimate.</span>
-                </li>
-              </ul>
-            </div>
-
-            <footer class="plate-foot">
-              <div class="stats">
-                <div class="st"><b data-tally>6</b><span>parametric models</span></div>
-                <div class="st"><b data-tally>40</b><span>year horizon</span></div>
-                <div class="st"><b>NPV / IRR</b><span>decision benchmarks</span></div>
-              </div>
-              <p class="slide-note" data-note-slot>Point at any figure for what it counts.</p>
-            </footer>
-          </section>
-
-        </div>
-      </div>
-
-      <!-- ============ FILM STRIP ============ -->
-      <nav class="deck-dots" id="deck-dots" aria-label="Resume slides"></nav>
-
-      <!-- ============ DEEP DIVE OVERLAY ============
-           One stage, re-drawn by ride.js for whichever tile was pressed. -->
-      <div class="deep" id="deep" hidden>
-        <div class="deep-scrim" data-deep-close></div>
-        <figure class="deep-stage" role="dialog" aria-modal="true" aria-labelledby="deep-t">
-          <figcaption class="deep-cap">
-            <span class="deep-k" id="deep-k"></span>
-            <h3 class="deep-t" id="deep-t"></h3>
-            <p class="deep-s" id="deep-s"></p>
-          </figcaption>
-          <div class="deep-art" id="deep-art"></div>
-          <p class="deep-read" id="deep-read"></p>
-          <button class="deep-close" type="button" data-deep-close aria-label="Close">&times;</button>
-          <div class="deep-timer"><i id="deep-timer"></i></div>
-        </figure>
-      </div>
+      </figure>
     </div>
+  </section>
 
-    <!-- ---------- SHEET 04 · CHESS ---------- -->
-    <div class="sheet" id="sheet-chess" data-station="chess">
-      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
-      <div class="sheet-head">
-        <span class="sheet-num">04</span>
-        <h2 class="sheet-title">Chess</h2>
-        <span class="sheet-coord" data-coord>&mdash;</span>
+  <!-- ===== Experience ===== -->
+  <section class="section" id="experience" aria-labelledby="h-exp">
+    <div class="wrap">
+      <h2 class="section-title" id="h-exp">Experience</h2>
+
+      <div class="xp-grid">
+      <div>
+      <ol class="xp" id="xp-list">
+        <li class="xp-item">
+          <div class="xp-head"><h3>Industrial Engineering Intern, R&amp;D Strategy &amp; Budgeting</h3><span class="xp-where">Boise, ID</span></div>
+          <p class="xp-org">Micron Technology &middot; May &ndash; Aug 2026</p>
+          <p class="xp-desc">built an r&amp;d tool-review app that shortlists fab tools for removal at 8&times; the precision of the manual process; it&rsquo;s now the budgeting team&rsquo;s register for ~1,500 tools across 152,000 ft&sup2; of cleanroom. joined 13 datastores in sql and python, set opex forecasting logic over 6 fiscal years and 25+ scenarios in tableau, and shipped two tools now used for fy27 planning, saving about 40 hours a quarter.</p>
+        </li>
+        <li class="xp-item">
+          <div class="xp-head"><h3>Predictive Data Analyst</h3><span class="xp-where">West Lafayette, IN</span></div>
+          <p class="xp-org">Purdue D1 Women&rsquo;s Soccer &middot; May 2026 &ndash; Present</p>
+          <p class="xp-desc">built a match-preparation app for the coaching staff that pulls tactics, trends and stats across 18 big ten teams. i brief the staff, players and athletics on the findings every week.</p>
+        </li>
+        <li class="xp-item">
+          <div class="xp-head"><h3>Student Chairperson</h3><span class="xp-where">Purdue University</span></div>
+          <p class="xp-org">Semiconductor Student Alliance &middot; Aug 2026 &ndash; Present</p>
+          <p class="xp-desc">running member recruitment and alumni engagement for purdue&rsquo;s semiconductor student organization.</p>
+        </li>
+        <li class="xp-item" data-more>
+          <div class="xp-head"><h3>Undergraduate Data Science Researcher</h3><span class="xp-where">West Lafayette, IN</span></div>
+          <p class="xp-org">The Data Mine at Purdue &middot; Jan &ndash; May 2026</p>
+          <p class="xp-desc">engineered a kpi framework that scores 200+ recruit emails a week with rule-based logic, and led a 5-person team building the etl pipeline that carries the top 15% forward, saving about 20 hours a month of manual review. greenlit for continued use by purdue women&rsquo;s soccer and the data mine.</p>
+        </li>
+        <li class="xp-item" data-more>
+          <div class="xp-head"><h3>Team Captain</h3><span class="xp-where">Purdue University</span></div>
+          <p class="xp-org">Collegiate Chess League &middot; Aug 2024 &ndash; May 2026</p>
+          <p class="xp-desc">captained purdue&rsquo;s 6-player team as a 2000+ rated player against top us universities: board order, match preparation and the opening repertoire.</p>
+        </li>
+        <li class="xp-item" data-more>
+          <div class="xp-head"><h3>Lead Mentor</h3><span class="xp-where">West Lafayette, IN</span></div>
+          <p class="xp-org">Wonderland + Purdue IE &middot; Aug 2025 &ndash; May 2026</p>
+          <p class="xp-desc">led 3-person mentor teams through weekly hands-on physics, math and engineering lessons for about 60 elementary students.</p>
+        </li>
+        <li class="xp-item" data-more>
+          <div class="xp-head"><h3>Cashier &amp; Clerk</h3><span class="xp-where">Boise, ID</span></div>
+          <p class="xp-org">Diana&rsquo;s Korean Market &middot; Dec 2022 &ndash; Aug 2024</p>
+          <p class="xp-desc">the store&rsquo;s sole weekend cashier, serving a diverse customer base in korean and english.</p>
+        </li>
+      </ol>
+      <button class="text-btn" type="button" id="xp-more" aria-expanded="false" aria-controls="xp-list">Show 4 more</button>
       </div>
-      <div class="sheet-body">
-        <p style="font-size:16px">Live from the Lichess API &mdash; the bars extruded off the board out there <em>are</em> these numbers.</p>
 
-        <div class="split">
+      <aside class="edu">
+        <h3 class="edu-title">Education</h3>
+        <div class="edu-row">
           <div>
-            <h4>Ratings</h4>
-            <table class="readout">
-              <thead>
-                <tr><th>Format</th><th class="num">Rating</th><th class="num">Games</th></tr>
-              </thead>
-              <tbody id="chess-ratings">
-                <tr><td colspan="3" class="loading">fetching lichess/an_d22&hellip;</td></tr>
-              </tbody>
-            </table>
-
-            <h4>Record</h4>
-            <table class="readout">
-              <tbody id="chess-record">
-                <tr><td colspan="2" class="loading">&hellip;</td></tr>
-              </tbody>
-            </table>
+            <p class="edu-school">Purdue University</p>
+            <p class="xp-org">B.S. Industrial Engineering, minor in Statistics &middot; est. May 2028</p>
+            <p class="xp-desc">Presidential Scholar, Simplot Foundation Scholar, Dr. James Barany Endowed Scholar, Redinger Scholar. Certifications in Semiconductors &amp; Microelectronics, Semiconductor Fabrication, and Data Science Applications.</p>
           </div>
-
-          <div>
-            <h4>Repertoire</h4>
-            <table class="readout">
-              <thead><tr><th>Opening</th><th>Side</th></tr></thead>
-              <tbody>
-                <tr><td>Goring Gambit</td><td>White</td></tr>
-                <tr><td>Scotch Game</td><td>White</td></tr>
-                <tr><td>Italian Game</td><td>White</td></tr>
-                <tr><td>Caro-Kann</td><td>Black</td></tr>
-                <tr><td>Modern Defense</td><td>Black</td></tr>
-              </tbody>
-            </table>
-
-            <h4>Competitive</h4>
-            <div class="pills">
-              <span class="pill hot">CCL Team Captain</span>
-              <span class="pill hot">2000+ ELO</span>
-              <span class="pill">6-member team</span>
-              <span class="pill">Aug 2024 &ndash; May 2026</span>
-            </div>
-            <p style="margin-top:14px;font-size:15px">
-              <a href="https://lichess.org/@/an_d22" target="_blank" rel="noreferrer">lichess.org/@/an_d22 &rarr;</a>
-            </p>
-          </div>
+          <p class="edu-gpa"><span class="num">3.89</span><span class="edu-gpa-of">/ 4.00 GPA</span></p>
         </div>
+      </aside>
       </div>
     </div>
+  </section>
 
-    <!-- ---------- SHEET 05 · MARKETS ---------- -->
-    <div class="sheet is-dark" id="sheet-markets" data-station="markets">
-      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
-      <div class="sheet-head">
-        <span class="sheet-num">05</span>
-        <h2 class="sheet-title">Markets</h2>
-        <span class="sheet-coord" data-coord>&mdash;</span>
-      </div>
-      <div class="sheet-body">
+  <!-- ===== Projects ===== -->
+  <section class="section" id="projects" aria-labelledby="h-proj">
+    <div class="wrap">
+      <h2 class="section-title" id="h-proj">Projects</h2>
+      <div class="proj-grid">
 
-        <div class="tape-note">
-          <span class="tape-dot"></span>
-          The columns running across the floor outside are a <b>procedural animation</b>,
-          not live quotes. No price is shown against them anywhere on this page.
-        </div>
-
-        <svg class="chain" viewBox="0 0 640 92" role="img" aria-label="Semiconductor supply chain flow">
-          <defs>
-            <marker id="ch-arrow" viewBox="0 0 10 10" refX="9" refY="5"
-                    markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-            </marker>
-          </defs>
-          <g class="chain-flow">
-            <path d="M566 46 L92 46" marker-end="url(#ch-arrow)"/>
-          </g>
-          <g class="chain-node" data-link="demand">
-            <rect x="512" y="24" width="108" height="44" rx="4"/>
-            <text x="566" y="42">DEMAND</text><text class="sub" x="566" y="58">NVDA</text>
-          </g>
-          <g class="chain-node" data-link="litho">
-            <rect x="392" y="24" width="100" height="44" rx="4"/>
-            <text x="442" y="42">LITHO</text><text class="sub" x="442" y="58">ASML</text>
-          </g>
-          <g class="chain-node" data-link="tools">
-            <rect x="252" y="24" width="120" height="44" rx="4"/>
-            <text x="312" y="42">DEP / ETCH</text><text class="sub" x="312" y="58">AMAT &middot; LRCX</text>
-          </g>
-          <g class="chain-node" data-link="control">
-            <rect x="140" y="24" width="92" height="44" rx="4"/>
-            <text x="186" y="42">CONTROL</text><text class="sub" x="186" y="58">KLAC</text>
-          </g>
-          <g class="chain-node" data-link="fab">
-            <rect x="20" y="24" width="100" height="44" rx="4"/>
-            <text x="70" y="42">FAB</text><text class="sub" x="70" y="58">MU &middot; INTC</text>
-          </g>
-        </svg>
-
-        <div class="ticker-list" id="ticker-list">
-
-          <article class="entry is-expandable tk" data-entry data-tk="MU">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">MU</span>
-              <span class="entry-org">Micron Technology</span>
-              <span class="entry-role">Memory &mdash; DRAM and NAND</span>
-              <svg class="spark" data-spark="MU" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">Designs and manufactures <b>DRAM</b> and <b>NAND</b> flash memory. One of three remaining DRAM makers at scale, alongside Samsung and SK Hynix.</span></li>
-                <li class="beat"><span class="beat-t">Memory is sold as a commodity, so pricing moves with the balance of bit supply against bit demand rather than with individual design wins.</span></li>
-                <li class="beat"><span class="beat-t">Supplies <b>HBM</b> &mdash; high-bandwidth memory stacked beside AI accelerators &mdash; which is allocated under long-term agreements rather than sold spot.</span></li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="entry is-expandable tk" data-entry data-tk="INTC">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">INTC</span>
-              <span class="entry-org">Intel</span>
-              <span class="entry-role">Logic, and a foundry in the making</span>
-              <svg class="spark" data-spark="INTC" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">Designs and manufactures <b>x86</b> processors for PCs and servers, and sells discrete accelerators and networking silicon.</span></li>
-                <li class="beat"><span class="beat-t"><b>Intel Foundry</b> manufactures for external customers as well as for Intel&rsquo;s own product lines, reported as a separate operating segment.</span></li>
-                <li class="beat"><span class="beat-t">One of the few firms that both designs and fabricates at the leading edge, which makes it capital-intensive in a way fabless designers are not.</span></li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="entry is-expandable tk" data-entry data-tk="LRCX">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">LRCX</span>
-              <span class="entry-org">Lam Research</span>
-              <span class="entry-role">Etch &mdash; taking material away</span>
-              <svg class="spark" data-spark="LRCX" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">Builds <b>etch</b> and deposition equipment used to cut and build the structures on a wafer, plus wafer-cleaning systems.</span></li>
-                <li class="beat"><span class="beat-t">Etch demand scales with <b>3D NAND layer counts</b> &mdash; each additional layer adds process steps to the same wafer.</span></li>
-                <li class="beat"><span class="beat-t">Revenue tracks industry <b>wafer fab equipment</b> spending, which is set by memory and logic capex budgets a year or more ahead.</span></li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="entry is-expandable tk" data-entry data-tk="AMAT">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">AMAT</span>
-              <span class="entry-org">Applied Materials</span>
-              <span class="entry-role">Deposition &mdash; putting material down</span>
-              <svg class="spark" data-spark="AMAT" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">The largest semiconductor equipment maker by revenue, and the one with the <b>broadest product range</b>.</span></li>
-                <li class="beat"><span class="beat-t">Sells deposition, etch, ion implantation, chemical-mechanical planarisation and inspection systems, plus display manufacturing equipment.</span></li>
-                <li class="beat"><span class="beat-t">Serves both leading-edge and <b>trailing-edge</b> nodes, and runs a services business tied to the installed base rather than to new tool orders.</span></li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="entry is-expandable tk" data-entry data-tk="KLAC">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">KLAC</span>
-              <span class="entry-org">KLA</span>
-              <span class="entry-role">Process control &mdash; finding the defect</span>
-              <svg class="spark" data-spark="KLAC" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">Supplies <b>inspection and metrology</b> systems that find defects and measure features between the steps of a fabrication flow.</span></li>
-                <li class="beat"><span class="beat-t">Holds the majority share of the process-control segment, well ahead of its nearest competitors.</span></li>
-                <li class="beat"><span class="beat-t"><b>Inspection intensity</b> rises as feature sizes shrink: smaller structures and more process steps mean more points at which a wafer has to be measured.</span></li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="entry is-expandable tk" data-entry data-tk="ASML">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">ASML</span>
-              <span class="entry-org">ASML</span>
-              <span class="entry-role">Lithography &mdash; the only EUV there is</span>
-              <svg class="spark" data-spark="ASML" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">The <b>sole supplier</b> of extreme ultraviolet lithography systems. No leading-edge logic or memory is patterned without one.</span></li>
-                <li class="beat"><span class="beat-t"><b>High&#8209;NA EUV</b> is the next generation, raising numerical aperture to print smaller features in a single exposure.</span></li>
-                <li class="beat"><span class="beat-t">Unit volumes are low and unit prices run into the hundreds of millions, so a handful of shipments moves a quarter. Sales are also subject to <b>export controls</b>.</span></li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="entry is-expandable tk" data-entry data-tk="NVDA">
-            <button class="entry-head" type="button" aria-expanded="false">
-              <span class="tk-sym">NVDA</span>
-              <span class="entry-org">NVIDIA</span>
-              <span class="entry-role">Accelerators &mdash; where the demand starts</span>
-              <svg class="spark" data-spark="NVDA" viewBox="0 0 120 30" preserveAspectRatio="none"><polyline/></svg>
-              <span class="entry-chev" aria-hidden="true"></span>
-            </button>
-            <div class="entry-panel">
-              <ul class="beats">
-                <li class="beat"><span class="beat-t">Designs GPUs and data-centre accelerators. <b>Fabless</b> &mdash; it designs but does not manufacture, outsourcing fabrication to foundries.</span></li>
-                <li class="beat"><span class="beat-t">Sells systems and networking alongside the silicon, and the CUDA software stack that most of the training ecosystem is written against.</span></li>
-                <li class="beat"><span class="beat-t">Accelerator demand <b>propagates upstream</b>: an order here becomes HBM allocation, then wafer starts, then equipment bookings, with a lag at each step.</span></li>
-              </ul>
-            </div>
-          </article>
-        </div>
-
-        <p class="mkt-foot">
-          Company descriptions only. Nothing here is investment advice, a
-          recommendation, or a statement of any position held.
-        </p>
-      </div>
-    </div>
-
-    <!-- ---------- SHEET 06 · SOCCER ---------- -->
-    <div class="sheet" id="sheet-soccer" data-station="soccer">
-      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
-      <div class="sheet-head">
-        <span class="sheet-num">06</span>
-        <h2 class="sheet-title">Pitch Analytics</h2>
-        <span class="sheet-coord" data-coord>&mdash;</span>
-      </div>
-      <div class="sheet-body">
-        <p style="font-size:16px">
-          Purdue D1 Soccer Predictive Analytics &mdash; opponent tendencies, player tracking,
-          and zone-level performance. <b style="color:var(--accent)">Click a zone</b> to read it.
-        </p>
-
-        <div class="pitch-wrap">
-
-          <!-- ============ THE FIELD ============ -->
-          <div class="pitch-figure">
-            <svg class="pitch" viewBox="0 0 520 400" role="group" aria-label="Interactive pitch">
-
-              <!-- turf + mow stripes -->
-              <rect class="turf" x="10" y="10" width="500" height="380" rx="2"/>
-              <g class="mow">
-                <rect x="10"  y="10" width="500" height="47.5"/>
-                <rect x="10" y="105" width="500" height="47.5"/>
-                <rect x="10" y="200" width="500" height="47.5"/>
-                <rect x="10" y="295" width="500" height="47.5"/>
-              </g>
-
-              <!-- markings -->
-              <g class="marks">
-                <rect x="10" y="10" width="500" height="380"/>
-                <line x1="10" y1="200" x2="510" y2="200"/>
-                <circle cx="260" cy="200" r="52"/>
-                <circle class="spot" cx="260" cy="200" r="3"/>
-                <rect x="140" y="10" width="240" height="70"/>
-                <rect x="205" y="10" width="110" height="28"/>
-                <circle class="spot" cx="260" cy="62" r="3"/>
-                <path d="M208 80 A 55 55 0 0 0 312 80"/>
-                <rect x="140" y="320" width="240" height="70"/>
-                <rect x="205" y="362" width="110" height="28"/>
-                <circle class="spot" cx="260" cy="338" r="3"/>
-                <path d="M208 320 A 55 55 0 0 1 312 320"/>
-                <path d="M10 24 A 14 14 0 0 0 24 10"/>
-                <path d="M496 10 A 14 14 0 0 0 510 24"/>
-                <path d="M10 376 A 14 14 0 0 1 24 390"/>
-                <path d="M510 376 A 14 14 0 0 0 496 390"/>
-                <rect class="goal" x="215" y="2" width="90" height="8"/>
-                <rect class="goal" x="215" y="390" width="90" height="8"/>
-              </g>
-
-              <!-- heat blobs, opacity driven by weight -->
-              <g class="heat">
-                <ellipse data-heat="six"    cx="260" cy="45"  rx="86"  ry="42"/>
-                <ellipse data-heat="box"    cx="260" cy="105" rx="128" ry="58"/>
-                <ellipse data-heat="edge"   cx="260" cy="168" rx="132" ry="46"/>
-                <ellipse data-heat="left"   cx="72"  cy="150" rx="60"  ry="104"/>
-                <ellipse data-heat="right"  cx="448" cy="150" rx="60"  ry="104"/>
-                <ellipse data-heat="deep"   cx="260" cy="290" rx="180" ry="80"/>
-              </g>
-
-              <!-- movement arrows, drawn on select -->
-              <g class="runs">
-                <path class="run r1" d="M80 250 C120 190, 180 120, 236 62"/>
-                <path class="run r2" d="M440 250 C400 190, 340 120, 286 62"/>
-                <path class="run r3" d="M260 300 C260 250, 258 190, 260 96"/>
-              </g>
-
-              <!-- the 4-4-2 -->
-              <g class="players">
-                <g class="pl" data-pos="GK"><circle cx="260" cy="360" r="9"/><text x="260" y="363">GK</text></g>
-                <g class="pl" data-pos="LB"><circle cx="80"  cy="300" r="9"/><text x="80"  y="303">LB</text></g>
-                <g class="pl" data-pos="LCB"><circle cx="195" cy="312" r="9"/><text x="195" y="315">CB</text></g>
-                <g class="pl" data-pos="RCB"><circle cx="325" cy="312" r="9"/><text x="325" y="315">CB</text></g>
-                <g class="pl" data-pos="RB"><circle cx="440" cy="300" r="9"/><text x="440" y="303">RB</text></g>
-                <g class="pl" data-pos="LM"><circle cx="80"  cy="205" r="9"/><text x="80"  y="208">LM</text></g>
-                <g class="pl" data-pos="LCM"><circle cx="200" cy="215" r="9"/><text x="200" y="218">CM</text></g>
-                <g class="pl" data-pos="RCM"><circle cx="320" cy="215" r="9"/><text x="320" y="218">CM</text></g>
-                <g class="pl" data-pos="RM"><circle cx="440" cy="205" r="9"/><text x="440" y="208">RM</text></g>
-                <g class="pl" data-pos="LST"><circle cx="205" cy="105" r="9"/><text x="205" y="108">ST</text></g>
-                <g class="pl" data-pos="RST"><circle cx="315" cy="105" r="9"/><text x="315" y="108">ST</text></g>
-              </g>
-
-              <!-- the ball, animated along the selected run -->
-              <circle class="ball" cx="260" cy="300" r="5.5"/>
-
-              <!-- clickable regions, on top of everything -->
-              <g class="zones">
-                <rect class="zone" data-zone="six"   x="205" y="10"  width="110" height="52"/>
-                <path class="zone" data-zone="box"   d="M140,10 L205,10 L205,62 L315,62 L315,10 L380,10 L380,120 L140,120 Z"/>
-                <rect class="zone" data-zone="left"  x="10"  y="10"  width="130" height="230"/>
-                <rect class="zone" data-zone="right" x="380" y="10"  width="130" height="230"/>
-                <rect class="zone" data-zone="edge"  x="140" y="120" width="240" height="120"/>
-                <rect class="zone" data-zone="deep"  x="10"  y="240" width="500" height="150"/>
+        <article class="proj proj-feature" id="proj-register">
+          <div class="proj-fig">
+            <svg viewBox="0 0 480 300" role="img" aria-label="Hundreds of tool records, a few flagged in green, converging into a short review list">
+              <g id="fig-register-links" fill="none" stroke="var(--green-500)" stroke-width="1" stroke-opacity=".55"></g>
+              <g id="fig-register"></g>
+              <g transform="translate(372 92)">
+                <rect x="0" y="0" width="84" height="116" rx="6" fill="none" stroke="var(--chrome-line)" stroke-opacity=".5"/>
+                <text x="42" y="-10" text-anchor="middle" class="fig-cap">REVIEW</text>
+                <g fill="var(--green-500)"><rect x="10" y="12" width="64" height="12" rx="2"/><rect x="10" y="32" width="64" height="12" rx="2" opacity=".85"/><rect x="10" y="52" width="64" height="12" rx="2" opacity=".7"/><rect x="10" y="72" width="64" height="12" rx="2" opacity=".55"/><rect x="10" y="92" width="64" height="12" rx="2" opacity=".4"/></g>
               </g>
             </svg>
-
-            <div class="pitch-legend">
-              <span class="lg"><i class="sw s1"></i>low</span>
-              <span class="lg"><i class="sw s2"></i>med</span>
-              <span class="lg"><i class="sw s3"></i>high</span>
-              <span class="lg-note">shading = relative zone weight</span>
-            </div>
           </div>
+          <div class="proj-body">
+            <div class="proj-head"><h3>tool register</h3><span>summer 2026</span></div>
+            <p>an r&amp;d tool-review app for micron. 13 datastores joined into one register of ~1,500 fab tools, with data quality up 7% across 22 tool attributes. the review shortlist it produces is 8&times; as precise as the manual pass.</p>
+            <ul class="tags"><li>sql</li><li>python</li><li>etl</li><li>tableau</li></ul>
+          </div>
+        </article>
 
-          <!-- ============ THE READOUT ============ -->
-          <aside class="pitch-readout" id="pitch-readout">
-            <div class="ro-head">
-              <span class="ro-kicker" id="ro-kicker">Zone</span>
-              <h3 class="ro-title" id="ro-title">Select a zone</h3>
-            </div>
+        <article class="proj" id="proj-match">
+          <div class="proj-fig">
+            <svg viewBox="0 0 320 200" role="img" aria-label="A pitch with a 4-4-2 shape and the attacking third shaded by zone">
+              <rect x="200" y="22" width="90" height="52" fill="var(--green-500)" opacity=".14"/>
+              <rect x="200" y="74" width="90" height="52" fill="var(--green-500)" opacity=".34"/>
+              <rect x="200" y="126" width="90" height="52" fill="var(--green-500)" opacity=".2"/>
+              <g fill="none" stroke="var(--chrome-line)" stroke-width="1.4">
+                <rect x="30" y="22" width="260" height="156" rx="2"/><line x1="160" y1="22" x2="160" y2="178"/><circle cx="160" cy="100" r="20"/>
+                <rect x="254" y="62" width="36" height="76"/><rect x="30" y="62" width="36" height="76"/>
+              </g>
+              <g fill="#e9ece9">
+                <circle cx="44" cy="100" r="3.4"/>
+                <circle cx="84" cy="44" r="3.4"/><circle cx="80" cy="82" r="3.4"/><circle cx="80" cy="118" r="3.4"/><circle cx="84" cy="156" r="3.4"/>
+                <circle cx="128" cy="40" r="3.4"/><circle cx="122" cy="80" r="3.4"/><circle cx="122" cy="120" r="3.4"/><circle cx="128" cy="160" r="3.4"/>
+                <circle cx="176" cy="84" r="3.4"/><circle cx="176" cy="116" r="3.4"/>
+              </g>
+            </svg>
+          </div>
+          <div class="proj-body">
+            <div class="proj-head"><h3>match prep</h3><span>2026</span></div>
+            <p>benchmarks across 200+ big ten athletes and 19 player-specific improvement plans, with standardized reports to the coaching and training staff twice a week.</p>
+            <ul class="tags"><li>predictive modeling</li><li>opponent tendencies</li></ul>
+          </div>
+        </article>
 
-            <div class="ro-body" id="ro-body">
-              <p class="ro-empty">
-                Six zones, weighted by how much of the model&rsquo;s signal comes from each.
-                Click one on the field to see its numbers and the runs that feed it.
-              </p>
-            </div>
+        <article class="proj" id="proj-recruit">
+          <div class="proj-fig">
+            <svg viewBox="0 0 320 200" role="img" aria-label="A stack of emails meets a rubric; one passes through and is checked">
+              <g fill="none" stroke="var(--chrome-line)" stroke-width="1.3" stroke-linejoin="round" opacity=".75"><g transform="translate(22 22)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g><g transform="translate(22 44)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g><g transform="translate(22 66)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g><g transform="translate(22 88)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g><g transform="translate(22 110)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g><g transform="translate(22 132)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g><g transform="translate(22 154)"><rect width="30" height="16" rx="2"/><path d="M0 1 15 9 30 1"/></g></g>
+              <g stroke="var(--chrome-line)" stroke-width="1" stroke-opacity=".35"><line x1="58" y1="30" x2="146" y2="30"/><line x1="58" y1="52" x2="146" y2="52"/><line x1="58" y1="74" x2="146" y2="74"/><line x1="58" y1="96" x2="146" y2="96"/><line x1="58" y1="118" x2="146" y2="118"/><line x1="58" y1="140" x2="146" y2="140"/><line x1="58" y1="162" x2="146" y2="162"/></g>
+              <rect x="148" y="18" width="10" height="164" rx="3" fill="var(--chrome-line)" opacity=".85"/>
+              <g fill="#060707"><rect x="148" y="24" width="10" height="12"/><rect x="148" y="46" width="10" height="12"/><rect x="148" y="90" width="10" height="12"/><rect x="148" y="112" width="10" height="12"/><rect x="148" y="134" width="10" height="12"/><rect x="148" y="156" width="10" height="12"/></g>
+              <line x1="158" y1="74" x2="226" y2="74" stroke="var(--green-500)" stroke-width="2" stroke-linecap="round"/>
+              <g transform="translate(230 66)" fill="none" stroke="var(--green-500)" stroke-width="1.8" stroke-linejoin="round"><rect width="30" height="16" rx="2" fill="var(--green-500)" fill-opacity=".18"/><path d="M0 1 15 9 30 1"/></g>
+              <circle cx="284" cy="74" r="13" fill="none" stroke="var(--green-500)" stroke-width="2"/>
+              <path d="M278 74.5l4 4 8-9" fill="none" stroke="var(--green-500)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="153" y="196" text-anchor="middle" class="fig-cap">RUBRIC</text>
+            </svg>
+          </div>
+          <div class="proj-body">
+            <div class="proj-head"><h3>recruit scorer</h3><span>spring 2026</span></div>
+            <p>every recruit email is scored against a rubric, and only the top 15% go forward to the coaches. that saves about 20 hours a month of manual review.</p>
+            <ul class="tags"><li>etl</li><li>scoring rubric</li><li>csv exports</li></ul>
+          </div>
+        </article>
 
-            <div class="ro-bars" id="ro-bars" hidden>
-              <div class="ro-bar"><span class="ro-bk">Weight</span>
-                <span class="ro-track"><i data-bar="weight"></i></span><b data-val="weight">&mdash;</b></div>
-              <div class="ro-bar"><span class="ro-bk">Entries</span>
-                <span class="ro-track"><i data-bar="entries"></i></span><b data-val="entries">&mdash;</b></div>
-              <div class="ro-bar"><span class="ro-bk">Conversion</span>
-                <span class="ro-track"><i data-bar="conv"></i></span><b data-val="conv">&mdash;</b></div>
-            </div>
-          </aside>
+        <article class="proj" id="proj-solar">
+          <div class="proj-fig">
+            <svg viewBox="0 0 320 200" role="img" aria-label="Net present value plotted as one driver at a time is varied, each line crossing the base case">
+              <line x1="40" y1="100" x2="290" y2="100" stroke="var(--chrome-line)" stroke-opacity=".45" stroke-dasharray="3 4"/>
+              <line x1="165" y1="24" x2="165" y2="176" stroke="var(--chrome-line)" stroke-opacity=".3"/>
+              <path d="M50 164 C110 138 140 112 165 100 S236 52 280 32" fill="none" stroke="var(--green-500)" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M50 132 C110 118 140 106 165 100 S236 80 280 70" fill="none" stroke="var(--chrome-line)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M50 110 C110 105 140 102 165 100 S236 94 280 90" fill="none" stroke="var(--chrome-line)" stroke-width="1.6" stroke-linecap="round" stroke-opacity=".6"/>
+              <circle cx="165" cy="100" r="4" fill="#e9ece9"/>
+              <text x="30" y="34" class="fig-cap">NPV</text>
+              <text x="165" y="194" text-anchor="middle" class="fig-cap">ONE DRIVER AT A TIME</text>
+            </svg>
+          </div>
+          <div class="proj-body">
+            <div class="proj-head"><h3>solar pv model</h3><span>purdue</span></div>
+            <p>six parametric dcf models over a 40-year horizon, judged by npv and irr against an 8% marr. each driver was swept one at a time to see which ones move the answer.</p>
+            <ul class="tags"><li>excel</li><li>engineering economics</li><li>sensitivity</li></ul>
+          </div>
+        </article>
+
+        <article class="proj" id="proj-bridge">
+          <div class="proj-fig">
+            <svg viewBox="0 0 320 200" role="img" aria-label="Data points, a fitted regression line, and the residual from each point to the line">
+              <path d="M36 176 H290 M36 176 V24" fill="none" stroke="var(--chrome-line)" stroke-opacity=".4"/>
+              <g stroke="var(--green-500)" stroke-width="1.4" stroke-opacity=".8"><line x1="52" y1="148" x2="52" y2="161.3"/><line x1="78" y1="132" x2="78" y2="151.2"/><line x1="96" y1="140" x2="96" y2="144.2"/><line x1="118" y1="116" x2="118" y2="135.6"/><line x1="140" y1="122" x2="140" y2="127.0"/><line x1="160" y1="98" x2="160" y2="119.2"/><line x1="184" y1="104" x2="184" y2="109.8"/><line x1="206" y1="82" x2="206" y2="101.3"/><line x1="226" y1="90" x2="226" y2="93.5"/><line x1="250" y1="64" x2="250" y2="84.1"/><line x1="270" y1="72" x2="270" y2="76.3"/></g>
+              <line x1="40" y1="166" x2="286" y2="70" stroke="var(--chrome-line)" stroke-width="2" stroke-linecap="round"/>
+              <g fill="#e9ece9"><circle cx="52" cy="148" r="3.6"/><circle cx="78" cy="132" r="3.6"/><circle cx="96" cy="140" r="3.6"/><circle cx="118" cy="116" r="3.6"/><circle cx="140" cy="122" r="3.6"/><circle cx="160" cy="98" r="3.6"/><circle cx="184" cy="104" r="3.6"/><circle cx="206" cy="82" r="3.6"/><circle cx="226" cy="90" r="3.6"/><circle cx="250" cy="64" r="3.6"/><circle cx="270" cy="72" r="3.6"/></g>
+            </svg>
+          </div>
+          <div class="proj-body">
+            <div class="proj-head"><h3>bridge regression</h3><span>mini project</span></div>
+            <p>a bridge-focused regression workflow: define the features, fit the model, inspect the error, and summarize the result.</p>
+            <ul class="tags"><li>regression</li><li>statistics</li></ul>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Toolbox ===== -->
+  <section class="section" id="toolbox" aria-labelledby="h-tool">
+    <div class="wrap">
+      <div class="tool-intro">
+        <h2 class="section-title" id="h-tool">Toolbox</h2>
+        <p class="lede">what i reach for. open a drawer, then pick something up.</p>
+      </div>
+
+      <div class="toolbox">
+        <div class="chest" id="chest">
+          <div class="chest-lid" aria-hidden="true"><span class="chest-badge">AN</span></div>
+          <!-- drawers are built by site.js from TOOLBOX; this list is the no-script fallback -->
+          <ul class="chest-fallback">
+            <li><strong>Data:</strong> Python, SQL, Excel, Tableau</li>
+            <li><strong>Stats:</strong> Probability, JMP &amp; DOE, Six Sigma, Machine learning</li>
+            <li><strong>Fab &amp; ops:</strong> Industrial engineering, Semiconductor fabrication, Agentic coding</li>
+            <li><strong>Off the clock:</strong> Rapid chess, Soccer, Hiking, Kung fu movies, Coke zero</li>
+          </ul>
+          <div class="chest-base" aria-hidden="true"><span class="caster"></span><span class="caster"></span></div>
         </div>
 
-        <p style="font-size:13px;color:var(--ink-faint);margin-top:14px">
-          Zone weights are placeholders shaped like the real model output &mdash; swap in
-          the live numbers and both this field and the 3D surface outside re-render from them.
-        </p>
+        <aside class="plate" id="plate" aria-live="polite">
+          <div class="plate-fig" id="plate-fig"></div>
+          <h3 class="plate-name" id="plate-name">Python</h3>
+          <p class="plate-sub" id="plate-sub">pandas &middot; scikit-learn &middot; sqlalchemy</p>
+          <p class="plate-use" id="plate-use">the etl behind micron&rsquo;s tool register.</p>
+          <a class="plate-link" id="plate-link" href="#proj-register">see the tool register</a>
+        </aside>
+      </div>
+    </div>
+  </section>
 
-        <div class="split" style="margin-top:18px">
-          <div>
-            <h4>Scope</h4>
-            <ul style="padding-left:20px;margin:0">
-              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">Predictive framework for opponent tendencies and match prep.</li>
-              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">Big Ten benchmark data across 200+ athletes.</li>
-              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft);margin-bottom:8px">19 player-specific improvement plans delivered.</li>
-              <li style="font-size:16px;line-height:1.55;color:var(--ink-soft)">Twice-weekly standardized reports to coaching and training staff.</li>
-            </ul>
+  <!-- ===== Chess ===== -->
+  <section class="section" id="chess" aria-labelledby="h-chess">
+    <div class="wrap">
+      <h2 class="section-title" id="h-chess">Chess</h2>
+      <div class="chess-grid">
+        <div class="chess-live">
+          <p class="big-rating"><span class="num" id="c-rapid">&mdash;</span></p>
+          <p class="status"><span class="live-dot" aria-hidden="true"></span><span id="c-live">rapid on lichess</span></p>
+
+          <table class="ratings" aria-label="Lichess ratings by format">
+            <thead><tr><th scope="col">Format</th><th scope="col">Rating</th><th scope="col">Games</th></tr></thead>
+            <tbody id="c-perfs">
+              <tr><td>Bullet</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+              <tr><td>Blitz</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+              <tr><td>Rapid</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+              <tr><td>Classical</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+            </tbody>
+          </table>
+
+          <div class="record" id="c-record" hidden>
+            <div class="record-bar" aria-hidden="true"><span class="rb-w" id="rb-w"></span><span class="rb-d" id="rb-d"></span><span class="rb-l" id="rb-l"></span></div>
+            <p class="record-key"><span><i class="k-w"></i><span id="c-w">0</span> wins</span><span><i class="k-d"></i><span id="c-d">0</span> draws</span><span><i class="k-l"></i><span id="c-l">0</span> losses</span></p>
           </div>
-          <div>
-            <h4>Context</h4>
-            <div class="pills">
-              <span class="pill hot">Big Ten</span>
-              <span class="pill hot">NCAA D1</span>
-              <span class="pill">4-4-2 base shape</span>
-              <span class="pill">200+ athletes</span>
-              <span class="pill">Public historical data</span>
-            </div>
-          </div>
+          <p class="chess-note" id="c-note"></p>
+        </div>
+
+        <div class="chess-side">
+          <h3 class="sub-title">Repertoire</h3>
+          <table class="rep">
+            <thead><tr><th scope="col">Opening</th><th scope="col">Moves</th><th scope="col">Side</th></tr></thead>
+            <tbody>
+              <tr><td>Goring Gambit</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.c3</td><td><span class="side side-w">White</span></td></tr>
+              <tr><td>Scotch Game</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4</td><td><span class="side side-w">White</span></td></tr>
+              <tr><td>Italian Game</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.Bc4</td><td><span class="side side-w">White</span></td></tr>
+              <tr><td>Caro-Kann Defense</td><td class="moves">1.e4 c6 2.d4 d5</td><td><span class="side side-b">Black</span></td></tr>
+              <tr><td>Modern Defense</td><td class="moves">1.e4 g6 2.d4 Bg7</td><td><span class="side side-b">Black</span></td></tr>
+            </tbody>
+          </table>
+
+          <h3 class="sub-title">Purdue in the CCL</h3>
+          <p class="ccl"><span class="num">4&ndash;5&ndash;3</span> as team captain, against UT Dallas, Arizona State, Drexel and Tulane.</p>
+          <a class="arrow-link" href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">lichess.org/@/an_d22</a>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- ---------- SHEET 07 · CONTACT ---------- -->
-    <div class="sheet" id="sheet-contact" data-station="contact">
-      <button class="sheet-close" type="button" aria-label="Close">&times;</button>
-      <div class="sheet-head">
-        <span class="sheet-num">07</span>
-        <h2 class="sheet-title">Contact</h2>
-        <span class="sheet-coord" data-coord>&mdash;</span>
-      </div>
-      <div class="sheet-body">
-        <p style="font-size:20px">Everyone has something to teach that I&rsquo;d like to learn. Please reach me at:</p>
-
-        <div class="contact-row">
-          <a class="contact-link" href="mailto:nguy1051@purdue.edu">
-            <span class="cl-k">Email</span>
-            <span class="cl-v">nguy1051@purdue.edu</span>
-          </a>
-          <a class="contact-link" href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noreferrer">
-            <span class="cl-k">LinkedIn</span>
-            <span class="cl-v">Connect with me</span>
-          </a>
-          <a class="contact-link" href="https://github.com/anguy22" target="_blank" rel="noreferrer">
-            <span class="cl-k">GitHub</span>
-            <span class="cl-v">View my code</span>
-          </a>
-          <a class="contact-link" href="https://lichess.org/@/an_d22" target="_blank" rel="noreferrer">
-            <span class="cl-k">Lichess</span>
-            <span class="cl-v">an_d22</span>
-          </a>
+  <!-- ===== Contact ===== -->
+  <section class="section contact" id="contact" aria-labelledby="h-contact">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <h2 class="section-title" id="h-contact">Contact</h2>
+        <p class="lede">everyone has something to teach that i&rsquo;d like to learn. please reach me at:</p>
+        <p class="contact-email"><a href="mailto:nguy1051@purdue.edu">nguy1051@purdue.edu</a></p>
+        <div class="actions">
+          <button class="btn btn-primary" type="button" data-copy-email>copy email</button>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn btn-ghost" href="https://github.com/anguy22" target="_blank" rel="noopener">GitHub</a>
         </div>
-
-        <h4>End of Curve</h4>
-        <p style="font-size:15px">
-          Scroll back up to travel the surface in reverse, or jump with the station rail
-          on the left. Prefer a plain page? <a href="classic.html">Classic view &rarr;</a>
-        </p>
-        <p style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--ink-faint);margin-top:20px">
-          &copy; 2026 Andrew Nguyen &middot; Built with diet coke and ai
-        </p>
+      </div>
+      <div class="contact-sign">
+        <svg class="sign-svg" id="sign-svg" aria-hidden="true" focusable="false"></svg>
       </div>
     </div>
+  </section>
 
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-row">
+    <p>&copy; 2026 Andrew Nguyen &middot; built with diet coke and ai</p>
+    <a href="#top">Back to top</a>
   </div>
+</footer>
 
-  <!-- src is assigned by ride.js only if the audio file is actually present -->
-  <audio id="ride-audio" preload="auto"></audio>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="m-chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".38" stop-color="#cfd5d2"/><stop offset=".5" stop-color="#7c8481"/><stop offset=".6" stop-color="#eef1ef"/><stop offset="1" stop-color="#8d9491"/>
+    </linearGradient>
+    <linearGradient id="m-chrome-h" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8d9491"/><stop offset=".3" stop-color="#f4f6f5"/><stop offset=".48" stop-color="#7c8481"/><stop offset=".7" stop-color="#ffffff"/><stop offset="1" stop-color="#9aa19e"/>
+    </linearGradient>
+    <linearGradient id="m-gloss" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#454b48"/><stop offset=".22" stop-color="#1a1e1c"/><stop offset=".55" stop-color="#060707"/><stop offset="1" stop-color="#202523"/>
+    </linearGradient>
+    <radialGradient id="m-ball" cx=".36" cy=".3" r=".75">
+      <stop offset="0" stop-color="#5b625f"/><stop offset=".18" stop-color="#202523"/><stop offset=".7" stop-color="#050606"/><stop offset="1" stop-color="#151817"/>
+    </radialGradient>
+    <radialGradient id="m-chrome-ball" cx=".35" cy=".3" r=".8">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#d7dcda"/><stop offset=".72" stop-color="#6c7471"/><stop offset="1" stop-color="#1d2120"/>
+    </radialGradient>
+  </defs>
+</svg>
 
-  <script type="module" src="ride.js?v=17"></script>
-
-  <script>
-    /* If three.js can't be fetched the module never executes and the launch
-       button would silently do nothing. Fail over to the classic view. */
-    (function () {
-      var GRACE = 9000;
-      setTimeout(function () {
-        if (window.__rideBooted) return;
-        var g = document.getElementById('gate');
-        if (g) g.classList.add('is-gone');
-        var f = document.getElementById('nowebgl');
-        if (!f) return;
-        f.innerHTML =
-          '<div><p>The 3D engine could not load &mdash; it is fetched from a CDN ' +
-          'that may be blocked or offline.</p>' +
-          '<p><a href="classic.html">Open the classic view instead &rarr;</a></p></div>';
-        f.classList.add('is-live');
-      }, GRACE);
-    })();
-  </script>
+<script type="module" src="js/site.js?v=1"></script>
+<script type="module" src="js/galton.js?v=1"></script>
 </body>
 </html>
