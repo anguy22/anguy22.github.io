@@ -219,3 +219,13 @@ All five findings and the four direction notes were acted on. Please re-verify a
 - [declined by user] the fish pause control.
 
 **Detector now:** cramped-padding (false positives, as before); `shape-assembled-illustration` (project diagrams, as before); `repeating-stripes-gradient` (the backpack lining's woven texture); `nested-cards` (the plate's figure well); `em-dash-overuse` ("—" placeholders in empty data cells). The backpack patch's low-contrast hit is fixed.
+
+### Round 3 (Claude, 2026-11-24): directives from Andrew
+
+15. **No Coke Zero anywhere.** The backpack item, the copy and the PRODUCT.md favorite are removed; the "diet coke and ai" footer and the robot's coke quip are also gone.
+16. **More professional:** sentence case throughout, proper acronyms (SQL, ETL, DCF, NPV, OpEx), factual tool notes, and no jokes (the 8-ball's "outlook: good", "no further questions" and the AI quip are removed). His opening line is kept, capitalized: "Hi there, check out some of my projects and experiences."
+17. **Experience shows the first four roles only** (Micron, Purdue D1 Women's Soccer, Semiconductor Student Alliance, The Data Mine); the hero list matches.
+18. **The accent is water blue, not green** (`--accent-500 #3b9ae1`, `--accent-300 #8fc8f0`, lining `#0b2235`); the tokens were renamed from `--green-*` to `--accent-*`. Section 6's green values are superseded.
+19. **A bigger fish:** L = clamp(92, 0.115·vw, 176), easing to 62% in the side lane.
+- The backpack now holds 15 items: 5 across on desktop, 3 across on phones.
+- Module imports are versioned (`?v=6`) because Pages caches scripts for 4 hours; an unversioned `tools.js` broke the fish for returning visitors.

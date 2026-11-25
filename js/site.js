@@ -1,6 +1,6 @@
-import { nameSVG, wordPath } from "./script-name.js?v=5";
-import { TOOLS, PACK, SHARED_DEFS, toolSVG } from "./tools.js?v=5";
-import { createFish } from "./fish.js?v=5";
+import { nameSVG, wordPath } from "./script-name.js?v=6";
+import { TOOLS, PACK, SHARED_DEFS, toolSVG } from "./tools.js?v=6";
+import { createFish } from "./fish.js?v=6";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -74,8 +74,8 @@ $$("[data-copy-email]").forEach((btn) => {
     try { await navigator.clipboard.writeText(EMAIL); }
     catch { location.href = `mailto:${EMAIL}`; return; }
     btn.style.minWidth = `${btn.offsetWidth}px`; // hold the width while the label changes
-    btn.textContent = "copied"; btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "copy email"; btn.classList.remove("copied"); }, 1800);
+    btn.textContent = "Copied"; btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy email"; btn.classList.remove("copied"); }, 1800);
   });
 });
 
@@ -121,7 +121,7 @@ if (reg) {
   let h = "", links = "", k = 0;
   for (let r = 0; r < 11; r++) for (let c = 0; c < 14; c++) {
     const x = 26 + c * 21, y = 36 + r * 21, flag = flagged.has(`${r},${c}`);
-    h += `<rect x="${x}" y="${y}" width="14" height="14" rx="3" fill="${flag ? "var(--green-500)" : "var(--chrome-line)"}" opacity="${flag ? 0.95 : 0.12 + rnd() * 0.16}"/>`;
+    h += `<rect x="${x}" y="${y}" width="14" height="14" rx="3" fill="${flag ? "var(--accent-500)" : "var(--chrome-line)"}" opacity="${flag ? 0.95 : 0.12 + rnd() * 0.16}"/>`;
     if (flag) {
       const ty = 92 + 18 + k++ * 20, sx = x + 14, sy = y + 7;
       links += `<path d="M${sx} ${sy} C${sx + 60} ${sy} ${372 - 50} ${ty} 382 ${ty}"/>`;
@@ -185,8 +185,8 @@ async function lichess() {
     const rapid = p.rapid && p.rapid.games > 0 ? p.rapid.rating + (p.rapid.prov ? "?" : "") : null;
     if (rapid) {
       $("#c-rapid").textContent = rapid;
-      $("#c-live").textContent = "rapid on lichess, live";
-      $("#hero-rating").textContent = `rapid ${rapid} on lichess, live`;
+      $("#c-live").textContent = "Rapid on Lichess, live";
+      $("#hero-rating").textContent = `Lichess rapid ${rapid}, live`;
       $$(".status").forEach((s) => s.classList.add("is-live"));
     }
     const c = u.count;
@@ -198,9 +198,9 @@ async function lichess() {
         $("#rb-w").style.width = `${(w / all) * 100}%`; $("#rb-d").style.width = `${(d / all) * 100}%`; $("#rb-l").style.width = `${(l / all) * 100}%`;
       }));
     }
-    note.textContent = `${(c?.all ?? 0).toLocaleString()} games on lichess.org, pulled when this page loaded.`;
+    note.textContent = `${(c?.all ?? 0).toLocaleString()} games on lichess.org, loaded with this page.`;
   } catch {
-    note.innerHTML = `lichess didn&rsquo;t answer just now. the <a href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">profile</a> has the live numbers.`;
+    note.innerHTML = `Lichess didn&rsquo;t respond. The <a href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">profile</a> has the live numbers.`;
   }
 }
 lichess();

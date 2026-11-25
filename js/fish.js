@@ -178,7 +178,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     dpr = Math.min(devicePixelRatio || 1, VW < 720 ? 1.5 : 2);
     for (const cv of [back, front]) { cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr); }
     ctxB.setTransform(dpr, 0, 0, dpr, 0, 0); ctxF.setTransform(dpr, 0, 0, dpr, 0, 0);
-    L = Math.max(70, Math.min(132, VW * 0.085));
+    L = Math.max(92, Math.min(176, VW * 0.115)); // a big, readable fish
   }
 
   // The loop the fish follows when nothing has its attention, in viewport coordinates.
@@ -267,7 +267,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       turn = f.upright ? 3.4 : 2.6;
       const far = Math.hypot(tx - x, ty - y);
       if (far > L * 1.5) { maxS = Math.max(maxS, Math.min(L * 5, far * 1.4)); turn = 4.5; }
-      sizeGoal = f.upright ? 0.72 : 1;
+      sizeGoal = f.upright ? 0.62 : 1;
     }
 
     // steer: limited turn rate, eased speed
