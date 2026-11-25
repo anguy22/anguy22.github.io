@@ -27,7 +27,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 ## Signature interaction and motion grammar
 
-Signature (updated 2026-11-24): a goldfish companion swims through the hero copy (behind text, in front in open water), follows scroll in the right margin, and darts to any clicked control to look at it. A brown leather backpack holds every tool loose on a green lining; picking one fills the detail plate. Motion grammar: name stroke draws once on load (~4s total); the fish steers with a limited turn rate and eased speed; under reduced motion the fish rests in one pose. No pause control, by Andrew's decision.
+Signature (updated 2026-11-24): a goldfish companion swims through the hero copy (behind text, in front in open water), follows scroll in the right margin, and darts to any clicked control to look at it. A skills aquarium holds one symbolic object per skill (eel, database coral, sunken knight, kelp bar chart, ...) at varied sizes and depths; selecting one spotlights it, fills a brushed-steel placard, and the goldfish swims over to stay beside it. Motion grammar: name stroke draws once on load (~4s total); the fish steers with a limited turn rate and eased speed; under reduced motion the fish rests in one pose. No pause control, by Andrew's decision.
 
 ## Unresolved
 

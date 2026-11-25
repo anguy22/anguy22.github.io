@@ -1,6 +1,6 @@
-import { nameSVG, wordPath } from "./script-name.js?v=6";
-import { TOOLS, PACK, SHARED_DEFS, toolSVG } from "./tools.js?v=6";
-import { createFish } from "./fish.js?v=6";
+import { nameSVG, wordPath } from "./script-name.js?v=8";
+import { initTank } from "./tank.js?v=8";
+import { createFish } from "./fish.js?v=8";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -112,60 +112,8 @@ addEventListener("scroll", () => { if (!navTick) { navTick = true; requestAnimat
 addEventListener("resize", markNav);
 markNav();
 
-/* ---------- Project figure: tool register ---------- */
-// Many records on the left; the five flagged ones run to the review list on the right.
-const reg = $("#fig-register"), regLinks = $("#fig-register-links");
-if (reg) {
-  let s = 11; const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
-  const flagged = new Set(["1,3", "3,9", "5,5", "7,12", "9,2"]);
-  let h = "", links = "", k = 0;
-  for (let r = 0; r < 11; r++) for (let c = 0; c < 14; c++) {
-    const x = 26 + c * 21, y = 36 + r * 21, flag = flagged.has(`${r},${c}`);
-    h += `<rect x="${x}" y="${y}" width="14" height="14" rx="3" fill="${flag ? "var(--accent-500)" : "var(--chrome-line)"}" opacity="${flag ? 0.95 : 0.12 + rnd() * 0.16}"/>`;
-    if (flag) {
-      const ty = 92 + 18 + k++ * 20, sx = x + 14, sy = y + 7;
-      links += `<path d="M${sx} ${sy} C${sx + 60} ${sy} ${372 - 50} ${ty} 382 ${ty}"/>`;
-    }
-  }
-  reg.innerHTML = h;
-  regLinks.innerHTML = links;
-}
-
-/* ---------- Backpack ---------- */
-const defsHost = document.querySelector("svg[aria-hidden] defs");
-defsHost?.insertAdjacentHTML("beforeend", SHARED_DEFS);
-
-// Everything sits loose in one compartment, each at its own slight angle.
-const opening = $(".pack-opening");
-if (opening) {
-  const tilt = [-6, 4, -3, 7, -5, 2, 6, -4, 3, -7, 5, -2, 4, -6, 2, -3];
-  const items = document.createElement("div");
-  items.className = "pack-items";
-  items.setAttribute("role", "group");
-  items.setAttribute("aria-label", "Things in the backpack");
-  items.innerHTML = PACK.map((t, i) => `<button class="tool" type="button" data-tool="${t}" aria-pressed="${t === "python"}" style="--tilt:${tilt[i % tilt.length]}deg">${toolSVG(t, { cut: false })}<span class="tool-name">${TOOLS[t].name}</span></button>`).join("");
-  opening.appendChild(items);
-
-  const plate = { fig: $("#plate-fig"), name: $("#plate-name"), sub: $("#plate-sub"), use: $("#plate-use"), link: $("#plate-link") };
-  function select(id, { animate = true } = {}) {
-    const t = TOOLS[id];
-    $$(".tool", items).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tool === id)));
-    plate.fig.classList.remove("swap"); if (animate) void plate.fig.offsetWidth;
-    plate.fig.innerHTML = toolSVG(id, { cut: false });
-    if (animate) plate.fig.classList.add("swap");
-    plate.name.textContent = t.name; plate.sub.textContent = t.sub; plate.use.textContent = t.use;
-    if (t.link) { plate.link.href = t.link.href; plate.link.textContent = t.link.label; plate.link.hidden = false; }
-    else plate.link.hidden = true;
-  }
-  items.addEventListener("click", (e) => {
-    const tool = e.target.closest(".tool");
-    if (!tool) return;
-    select(tool.dataset.tool);
-    // on narrow screens the detail sits below the bag; bring it into view
-    if (matchMedia("(max-width: 1100px)").matches) $("#plate").scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
-  });
-  select("python", { animate: false });
-}
+/* ---------- Skills tank ---------- */
+initTank({ reduce });
 
 /* ---------- Lichess (live) ---------- */
 const FORMATS = [["bullet", "Bullet"], ["blitz", "Blitz"], ["rapid", "Rapid"], ["classical", "Classical"]];

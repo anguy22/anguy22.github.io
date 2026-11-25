@@ -170,6 +170,8 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   let trail = [], mode = "wander", target = null, lookUntil = 0, seekUntil = 0, layer = "back", raf = 0;
   let pending = null, pendingUntil = 0; // a destination heading waiting to scroll into view
   let restTimer = 0;
+  let reside = false; // stay beside a selected tank object until something else is picked
+  const tank = document.getElementById("tank");
   let size = 1, sizeGoal = 1; // the fish shrinks to fit the side lane
   let loopT = 0.4, scrollV = 0, lastScroll = scrollY, lastScrollT = performance.now();
 
@@ -190,6 +192,11 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       const cx = wide ? c.left + c.width * 0.92 : c.left + c.width * 0.5;
       const A = wide ? Math.min(c.width * 0.78, VW - cx - L * 1.4) : c.width * 0.46;
       return { inHero, cx, cy: c.top + c.height * 0.52, A, B: Math.min(c.height * 0.42, VH * 0.4) / 0.3536, split: wide ? cx + L * 0.2 : Infinity };
+    }
+    // The skills tank: when it fills the middle of the screen, swim inside it.
+    const tk = tank && tank.getBoundingClientRect();
+    if (tk && tk.top < VH * 0.6 && tk.bottom > VH * 0.4) {
+      return { inHero, inTank: true, cx: tk.left + tk.width / 2, cy: tk.top + tk.height * 0.34, A: tk.width * 0.36, B: (tk.height * 0.2) / 0.3536, front: true, split: Infinity };
     }
     // Past the hero: an upright figure-eight in the empty margin right of the content,
     // drawn in front so it stays visible. When that margin is too narrow (tablets,
@@ -212,12 +219,16 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   function aimPoint(el) {
     const r = el.getBoundingClientRect();
     const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    const gap = L * 0.95, clampX = (v) => Math.max(L * 0.6, Math.min(VW - L * 0.6, v)), clampY = (v) => Math.max(L * 0.6, Math.min(VH - L * 0.6, v));
+    const inTank = tank && tank.contains(el);
+    // inside the tank the fish is smaller and keeps to the water around the object
+    const B = inTank ? tank.getBoundingClientRect() : { left: 0, top: 0, right: VW, bottom: VH };
+    const Ls = L * (inTank ? 0.62 : 1), gap = Ls * 0.95, pad = Ls * 0.6;
+    const clampX = (v) => Math.max(B.left + pad, Math.min(B.right - pad, v)), clampY = (v) => Math.max(B.top + pad, Math.min(B.bottom - pad, v));
     const sides = [
-      { room: VW - r.right, stand: [r.right + gap, cy] },
-      { room: r.left, stand: [r.left - gap, cy] },
-      { room: (VH - r.bottom) * 1.15, stand: [cx, r.bottom + gap] }, // slight preference for over/under on phones
-      { room: r.top * 1.15, stand: [cx, r.top - gap] },
+      { room: B.right - r.right, stand: [r.right + gap, cy] },
+      { room: r.left - B.left, stand: [r.left - gap, cy] },
+      { room: (B.bottom - r.bottom) * (inTank ? 0.5 : 1.15), stand: [cx, r.bottom + gap] }, // not into the sand
+      { room: (r.top - B.top) * (inTank ? 0.9 : 1.15), stand: [cx, r.top - gap] },
     ].sort((a, b) => b.room - a.room);
     const onScreen = r.bottom > 0 && r.top < VH && r.right > 0 && r.left < VW;
     return { rect: r, onScreen, stand: [clampX(sides[0].stand[0]), clampY(sides[0].stand[1])], look: [cx, cy] };
@@ -235,16 +246,31 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       else if (now > pendingUntil) pending = null; // the route never resolved
     }
     if (mode !== "wander" && (!target || !target.isConnected)) mode = "wander";
-    if (mode === "seek" || mode === "look") {
+    if (mode === "reside") {
+      // Stay with the selected object: face it for a moment, then hover beside it.
+      const a = aimPoint(target), Ls = L * size;
+      if (!a.onScreen) { mode = "wander"; reside = false; }
+      if (now % 5200 < 1600) {
+        [tx, ty] = a.look;
+        const m = Ls * 0.3, r = a.rect;
+        const touching = x > r.left - m && x < r.right + m && y > r.top - m && y < r.bottom + m;
+        maxS = touching ? 0 : Ls * 0.3; turn = 5; wave = 0.5;
+      } else {
+        const g = clock * 0.8;
+        tx = a.stand[0] + Math.cos(g) * Ls * 0.35; ty = a.stand[1] + Math.sin(g * 1.3) * Ls * 0.18;
+        maxS = Ls * 0.6; turn = 3; wave = 0.7;
+      }
+      sizeGoal = 0.62;
+    } else if (mode === "seek" || mode === "look") {
       const a = aimPoint(target);
       if (mode === "seek") {
         [tx, ty] = a.stand;
         const d = Math.hypot(tx - x, ty - y);
         maxS = Math.min(L * 9, Math.max(L * 1.2, d * 3));
         turn = 7.5;
-        if (d < L * 0.35 && a.onScreen) { mode = "look"; lookUntil = now + 700; }
-        if (now > seekUntil) mode = "wander"; // the target never came into view
-        sizeGoal = 1;
+        if (d < L * 0.35 && a.onScreen) { mode = reside ? "reside" : "look"; lookUntil = now + 700; }
+        if (now > seekUntil) { mode = "wander"; reside = false; } // the target never came into view
+        sizeGoal = tank && tank.contains(target) ? 0.62 : 1;
       } else {
         // turn toward it, then hold: the snout stops just outside the control
         [tx, ty] = a.look;
@@ -258,7 +284,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       // advance the loop at about the fish's cruising pace, then chase a point just ahead
       const p0 = lemni(f, loopT), p1 = lemni(f, loopT + 0.01);
       const ds = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / 0.01 || 1;
-      loopT = (loopT + (L * (f.upright ? 0.85 : 1.15) * dt) / ds) % TAU;
+      loopT = (loopT + (L * (f.upright || f.inTank ? 0.75 : 1.15) * dt) / ds) % TAU;
       [tx, ty] = lemni(f, loopT + 0.35);
       // lean where the visitor is scrolling
       ty += Math.max(-VH * 0.28, Math.min(VH * 0.28, scrollV * 0.22));
@@ -267,7 +293,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       turn = f.upright ? 3.4 : 2.6;
       const far = Math.hypot(tx - x, ty - y);
       if (far > L * 1.5) { maxS = Math.max(maxS, Math.min(L * 5, far * 1.4)); turn = 4.5; }
-      sizeGoal = f.upright ? 0.62 : 1;
+      sizeGoal = f.upright || f.inTank ? 0.62 : 1;
     }
 
     // steer: limited turn rate, eased speed
@@ -275,8 +301,9 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     let diff = ((want - heading + Math.PI) % TAU + TAU) % TAU - Math.PI;
     heading += Math.max(-turn * dt, Math.min(turn * dt, diff));
     const dist = Math.hypot(tx - x, ty - y);
-    const desired = mode === "look" ? maxS : Math.min(maxS, Math.max(L * 0.4, dist * 2.4));
-    if (mode === "look" && maxS === 0) speed *= Math.pow(0.001, dt); // settle, still facing it
+    const holding = mode === "look" || mode === "reside";
+    const desired = holding ? maxS : Math.min(maxS, Math.max(L * 0.4, dist * 2.4));
+    if (holding && maxS === 0) speed *= Math.pow(0.001, dt); // settle, still facing it
     speed += (desired - speed) * Math.min(1, dt * (mode === "seek" ? 5 : 2.2));
     x += Math.cos(heading) * speed * dt;
     y += Math.sin(heading) * speed * dt;
@@ -312,8 +339,16 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
 
   // attention: buttons, links and backpack items
   document.addEventListener("click", (e) => {
+    const sk = e.target.closest("[data-skill]");
+    const obj = sk && document.querySelector(`.tank-obj[data-skill="${sk.dataset.skill}"]`);
+    if (obj) {
+      target = obj; mode = "seek"; reside = true; pending = null; seekUntil = performance.now() + 4000;
+      if (still) placeBeside(obj);
+      return;
+    }
     const el = e.target.closest("a, button");
     if (!el) return;
+    reside = false;
     const hash = el.getAttribute("href");
     const now = performance.now();
     pending = null;
