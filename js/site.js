@@ -1,7 +1,7 @@
-import { nameSVG, wordPath } from "./script-name.js?v=14";
-import { initTank } from "./tank.js?v=14";
-import { createFish } from "./fish.js?v=14";
-import { initChess } from "./chess.js?v=14";
+import { nameSVG, wordPath } from "./script-name.js?v=18";
+import { initTank } from "./tank.js?v=18";
+import { createFish } from "./fish.js?v=18";
+import { initChess } from "./chess.js?v=18";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -72,29 +72,21 @@ if (heroCopy && $("#fish-back")) {
 /* ---------- Copy email ---------- */
 $$("[data-copy-email]").forEach((btn) => {
   btn.addEventListener("click", async () => {
+    const label = btn.dataset.label || (btn.dataset.label = btn.textContent);
     try { await navigator.clipboard.writeText(EMAIL); }
     catch { location.href = `mailto:${EMAIL}`; return; }
     btn.style.minWidth = `${btn.offsetWidth}px`; // hold the width while the label changes
     btn.textContent = "Copied"; btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "Copy email"; btn.classList.remove("copied"); }, 1800);
+    setTimeout(() => { btn.textContent = label; btn.classList.remove("copied"); }, 1800);
   });
 });
 
 /* ---------- Nav ---------- */
-const toggle = $(".nav-toggle"), links = $("#nav-links");
-toggle?.addEventListener("click", () => {
-  const open = toggle.getAttribute("aria-expanded") !== "true";
-  toggle.setAttribute("aria-expanded", String(open));
-  links.classList.toggle("open", open);
-  document.body.classList.toggle("menu-open", open);
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && links?.classList.contains("open")) {
-    toggle.setAttribute("aria-expanded", "false"); links.classList.remove("open"); document.body.classList.remove("menu-open"); toggle.focus();
-  }
-});
+const links = $("#nav-links");
+// Picking a section moves focus to its heading as well as scrolling there.
 $$("#nav-links a").forEach((a) => a.addEventListener("click", () => {
-  toggle?.setAttribute("aria-expanded", "false"); links.classList.remove("open"); document.body.classList.remove("menu-open");
+  const heading = $(`${a.getAttribute("href")} .section-title`);
+  if (heading) setTimeout(() => heading.focus({ preventScroll: true }), 0);
 }));
 // Active link: the last section whose top has passed 40% of the viewport.
 const navMap = new Map($$("#nav-links a").map((a) => [a.getAttribute("href").slice(1), a]));

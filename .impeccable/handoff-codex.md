@@ -263,3 +263,15 @@ All five findings and the four direction notes were acted on. Please re-verify a
 26. **Hero copy is Andrew's own:** "Hi there, check out some of my work and experiences!" plus a paragraph on the problems and fields he enjoys, ending "Please reach out!" The worked-on list and the location/Lichess status line are removed (`#hero-rating` is gone, and chess.js no longer writes to it).
 27. **Experience:** a new top role, Micron Technology, Industrial Engineering Intern, R&D Budgeting, May–Aug 2027. Andrew's one-line descriptions sit on Micron 2026, Predictive Data Analyst and Undergraduate Data Science Researcher (`.xp-desc`).
 - Pending: Andrew wants the official Purdue P artwork on the Education card; it will go in as `img/purdue-p.png` once he adds the file. Andrew has not yet asked for the five-point review he pasted on 2026-11-25 to be applied.
+
+### Round 10 (Claude, 2026-11-25): pasted-review items 3-5 (Andrew: "suggestions 2-4" of my follow-up list)
+
+28. **A quieter fish.** Cruising is about 40% slower, with slow swells that ease it to ~35% of its pace now and then. A full-speed dart (9L/s) is reserved for selecting a skill; other button and link clicks still draw it over (Andrew's earlier directive), but unhurried (4.5L/s). Turn rates are lower.
+29. **Chrome only on the handwritten name and the tank rim.** The primary button is flat off-white (#eef1ee, white on hover, water blue when "Copied"). Icon buttons, ghost buttons and chips are transparent with hairline borders, and the selected chip is flat `--accent-500`.
+30. **Menu and Contact.** While the phone menu is open, `main`, the footer and the skip link are `inert`, and focus moves to the first link once the menu is visible (it now shows instantly; the fade is kept). Escape closes it and returns focus to the toggle. Picking a section moves focus to that section's heading (`tabindex="-1"`, focus-visible ring only). Contact leads with **Email me** (a mailto primary button), followed by Copy address, LinkedIn and GitHub as quiet `.text-link`s; the copy button restores its own label.
+- Not done (pasted item 2): moving the skill chips above the demo on phones and playing each demo only once.
+
+### Round 11 (Claude, 2026-11-25)
+
+31. **The top bar has no name.** "Andrew Nguyen" is removed from the nav. On phones (720px and under) the four section links sit inline and centred instead of behind a menu, so the toggle, the slide-down sheet and the menu-focus code are removed; they fit at 320px with no overflow. On desktop the links sit at the right. Section links still move focus to their heading.
+32. **The bullet rating chart is removed** (user directive). The Chess section is the live link plus the stats row (Rapid, Bullet, Blitz, Record). chess.js now makes one profile request; the rating-history and perf requests, the chart code and the chart CSS are gone, which also resolves the P2 about stats waiting on the history request.

@@ -29,7 +29,7 @@ The site is about one person whose interests sit at a real intersection: competi
 ## Capabilities and Constraints
 
 - Static site: plain HTML, CSS, and JavaScript, no build step.
-- Must keep: live Lichess stats (ratings by format, game record) and a live bullet-rating history chart. The repertoire and CCL record were removed from the Chess section by user directive (2026-11-25).
+- Must keep: live Lichess stats (ratings by format, game record) (the bullet rating chart was removed by user directive, 2026-11-25). The repertoire and CCL record were removed from the Chess section by user directive (2026-11-25).
 - Retired in this revamp: the WebGL 3D "ride" homepage (index.html + ride.js/ride.css), classic.html, background audio, the Markets sheet, and the pitch-zone map. They remain in git history.
 - No personal contact details beyond the school email, LinkedIn, GitHub, and Lichess (see .gitignore notes): no phone, home address, or personal email.
 

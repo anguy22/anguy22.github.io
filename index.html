@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=14">
+  <link rel="stylesheet" href="css/site.css?v=18">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -26,10 +26,6 @@
 
 <header class="nav" id="nav">
   <div class="wrap nav-row">
-    <a class="nav-name" href="#top">Andrew Nguyen</a>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
-      <span class="nav-toggle-bars" aria-hidden="true"></span><span class="sr-only">Menu</span>
-    </button>
     <nav class="nav-links" id="nav-links" aria-label="Sections">
       <a href="#experience">Experience</a>
       <a href="#skills">Skills</a>
@@ -53,7 +49,7 @@
         <div class="bio" data-rise>
           <p class="bio-lead">Hi there, check out some of my work and experiences!</p>
 
-          <p>I want to solve big problems with cool tools. I enjoy working on probabilistic models, database architectures, manufacturing processes and data analytics. I&rsquo;m always looking to learn from others in any field, and I find joy in the passions of the people I meet. Please reach out!</p>
+          <p>I want to solve big problems with cool tools. I enjoy working with stochastic models, database architectures, manufacturing processes, and data analytics. I&rsquo;m always looking to learn from others in any field, and I find joy in the passions of the people I meet. Please reach out!</p>
 
           <div class="actions">
             <button class="btn btn-primary" type="button" data-copy-email>Copy email</button>
@@ -76,7 +72,7 @@
   <!-- ===== Experience ===== -->
   <section class="section" id="experience" aria-labelledby="h-exp">
     <div class="wrap">
-      <h2 class="section-title" id="h-exp">Experience</h2>
+      <h2 class="section-title" id="h-exp" tabindex="-1">Experience</h2>
 
       <div class="xp-grid">
       <div>
@@ -138,7 +134,7 @@
   <section class="section" id="skills" aria-labelledby="h-skills">
     <div class="wrap">
       <div class="tool-intro">
-        <h2 class="section-title" id="h-skills">Skills</h2>
+        <h2 class="section-title" id="h-skills" tabindex="-1">Skills</h2>
         <p class="lede">Everything in the tank is something I work with. Select one and the goldfish will swim over to it.</p>
       </div>
       <div class="tank" id="tank">
@@ -159,7 +155,7 @@
   <section class="section" id="chess" aria-labelledby="h-chess">
     <div class="wrap">
       <div class="tool-intro">
-        <h2 class="section-title" id="h-chess">Chess</h2>
+        <h2 class="section-title" id="h-chess" tabindex="-1">Chess</h2>
         <p class="status chess-live"><span class="live-dot" aria-hidden="true"></span><span>Live from <a href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">lichess.org/@/an_d22</a></span></p>
       </div>
       <div class="stats" id="c-stats">
@@ -167,11 +163,6 @@
         <div class="stat"><p class="stat-label">Bullet</p><p class="stat-value">&mdash;</p><p class="stat-sub">Loading</p></div>
         <div class="stat"><p class="stat-label">Blitz</p><p class="stat-value">&mdash;</p><p class="stat-sub">Loading</p></div>
       </div>
-      <figure class="rating-chart">
-        <figcaption class="chart-head"><span class="chart-title">Bullet rating</span><span class="chart-note" id="bc-note"></span></figcaption>
-        <div class="chart-plot" id="bc-plot"><p class="chart-empty">Loading the rating history&hellip;</p></div>
-        <div class="sr-only" id="bc-summary"></div>
-      </figure>
       <p class="chess-note" id="c-note"></p>
     </div>
   </section>
@@ -180,13 +171,14 @@
   <section class="section contact" id="contact" aria-labelledby="h-contact">
     <div class="wrap contact-grid">
       <div class="contact-copy">
-        <h2 class="section-title" id="h-contact">Contact</h2>
+        <h2 class="section-title" id="h-contact" tabindex="-1">Contact</h2>
         <p class="lede">Everyone has something to teach that I&rsquo;d like to learn. Please reach me at:</p>
         <p class="contact-email"><a href="mailto:nguy1051@purdue.edu">nguy1051@purdue.edu</a></p>
-        <div class="actions">
-          <button class="btn btn-primary" type="button" data-copy-email>Copy email</button>
-          <a class="btn btn-ghost" href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noopener">LinkedIn</a>
-          <a class="btn btn-ghost" href="https://github.com/anguy22" target="_blank" rel="noopener">GitHub</a>
+        <div class="actions contact-actions">
+          <a class="btn btn-primary" href="mailto:nguy1051@purdue.edu">Email me</a>
+          <button class="text-link" type="button" data-copy-email>Copy address</button>
+          <a class="text-link" href="https://www.linkedin.com/in/andrew-nguyen-91b88327a/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="text-link" href="https://github.com/anguy22" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
       <div class="contact-sign">
@@ -224,6 +216,6 @@
   </defs>
 </svg>
 
-<script type="module" src="js/site.js?v=14"></script>
+<script type="module" src="js/site.js?v=18"></script>
 </body>
 </html>

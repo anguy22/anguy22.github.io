@@ -391,7 +391,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       if (mode === "seek") {
         [tx, ty] = a.stand;
         const d = Math.hypot(tx - x, ty - y);
-        maxS = Math.min(L * 9, Math.max(L * 1.2, d * 3));
+        maxS = Math.min(L * (reside ? 9 : 4.5), Math.max(L * 1.2, d * 3)); // a quick dart for skills, unhurried elsewhere
         turn = 7.5;
         if (d < L * 0.35 && a.onScreen) { mode = reside ? "reside" : "look"; lookUntil = now + 700; }
         if (now > seekUntil) { mode = "wander"; reside = false; } // the target never came into view
@@ -409,13 +409,16 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       // advance the loop at about the fish's cruising pace, then chase a point just ahead
       const p0 = lemni(f, loopT), p1 = lemni(f, loopT + 0.01);
       const ds = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / 0.01 || 1;
-      loopT = (loopT + (L * (f.upright || f.inTank ? 0.75 : 1.15) * dt) / ds) % TAU;
+      // Slow swells: it eases down to about a third of its pace now and then, so the
+      // dart toward a selected skill is the moment that stands out.
+      const calm = 0.35 + 0.65 * Math.pow(Math.max(0, Math.sin(clock * 0.28 + 0.6)), 0.6);
+      loopT = (loopT + (L * (f.upright || f.inTank ? 0.55 : 0.7) * calm * dt) / ds) % TAU;
       [tx, ty] = lemni(f, loopT + 0.35);
       // lean where the visitor is scrolling
       ty += Math.max(-VH * 0.28, Math.min(VH * 0.28, scrollV * 0.22));
       // slower and tighter in the side lane so the turns stay inside it
-      maxS = L * (f.upright ? 0.85 : 1.15 + 0.3 * Math.sin(clock * 0.55)) + Math.min(L * 4, Math.abs(scrollV) * 0.6);
-      turn = f.upright ? 3.4 : 2.6;
+      maxS = L * (f.upright ? 0.6 : 0.72) * calm + Math.min(L * 3, Math.abs(scrollV) * 0.4);
+      turn = f.upright ? 3 : 2.1;
       const far = Math.hypot(tx - x, ty - y);
       if (far > L * 1.5) { maxS = Math.max(maxS, Math.min(L * 5, far * 1.4)); turn = 4.5; }
       sizeGoal = f.upright || f.inTank ? 0.62 : 1;
