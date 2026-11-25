@@ -231,18 +231,7 @@ main, .footer { position: relative; z-index: 1; }
 @keyframes bubble { from { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } to { transform: translate(var(--x), -420px); opacity: 0; } }
 .tank.reduce * { animation: none !important; }
 
-.tank-foot { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); margin-top: 28px; align-items: start; }
-.placard { padding: 22px 24px 18px; border-radius: 12px;
-  background: linear-gradient(180deg, #d9dfdc 0%, #aeb6b2 48%, #969f9b 52%, #c6cdca 100%);
-  color: #0d1214; box-shadow: inset 0 1px 0 #fff, 0 18px 40px -20px rgba(0,0,0,.9); position: relative; }
-.placard::before, .placard::after { content: ""; position: absolute; top: 12px; width: 8px; height: 8px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, #6d7471 70%); box-shadow: 0 1px 1px rgba(0,0,0,.4); }
-.placard::before { left: 12px; } .placard::after { right: 12px; }
-.placard-as { font-size: 12px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: #3b4a52; }
-.placard-name { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; margin-top: 4px; }
-.placard-sub { font-size: 14.5px; color: #1d4f7a; margin-top: 2px; font-weight: 550; }
-.placard-use { font-size: 15.5px; color: #1f2a2f; margin-top: 10px; }
-.placard .plate-link { color: #0d1214; text-decoration-color: #1f5f96; }
+.tank-foot { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr); gap: clamp(24px, 4vw, 56px); margin-top: 28px; align-items: start; }
 .skill-chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: start; }
 .chip { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-2); cursor: pointer;
   background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); color: var(--ink-2); font-size: 14.5px; font-weight: 550;
@@ -327,7 +316,6 @@ main, .footer { position: relative; z-index: 1; }
 @media (max-width: 720px) {
   .tool-intro { flex-direction: column; align-items: start; }
   .tank { border-radius: 14px; }
-  .placard-name { font-size: 22px; }
   .nav-toggle { display: block; }
   .nav-links {
     position: fixed; inset: 56px 0 0 0; height: calc(100dvh - 56px); overflow-y: auto; overscroll-behavior: contain; background: var(--bg); flex-direction: column; gap: 0; padding: 12px var(--gutter);
@@ -354,3 +342,53 @@ main, .footer { position: relative; z-index: 1; }
 .chart-svg [data-tip] { cursor: default; }
 .chart-foot { margin-top: 6px; font-size: 13.5px; color: var(--muted); }
 .chart-plot:has(.chart-svg) { min-height: 0; }
+
+/* Skill demo window */
+.demo { border-radius: 12px; overflow: hidden; background: #08121b; border: 1px solid rgba(160,205,245,.16);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 24px 50px -28px rgba(0,0,0,.95); }
+.demo-bar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 16px;
+  border-bottom: 1px solid rgba(160,205,245,.12); background: linear-gradient(180deg, rgba(255,255,255,.035), transparent); }
+.demo-title { font-size: 14px; font-weight: 650; color: var(--ink); }
+.demo-file { font: 500 12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--muted); }
+.demo-body { height: 300px; padding: 16px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+.demo-code { margin: 0; font: 500 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #d6e4ef; white-space: pre-wrap; word-break: break-word; }
+.demo-code.one { min-height: 3.2em; }
+.demo-code .prompt { color: var(--accent-300); }
+.demo-code .step { color: #b8c7d3; }
+.demo-code .ok { color: var(--accent-300); }
+.demo-svg { width: 100%; height: 100%; flex: 1 1 0; min-height: 0; overflow: visible; }
+.demo-out { flex: 1 1 0; min-height: 0; display: flex; }
+.demo-svg .t { fill: #b8c7d3; font: 500 11px var(--font); }
+.demo-svg .t.dark { fill: #06121c; font-weight: 700; }
+.demo-svg .t.warm { fill: #f0a08b; }
+.demo-svg .th { fill: #8b98a3; font: 600 11px var(--font); }
+.demo-svg .td { fill: #e6eef5; font: 500 11.5px ui-monospace, Menlo, Consolas, monospace; }
+.demo-svg .big { fill: #e6eef5; font: 600 36px var(--font); letter-spacing: -0.03em; }
+.demo-svg .pc { font: 20px "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; text-anchor: middle; }
+.demo-svg .pc.w { fill: #fff; stroke: #0b1722; stroke-width: .6; }
+.demo-svg .pc.b { fill: #0b1722; }
+.demo-chess { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; height: 100%; }
+.demo-chess .demo-svg { width: 220px; }
+.demo-chess .moves { font-size: 14px; }
+.demo-chips { display: flex; gap: 8px; }
+.demo-chips span { font-size: 12.5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(160,205,245,.2); color: #b8c7d3; transition: background .3s, color .3s; }
+.demo-chips span.on { background: var(--accent-500); border-color: transparent; color: #061524; }
+.demo-fx { display: flex; gap: 10px; align-items: center; padding: 6px 10px; border-radius: 6px; background: #0d1a25; font: 500 13px ui-monospace, Menlo, Consolas, monospace; color: #d6e4ef; min-height: 32px; }
+.demo-fx .fx { color: var(--accent-300); font-style: italic; }
+.demo-grid { border-collapse: collapse; width: 100%; font: 500 12.5px ui-monospace, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+.demo-grid th { color: #6f7d88; font-weight: 600; padding: 3px 8px; border: 1px solid rgba(160,205,245,.08); background: #0b1620; text-align: center; font-size: 11.5px; }
+.demo-grid td { color: #d6e4ef; padding: 3px 8px; border: 1px solid rgba(160,205,245,.08); height: 24px; text-align: right; }
+.demo-grid td:first-child { text-align: left; color: #b8c7d3; }
+.demo-grid td.live { outline: 2px solid var(--accent-500); outline-offset: -2px; }
+.demo-grid td.result { background: rgba(59,154,225,.22); color: #fff; font-weight: 700; }
+.demo-doe { display: grid; grid-template-columns: 200px 1fr; gap: 18px; align-items: start; }
+.demo-runs { border-collapse: collapse; font: 500 12px ui-monospace, Menlo, Consolas, monospace; color: #d6e4ef; font-variant-numeric: tabular-nums; }
+.demo-runs th { color: #6f7d88; font-weight: 600; padding: 2px 10px; text-align: center; }
+.demo-runs td { padding: 1px 10px; text-align: center; }
+@media (max-width: 720px) {
+  .demo-body { height: 330px; padding: 14px; }
+  .demo-chess, .demo-doe { grid-template-columns: 1fr; gap: 8px; }
+  .demo-chess .demo-svg { width: 180px; }
+  .demo-doe .demo-svg { width: 150px; }
+  .demo-code { font-size: 12px; }
+}

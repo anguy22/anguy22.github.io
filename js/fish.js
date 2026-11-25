@@ -154,12 +154,14 @@ function pectoral(ctx, shoulder, angle, L, side, paddle, tint) {
     L, -side * L * (.76 + paddle * .19), { length: .32, lift: .054, breadth: .16, tint, rays: 5 });
 }
 
-export function drawFish(ctx, spine, L, phase, turnBank = 0) {
+// bank: its sign is which flank faces the viewer (chosen so the back stays up), its size how
+// side-on the fish is (1 = profile, 0 = face-on, both eyes showing).
+export function drawFish(ctx, spine, L, phase, bankIn) {
   const frame = (u) => fishFrame(spine, u);
   const head = frame(0), shoulder = frame(.25), tail = frame(1);
   const angle = Math.atan2(head.fy, head.fx);
   // The near flank changes as the fish turns. The tail folds before the body banks.
-  const bank = Math.max(-1, Math.min(1, head.fx * .84 + turnBank * .22 + Math.sin(phase * .61) * .13));
+  const bank = typeof bankIn === "number" ? Math.max(-1, Math.min(1, bankIn)) : (head.fx >= 0 ? .9 : -.9);
   const roll = Math.abs(bank);
   const beat = Math.sin(phase - 3.8);
   const tailAngle = Math.atan2(-tail.fy, -tail.fx) + beat * .27;
@@ -251,10 +253,10 @@ export function drawFish(ctx, spine, L, phase, turnBank = 0) {
   if (roll < .47) {
     ctx.save();
     ctx.globalAlpha *= 1 - roll / .47;
-    eye(ctx, ...at(ep, L * .005, -gillSide * L * .067), L * (.035 - roll * .015), true);
+    eye(ctx, ...at(ep, L * .005, gillSide * L * .067), L * (.035 - roll * .015), true);
     ctx.restore();
   }
-  eye(ctx, ...at(ep, L * .007, gillSide * L * (.067 - roll * .01)), L * .035, false);
+  eye(ctx, ...at(ep, L * .007, -gillSide * L * (.067 - roll * .04)), L * .035, false);
 
   const lip = bank * L * .048;
   ctx.beginPath();
@@ -287,6 +289,8 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   // state
   let x = 0, y = 0, heading = 0, speed = 0, phase = 0, clock = 0, last = 0;
   let turnBank = 0, lastCanvas = null;
+  // depth: z 0 (far, behind the page) .. 1 (near); bankS rolls smoothly between flanks
+  let z = 0.5, vz = 0, bankSign = 1, bankS = 0.9, sideAmt = 1;
   let trail = [], mode = "wander", target = null, lookUntil = 0, seekUntil = 0, layer = "back", raf = 0;
   let pending = null, pendingUntil = 0; // a destination heading waiting to scroll into view
   let restTimer = 0;
@@ -437,9 +441,22 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
       if (trail.length > 600) trail.length = 600;
     }
 
-    // depth: in front when it has something's attention or is in open water beside the copy
+    // Depth (z): it comes close when it has something's attention, weaves behind the copy
+    // and out in front of it in the hero, and drifts nearer and farther elsewhere.
     const f = mode === "wander" ? loopFrame() : null;
-    layer = mode !== "wander" ? "front" : (f.inHero ? (x > f.split ? "front" : "back") : (f.front ? "front" : "back"));
+    const zGoal = mode !== "wander" ? 0.85
+      : f.inHero ? (x > f.split ? 0.92 : 0.2)
+      : f.inTank ? 0.5 + 0.38 * Math.sin(clock * 0.33)
+      : f.front ? 0.55 + 0.3 * Math.sin(clock * 0.37) : 0.3;
+    vz += (Math.max(-0.5, Math.min(0.5, (zGoal - z) * 1.6)) - vz) * Math.min(1, dt * 3);
+    z = Math.max(0, Math.min(1, z + vz * dt));
+    // Swimming toward or away from the viewer turns it face-on; otherwise it is in profile.
+    const pitch = Math.atan2(Math.abs(vz) * L * 3.2, Math.max(speed, L * 0.3));
+    sideAmt = 1 - Math.min(0.85, pitch / 1.1);
+    const cx = Math.cos(heading);
+    if (Math.abs(cx) > 0.2) bankSign = cx >= 0 ? 1 : -1; // hysteresis: no flip-flop when swimming vertically
+    bankS += (bankSign * sideAmt - bankS) * Math.min(1, dt * 3.5); // rolls through when it reverses
+    layer = mode !== "wander" ? "front" : f.inHero ? (z > 0.55 ? "front" : "back") : (f.front ? "front" : "back");
     return wave;
   }
 
@@ -449,8 +466,9 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     canvas.clearRect(0, 0, VW, VH);
     lastCanvas = canvas;
     if (trail.length < 2) return;
-    const Ld = L * size;
-    drawFish(canvas, spineFrom(trail, Ld, phase, wave), Ld, phase, turnBank);
+    const Ld = L * size * (0.7 + 0.42 * z);       // nearer is bigger
+    const Ls = Ld * (0.6 + 0.4 * sideAmt);        // head-on shortens the body
+    drawFish(canvas, spineFrom(trail, Ls, phase, wave), Ld, phase, bankS);
   }
 
   function frame(ts) {

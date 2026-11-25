@@ -1,7 +1,9 @@
+import { createDemoPlayer } from "./demos.js?v=11";
+
 // The skills tank: an aquarium where each skill is something living or sunk in it.
 // Objects differ in size and depth (a hazy back row, a front row, things floating
 // mid-water). Selecting one (in the tank or from the list below) lights it with a
-// spotlight, fills the placard, and the goldfish swims over to stay beside it.
+// spotlight, plays a short demo of the skill, and the goldfish swims over to stay beside it.
 
 const ACCENT = "#3b9ae1";
 const WARM = "#e0735a";
@@ -12,15 +14,13 @@ export const SKILLS = {
   chess: { name: "Chess", as: "An old knight", sub: "Lichess · an_d22", use: "Captained Purdue in the Collegiate Chess League as a 2000+ rated player.", link: ["#chess", "See live chess"] },
   tableau: { name: "Tableau", as: "Kelp bar chart", sub: "Dashboards · reporting", use: "OpEx forecasting across 6 fiscal years and 25+ scenarios at Micron.", link: ["#experience", "See the Micron role"] },
   excel: { name: "Excel", as: "Fishing net", sub: "Parametric modeling", use: "Parametric models for engineering economics, including 40-year DCF and NPV/IRR analysis." },
-  probability: { name: "Probability", as: "Bell-curve pebble mound", sub: "Distributions · central limit theorem", use: "Statistics minor: distributions, sampling and inference." },
   doe: { name: "JMP & DOE", as: "Factorial crate", sub: "Factorial designs", use: "Design of experiments coursework, with factorial designs run in JMP." },
   sixsigma: { name: "Six Sigma", as: "Tide gauge with control limits", sub: "SPC · process capability", use: "Quality control and Six Sigma coursework." },
   ml: { name: "Machine learning", as: "Neural jellyfish", sub: "Classification · validation", use: "Machine learning coursework: classification and model validation." },
-  ie: { name: "Industrial engineering", as: "Sunken gears", sub: "Manufacturing process · quality", use: "B.S. in Industrial Engineering at Purdue.", link: ["#experience", "See education"] },
   fab: { name: "Semiconductor fab", as: "Clam with a wafer pearl", sub: "Fabrication · microelectronics", use: "Two Purdue certifications, and R&D tool budgeting at Micron.", link: ["#experience", "See the Micron role"] },
   agentic: { name: "Agentic coding", as: "Survey drone", sub: "Claude Code", use: "Used to build and iterate on this site." },
 };
-const ORDER = ["python", "sql", "chess", "tableau", "excel", "probability", "doe", "sixsigma", "ml", "ie", "fab", "agentic"];
+const ORDER = ["python", "sql", "chess", "tableau", "excel", "doe", "sixsigma", "ml", "fab", "agentic"];
 
 /* ---------------- art: each in local units, origin at its base (or centre when floating) ---------------- */
 
@@ -97,24 +97,6 @@ function net() {
   return h;
 }
 
-function pebbles() {
-  const counts = [1, 2, 3, 5, 7, 8, 7, 5, 3, 2, 1];
-  const tones = ["#9a9184", "#7d7569", "#b3a998", "#6c665d", "#a59c8d"];
-  let s = 7; const r = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
-  let h = "";
-  counts.forEach((n, i) => {
-    const x = (i - 5) * 17;
-    for (let k = 0; k < n; k++) {
-      const y = -6 - k * 9.5;
-      h += `<ellipse cx="${(x + (r() - 0.5) * 3).toFixed(1)}" cy="${y.toFixed(1)}" rx="${(8 + r() * 1.5).toFixed(1)}" ry="${(5.6 + r()).toFixed(1)}" fill="${tones[Math.floor(r() * tones.length)]}"/>`;
-    }
-  });
-  // the fitted normal curve over the pile
-  let d = "";
-  for (let k = -100; k <= 100; k += 4) { const z = k / 17 / 2.0; const y = -6 - 8 * 9.5 * Math.exp(-0.5 * z * z) - 4; d += `${k === -100 ? "M" : "L"}${k} ${y.toFixed(1)} `; }
-  return h + `<path d="${d}" fill="none" stroke="${ACCENT}" stroke-width="2" stroke-dasharray="4 4" opacity=".9"/>`;
-}
-
 function crate() {
   const e = 50, o = 22; // edge and isometric offset
   const P = [[-e / 2, 0], [e / 2, 0], [e / 2, -e], [-e / 2, -e]];
@@ -157,22 +139,6 @@ function jelly() {
     </g>`;
 }
 
-function gears() {
-  const gear = (cx, cy, R, n, cls) => {
-    let d = "";
-    for (let k = 0; k < n * 2; k++) {
-      const a0 = (k / (n * 2)) * Math.PI * 2, a1 = ((k + 1) / (n * 2)) * Math.PI * 2, r = k % 2 ? R : R + 8;
-      d += `${k ? "L" : "M"}${(cx + Math.cos(a0) * r).toFixed(1)} ${(cy + Math.sin(a0) * r).toFixed(1)} L${(cx + Math.cos(a1) * r).toFixed(1)} ${(cy + Math.sin(a1) * r).toFixed(1)} `;
-    }
-    return `<g class="${cls}" style="transform-origin:${cx}px ${cy}px"><path d="${d}Z" fill="url(#t-brass)" stroke="#5a431c" stroke-width="1.5"/>
-      <circle cx="${cx}" cy="${cy}" r="${R * 0.55}" fill="none" stroke="#5a431c" stroke-opacity=".6" stroke-width="2"/>
-      <circle cx="${cx}" cy="${cy}" r="${R * 0.2}" fill="#2a2111"/>
-      <g fill="#3e8f84" opacity=".55"><ellipse cx="${cx - R * 0.4}" cy="${cy - R * 0.3}" rx="${R * 0.18}" ry="${R * 0.1}"/><ellipse cx="${cx + R * 0.35}" cy="${cy + R * 0.2}" rx="${R * 0.14}" ry="${R * 0.08}"/></g></g>`;
-  };
-  return gear(-22, -34, 44, 12, "spin-slow") + gear(44, -24, 24, 8, "spin-rev") +
-    `<path d="M-84 2 C-60 -18 -20 -22 6 -14 C30 -22 62 -16 84 2 Z" fill="url(#t-sand)"/>`;
-}
-
 function clam() {
   let ridges = "";
   for (let k = -4; k <= 4; k++) ridges += `<path d="M0 -4 L${k * 11} ${k === 0 ? -2 : 0}" />`;
@@ -204,27 +170,27 @@ function drone() {
     </g>`;
 }
 
-const ART = { python: eel, sql: coral, chess: knight, tableau: kelp, excel: net, probability: pebbles, doe: crate, sixsigma: gauge, ml: jelly, ie: gears, fab: clam, agentic: drone };
+const ART = { python: eel, sql: coral, chess: knight, tableau: kelp, excel: net, doe: crate, sixsigma: gauge, ml: jelly, fab: clam, agentic: drone };
 // rough heights above the base, for placing hover tags
-const TOP = { python: 214, sql: 178, chess: 126, tableau: 214, excel: 72, probability: 88, doe: 82, sixsigma: 226, ml: 46, ie: 86, fab: 96, agentic: 52 };
+const TOP = { python: 214, sql: 178, chess: 126, tableau: 214, excel: 72, doe: 82, sixsigma: 226, ml: 46, fab: 96, agentic: 52 };
 
 /* ---------------- layouts: x, y (base), scale; depth "back" is hazier ---------------- */
 
 const WIDE = {
   view: [1200, 560], sand: 470,
   items: {
-    tableau: [80, 478, 0.95, "back"], sql: [345, 474, 0.85, "back"], ie: [770, 476, 0.85, "back"], sixsigma: [1135, 480, 0.95, "back"],
-    python: [205, 532, 1, "front"], chess: [495, 534, 1.05, "front"], probability: [640, 530, 0.95, "front"], doe: [800, 538, 0.9, "front"],
-    excel: [945, 534, 1, "front"], fab: [1075, 540, 1, "front"],
-    agentic: [560, 150, 1, "float"], ml: [985, 205, 1.05, "float"],
+    tableau: [90, 478, 0.95, "back"], sql: [400, 474, 0.85, "back"], sixsigma: [1130, 480, 0.95, "back"],
+    python: [230, 532, 1, "front"], chess: [540, 534, 1.05, "front"], doe: [720, 538, 0.95, "front"],
+    excel: [900, 534, 1, "front"], fab: [1060, 540, 1, "front"],
+    agentic: [560, 150, 1, "float"], ml: [960, 205, 1.05, "float"],
   },
 };
 const TALL = {
   view: [600, 980], sand: 700,
   items: {
     tableau: [80, 720, 0.9, "back"], sql: [300, 714, 0.8, "back"], sixsigma: [540, 718, 0.85, "back"],
-    python: [130, 820, 0.95, "front"], ie: [330, 812, 0.85, "front"], doe: [500, 818, 0.85, "front"],
-    chess: [80, 952, 1, "front"], probability: [250, 944, 0.95, "front"], fab: [412, 958, 0.85, "front"], excel: [528, 950, 0.82, "front"],
+    python: [150, 830, 0.95, "front"], doe: [440, 830, 0.9, "front"],
+    chess: [100, 952, 1, "front"], fab: [310, 960, 0.9, "front"], excel: [500, 950, 0.85, "front"],
     agentic: [170, 190, 1.1, "float"], ml: [450, 330, 1.1, "float"],
   },
 };
@@ -290,7 +256,8 @@ function scene(L) {
 }
 
 export function initTank({ reduce }) {
-  const host = document.getElementById("tank"), placard = document.getElementById("placard"), chips = document.getElementById("skill-chips");
+  const host = document.getElementById("tank"), chips = document.getElementById("skill-chips");
+  const demos = createDemoPlayer(document.getElementById("demo"), { reduce });
   if (!host) return;
   let layout = null, selected = "python";
 
@@ -334,10 +301,7 @@ export function initTank({ reduce }) {
     render(id);
   }
 
-  function render(id) {
-    const s = SKILLS[id];
-    placard.innerHTML = `<p class="placard-as">${s.as}</p><h3 class="placard-name">${s.name}</h3><p class="placard-sub">${s.sub}</p><p class="placard-use">${s.use}</p>${s.link ? `<a class="plate-link" href="${s.link[0]}">${s.link[1]}</a>` : ""}`;
-  }
+  function render(id) { demos.play(id, SKILLS[id].name); }
 
   host.addEventListener("click", (e) => { const g = e.target.closest(".tank-obj"); if (g) mark(g.dataset.skill); });
   chips.addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) mark(b.dataset.skill); });
