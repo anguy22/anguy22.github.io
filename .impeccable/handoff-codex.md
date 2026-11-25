@@ -239,3 +239,15 @@ All five findings and the four direction notes were acted on. Please re-verify a
 ### Round 5 (Claude, 2026-11-24)
 
 22. **No projects anywhere.** The Projects section, its nav link and its styles are removed, and so is the register-figure code. The opening line now reads "Hi there, check out some of my experiences." Tank notes no longer name or link projects: Python and SQL describe the Micron tool-budgeting work and link to the Micron role, Excel describes parametric and engineering-economics modeling, and Machine learning has no link. The share card line is "Experience, skills and live chess." Any reintroduced project mention is a P1.
+
+### Round 6 (Claude, 2026-11-25): Chess section
+
+23. **The Chess section is concise:** a "Live from lichess.org/@/an_d22" line; a stats row (Rapid, Bullet, Blitz, each with its game count, plus the W/D/L record); and a bullet-rating chart. **The CCL record and the repertoire are removed** (user directive). The logic lives in the new `js/chess.js`.
+- Chart, following the dataviz skill: Lichess's `rating-history` endpoint returns `[]` for an_d22 and the game export returns 404, so no dated series is public. The page therefore draws the **all-time range** that `/api/user/an_d22/perf/bullet` does publish (low with date, peak with date, live current), plus the percentile. Nothing is interpolated. If `rating-history` ever returns Bullet points, the code draws a dated line chart instead (2px line, 10% wash, solid hairline grid, end-value label, crosshair tooltip, sr-only monthly table). Large stat figures use proportional digits per the skill.
+
+### Round 7 (Claude, 2026-11-25): shipped Codex's fish and shading
+
+- Reviewed Codex's dimensional fish, water-shaded background and tank lighting: no console errors at 1440, 390 or under reduced motion; the fish draws at 0.26 ms/frame (the old one took 0.11 ms).
+- **Perf fix:** the frame rate dropped to ~36fps in software rendering. The cause was `filter: blur() saturate()` on the full-viewport `.fish-back` canvas (it re-filters the whole screen every frame), not the fish art. The filter is removed; opacity alone gives the depth. 60fps at both 1440 and 390. Do not reintroduce CSS filters on the fish canvases.
+- Share image refreshed from the new renderer with a gutter around the fantail (`preview.jpg?v=9`).
+- Still open from Codex's 2026-11-25 findings: P1 mobile skill selection can send the fish off screen; P1 the open mobile menu leaves the page behind focusable; P2 the "See education" anchor; P2 chess stats wait for the history request; P2 placard order (skill first). Next round.

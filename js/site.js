@@ -1,6 +1,7 @@
-import { nameSVG, wordPath } from "./script-name.js?v=8";
-import { initTank } from "./tank.js?v=8";
-import { createFish } from "./fish.js?v=8";
+import { nameSVG, wordPath } from "./script-name.js?v=9";
+import { initTank } from "./tank.js?v=9";
+import { createFish } from "./fish.js?v=9";
+import { initChess } from "./chess.js?v=9";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -115,40 +116,5 @@ markNav();
 /* ---------- Skills tank ---------- */
 initTank({ reduce });
 
-/* ---------- Lichess (live) ---------- */
-const FORMATS = [["bullet", "Bullet"], ["blitz", "Blitz"], ["rapid", "Rapid"], ["classical", "Classical"]];
-async function lichess() {
-  const note = $("#c-note");
-  try {
-    const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 8000);
-    const res = await fetch("https://lichess.org/api/user/an_d22", { signal: ctrl.signal, headers: { Accept: "application/json" } });
-    if (!res.ok) throw new Error(res.status);
-    const u = await res.json();
-    const p = u.perfs || {};
-    $("#c-perfs").innerHTML = FORMATS.map(([k, label]) => {
-      const r = p[k];
-      const played = r && r.games > 0;
-      return `<tr class="${k === "rapid" ? "top" : ""}"><td>${label}</td><td class="num">${played ? r.rating + (r.prov ? "?" : "") : "—"}</td><td class="num">${played ? r.games.toLocaleString() : "—"}</td></tr>`;
-    }).join("");
-    const rapid = p.rapid && p.rapid.games > 0 ? p.rapid.rating + (p.rapid.prov ? "?" : "") : null;
-    if (rapid) {
-      $("#c-rapid").textContent = rapid;
-      $("#c-live").textContent = "Rapid on Lichess, live";
-      $("#hero-rating").textContent = `Lichess rapid ${rapid}, live`;
-      $$(".status").forEach((s) => s.classList.add("is-live"));
-    }
-    const c = u.count;
-    if (c && c.all) {
-      const w = c.win, d = c.draw, l = c.loss, all = w + d + l || 1;
-      $("#c-w").textContent = w.toLocaleString(); $("#c-d").textContent = d.toLocaleString(); $("#c-l").textContent = l.toLocaleString();
-      $("#c-record").hidden = false;
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        $("#rb-w").style.width = `${(w / all) * 100}%`; $("#rb-d").style.width = `${(d / all) * 100}%`; $("#rb-l").style.width = `${(l / all) * 100}%`;
-      }));
-    }
-    note.textContent = `${(c?.all ?? 0).toLocaleString()} games on lichess.org, loaded with this page.`;
-  } catch {
-    note.innerHTML = `Lichess didn&rsquo;t respond. The <a href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">profile</a> has the live numbers.`;
-  }
-}
-lichess();
+/* ---------- Chess (live) ---------- */
+initChess();

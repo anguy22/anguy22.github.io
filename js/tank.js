@@ -231,7 +231,9 @@ const TALL = {
 
 function defs() {
   return `<defs>
-    <linearGradient id="t-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f3d61"/><stop offset=".55" stop-color="#0a2843"/><stop offset="1" stop-color="#071b2d"/></linearGradient>
+    <linearGradient id="t-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#184f65"/><stop offset=".36" stop-color="#10374e"/><stop offset=".72" stop-color="#0b253a"/><stop offset="1" stop-color="#071827"/></linearGradient>
+    <radialGradient id="t-scatter" cx=".38" cy=".04" r=".76"><stop offset="0" stop-color="#73d4d2" stop-opacity=".24"/><stop offset=".47" stop-color="#4fa9bc" stop-opacity=".1"/><stop offset="1" stop-color="#2e728c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="t-ripple"><stop offset="0" stop-color="#b4e4e9" stop-opacity="0"/><stop offset=".34" stop-color="#b4e4e9" stop-opacity=".15"/><stop offset=".68" stop-color="#d1f0ee" stop-opacity=".35"/><stop offset="1" stop-color="#b4e4e9" stop-opacity="0"/></linearGradient>
     <linearGradient id="t-sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b7655"/><stop offset="1" stop-color="#4f4029"/></linearGradient>
     <radialGradient id="t-rock" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#4b5764"/><stop offset="1" stop-color="#1d242b"/></radialGradient>
     <linearGradient id="t-coral" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b9503a"/><stop offset=".45" stop-color="#ef8a6b"/><stop offset="1" stop-color="#b9503a"/></linearGradient>
@@ -246,7 +248,8 @@ function defs() {
     <linearGradient id="t-post" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8f8a80"/><stop offset=".45" stop-color="#e6e1d6"/><stop offset="1" stop-color="#8f8a80"/></linearGradient>
     <linearGradient id="t-hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4753"/><stop offset="1" stop-color="#141b22"/></linearGradient>
     <linearGradient id="t-beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fd0ff" stop-opacity=".35"/><stop offset="1" stop-color="#9fd0ff" stop-opacity="0"/></linearGradient>
-    <linearGradient id="t-ray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2ff" stop-opacity=".16"/><stop offset="1" stop-color="#bfe2ff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="t-ray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4ecec" stop-opacity=".16"/><stop offset=".53" stop-color="#96cce0" stop-opacity=".045"/><stop offset="1" stop-color="#96cce0" stop-opacity="0"/></linearGradient>
+    <filter id="t-light-diffusion" x="-.12" y="-.12" width="1.24" height="1.24"><feGaussianBlur stdDeviation="9"/></filter>
     <linearGradient id="t-spot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9ff" stop-opacity=".02"/><stop offset="1" stop-color="#cfe9ff" stop-opacity=".22"/></linearGradient>
     <filter id="t-haze"><feColorMatrix type="matrix" values=".72 0 0 0 .02  0 .78 0 0 .06  0 0 .9 0 .12  0 0 0 1 0"/></filter>
   </defs>`;
@@ -254,15 +257,34 @@ function defs() {
 
 function scene(L) {
   const [W, H] = L.view, S = L.sand;
-  const rays = [0.18, 0.42, 0.7].map((f, i) => `<polygon class="ray" style="--d:${i * 1.7}s" points="${W * f - 30},0 ${W * f + 30},0 ${W * f + 140},${S} ${W * f - 40},${S}" fill="url(#t-ray)"/>`).join("");
+  const rays = [.14, .31, .48, .65, .81].map((f, i) => {
+    const x = W * f, drift = W * (.06 + (i % 3) * .035), beam = 13 + (i % 2) * 13;
+    return `<path d="M${x - beam} 0 H${x + beam} L${x + drift + 65} ${S} H${x + drift - 85} Z" fill="url(#t-ray)"/>`;
+  }).join("");
+  const ripples = Array.from({ length: 8 }, (_, i) => {
+    const x = (i % 4) * W * .29 - W * .1 + Math.floor(i / 4) * W * .075;
+    const y = 8 + Math.floor(i / 4) * 12 + (i % 3) * 3, length = W * (.23 + (i % 3) * .035);
+    return `<path d="M${x} ${y} q${length * .22} -10 ${length * .48} -2 t${length * .52} 0"/>`;
+  }).join("");
+  const motes = Array.from({ length: 39 }, (_, i) => {
+    const x = W * ((i * 89 + 31) % 127) / 127, y = 30 + (S - 66) * ((i * 53 + 15) % 113) / 113;
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${.65 + (i % 4) * .25}" opacity="${[.13, .31, .19, .38][i % 4]}"/>`;
+  }).join("");
   const dunes = `M0 ${S} C${W * 0.2} ${S - 22} ${W * 0.35} ${S + 6} ${W * 0.55} ${S - 12} S${W * 0.85} ${S + 4} ${W} ${S - 16} V${H} H0 Z`;
   const hills = `M0 ${S - 30} C${W * 0.15} ${S - 90} ${W * 0.3} ${S - 40} ${W * 0.45} ${S - 70} S${W * 0.75} ${S - 30} ${W} ${S - 80} V${S + 10} H0 Z`;
   const bubbles = Array.from({ length: 9 }, (_, k) => `<circle class="bubble" style="--d:${(k * 0.9).toFixed(1)}s;--x:${(Math.sin(k) * 8).toFixed(1)}px" cx="${W - 70 + (k % 3) * 6}" cy="${S - 8}" r="${2 + (k % 3)}" fill="none" stroke="#cfe9ff" stroke-opacity=".55"/>`).join("");
-  return `<rect width="${W}" height="${H}" fill="url(#t-water)"/>${rays}
+  const sandLight = Array.from({ length: 6 }, (_, i) => {
+    const x = W * (.05 + i * .16), y = S + 16 + (i % 2) * 17;
+    return `<path d="M${x} ${y} q18 -11 42 -3 t47 -3 m-74 11 q17 -6 37 -1 t39 0"/>`;
+  }).join("");
+  return `<rect width="${W}" height="${H}" fill="url(#t-water)"/>
+    <rect width="${W}" height="${S}" fill="url(#t-scatter)"/><g filter="url(#t-light-diffusion)">${rays}</g>
+    <g fill="none" stroke="url(#t-ripple)" stroke-width="1.15">${ripples}</g>
+    <g fill="#b9e5e6">${motes}</g>
     <path d="${hills}" fill="#0b2034" opacity=".9"/>
     <path d="${dunes}" fill="url(#t-sand)"/>
     <path d="${dunes}" fill="none" stroke="#c2a878" stroke-opacity=".25" stroke-width="2"/>
-    <g opacity=".35" stroke="#e9d8b4" stroke-width="1" fill="none">${[0.12, 0.33, 0.6, 0.82].map((f) => `<path d="M${W * f} ${S + 26} q14 -6 28 0 t28 0"/>`).join("")}</g>
+    <g opacity=".65" stroke="url(#t-ripple)" stroke-width="1.2" fill="none">${sandLight}</g>
     <ellipse cx="${W - 64}" cy="${S - 4}" rx="16" ry="6" fill="#3b4148"/>${bubbles}
     <polygon id="t-spotlight" points="0,0 0,0 0,0 0,0" fill="url(#t-spot)"/>`;
 }

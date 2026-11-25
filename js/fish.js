@@ -5,7 +5,7 @@
 //   open water on the right. Crossing between the two is the weave.
 // - Past the hero it cruises a loop on the side of the screen, behind the content,
 //   and leans in the direction the visitor scrolls.
-// - When the visitor clicks a button, link or backpack item, it darts over, turns to
+// - When the visitor clicks a button, link or skill, it darts over, turns to
 //   face the thing and noses up to it for a moment. In-page links send it to the
 //   section heading they jump to.
 //
@@ -17,7 +17,9 @@ const N = 14;
 
 /* ---------------- drawing ---------------- */
 
-function widthAt(u, L) { return L * (0.05 + 0.125 * Math.sin(Math.PI * Math.pow(u, 0.58))) * (1 - 0.62 * u * u * u); }
+function widthAt(u, L) {
+  return L * (.066 + .154 * Math.sin(Math.PI * Math.pow(u, .64))) * (1 - .64 * u * u);
+}
 
 function smooth(ctx, pts) {
   for (let k = 0; k < pts.length - 1; k++) {
@@ -56,95 +58,212 @@ function spineFrom(trail, L, phase, wave) {
   });
 }
 
-export function drawFish(ctx, s, L, phase) {
-  const nrm = s.map((p, k) => {
-    const q = s[Math.min(k + 1, N - 1)], r = s[Math.max(k - 1, 0)];
-    const tx = q[0] - r[0], ty = q[1] - r[1], tl = Math.hypot(tx, ty) || 1;
-    return [ty / tl, -tx / tl];
-  });
-  const head = s[0], dirx = s[0][0] - s[1][0], diry = s[0][1] - s[1][1], dl = Math.hypot(dirx, diry) || 1;
-  const fx = dirx / dl, fy = diry / dl;
-  const flap = Math.sin(phase * 0.9);
+// Each frame carries a tangent and its perpendicular along the curved body.
+function fishFrame(spine, u) {
+  const index = u * (N - 1), k = Math.floor(index), t = index - k;
+  const a = spine[k], b = spine[Math.min(k + 1, N - 1)];
+  const forward = spine[Math.max(0, k - 1)], aft = spine[Math.min(N - 1, k + 2)];
+  const dx = forward[0] - aft[0], dy = forward[1] - aft[1], d = Math.hypot(dx, dy) || 1;
+  return { x: a[0] + (b[0] - a[0]) * t, y: a[1] + (b[1] - a[1]) * t, fx: dx / d, fy: dy / d };
+}
 
-  // fantail
-  const tb = s[N - 1], tp = s[N - 3];
-  let bx = tb[0] - tp[0], by = tb[1] - tp[1]; const bl = Math.hypot(bx, by) || 1; bx /= bl; by /= bl;
-  const lag = Math.sin(phase - 4.6) * 0.42;
-  for (const side of [-1, 1]) {
-    const ang = Math.atan2(by, bx) + side * (0.42 + 0.12 * Math.sin(phase * 1.1 + side)) + lag;
-    const len = L * (0.66 + 0.06 * side * Math.sin(phase));
-    const ex = tb[0] + Math.cos(ang) * len, ey = tb[1] + Math.sin(ang) * len;
-    const c1x = tb[0] + Math.cos(ang - side * 0.55) * len * 0.55, c1y = tb[1] + Math.sin(ang - side * 0.55) * len * 0.55;
-    const c2x = tb[0] + Math.cos(ang + side * 0.5) * len * 0.62, c2y = tb[1] + Math.sin(ang + side * 0.5) * len * 0.62;
-    const g = ctx.createLinearGradient(tb[0], tb[1], ex, ey);
-    g.addColorStop(0, "rgba(255,150,52,0.9)"); g.addColorStop(0.55, "rgba(255,186,120,0.55)"); g.addColorStop(1, "rgba(255,236,214,0.08)");
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.moveTo(tb[0], tb[1]);
-    ctx.quadraticCurveTo(c1x, c1y, ex, ey);
-    ctx.quadraticCurveTo(c2x, c2y, tb[0] + bx * 2, tb[1] + by * 2);
-    ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(255,214,170,0.28)"; ctx.lineWidth = 0.8;
-    for (let r = 1; r <= 3; r++) {
-      const f = r / 4;
-      ctx.beginPath(); ctx.moveTo(tb[0], tb[1]);
-      ctx.quadraticCurveTo(c1x * (1 - f) + c2x * f, c1y * (1 - f) + c2y * f, ex * 0.85 + tb[0] * 0.15, ey * 0.85 + tb[1] * 0.15);
-      ctx.stroke();
+function at(f, along, across) {
+  return [f.x + f.fx * along - f.fy * across, f.y + f.fy * along + f.fx * across];
+}
+
+function fin(ctx, root, angle, scaleX, scaleY, { length, lift, breadth, tint = 1, rays = 5 }) {
+  ctx.save();
+  ctx.translate(...root);
+  ctx.rotate(angle);
+  ctx.scale(scaleX, scaleY);
+  ctx.globalAlpha *= tint;
+  const edge = ctx.createLinearGradient(0, 0, length, lift * 0.8);
+  edge.addColorStop(0, "rgba(130,47,22,.95)");
+  edge.addColorStop(.28, "rgba(225,101,36,.88)");
+  edge.addColorStop(.72, "rgba(248,163,95,.64)");
+  edge.addColorStop(1, "rgba(218,220,191,.26)");
+  ctx.fillStyle = edge;
+  ctx.beginPath();
+  ctx.moveTo(0, -breadth * .1);
+  ctx.bezierCurveTo(length * .26, -breadth * .28, length * .68, lift - breadth * .92, length, lift - breadth * .5);
+  ctx.quadraticCurveTo(length * 1.02, lift + breadth * .06, length * .76, lift + breadth * .52);
+  ctx.bezierCurveTo(length * .48, lift + breadth * .62, length * .24, breadth * .39, 0, breadth * .12);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,199,143,.34)";
+  ctx.lineWidth = .005;
+  ctx.stroke();
+  ctx.save();
+  ctx.clip();
+  ctx.beginPath();
+  for (let r = 0; r < rays; r++) {
+    const t = (r + .5) / rays;
+    ctx.moveTo(0, (t - .5) * breadth * .14);
+    ctx.quadraticCurveTo(length * .42, lift * .22 + (t - .5) * breadth * .84,
+      length * (1.03 - .26 * t), lift + (t - .5) * breadth * 1.02);
+  }
+  ctx.strokeStyle = "rgba(106,49,32,.46)";
+  ctx.lineWidth = .006;
+  ctx.stroke();
+  ctx.restore();
+  ctx.restore();
+}
+
+function scales(ctx, frames, L) {
+  const rows = 5;
+  ctx.beginPath();
+  for (let k = 0; k < 11; k++) {
+    for (let row = 0; row < rows; row++) {
+      const u = .26 + k * .055 + (row % 2) * .022;
+      const f = frames(u);
+      const w = widthAt(u, L);
+      const across = (row - (rows - 1) / 2) * w * .36;
+      const r = w * .18;
+      ctx.moveTo(...at(f, 0, across - r));
+      ctx.quadraticCurveTo(...at(f, -r * 1.85, across), ...at(f, 0, across + r));
     }
   }
+  ctx.lineWidth = Math.max(.42, L * .0045);
+  ctx.strokeStyle = "rgba(88,33,20,.28)";
+  ctx.stroke();
+}
 
-  // pectoral fins
-  const pi = 3, pp = s[pi], pw = widthAt(pi / (N - 1), L);
-  for (const side of [-1, 1]) {
-    const ox = pp[0] + nrm[pi][0] * pw * side * 0.9, oy = pp[1] + nrm[pi][1] * pw * side * 0.9;
-    const ang = Math.atan2(-fy, -fx) - side * (0.95 + 0.35 * flap * side);
-    ctx.save(); ctx.translate(ox, oy); ctx.rotate(ang);
-    const g = ctx.createLinearGradient(0, 0, L * 0.26, 0);
-    g.addColorStop(0, "rgba(255,160,70,0.85)"); g.addColorStop(1, "rgba(255,230,200,0.1)");
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.ellipse(L * 0.12, 0, L * 0.13, L * 0.05, 0, 0, TAU); ctx.fill();
-    ctx.restore();
+function eye(ctx, x, y, r, far) {
+  ctx.fillStyle = far ? "#a75a32" : "#d87e3c";
+  ctx.beginPath();
+  ctx.arc(x, y, r * 1.16, 0, TAU);
+  ctx.fill();
+  const iris = ctx.createRadialGradient(x - r * .25, y - r * .31, 0, x, y, r);
+  iris.addColorStop(0, "#695464");
+  iris.addColorStop(.53, "#211719");
+  iris.addColorStop(.84, "#111216");
+  iris.addColorStop(1, "#6f3b2b");
+  ctx.fillStyle = iris;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = far ? "rgba(247,239,213,.65)" : "#fff5d8";
+  ctx.beginPath();
+  ctx.arc(x - r * .27, y - r * .34, r * .27, 0, TAU);
+  ctx.fill();
+}
+
+function pectoral(ctx, shoulder, angle, L, side, paddle, tint) {
+  if (tint < .04) return;
+  fin(ctx, at(shoulder, -L * .028, side * L * .103), angle + Math.PI + side * (.65 + paddle * .28),
+    L, -side * L * (.76 + paddle * .19), { length: .32, lift: .054, breadth: .16, tint, rays: 5 });
+}
+
+export function drawFish(ctx, spine, L, phase, turnBank = 0) {
+  const frame = (u) => fishFrame(spine, u);
+  const head = frame(0), shoulder = frame(.25), tail = frame(1);
+  const angle = Math.atan2(head.fy, head.fx);
+  // The near flank changes as the fish turns. The tail folds before the body banks.
+  const bank = Math.max(-1, Math.min(1, head.fx * .84 + turnBank * .22 + Math.sin(phase * .61) * .13));
+  const roll = Math.abs(bank);
+  const beat = Math.sin(phase - 3.8);
+  const tailAngle = Math.atan2(-tail.fy, -tail.fx) + beat * .27;
+  const fan = L * (.8 + .2 * Math.cos(phase - 3.8));
+
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  fin(ctx, at(tail, L * .02, 0), tailAngle - .17, L, -fan,
+    { length: .66, lift: .22, breadth: .34, tint: .8, rays: 7 });
+  fin(ctx, at(tail, L * .02, 0), tailAngle + .17, L * (.97 + .05 * beat), fan,
+    { length: .69, lift: .21, breadth: .38, rays: 8 });
+
+  const paddle = Math.sin(phase * 1.25);
+  for (const side of [-1, 1]) pectoral(ctx, shoulder, angle, L, side, paddle, .62 * (1 - side * bank) / 2);
+  const dorsal = frame(.3);
+  if (roll > .02) {
+    fin(ctx, at(dorsal, L * .045, -bank * widthAt(.3, L) * .85), angle + Math.PI + bank * .46, L, bank * L,
+      { length: .43, lift: .12, breadth: .23, tint: .92, rays: 7 });
   }
 
-  // body with a soft shadow for depth
-  ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,0.55)"; ctx.shadowBlur = L * 0.18; ctx.shadowOffsetX = L * 0.06; ctx.shadowOffsetY = L * 0.1;
   const left = [], right = [];
   for (let k = 0; k < N; k++) {
-    const w = widthAt(k / (N - 1), L);
-    left.push([s[k][0] + nrm[k][0] * w, s[k][1] + nrm[k][1] * w]);
-    right.push([s[k][0] - nrm[k][0] * w, s[k][1] - nrm[k][1] * w]);
+    const u = k / (N - 1), f = frame(u), width = widthAt(u, L) * (.87 + .13 * roll);
+    const belly = bank * L * .041 * Math.sin(Math.PI * u);
+    left.push(at(f, 0, belly + width));
+    right.push(at(f, 0, belly - width));
   }
-  const mid = s[4], mw = widthAt(4 / (N - 1), L) * 1.1;
-  const g = ctx.createLinearGradient(mid[0] + nrm[4][0] * mw, mid[1] + nrm[4][1] * mw, mid[0] - nrm[4][0] * mw, mid[1] - nrm[4][1] * mw);
-  g.addColorStop(0, "#c63f12"); g.addColorStop(0.32, "#ff8a1f"); g.addColorStop(0.5, "#ffb347"); g.addColorStop(0.68, "#ff8a1f"); g.addColorStop(1, "#c63f12");
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  const hw = widthAt(0, L) + L * 0.02;
-  ctx.moveTo(left[0][0], left[0][1]);
-  ctx.quadraticCurveTo(head[0] + fx * hw * 1.9, head[1] + fy * hw * 1.9, right[0][0], right[0][1]);
-  smooth(ctx, right);
-  smooth(ctx, left.slice().reverse());
-  ctx.closePath(); ctx.fill();
-  ctx.shadowColor = "transparent";
-  ctx.strokeStyle = "rgba(96,26,6,0.7)"; ctx.lineWidth = Math.max(0.8, L * 0.009); ctx.stroke();
-  ctx.restore();
 
-  // dorsal fin and glossy back highlight
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "rgba(255,226,180,0.42)"; ctx.lineWidth = L * 0.05;
-  ctx.beginPath(); ctx.moveTo(s[1][0], s[1][1]); for (let k = 2; k < 9; k++) ctx.lineTo(s[k][0], s[k][1]); ctx.stroke();
-  ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = L * 0.018;
-  ctx.beginPath(); ctx.moveTo(s[1][0] + nrm[1][0] * 1.5, s[1][1] + nrm[1][1] * 1.5);
-  for (let k = 2; k < 6; k++) ctx.lineTo(s[k][0] + nrm[k][0] * 1.5, s[k][1] + nrm[k][1] * 1.5);
+  ctx.beginPath();
+  ctx.moveTo(...left[0]);
+  ctx.quadraticCurveTo(...at(head, L * .135, bank * L * .025), ...right[0]);
+  smooth(ctx, right);
+  smooth(ctx, left.reverse());
+  ctx.closePath();
+  const mid = frame(.37);
+  const light = ctx.createLinearGradient(...at(mid, 0, -L * .24), ...at(mid, 0, L * .24));
+  light.addColorStop(0, "#65301f");
+  light.addColorStop(.23, "#be4c22");
+  light.addColorStop(.5, "#f69a37");
+  light.addColorStop(.77, "#be4c22");
+  light.addColorStop(1, "#65301f");
+  ctx.fillStyle = light;
+  ctx.fill();
+  ctx.strokeStyle = "rgba(79,32,23,.8)";
+  ctx.lineWidth = Math.max(.7, L * .006);
   ctx.stroke();
 
-  // eyes
-  const ep = s[1], ew = widthAt(1 / (N - 1), L) * 0.78;
-  for (const side of [-1, 1]) {
-    const ex = ep[0] + nrm[1][0] * ew * side + fx * L * 0.02, ey = ep[1] + nrm[1][1] * ew * side + fy * L * 0.02;
-    ctx.fillStyle = "#1a0c05"; ctx.beginPath(); ctx.arc(ex, ey, L * 0.034, 0, TAU); ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.beginPath(); ctx.arc(ex - fx * L * 0.008 + 0.6, ey - fy * L * 0.008 - 0.6, L * 0.011, 0, TAU); ctx.fill();
+  ctx.save();
+  ctx.clip();
+  // The broad key and cool backscatter stay in water space as the fish turns.
+  const key = ctx.createRadialGradient(shoulder.x - L * .09, shoulder.y - L * .13, L * .012, shoulder.x, shoulder.y - L * .01, L * .48);
+  key.addColorStop(0, "rgba(255,231,155,.9)");
+  key.addColorStop(.24, "rgba(255,191,99,.6)");
+  key.addColorStop(.66, "rgba(255,139,53,.15)");
+  key.addColorStop(1, "rgba(255,128,42,0)");
+  ctx.fillStyle = key;
+  ctx.fillRect(shoulder.x - L, shoulder.y - L, L * 2, L * 2);
+  const bounce = ctx.createRadialGradient(mid.x + L * .11, mid.y + L * .26, L * .04, mid.x, mid.y + L * .19, L * .52);
+  bounce.addColorStop(0, "rgba(165,202,202,.46)");
+  bounce.addColorStop(.42, "rgba(112,146,162,.22)");
+  bounce.addColorStop(1, "rgba(79,114,139,0)");
+  ctx.fillStyle = bounce;
+  ctx.fillRect(mid.x - L, mid.y - L, L * 2, L * 2);
+  scales(ctx, frame, L);
+  ctx.restore();
+
+  const gill = frame(.206), gillSide = bank < 0 ? -1 : 1;
+  const gillBeat = Math.sin(phase * .72) * L * .009;
+  ctx.save();
+  ctx.globalAlpha *= Math.min(1, roll * 2.3);
+  ctx.beginPath();
+  ctx.moveTo(...at(gill, L * .01, -gillSide * L * .084));
+  ctx.quadraticCurveTo(...at(gill, -L * .085 + gillBeat, gillSide * L * .042), ...at(gill, -L * .008, gillSide * L * .139));
+  ctx.strokeStyle = "rgba(111,42,23,.67)";
+  ctx.lineWidth = Math.max(.65, L * .011);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(...at(gill, -L * .009, -gillSide * L * .078));
+  ctx.quadraticCurveTo(...at(gill, -L * .091 + gillBeat, gillSide * L * .047), ...at(gill, -L * .024, gillSide * L * .127));
+  ctx.strokeStyle = "rgba(255,219,133,.48)";
+  ctx.lineWidth = L * .007;
+  ctx.stroke();
+  ctx.restore();
+
+  for (const side of [-1, 1]) pectoral(ctx, shoulder, angle, L, side, paddle, .91 * Math.max(0, side * bank));
+
+  const ep = frame(.064);
+  if (roll < .47) {
+    ctx.save();
+    ctx.globalAlpha *= 1 - roll / .47;
+    eye(ctx, ...at(ep, L * .005, -gillSide * L * .067), L * (.035 - roll * .015), true);
+    ctx.restore();
   }
+  eye(ctx, ...at(ep, L * .007, gillSide * L * (.067 - roll * .01)), L * .035, false);
+
+  const lip = bank * L * .048;
+  ctx.beginPath();
+  ctx.moveTo(...at(head, L * .069, lip - L * .016));
+  ctx.quadraticCurveTo(...at(head, L * .044, lip), ...at(head, L * .066, lip + L * .014));
+  ctx.lineWidth = Math.max(.65, L * .008);
+  ctx.strokeStyle = "rgba(107,46,29,.76)";
+  ctx.stroke();
+  ctx.restore();
 }
 
 // A still fish along a gentle curve, for the share card.
@@ -167,6 +286,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   let VW = 0, VH = 0, dpr = 1, L = 110;
   // state
   let x = 0, y = 0, heading = 0, speed = 0, phase = 0, clock = 0, last = 0;
+  let turnBank = 0, lastCanvas = null;
   let trail = [], mode = "wander", target = null, lookUntil = 0, seekUntil = 0, layer = "back", raf = 0;
   let pending = null, pendingUntil = 0; // a destination heading waiting to scroll into view
   let restTimer = 0;
@@ -190,13 +310,14 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     const wide = VW - c.right > 260;
     if (inHero) {
       const cx = wide ? c.left + c.width * 0.92 : c.left + c.width * 0.5;
-      const A = wide ? Math.min(c.width * 0.78, VW - cx - L * 1.4) : c.width * 0.46;
+      const A = wide ? Math.min(c.width * 0.78, VW - cx - L * 1.4) : Math.min(c.width * 0.46, VW * .5 - L * .74);
       return { inHero, cx, cy: c.top + c.height * 0.52, A, B: Math.min(c.height * 0.42, VH * 0.4) / 0.3536, split: wide ? cx + L * 0.2 : Infinity };
     }
     // The skills tank: when it fills the middle of the screen, swim inside it.
     const tk = tank && tank.getBoundingClientRect();
     if (tk && tk.top < VH * 0.6 && tk.bottom > VH * 0.4) {
-      return { inHero, inTank: true, cx: tk.left + tk.width / 2, cy: tk.top + tk.height * 0.34, A: tk.width * 0.36, B: (tk.height * 0.2) / 0.3536, front: true, split: Infinity };
+      const clearance = Math.max(tk.width * .12, tk.width * .5 - L * .76);
+      return { inHero, inTank: true, cx: tk.left + tk.width / 2, cy: tk.top + tk.height * 0.34, A: Math.min(tk.width * .36, clearance), B: (tk.height * 0.2) / 0.3536, front: true, split: Infinity };
     }
     // Past the hero: an upright figure-eight in the empty margin right of the content,
     // drawn in front so it stays visible. When that margin is too narrow (tablets,
@@ -300,6 +421,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     const want = Math.atan2(ty - y, tx - x);
     let diff = ((want - heading + Math.PI) % TAU + TAU) % TAU - Math.PI;
     heading += Math.max(-turn * dt, Math.min(turn * dt, diff));
+    turnBank += (Math.max(-1, Math.min(1, diff)) - turnBank) * Math.min(1, dt * 4);
     const dist = Math.hypot(tx - x, ty - y);
     const holding = mode === "look" || mode === "reside";
     const desired = holding ? maxS : Math.min(maxS, Math.max(L * 0.4, dist * 2.4));
@@ -322,10 +444,13 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   }
 
   function render(wave) {
-    ctxB.clearRect(0, 0, VW, VH); ctxF.clearRect(0, 0, VW, VH);
+    const canvas = layer === "front" ? ctxF : ctxB;
+    if (lastCanvas && lastCanvas !== canvas) lastCanvas.clearRect(0, 0, VW, VH);
+    canvas.clearRect(0, 0, VW, VH);
+    lastCanvas = canvas;
     if (trail.length < 2) return;
     const Ld = L * size;
-    drawFish(layer === "front" ? ctxF : ctxB, spineFrom(trail, Ld, phase, wave), Ld, phase);
+    drawFish(canvas, spineFrom(trail, Ld, phase, wave), Ld, phase, turnBank);
   }
 
   function frame(ts) {
@@ -337,7 +462,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   const start = () => { if (still || raf || document.hidden) return; last = 0; raf = requestAnimationFrame(frame); };
   const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
-  // attention: buttons, links and backpack items
+  // attention: buttons, links and skills
   document.addEventListener("click", (e) => {
     const sk = e.target.closest("[data-skill]");
     const obj = sk && document.querySelector(`.tank-obj[data-skill="${sk.dataset.skill}"]`);
@@ -370,19 +495,20 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
 
   // A straight-bodied pose at (px, py) heading `ang`, drawn once.
-  function pose(px, py, ang, front) {
-    x = px; y = py; heading = ang; trail = [];
+  function pose(px, py, ang, front, scale = 1) {
+    x = px; y = py; heading = ang; turnBank = 0; trail = [];
     for (let k = 0; k < 60; k++) trail.push([x - Math.cos(ang) * k * 4, y - Math.sin(ang) * k * 4]);
-    layer = front ? "front" : "back"; size = sizeGoal = 1;
+    layer = front ? "front" : "back"; size = sizeGoal = scale;
     render(0.4);
   }
   function restPose() {
-    const f = loopFrame(), p = lemni(f, 0.15), q = lemni(f, 0.3);
-    pose(p[0], p[1], Math.atan2(q[1] - p[1], q[0] - p[0]), f.inHero ? p[0] > f.split : f.front);
+    const f = loopFrame(), t = f.inHero && f.split === Infinity ? .99 : .15;
+    const p = lemni(f, t), q = lemni(f, t + .15);
+    pose(p[0], p[1], Math.atan2(q[1] - p[1], q[0] - p[0]), f.inHero ? p[0] > f.split : f.front, f.inTank || f.upright ? .62 : 1);
   }
   function placeBeside(el) {
     const a = aimPoint(el);
-    pose(a.stand[0], a.stand[1], Math.atan2(a.look[1] - a.stand[1], a.look[0] - a.stand[0]), true);
+    pose(a.stand[0], a.stand[1], Math.atan2(a.look[1] - a.stand[1], a.look[0] - a.stand[0]), true, tank?.contains(el) ? .62 : 1);
   }
 
   resize();

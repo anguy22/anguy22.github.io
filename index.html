@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Andrew Nguyen</title>
   <meta name="description" content="Andrew Nguyen studies industrial engineering and statistics at Purdue. Fab tools at Micron, match prep for Purdue soccer, competitive chess.">
-  <meta name="theme-color" content="#050706">
+  <meta name="theme-color" content="#05080b">
   <meta property="og:title" content="Andrew Nguyen">
   <meta property="og:description" content="Industrial engineering and statistics at Purdue. Chess, soccer analytics, semiconductors.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://anguy.app">
-  <meta property="og:image" content="https://anguy.app/preview.jpg?v=8">
+  <meta property="og:image" content="https://anguy.app/preview.jpg?v=9">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon-clownfish.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=8">
+  <link rel="stylesheet" href="css/site.css?v=10">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -161,47 +161,21 @@
   <!-- ===== Chess ===== -->
   <section class="section" id="chess" aria-labelledby="h-chess">
     <div class="wrap">
-      <h2 class="section-title" id="h-chess">Chess</h2>
-      <div class="chess-grid">
-        <div class="chess-live">
-          <p class="big-rating"><span class="num" id="c-rapid">&mdash;</span></p>
-          <p class="status"><span class="live-dot" aria-hidden="true"></span><span id="c-live">Rapid on Lichess</span></p>
-
-          <table class="ratings" aria-label="Lichess ratings by format">
-            <thead><tr><th scope="col">Format</th><th scope="col">Rating</th><th scope="col">Games</th></tr></thead>
-            <tbody id="c-perfs">
-              <tr><td>Bullet</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
-              <tr><td>Blitz</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
-              <tr><td>Rapid</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
-              <tr><td>Classical</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
-            </tbody>
-          </table>
-
-          <div class="record" id="c-record" hidden>
-            <div class="record-bar" aria-hidden="true"><span class="rb-w" id="rb-w"></span><span class="rb-d" id="rb-d"></span><span class="rb-l" id="rb-l"></span></div>
-            <p class="record-key"><span><i class="k-w"></i><span id="c-w">0</span> wins</span><span><i class="k-d"></i><span id="c-d">0</span> draws</span><span><i class="k-l"></i><span id="c-l">0</span> losses</span></p>
-          </div>
-          <p class="chess-note" id="c-note"></p>
-        </div>
-
-        <div class="chess-side">
-          <h3 class="sub-title">Repertoire</h3>
-          <table class="rep">
-            <thead><tr><th scope="col">Opening</th><th scope="col" class="th-moves">Moves</th><th scope="col">Side</th></tr></thead>
-            <tbody>
-              <tr><td>Goring Gambit</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.c3</td><td><span class="side side-w">White</span></td></tr>
-              <tr><td>Scotch Game</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4</td><td><span class="side side-w">White</span></td></tr>
-              <tr><td>Italian Game</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.Bc4</td><td><span class="side side-w">White</span></td></tr>
-              <tr><td>Caro-Kann Defense</td><td class="moves">1.e4 c6 2.d4 d5</td><td><span class="side side-b">Black</span></td></tr>
-              <tr><td>Modern Defense</td><td class="moves">1.e4 g6 2.d4 Bg7</td><td><span class="side side-b">Black</span></td></tr>
-            </tbody>
-          </table>
-
-          <h3 class="sub-title">Purdue in the CCL</h3>
-          <p class="ccl"><span class="num">4&ndash;5&ndash;3</span> as team captain, against UT Dallas, Arizona State, Drexel and Tulane.</p>
-          <a class="arrow-link" href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">lichess.org/@/an_d22</a>
-        </div>
+      <div class="tool-intro">
+        <h2 class="section-title" id="h-chess">Chess</h2>
+        <p class="status chess-live"><span class="live-dot" aria-hidden="true"></span><span>Live from <a href="https://lichess.org/@/an_d22" target="_blank" rel="noopener">lichess.org/@/an_d22</a></span></p>
       </div>
+      <div class="stats" id="c-stats">
+        <div class="stat lead"><p class="stat-label">Rapid</p><p class="stat-value">&mdash;</p><p class="stat-sub">Loading</p></div>
+        <div class="stat"><p class="stat-label">Bullet</p><p class="stat-value">&mdash;</p><p class="stat-sub">Loading</p></div>
+        <div class="stat"><p class="stat-label">Blitz</p><p class="stat-value">&mdash;</p><p class="stat-sub">Loading</p></div>
+      </div>
+      <figure class="rating-chart">
+        <figcaption class="chart-head"><span class="chart-title">Bullet rating</span><span class="chart-note" id="bc-note"></span></figcaption>
+        <div class="chart-plot" id="bc-plot"><p class="chart-empty">Loading the rating history&hellip;</p></div>
+        <div class="sr-only" id="bc-summary"></div>
+      </figure>
+      <p class="chess-note" id="c-note"></p>
     </div>
   </section>
 
@@ -253,6 +227,6 @@
   </defs>
 </svg>
 
-<script type="module" src="js/site.js?v=8"></script>
+<script type="module" src="js/site.js?v=9"></script>
 </body>
 </html>
