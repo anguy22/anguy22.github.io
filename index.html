@@ -10,17 +10,19 @@
   <meta property="og:description" content="Industrial engineering and statistics at Purdue. Chess, soccer analytics, semiconductors.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://anguy.app">
-  <meta property="og:image" content="https://anguy.app/preview.jpg?v=5">
+  <meta property="og:image" content="https://anguy.app/preview.jpg?v=6">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon-clownfish.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site.css?v=1">
+  <link rel="stylesheet" href="css/site.css?v=4">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<canvas class="fish-layer fish-back" id="fish-back" aria-hidden="true"></canvas>
+<canvas class="fish-layer fish-front" id="fish-front" aria-hidden="true"></canvas>
 
 <header class="nav" id="nav">
   <div class="wrap nav-row">
@@ -31,7 +33,7 @@
     <nav class="nav-links" id="nav-links" aria-label="Sections">
       <a href="#experience">Experience</a>
       <a href="#projects">Projects</a>
-      <a href="#toolbox">Toolbox</a>
+      <a href="#backpack">Backpack</a>
       <a href="#chess">Chess</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -50,32 +52,16 @@
         </h1>
 
         <div class="bio" data-rise>
-          <p class="bio-lead">hi there. i&rsquo;m andrew, an industrial engineering student at purdue with a minor in statistics. off the clock i play <button class="fn" type="button" aria-expanded="false" aria-controls="fn-1">rapid chess<sup>1</sup></button>, watch <button class="fn" type="button" aria-expanded="false" aria-controls="fn-2">kung fu movies<sup>2</sup></button>, hike, follow <button class="fn" type="button" aria-expanded="false" aria-controls="fn-3">the chip sector<sup>3</sup></button> and drink <button class="fn" type="button" aria-expanded="false" aria-controls="fn-4">coke zero<sup>4</sup></button>. <a href="#contact">please get in touch</a>.</p>
-
-          <div class="fn-slot">
-            <div class="fn-card" id="fn-1" tabindex="-1" hidden><span class="fn-n">1</span><p>2000+ rated in league play. my live lichess numbers are <a href="#chess">a little further down</a>.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-2" tabindex="-1" hidden><span class="fn-n">2</span><p>current favorite: <em>ip man 3</em> (2015).</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-3" tabindex="-1" hidden><span class="fn-n">3</span><p>current favorite ticker: $INTC. current favorite song: JYP / Rain, &lsquo;나로 바꾸자&rsquo;.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-4" tabindex="-1" hidden><span class="fn-n">4</span><p>diet coke or coke zero? coke zero.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-          </div>
+          <p class="bio-lead">hi there, check out some of my projects and experiences.</p>
 
           <p>some of what i&rsquo;ve worked on:</p>
           <ul class="dash-list">
-            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-5">tool budgeting at micron<sup>5</sup></button></li>
-            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-6">purdue soccer analytics<sup>6</sup></button></li>
-            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-7">data mine recruit scoring<sup>7</sup></button></li>
-            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-8">semiconductor alliance<sup>8</sup></button></li>
-            <li><button class="fn" type="button" aria-expanded="false" aria-controls="fn-9">purdue chess captain<sup>9</sup></button></li>
-            <li><a href="#experience">full experience</a></li>
+            <li>tool budgeting at micron</li>
+            <li>purdue soccer analytics</li>
+            <li>data mine recruit scoring</li>
+            <li>semiconductor alliance</li>
+            <li>purdue chess captain</li>
           </ul>
-
-          <div class="fn-slot">
-            <div class="fn-card" id="fn-5" tabindex="-1" hidden><span class="fn-n">5</span><p><strong>Micron Technology, Boise.</strong> built an r&amp;d tool-review app that flags fab tools for removal at 8&times; the precision of the manual process. it&rsquo;s now the register for ~1,500 tools. summer 2026.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-6" tabindex="-1" hidden><span class="fn-n">6</span><p><strong>Purdue D1 Women&rsquo;s Soccer.</strong> a match-prep app covering tactics, trends and stats across 18 big ten teams, briefed to the staff every week. may 2026 to now.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-7" tabindex="-1" hidden><span class="fn-n">7</span><p><strong>The Data Mine.</strong> rule-based scoring for 200+ recruit emails a week. i led a 5-person team on the etl pipeline. spring 2026.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-8" tabindex="-1" hidden><span class="fn-n">8</span><p><strong>Semiconductor Student Alliance.</strong> student chair, running recruitment and alumni engagement. aug 2026 to now.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-            <div class="fn-card" id="fn-9" tabindex="-1" hidden><span class="fn-n">9</span><p><strong>Collegiate Chess League.</strong> team captain and 2000+ rated player against top us universities. aug 2024 to may 2026.</p><button class="fn-close" type="button" aria-label="Close note">&times;</button></div>
-          </div>
 
           <p>i&rsquo;m always looking to learn from others in any field, and i find personal joy in the passions of people i meet. here i document my learning, experiences, and work. if we&rsquo;re going to be replaced by ai it might as well be accurate.</p>
 
@@ -96,18 +82,6 @@
         </div>
       </div>
 
-      <figure class="hero-figure" id="galton-demo">
-        <canvas id="galton" aria-hidden="true"></canvas>
-        <figcaption class="sr-only">A Galton board. Each ball takes twelve left-or-right steps through a field of pegs, and the stacks show where the balls land. The green line is a normal curve fitted to the sample, and the readout gives the sample size, mean and standard deviation.</figcaption>
-        <div class="galton-readout">
-          <button class="g-ctrl" id="g-ctrl" type="button" aria-label="Pause the animation">
-            <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1"/><rect x="9.4" y="3" width="2.6" height="10" rx="1"/></svg>
-            <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.6-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5z"/></svg>
-            <svg class="i-replay" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3a5 5 0 1 1-4.6 3.1l1.4.6A3.5 3.5 0 1 0 8 4.5V7L4.5 3.8 8 .5V3z"/></svg>
-          </button>
-          <span class="g-text" aria-hidden="true"><span id="g-n">n = 0</span><span id="g-stats"></span></span>
-        </div>
-      </figure>
     </div>
   </section>
 
@@ -122,51 +96,55 @@
         <li class="xp-item">
           <div class="xp-head"><h3>Industrial Engineering Intern, R&amp;D Strategy &amp; Budgeting</h3><span class="xp-where">Boise, ID</span></div>
           <p class="xp-org">Micron Technology &middot; May &ndash; Aug 2026</p>
-          <p class="xp-desc">built an r&amp;d tool-review app that shortlists fab tools for removal at 8&times; the precision of the manual process; it&rsquo;s now the budgeting team&rsquo;s register for ~1,500 tools across 152,000 ft&sup2; of cleanroom. joined 13 datastores in sql and python, set opex forecasting logic over 6 fiscal years and 25+ scenarios in tableau, and shipped two tools now used for fy27 planning, saving about 40 hours a quarter.</p>
         </li>
         <li class="xp-item">
           <div class="xp-head"><h3>Predictive Data Analyst</h3><span class="xp-where">West Lafayette, IN</span></div>
           <p class="xp-org">Purdue D1 Women&rsquo;s Soccer &middot; May 2026 &ndash; Present</p>
-          <p class="xp-desc">built a match-preparation app for the coaching staff that pulls tactics, trends and stats across 18 big ten teams. i brief the staff, players and athletics on the findings every week.</p>
         </li>
         <li class="xp-item">
           <div class="xp-head"><h3>Student Chairperson</h3><span class="xp-where">Purdue University</span></div>
           <p class="xp-org">Semiconductor Student Alliance &middot; Aug 2026 &ndash; Present</p>
-          <p class="xp-desc">running member recruitment and alumni engagement for purdue&rsquo;s semiconductor student organization.</p>
         </li>
-        <li class="xp-item" data-more>
+        <li class="xp-item">
           <div class="xp-head"><h3>Undergraduate Data Science Researcher</h3><span class="xp-where">West Lafayette, IN</span></div>
           <p class="xp-org">The Data Mine at Purdue &middot; Jan &ndash; May 2026</p>
-          <p class="xp-desc">engineered a kpi framework that scores 200+ recruit emails a week with rule-based logic, and led a 5-person team building the etl pipeline that carries the top 15% forward, saving about 20 hours a month of manual review. greenlit for continued use by purdue women&rsquo;s soccer and the data mine.</p>
         </li>
-        <li class="xp-item" data-more>
+        <li class="xp-item">
           <div class="xp-head"><h3>Team Captain</h3><span class="xp-where">Purdue University</span></div>
           <p class="xp-org">Collegiate Chess League &middot; Aug 2024 &ndash; May 2026</p>
-          <p class="xp-desc">captained purdue&rsquo;s 6-player team as a 2000+ rated player against top us universities: board order, match preparation and the opening repertoire.</p>
         </li>
-        <li class="xp-item" data-more>
+        <li class="xp-item">
           <div class="xp-head"><h3>Lead Mentor</h3><span class="xp-where">West Lafayette, IN</span></div>
           <p class="xp-org">Wonderland + Purdue IE &middot; Aug 2025 &ndash; May 2026</p>
-          <p class="xp-desc">led 3-person mentor teams through weekly hands-on physics, math and engineering lessons for about 60 elementary students.</p>
         </li>
-        <li class="xp-item" data-more>
+        <li class="xp-item">
           <div class="xp-head"><h3>Cashier &amp; Clerk</h3><span class="xp-where">Boise, ID</span></div>
           <p class="xp-org">Diana&rsquo;s Korean Market &middot; Dec 2022 &ndash; Aug 2024</p>
-          <p class="xp-desc">the store&rsquo;s sole weekend cashier, serving a diverse customer base in korean and english.</p>
         </li>
       </ol>
-      <button class="text-btn" type="button" id="xp-more" aria-expanded="false" aria-controls="xp-list">Show 4 more</button>
       </div>
 
-      <aside class="edu">
-        <h3 class="edu-title">Education</h3>
-        <div class="edu-row">
-          <div>
-            <p class="edu-school">Purdue University</p>
-            <p class="xp-org">B.S. Industrial Engineering, minor in Statistics &middot; est. May 2028</p>
-            <p class="xp-desc">Presidential Scholar, Simplot Foundation Scholar, Dr. James Barany Endowed Scholar, Redinger Scholar. Certifications in Semiconductors &amp; Microelectronics, Semiconductor Fabrication, and Data Science Applications.</p>
+      <aside class="edu" aria-labelledby="h-edu">
+        <h3 class="edu-title" id="h-edu">Education</h3>
+        <div class="edu-card">
+          <div class="edu-top">
+            <svg class="edu-p" viewBox="0 0 92 100" aria-hidden="true" focusable="false">
+              <defs><linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f6e7bd"/><stop offset=".42" stop-color="#d7c08a"/><stop offset=".52" stop-color="#8f7a46"/><stop offset=".62" stop-color="#e8d6a2"/><stop offset="1" stop-color="#b39b62"/>
+              </linearGradient></defs>
+              <path fill="url(#g-gold)" fill-rule="evenodd" d="M6 6 H54 C76 6 88 19 88 38 C88 57 76 70 54 70 H38 V84 H50 V94 H6 V84 H18 V16 H6 Z M38 22 V54 H52 C63 54 68 47 68 38 C68 29 63 22 52 22 Z"/>
+              <path fill="none" stroke="#fff" stroke-opacity=".35" d="M7 7 H54 C75 7 87 19.5 87 38"/>
+            </svg>
+            <div>
+              <p class="edu-school">Purdue University</p>
+              <p class="xp-org">Industrial Engineering &middot; Statistics minor &middot; 2028</p>
+            </div>
+            <p class="edu-gpa"><span class="num">3.89</span> GPA</p>
           </div>
-          <p class="edu-gpa"><span class="num">3.89</span><span class="edu-gpa-of">/ 4.00 GPA</span></p>
+          <p class="edu-label">Scholarships</p>
+          <ul class="chips"><li>Presidential</li><li>Simplot Foundation</li><li>Barany Endowed</li><li>Redinger</li></ul>
+          <p class="edu-label">Certifications</p>
+          <ul class="chips"><li>Semiconductors &amp; Microelectronics</li><li>Semiconductor Fabrication</li><li>Data Science Applications</li></ul>
         </div>
       </aside>
       </div>
@@ -284,33 +262,44 @@
     </div>
   </section>
 
-  <!-- ===== Toolbox ===== -->
-  <section class="section" id="toolbox" aria-labelledby="h-tool">
+  <!-- ===== Backpack ===== -->
+  <section class="section" id="backpack" aria-labelledby="h-pack">
     <div class="wrap">
       <div class="tool-intro">
-        <h2 class="section-title" id="h-tool">Toolbox</h2>
-        <p class="lede">what i reach for. open a drawer, then pick something up.</p>
+        <h2 class="section-title" id="h-pack">My backpack</h2>
+        <p class="lede">what i carry around. pick something up.</p>
       </div>
 
       <div class="toolbox">
-        <div class="chest" id="chest">
-          <div class="chest-lid" aria-hidden="true"><span class="chest-badge">AN</span></div>
-          <!-- drawers are built by site.js from TOOLBOX; this list is the no-script fallback -->
-          <ul class="chest-fallback">
-            <li><strong>Data:</strong> Python, SQL, Excel, Tableau</li>
-            <li><strong>Stats:</strong> Probability, JMP &amp; DOE, Six Sigma, Machine learning</li>
-            <li><strong>Fab &amp; ops:</strong> Industrial engineering, Semiconductor fabrication, Agentic coding</li>
-            <li><strong>Off the clock:</strong> Rapid chess, Soccer, Hiking, Kung fu movies, Coke zero</li>
-          </ul>
-          <div class="chest-base" aria-hidden="true"><span class="caster"></span><span class="caster"></span></div>
+        <div class="pack" id="pack">
+          <span class="pack-handle" aria-hidden="true"></span>
+          <span class="pack-strap pack-strap-l" aria-hidden="true"></span>
+          <span class="pack-strap pack-strap-r" aria-hidden="true"></span>
+          <span class="pack-side pack-side-l" aria-hidden="true"></span>
+          <span class="pack-side pack-side-r" aria-hidden="true"></span>
+          <div class="pack-body">
+            <div class="pack-opening">
+              <span class="pack-pull pack-pull-l" aria-hidden="true"></span>
+              <span class="pack-pull pack-pull-r" aria-hidden="true"></span>
+              <ul class="pack-fallback">
+                <li>Python, SQL, Excel, Tableau</li>
+                <li>Probability, JMP &amp; DOE, Six Sigma, Machine learning</li>
+                <li>Industrial engineering, Semiconductor fabrication, Agentic coding</li>
+                <li>Rapid chess, Soccer, Hiking, Kung fu movies, Coke zero</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pack-flap" aria-hidden="true"><span class="pack-pocket"></span><span class="pack-patch">AN</span></div>
         </div>
 
         <aside class="plate" id="plate" aria-live="polite">
           <div class="plate-fig" id="plate-fig"></div>
-          <h3 class="plate-name" id="plate-name">Python</h3>
-          <p class="plate-sub" id="plate-sub">pandas &middot; scikit-learn &middot; sqlalchemy</p>
-          <p class="plate-use" id="plate-use">the etl behind micron&rsquo;s tool register.</p>
-          <a class="plate-link" id="plate-link" href="#proj-register">see the tool register</a>
+          <div class="plate-text">
+            <h3 class="plate-name" id="plate-name">Python</h3>
+            <p class="plate-sub" id="plate-sub">pandas &middot; scikit-learn &middot; sqlalchemy</p>
+            <p class="plate-use" id="plate-use">the etl behind micron&rsquo;s tool register.</p>
+            <a class="plate-link" id="plate-link" href="#proj-register">see the tool register</a>
+          </div>
         </aside>
       </div>
     </div>
@@ -345,7 +334,7 @@
         <div class="chess-side">
           <h3 class="sub-title">Repertoire</h3>
           <table class="rep">
-            <thead><tr><th scope="col">Opening</th><th scope="col">Moves</th><th scope="col">Side</th></tr></thead>
+            <thead><tr><th scope="col">Opening</th><th scope="col" class="th-moves">Moves</th><th scope="col">Side</th></tr></thead>
             <tbody>
               <tr><td>Goring Gambit</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.c3</td><td><span class="side side-w">White</span></td></tr>
               <tr><td>Scotch Game</td><td class="moves">1.e4 e5 2.Nf3 Nc6 3.d4 exd4 4.Nxd4</td><td><span class="side side-w">White</span></td></tr>
@@ -411,7 +400,6 @@
   </defs>
 </svg>
 
-<script type="module" src="js/site.js?v=1"></script>
-<script type="module" src="js/galton.js?v=1"></script>
+<script type="module" src="js/site.js?v=4"></script>
 </body>
 </html>

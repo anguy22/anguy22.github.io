@@ -1,5 +1,6 @@
 import { nameSVG, wordPath } from "./script-name.js";
-import { TOOLS, DRAWERS, SHARED_DEFS, toolSVG } from "./tools.js";
+import { TOOLS, PACK, SHARED_DEFS, toolSVG } from "./tools.js";
+import { createFish } from "./fish.js";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -43,7 +44,7 @@ if (nameSvg) {
   const els = paint(nameSvg, paths, { width: 5 });
   draw(els, { total: 3800, delay: 250 });
 }
-const rise = () => $$("[data-rise], .hero-figure").forEach((el) => el.classList.add("risen"));
+const rise = () => $$("[data-rise]").forEach((el) => el.classList.add("risen"));
 // The greeting arrives while the name is still being written.
 reduce ? rise() : setTimeout(rise, 700);
 
@@ -59,38 +60,21 @@ if (sign) {
   }
 }
 
-/* ---------- Footnotes ---------- */
-// One note open at a time. Opening moves focus into the note so Tab continues
-// inside it; every close path (×, Escape, the trigger again) can hand focus back.
-let openFn = null;
-const cardFor = (b) => document.getElementById(b.getAttribute("aria-controls"));
-function closeFn(restoreFocus) {
-  if (!openFn) return;
-  const b = openFn; openFn = null;
-  b.setAttribute("aria-expanded", "false");
-  cardFor(b).hidden = true;
-  if (restoreFocus) b.focus();
+/* ---------- Goldfish ---------- */
+// Decorative companion. Under reduced motion it rests in one pose and moves only
+// by repositioning instantly beside whatever is clicked.
+const heroCopy = $(".hero-copy");
+if (heroCopy && $("#fish-back")) {
+  createFish({ back: $("#fish-back"), front: $("#fish-front"), heroCopy, reduce });
 }
-function openFnNote(b) {
-  closeFn(false);
-  openFn = b;
-  b.setAttribute("aria-expanded", "true");
-  const card = cardFor(b);
-  card.hidden = false;
-  card.focus({ preventScroll: true });
-  const r = card.getBoundingClientRect();
-  if (r.bottom > innerHeight - 16) card.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
-}
-$$(".fn").forEach((b) => b.addEventListener("click", () => (openFn === b ? closeFn(true) : openFnNote(b))));
-$$(".fn-close").forEach((x) => x.addEventListener("click", () => closeFn(true)));
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && openFn) { e.preventDefault(); closeFn(true); } });
 
 /* ---------- Copy email ---------- */
 $$("[data-copy-email]").forEach((btn) => {
   btn.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(EMAIL); btn.textContent = "copied"; }
-    catch { btn.textContent = EMAIL; }
-    btn.classList.add("copied");
+    try { await navigator.clipboard.writeText(EMAIL); }
+    catch { location.href = `mailto:${EMAIL}`; return; }
+    btn.style.minWidth = `${btn.offsetWidth}px`; // hold the width while the label changes
+    btn.textContent = "copied"; btn.classList.add("copied");
     setTimeout(() => { btn.textContent = "copy email"; btn.classList.remove("copied"); }, 1800);
   });
 });
@@ -102,6 +86,11 @@ toggle?.addEventListener("click", () => {
   toggle.setAttribute("aria-expanded", String(open));
   links.classList.toggle("open", open);
   document.body.classList.toggle("menu-open", open);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && links?.classList.contains("open")) {
+    toggle.setAttribute("aria-expanded", "false"); links.classList.remove("open"); document.body.classList.remove("menu-open"); toggle.focus();
+  }
 });
 $$("#nav-links a").forEach((a) => a.addEventListener("click", () => {
   toggle?.setAttribute("aria-expanded", "false"); links.classList.remove("open"); document.body.classList.remove("menu-open");
@@ -123,15 +112,6 @@ addEventListener("scroll", () => { if (!navTick) { navTick = true; requestAnimat
 addEventListener("resize", markNav);
 markNav();
 
-/* ---------- Experience: show more ---------- */
-const xpBtn = $("#xp-more"), xpList = $("#xp-list");
-xpBtn?.addEventListener("click", () => {
-  const open = !xpList.classList.contains("expanded");
-  xpList.classList.toggle("expanded", open);
-  xpBtn.setAttribute("aria-expanded", String(open));
-  xpBtn.textContent = open ? "Show less" : "Show 4 more";
-});
-
 /* ---------- Project figure: tool register ---------- */
 // Many records on the left; the five flagged ones run to the review list on the right.
 const reg = $("#fig-register"), regLinks = $("#fig-register-links");
@@ -151,74 +131,39 @@ if (reg) {
   regLinks.innerHTML = links;
 }
 
-/* ---------- Toolbox ---------- */
+/* ---------- Backpack ---------- */
 const defsHost = document.querySelector("svg[aria-hidden] defs");
 defsHost?.insertAdjacentHTML("beforeend", SHARED_DEFS);
 
-const chest = $("#chest");
-if (chest) {
-  const list = document.createElement("div");
-  list.className = "drawers";
-  list.innerHTML = DRAWERS.map((d, i) => `
-    <div class="drawer${i === 0 ? " open" : ""}" data-drawer="${d.id}">
-      <button class="drawer-front" type="button" aria-expanded="${i === 0}" aria-controls="tray-${d.id}">
-        <span class="drawer-label">${d.label}</span>
-        <span class="drawer-handle" aria-hidden="true"></span>
-        <span class="drawer-count">${d.tools.length} tools<span class="drawer-led" aria-hidden="true"></span></span>
-      </button>
-      <div class="tray-wrap"><div class="tray-clip">
-        <div class="tray" id="tray-${d.id}" role="group" aria-label="${d.label} tools" data-count="${d.tools.length}">
-          ${d.tools.map((t) => `<button class="tool" type="button" data-tool="${t}" aria-pressed="${t === "python"}">${toolSVG(t)}<span class="tool-name">${TOOLS[t].name}</span></button>`).join("")}
-        </div>
-        <div class="tray-note" aria-live="polite"></div>
-      </div></div>
-    </div>`).join("");
-  chest.insertBefore(list, $(".chest-base", chest));
-
-  const setTrayFocus = () => $$(".drawer", list).forEach((d) => {
-    const open = d.classList.contains("open");
-    $$(".tool", d).forEach((b) => (b.tabIndex = open ? 0 : -1));
-    $(".tray-wrap", d).inert = !open;
-  });
-  setTrayFocus();
-
-  list.addEventListener("click", (e) => {
-    const front = e.target.closest(".drawer-front");
-    if (front) {
-      const drawer = front.parentElement;
-      const willOpen = !drawer.classList.contains("open");
-      $$(".drawer", list).forEach((d) => { d.classList.remove("open"); $(".drawer-front", d).setAttribute("aria-expanded", "false"); });
-      if (willOpen) {
-        drawer.classList.add("open"); front.setAttribute("aria-expanded", "true");
-        // keep the detail in step with the open drawer
-        if (!$(`.tool[data-tool="${selected}"]`, drawer)) select($(".tool", drawer).dataset.tool);
-      }
-      setTrayFocus();
-      return;
-    }
-    const tool = e.target.closest(".tool");
-    if (tool) select(tool.dataset.tool);
-  });
+// Everything sits loose in one compartment, each at its own slight angle.
+const opening = $(".pack-opening");
+if (opening) {
+  const tilt = [-6, 4, -3, 7, -5, 2, 6, -4, 3, -7, 5, -2, 4, -6, 2, -3];
+  const items = document.createElement("div");
+  items.className = "pack-items";
+  items.setAttribute("role", "group");
+  items.setAttribute("aria-label", "Things in the backpack");
+  items.innerHTML = PACK.map((t, i) => `<button class="tool" type="button" data-tool="${t}" aria-pressed="${t === "python"}" style="--tilt:${tilt[i % tilt.length]}deg">${toolSVG(t, { cut: false })}<span class="tool-name">${TOOLS[t].name}</span></button>`).join("");
+  opening.appendChild(items);
 
   const plate = { fig: $("#plate-fig"), name: $("#plate-name"), sub: $("#plate-sub"), use: $("#plate-use"), link: $("#plate-link") };
-  let selected = null;
-  const linkHTML = (t, cls) => (t.link ? `<a class="${cls}" href="${t.link.href}">${t.link.label}</a>` : "");
   function select(id, { animate = true } = {}) {
     const t = TOOLS[id];
-    selected = id;
-    $$(".tool", list).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tool === id)));
-    // desktop plate
+    $$(".tool", items).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tool === id)));
     plate.fig.classList.remove("swap"); if (animate) void plate.fig.offsetWidth;
     plate.fig.innerHTML = toolSVG(id, { cut: false });
     if (animate) plate.fig.classList.add("swap");
     plate.name.textContent = t.name; plate.sub.textContent = t.sub; plate.use.textContent = t.use;
     if (t.link) { plate.link.href = t.link.href; plate.link.textContent = t.link.label; plate.link.hidden = false; }
     else plate.link.hidden = true;
-    // touch: the note inside the drawer that holds this tool
-    const drawer = $(`.tool[data-tool="${id}"]`, list).closest(".drawer");
-    $$(".tray-note", list).forEach((n) => (n.innerHTML = ""));
-    $(".tray-note", drawer).innerHTML = `<p class="note-name">${t.name}</p><p class="note-sub">${t.sub}</p><p class="note-use">${t.use}</p>${linkHTML(t, "note-link")}`;
   }
+  items.addEventListener("click", (e) => {
+    const tool = e.target.closest(".tool");
+    if (!tool) return;
+    select(tool.dataset.tool);
+    // on narrow screens the detail sits below the bag; bring it into view
+    if (matchMedia("(max-width: 1100px)").matches) $("#plate").scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+  });
   select("python", { animate: false });
 }
 
@@ -237,7 +182,7 @@ async function lichess() {
       const played = r && r.games > 0;
       return `<tr class="${k === "rapid" ? "top" : ""}"><td>${label}</td><td class="num">${played ? r.rating + (r.prov ? "?" : "") : "—"}</td><td class="num">${played ? r.games.toLocaleString() : "—"}</td></tr>`;
     }).join("");
-    const rapid = p.rapid?.rating;
+    const rapid = p.rapid && p.rapid.games > 0 ? p.rapid.rating + (p.rapid.prov ? "?" : "") : null;
     if (rapid) {
       $("#c-rapid").textContent = rapid;
       $("#c-live").textContent = "rapid on lichess, live";

@@ -1,4 +1,4 @@
-// The toolbox: drawers and the tools in them. Every tool is drawn top-down in a
+// The backpack and the things in it. Every tool is drawn top-down in a
 // 100x100 box from the shared metal gradients (m-chrome, m-gloss, m-ball, ...)
 // defined in index.html, so the whole chest reads as one material.
 
@@ -36,7 +36,7 @@ export const SHARED_DEFS = `
     ${[0, 72, 144, 216, 288].map((a) => { const r = (a * Math.PI) / 180; return `<circle cx="${(50 + 20 * Math.cos(r - 1.57)).toFixed(1)}" cy="${(50 + 20 * Math.sin(r - 1.57)).toFixed(1)}" r="8.6" fill="#000"/>`; }).join("")}
     <circle cx="50" cy="50" r="4.2" fill="#000"/>
   </mask>
-  <clipPath id="cp-wafer"><path d="M69 82.9 A38 38 0 1 1 31 82.9 Z"/></clipPath>
+  <clipPath id="cp-wafer"><path d="M69 82.9 A38 38 0 1 0 31 82.9 Z"/></clipPath>
   <filter id="f-cut" x="-25%" y="-25%" width="150%" height="150%">
     <feMorphology in="SourceAlpha" operator="dilate" radius="2.8" result="d"/>
     <feGaussianBlur in="d" stdDeviation="0.6" result="b"/>
@@ -96,7 +96,6 @@ export const TOOLS = {
   dice: {
     name: "Probability", sub: "distributions · the clt",
     use: "the statistics minor, and every gambit i’ve ever played.",
-    link: { href: "#galton-demo", label: "watch the bell curve fill" },
     art: `<g transform="rotate(-12 38 40)"><rect x="22" y="24" width="32" height="32" rx="6" fill="url(#m-gloss)"/><rect x="22" y="24" width="32" height="32" rx="6" fill="none" stroke="#fff" stroke-opacity=".16"/>
         ${[[30, 32], [46, 32], [38, 40], [30, 48], [46, 48]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.8" fill="url(#m-chrome-ball)"/>`).join("")}</g>
       <g transform="rotate(16 64 64)"><rect x="49" y="49" width="30" height="30" rx="6" fill="url(#m-gloss)"/><rect x="49" y="49" width="30" height="30" rx="6" fill="none" stroke="#fff" stroke-opacity=".16"/>
@@ -149,13 +148,13 @@ export const TOOLS = {
     name: "Semiconductor fab", sub: "fabrication · microelectronics",
     use: "two purdue certifications, and a summer in micron’s cleanroom budget.",
     link: { href: "#experience", label: "see the micron role" },
-    art: `<path d="M69 82.9 A38 38 0 1 1 31 82.9 Z" fill="url(#m-gloss)"/>
+    art: `<path d="M69 82.9 A38 38 0 1 0 31 82.9 Z" fill="url(#m-gloss)"/>
       <g clip-path="url(#cp-wafer)">
         <g stroke="#c7cecb" stroke-opacity=".35" stroke-width=".7">${Array.from({ length: 11 }, (_, i) => `<line x1="${12 + i * 7.6}" y1="10" x2="${12 + i * 7.6}" y2="90"/><line x1="10" y1="${12 + i * 7.6}" x2="90" y2="${12 + i * 7.6}"/>`).join("")}</g>
         ${[[3, 3], [5, 2], [6, 5], [2, 6], [7, 7], [4, 8]].map(([c, r]) => `<rect x="${12.4 + c * 7.6}" y="${12.4 + r * 7.6}" width="6.8" height="6.8" fill="${GREEN}" opacity=".85"/>`).join("")}
         <rect x="-20" y="30" width="140" height="18" fill="#fff" opacity=".07" transform="rotate(-32 50 50)"/>
       </g>
-      <path d="M69 82.9 A38 38 0 1 1 31 82.9 Z" fill="none" stroke="url(#m-chrome)" stroke-width="1.4"/>`,
+      <path d="M69 82.9 A38 38 0 1 0 31 82.9 Z" fill="none" stroke="url(#m-chrome)" stroke-width="1.4"/>`,
   },
   robot: {
     name: "Agentic coding", sub: "claude code",
@@ -218,12 +217,9 @@ export const TOOLS = {
   },
 };
 
-export const DRAWERS = [
-  { id: "data", label: "Data", tools: ["python", "sql", "excel", "tableau"] },
-  { id: "stats", label: "Stats", tools: ["dice", "doe", "calipers", "eightball"] },
-  { id: "fab", label: "Fab & ops", tools: ["stopwatch", "wafer", "robot"] },
-  { id: "off", label: "Off the clock", tools: ["clock", "whistle", "compass", "reel", "can"] },
-];
+// What is in the bag, in the order it spills out (deliberately not grouped).
+export const PACK = ["python", "clock", "sql", "dice", "wafer", "whistle", "excel", "eightball",
+  "stopwatch", "reel", "tableau", "calipers", "robot", "compass", "doe", "can"];
 
 export function toolSVG(id, { cut = true } = {}) {
   const t = TOOLS[id];

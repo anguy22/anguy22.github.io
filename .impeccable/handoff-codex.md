@@ -190,3 +190,32 @@ All five findings and the four direction notes were acted on. Please re-verify a
 - **Truth fix found while doing this:** the Data Mine project no longer claims Python (the source says ETL only), and the Python tool copy now cites only Micron.
 
 **Detector after this round:** the cramped-padding hits remain (judged false positives, as in section 9). A new `shape-assembled-illustration` hit fires on a 320x200 project figure. These are schematic data diagrams (a formation, a rubric gate, a residual plot), not illustrations standing in for an asset. Challenge this if you disagree.
+
+### Round 2 (Claude, 2026-11-24): new user directives, then `codex-findings.md` round 2
+
+**New pinned directives from Andrew (these supersede earlier sections where they conflict):**
+9. The bio has no links or footnotes. Andrew rewrote the opening line himself: "hi there, check out some of my projects and experiences."
+10. Experience shows only role, organization, dates and location: no descriptions and no "show more".
+11. The tool chest is replaced by **"My backpack"**: one brown leather backpack, opened, with every item loose inside (no categories). It uses the same 16 drawn items and the same detail plate, which sits beside the bag on desktop and below it at 1100px and under.
+12. Education is a compact card: a block-serif "P" in Purdue old gold (deliberately *not* the Motion P trademark), the GPA, and scholarships and certifications as chips.
+13. The Galton board is gone. A **goldfish** now swims through the description and keeps the reader company across the page. Andrew said **no pause button** (this overrides the tasteskill rule and Codex's suggested control, so do not re-raise it).
+14. The fish follows scroll and navigation. A click on a button, link or backpack item sends it quickly to that control, where it turns to look.
+
+**Fish (`js/fish.js`), with Codex's recommendations applied:**
+- Two viewport-fixed canvases. The back one sits under `main` (dimmed, behind text); the front one sits under the sticky nav (z 40). Page colour moved to `<html>`.
+- In the hero: a figure-eight behind the copy, in front in open water. Past the hero: an upright figure-eight in the right margin, in front where the margin is at least 0.55L, otherwise behind. In the margin the fish eases to 72% size. When it is far from its loop it hurries (up to 5L/s).
+- Seek, look, settle: on a click it approaches from whichever of the four sides has the most room (over and under preferred slightly on phones) and stops with the snout outside the control's rect plus a 0.14L margin. It turns to face the control, holds for about 0.7s, then returns to its loop. Same-page links target the link first, then the destination heading once that heading is on screen (4s timeout). Keyboard activation goes through the same `click` path.
+- One `requestAnimationFrame` id, cancelled on stop; the loop stops when the tab is hidden.
+- Reduced motion: one resting pose, no animation loop. A click repositions it instantly beside the control, and it returns to rest after 1.6s or on scroll.
+- The body has a thin dark rim.
+
+**Your round-2 findings:**
+- [fixed] P1 mobile repertoire: the Moves header is hidden with its cells (`.th-moves`). Verified at 390: visible headers are Opening|Side.
+- [fixed] P2 mobile menu: the blur moved to `.nav::before`, so the fixed menu now measures against the viewport (788px tall at 390x844). It gets `100dvh` height with internal scroll. Escape closes it and returns focus to the toggle.
+- [fixed] P2 live dot: muted by default, green only under `.is-live`, which is set only when rapid has games > 0. The provisional "?" carries into the big readout.
+- [fixed] P3 clipboard: confirmation shows only on a real copy, with the width held; failure opens `mailto:`.
+- [fixed] P1 fish inside a full-width button, P2 off-screen heading, P2 frame handling: see the fish notes above.
+- [obsolete] Galton pause/frames, footnote focus, tool-chest tray notes: those features were removed by directive.
+- [declined by user] the fish pause control.
+
+**Detector now:** cramped-padding (false positives, as before); `shape-assembled-illustration` (project diagrams, as before); `repeating-stripes-gradient` (the backpack lining's woven texture); `nested-cards` (the plate's figure well); `em-dash-overuse` ("—" placeholders in empty data cells). The backpack patch's low-contrast hit is fixed.

@@ -27,7 +27,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 ## Signature interaction and motion grammar
 
-Signature: drawers slide open one at a time; tools lift out of their foam cutouts on hover/focus and select on click, filling a detail plate. Motion grammar: name stroke draws once on load (~4s total); Galton fill loops slowly; drawers ease-out 420ms; everything rests under reduced motion.
+Signature (updated 2026-11-24): a goldfish companion swims through the hero copy (behind text, in front in open water), follows scroll in the right margin, and darts to any clicked control to look at it. A brown leather backpack holds every tool loose on a green lining; picking one fills the detail plate. Motion grammar: name stroke draws once on load (~4s total); the fish steers with a limited turn rate and eased speed; under reduced motion the fish rests in one pose. No pause control, by Andrew's decision.
 
 ## Unresolved
 
