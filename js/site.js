@@ -1,7 +1,7 @@
-import { nameSVG, wordPath } from "./script-name.js?v=18";
-import { initTank } from "./tank.js?v=18";
-import { createFish } from "./fish.js?v=18";
-import { initChess } from "./chess.js?v=18";
+import { nameSVG } from "./script-name.js?v=23";
+import { initTank } from "./tank.js?v=23";
+import { createFish } from "./fish.js?v=23";
+import { initChess } from "./chess.js?v=23";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -48,18 +48,6 @@ if (nameSvg) {
 const rise = () => $$("[data-rise]").forEach((el) => el.classList.add("risen"));
 // The greeting arrives while the name is still being written.
 reduce ? rise() : setTimeout(rise, 700);
-
-// Contact signature: "andrew", written when it scrolls into view.
-const sign = $("#sign-svg");
-if (sign) {
-  const els = paint(sign, [wordPath("andrew", 8).d], { width: 5.5, id: "g-sign" });
-  els.forEach((p) => { const L = p.getTotalLength(); p.style.strokeDasharray = `${L} ${L}`; p.style.strokeDashoffset = reduce ? 0 : L; });
-  if (!reduce) {
-    new IntersectionObserver((entries, io) => {
-      if (entries.some((e) => e.isIntersecting)) { draw(els, { total: 1700 }); io.disconnect(); }
-    }, { threshold: 0.8 }).observe(sign);
-  }
-}
 
 /* ---------- Goldfish ---------- */
 // Decorative companion. Under reduced motion it rests in one pose and moves only

@@ -1,4 +1,4 @@
-import { createDemoPlayer } from "./demos.js?v=18";
+import { createDemoPlayer } from "./demos.js?v=23";
 
 // The skills tank: an aquarium where each skill is something living or sunk in it.
 // Objects differ in size and depth (a hazy back row, a front row, things floating
@@ -9,18 +9,21 @@ const ACCENT = "#3b9ae1";
 const WARM = "#e0735a";
 
 export const SKILLS = {
-  python: { name: "Python", as: "Moray eel", sub: "pandas · scikit-learn · SQLAlchemy", use: "ETL and data pipelines for R&D tool budgeting at Micron.", link: ["#experience", "See the Micron role"] },
-  sql: { name: "SQL", as: "Database coral", sub: "Snowflake · MSSQL · Azure", use: "Joined 13 datastores for R&D tool budgeting and OpEx forecasting at Micron.", link: ["#experience", "See the Micron role"] },
-  chess: { name: "Chess", as: "An old knight", sub: "Lichess · an_d22", use: "Captained Purdue in the Collegiate Chess League as a 2000+ rated player.", link: ["#chess", "See live chess"] },
-  tableau: { name: "Tableau", as: "Kelp bar chart", sub: "Dashboards · reporting", use: "OpEx forecasting across 6 fiscal years and 25+ scenarios at Micron.", link: ["#experience", "See the Micron role"] },
-  excel: { name: "Excel", as: "Fishing net", sub: "Parametric modeling", use: "Parametric models for engineering economics, including 40-year DCF and NPV/IRR analysis." },
-  doe: { name: "JMP & DOE", as: "Factorial crate", sub: "Factorial designs", use: "Design of experiments coursework, with factorial designs run in JMP." },
-  sixsigma: { name: "Six Sigma", as: "Tide gauge with control limits", sub: "SPC · process capability", use: "Quality control and Six Sigma coursework." },
-  ml: { name: "Machine learning", as: "Neural jellyfish", sub: "Classification · validation", use: "Machine learning coursework: classification and model validation." },
-  fab: { name: "Semiconductor fab", as: "Clam with a wafer pearl", sub: "Fabrication · microelectronics", use: "Two Purdue certifications, and R&D tool budgeting at Micron.", link: ["#experience", "See the Micron role"] },
-  agentic: { name: "Agentic coding", as: "Survey drone", sub: "Claude Code", use: "Used to build and iterate on this site." },
+  python: { name: "Python", as: "Moray eel" },
+  sql: { name: "SQL", as: "Database coral" },
+  chess: { name: "Chess", as: "An old knight" },
+  tableau: { name: "Tableau", as: "Kelp bar chart" },
+  excel: { name: "Excel", as: "Fishing net" },
+  doe: { name: "JMP & DOE", as: "Factorial crate" },
+  sixsigma: { name: "Six Sigma", as: "Tide gauge with control limits" },
+  ml: { name: "Machine learning", as: "Neural jellyfish" },
+  fab: { name: "Semiconductor fab", as: "Clam with a wafer pearl" },
+  agentic: { name: "Agentic coding", as: "Survey drone" },
 };
-const ORDER = ["python", "sql", "chess", "tableau", "excel", "doe", "sixsigma", "ml", "fab", "agentic"];
+const ORDER = ["python", "sql", "tableau", "excel", "doe", "sixsigma", "ml", "fab", "agentic"];
+// Things in the tank that are not skills: they link elsewhere on the page.
+const LINKS = { chess: { href: "#chess", label: "Chess: see my live ratings" } };
+const OBJECTS = [...ORDER, ...Object.keys(LINKS)];
 
 /* ---------------- art: each in local units, origin at its base (or centre when floating) ---------------- */
 
@@ -268,18 +271,23 @@ export function initTank({ reduce }) {
     if (L === layout) return;
     layout = L;
     const [W, H] = L.view;
-    const items = ORDER.map((id) => {
+    const items = OBJECTS.map((id) => {
       const [x, y, s, depth] = L.items[id];
       const tagY = depth === "float" ? -60 : -TOP[id] - 18;
-      return `<g class="tank-obj ${depth}" data-skill="${id}" transform="translate(${x} ${y}) scale(${s})">
+      const link = LINKS[id];
+      const open = link
+        ? `<a class="tank-obj tank-link ${depth}" href="${link.href}" aria-label="${link.label}" transform="translate(${x} ${y}) scale(${s})">`
+        : `<g class="tank-obj ${depth}" data-skill="${id}" transform="translate(${x} ${y}) scale(${s})">`;
+      const close = link ? "</a>" : "</g>";
+      return `${open}
           <rect class="hit" x="-80" y="${depth === "float" ? -70 : -TOP[id] - 10}" width="160" height="${depth === "float" ? 150 : TOP[id] + 16}" fill="transparent"/>
           <g ${depth === "back" ? 'filter="url(#t-haze)"' : ""}>${ART[id]()}</g>
           <g class="tag" transform="translate(0 ${tagY})"><rect x="-${SKILLS[id].name.length * 4 + 12}" y="-13" width="${SKILLS[id].name.length * 8 + 24}" height="22" rx="11"/><text y="2.5" text-anchor="middle">${SKILLS[id].name}</text></g>
-        </g>`;
+        ${close}`;
     });
     // back row first, then front, then floating, so depth reads correctly
-    const by = (d) => items.filter((_, i) => L.items[ORDER[i]][3] === d).join("");
-    host.innerHTML = `<svg class="tank-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="An aquarium holding one object for each skill">${defs()}${scene(L)}${by("back")}${by("front")}${by("float")}</svg>`;
+    const by = (d) => items.filter((_, i) => L.items[OBJECTS[i]][3] === d).join("");
+    host.innerHTML = `<svg class="tank-svg" viewBox="0 0 ${W} ${H}" role="group" aria-label="Skills aquarium">${defs()}${scene(L)}${by("back")}${by("front")}${by("float")}</svg>`;
     host.classList.toggle("reduce", reduce);
     mark(selected, false);
   }
@@ -303,7 +311,7 @@ export function initTank({ reduce }) {
 
   function render(id) { demos.play(id, SKILLS[id].name); }
 
-  host.addEventListener("click", (e) => { const g = e.target.closest(".tank-obj"); if (g) mark(g.dataset.skill); });
+  host.addEventListener("click", (e) => { const g = e.target.closest(".tank-obj[data-skill]"); if (g) mark(g.dataset.skill); });
   chips.addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) mark(b.dataset.skill); });
   addEventListener("resize", build);
   build();

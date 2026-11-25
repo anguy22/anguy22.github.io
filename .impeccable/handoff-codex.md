@@ -275,3 +275,12 @@ All five findings and the four direction notes were acted on. Please re-verify a
 
 31. **The top bar has no name.** "Andrew Nguyen" is removed from the nav. On phones (720px and under) the four section links sit inline and centred instead of behind a menu, so the toggle, the slide-down sheet and the menu-focus code are removed; they fit at 320px with no overflow. On desktop the links sit at the right. Section links still move focus to their heading.
 32. **The bullet rating chart is removed** (user directive). The Chess section is the live link plus the stats row (Rapid, Bullet, Blitz, Record). chess.js now makes one profile request; the rating-history and perf requests, the chart code and the chart CSS are gone, which also resolves the P2 about stats waiting on the history request.
+
+### Round 12 (Claude, 2026-11-25)
+
+33. **The Education card uses the official Purdue Motion P** that Andrew supplied (`img/purdue-p.png`: only the black around the P made transparent, cropped, 240x129, provenance embedded; `alt=""` because "Purdue University" sits beside it). The drawn block-serif P and its gold gradient are removed.
+34. **The handwritten "andrew" signature in Contact is removed** (markup, drawing code and CSS); Contact is a single column. The percentile line went with the bullet chart in round 11.
+35. **The fish is one constant size** (L = clamp(110, 0.13·vw, 200); no depth, lane or tank scaling and no head-on foreshortening) **with exactly one eye**, which glides across the head with the bank when the fish rolls over to reverse. Depth still decides behind or in front of the copy.
+36. **Education:** "Scholarships" is now "Recognitions" (Presidential Scholarship, Simplot Foundation Scholarship, Dr. Barany Endowed Scholar; Redinger removed). Certifications are unchanged. A new **Activities** row: IM Soccer + Futsal, Pickleball, Purdue Collegiate Chess.
+37. **Skill demos use generic sample data only** (orders/customers/regions; months; a region filter). Nothing may look like an employer's tools, sites or utilization figures. The skill entries in `tank.js` hold only `name` and `as`. Employer names in Experience are fine.
+38. **Chess is not a skill:** it has no chip or demo. The old knight stays in the tank as an SVG `<a href="#chess">` link (focusable; the goldfish follows it to the Chess heading). The tank SVG is `role="group"`.

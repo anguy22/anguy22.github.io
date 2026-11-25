@@ -249,14 +249,10 @@ export function drawFish(ctx, spine, L, phase, bankIn) {
 
   for (const side of [-1, 1]) pectoral(ctx, shoulder, angle, L, side, paddle, .91 * Math.max(0, side * bank));
 
+  // One eye, always: it sits on the upper half of the head and glides across
+  // (with the bank) when the fish rolls over to swim the other way.
   const ep = frame(.064);
-  if (roll < .47) {
-    ctx.save();
-    ctx.globalAlpha *= 1 - roll / .47;
-    eye(ctx, ...at(ep, L * .005, gillSide * L * .067), L * (.035 - roll * .015), true);
-    ctx.restore();
-  }
-  eye(ctx, ...at(ep, L * .007, -gillSide * L * (.067 - roll * .04)), L * .035, false);
+  eye(ctx, ...at(ep, L * .007, -bank * L * .03), L * .035, false);
 
   const lip = bank * L * .048;
   ctx.beginPath();
@@ -304,7 +300,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     dpr = Math.min(devicePixelRatio || 1, VW < 720 ? 1.5 : 2);
     for (const cv of [back, front]) { cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr); }
     ctxB.setTransform(dpr, 0, 0, dpr, 0, 0); ctxF.setTransform(dpr, 0, 0, dpr, 0, 0);
-    L = Math.max(92, Math.min(176, VW * 0.115)); // a big, readable fish
+    L = Math.max(110, Math.min(200, VW * 0.13)); // one constant, generous size
   }
 
   // The loop the fish follows when nothing has its attention, in viewport coordinates.
@@ -347,7 +343,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     const inTank = tank && tank.contains(el);
     // inside the tank the fish is smaller and keeps to the water around the object
     const B = inTank ? tank.getBoundingClientRect() : { left: 0, top: 0, right: VW, bottom: VH };
-    const Ls = L * (inTank ? 0.62 : 1), gap = Ls * 0.95, pad = Ls * 0.6;
+    const Ls = L, gap = Ls * 0.95, pad = Ls * 0.6;
     const clampX = (v) => Math.max(B.left + pad, Math.min(B.right - pad, v)), clampY = (v) => Math.max(B.top + pad, Math.min(B.bottom - pad, v));
     const sides = [
       { room: B.right - r.right, stand: [r.right + gap, cy] },
@@ -373,7 +369,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     if (mode !== "wander" && (!target || !target.isConnected)) mode = "wander";
     if (mode === "reside") {
       // Stay with the selected object: face it for a moment, then hover beside it.
-      const a = aimPoint(target), Ls = L * size;
+      const a = aimPoint(target), Ls = L;
       if (!a.onScreen) { mode = "wander"; reside = false; }
       if (now % 5200 < 1600) {
         [tx, ty] = a.look;
@@ -455,7 +451,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     z = Math.max(0, Math.min(1, z + vz * dt));
     // Swimming toward or away from the viewer turns it face-on; otherwise it is in profile.
     const pitch = Math.atan2(Math.abs(vz) * L * 3.2, Math.max(speed, L * 0.3));
-    sideAmt = 1 - Math.min(0.85, pitch / 1.1);
+    sideAmt = 1; void pitch;
     const cx = Math.cos(heading);
     if (Math.abs(cx) > 0.2) bankSign = cx >= 0 ? 1 : -1; // hysteresis: no flip-flop when swimming vertically
     bankS += (bankSign * sideAmt - bankS) * Math.min(1, dt * 3.5); // rolls through when it reverses
@@ -469,8 +465,7 @@ export function createFish({ back, front, heroCopy, reduce = false }) {
     canvas.clearRect(0, 0, VW, VH);
     lastCanvas = canvas;
     if (trail.length < 2) return;
-    const Ld = L * size * (0.7 + 0.42 * z);       // nearer is bigger
-    const Ls = Ld * (0.6 + 0.4 * sideAmt);        // head-on shortens the body
+    const Ld = L, Ls = L; // constant size: depth only decides behind or in front
     drawFish(canvas, spineFrom(trail, Ls, phase, wave), Ld, phase, bankS);
   }
 

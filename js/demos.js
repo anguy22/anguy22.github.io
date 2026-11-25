@@ -60,18 +60,18 @@ const DEMOS = {
   sql: { file: "query.sql", async run(host, r, n) {
     const code = el("pre", "demo-code one"); host.append(code);
     const svg = svgEl("0 0 520 190"); host.append(svg);
-    const silos = [["tools", 30], ["costs", 82], ["sites", 134]];
+    const silos = [["orders", 30], ["customers", 82], ["regions", 134]];
     svg.innerHTML = silos.map(([name, y]) => `<g transform="translate(14 ${y})">
         <path d="M0 6 V34 A34 8 0 0 0 68 34 V6" fill="#16324f" stroke="${ACCENT}" stroke-opacity=".6"/>
         <ellipse cx="34" cy="6" rx="34" ry="8" fill="#1f4a73" stroke="${ACCENT}" stroke-opacity=".6"/>
         <text x="34" y="30" text-anchor="middle" class="t">${name}</text></g>`).join("")
       + `<g class="tbl" transform="translate(250 22)"><rect width="262" height="160" rx="8" fill="#0b1722" stroke="${MUTED}" stroke-opacity=".3"/>
-        <text x="14" y="22" class="th">tool</text><text x="110" y="22" class="th">site</text><text x="200" y="22" class="th">cost</text>
+        <text x="14" y="22" class="th">customer</text><text x="110" y="22" class="th">region</text><text x="200" y="22" class="th">total</text>
         <line x1="10" x2="252" y1="30" y2="30" stroke="${MUTED}" stroke-opacity=".3"/></g><g class="fly"></g>`;
-    await r.type(code, "SELECT t.tool, s.site, c.cost FROM tools t JOIN costs c USING (tool_id) JOIN sites s USING (site_id);", 52);
+    await r.type(code, "SELECT c.name, r.region, SUM(o.amount) AS total FROM orders o JOIN customers c USING (customer_id) JOIN regions r USING (region_id) GROUP BY 1, 2;", 52);
     await r.wait(250);
     const rnd = seeded(11 + n * 7), tbl = svg.querySelector(".tbl"), fly = svg.querySelector(".fly");
-    const names = ["etch_07", "litho_12", "cmp_03", "depo_21", "metro_05", "impl_09"], sites = ["Boise", "Lehi", "Manassas"];
+    const names = ["cust_0142", "cust_0388", "cust_0517", "cust_0623", "cust_0790", "cust_0912"], sites = ["North", "South", "West"];
     for (let i = 0; i < 6; i++) {
       const [, sy] = silos[i % 3];
       const dot = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -84,39 +84,10 @@ const DEMOS = {
     }
   } },
 
-  chess: { file: "goring_gambit.pgn", async run(host, r) {
-    const wrap = el("div", "demo-chess"), moves = el("pre", "demo-code moves");
-    const svg = svgEl("0 0 200 200"); wrap.append(svg, moves); host.append(wrap);
-    const glyph = { K: "♔", Q: "♕", R: "♖", B: "♗", N: "♘", P: "♙", k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" };
-    const start = ["rnbqkbnr", "pppppppp", "", "", "", "", "PPPPPPPP", "RNBQKBNR"];
-    let sq = "";
-    for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) sq += `<rect x="${x * 25}" y="${y * 25}" width="25" height="25" fill="${(x + y) % 2 ? "#2f5d7c" : "#c9d9e4"}"/>`;
-    svg.innerHTML = `${sq}<g class="hl"></g><g class="pcs"></g>`;
-    const pcs = svg.querySelector(".pcs"), hl = svg.querySelector(".hl"), at = {};
-    start.forEach((row, y) => [...row].forEach((c, x) => {
-      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      t.textContent = glyph[c]; t.setAttribute("class", "pc " + (c === c.toUpperCase() ? "w" : "b"));
-      t.setAttribute("x", x * 25 + 12.5); t.setAttribute("y", y * 25 + 20); pcs.append(t); at[`${x},${y}`] = t;
-    }));
-    const file = (s) => s.charCodeAt(0) - 97, rank = (s) => 8 - +s[1];
-    const play = [["e2", "e4", "1.e4"], ["e7", "e5", " e5"], ["g1", "f3", "\n2.Nf3"], ["b8", "c6", " Nc6"], ["d2", "d4", "\n3.d4"], ["e5", "d4", " exd4"], ["c2", "c3", "\n4.c3"]];
-    await r.wait(400);
-    for (const [a, b, txt] of play) {
-      const ax = file(a), ay = rank(a), bx = file(b), by = rank(b), p = at[`${ax},${ay}`];
-      hl.innerHTML = `<rect x="${ax * 25}" y="${ay * 25}" width="25" height="25" fill="${ACCENT}" opacity=".45"/><rect x="${bx * 25}" y="${by * 25}" width="25" height="25" fill="${ACCENT}" opacity=".6"/>`;
-      const captured = at[`${bx},${by}`];
-      await r.tween(380, (k) => { p.setAttribute("x", ((ax + (bx - ax) * k) * 25 + 12.5).toFixed(1)); p.setAttribute("y", ((ay + (by - ay) * k) * 25 + 20).toFixed(1)); });
-      if (captured) captured.remove();
-      delete at[`${ax},${ay}`]; at[`${bx},${by}`] = p;
-      await r.type(moves, txt, 30); await r.wait(420);
-    }
-    await r.type(moves, "\n\nWhite gives a pawn\nfor development.", 40);
-  } },
-
   tableau: { file: "dashboard", async run(host, r, n) {
-    const chips = el("div", "demo-chips", `<span class="on">All sites</span><span>Boise</span>`); host.append(chips);
+    const chips = el("div", "demo-chips", `<span class="on">All regions</span><span>West</span>`); host.append(chips);
     const svg = svgEl("0 0 520 170"); host.append(svg);
-    const cats = ["Etch", "Litho", "CMP", "Depo", "Implant", "Metro"];
+    const cats = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
     const A = [62, 88, 40, 71, 33, 52], B = [30, 64, 58, 44, 22, 70];
     svg.innerHTML = cats.map((c, i) => `<g transform="translate(${20 + i * 84} 0)"><rect class="bar" x="14" width="44" rx="4" fill="${ACCENT}" y="140" height="0"/><text x="36" y="160" text-anchor="middle" class="t">${c}</text><text class="v t" x="36" text-anchor="middle" y="134"></text></g>`).join("") + `<line x1="10" x2="510" y1="140" y2="140" stroke="${MUTED}" stroke-opacity=".35"/>`;
     const bars = [...svg.querySelectorAll(".bar")], vals = [...svg.querySelectorAll(".v")];
