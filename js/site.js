@@ -1,6 +1,6 @@
-import { nameSVG, wordPath } from "./script-name.js";
-import { TOOLS, PACK, SHARED_DEFS, toolSVG } from "./tools.js";
-import { createFish } from "./fish.js";
+import { nameSVG, wordPath } from "./script-name.js?v=5";
+import { TOOLS, PACK, SHARED_DEFS, toolSVG } from "./tools.js?v=5";
+import { createFish } from "./fish.js?v=5";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
