@@ -41,7 +41,7 @@ The site is about one person whose interests sit at a real intersection: competi
 ## Evidence on Hand
 
 - No Projects section and no mentions of projects on the site (user directive, 2026-11-24); project facts below are background only.
-- The site shows only the four most recent roles (Micron, Purdue D1 Women's Soccer, Semiconductor Student Alliance, The Data Mine) per user directive; older roles below stay as background facts.
+- Experience lists the incoming Micron IE Intern, R&D Budgeting role (May–Aug 2027) and the four most recent roles (Micron 2026, Purdue D1 Women's Soccer, Semiconductor Student Alliance, The Data Mine), with Andrew's own one-line descriptions on three of them; older roles below stay as background facts.
 - Resume content in the previous index.html: Purdue (GPA 3.89, scholarships, certifications, coursework), Micron Technology IE intern (8x shortlist precision, ~1,500 tools, 13 datastores, 40 hrs/quarter saved), Purdue D1 Women's Soccer predictive analyst (18 Big Ten teams), The Data Mine researcher (200+ emails/week, 5-person team, top 15%, 20 hrs/month), Semiconductor Student Alliance chair, CCL captain, Wonderland + Purdue IE lead mentor (~60 students), Solar PV economic modeling (6 models, 40-year DCF).
 - Personal: favorites (Ip Man 3, JYP/Rain, $INTC), interests (rapid chess, soccer, hiking, game/decision theory, tech sector coverage, kung fu movies, racquet sports).
 - Chess repertoire: Goring Gambit, Scotch, Italian (White); Caro-Kann, Modern (Black). CCL record 4W-5L-3D vs UT Dallas, Arizona State, Drexel, Tulane.

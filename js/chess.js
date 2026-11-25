@@ -44,7 +44,6 @@ export async function initChess() {
     }
     const rapid = p.rapid && p.rapid.games > 0 ? p.rapid.rating + (p.rapid.prov ? "?" : "") : null;
     if (rapid) {
-      $("#hero-rating").textContent = `Lichess rapid ${rapid}, live`;
       document.querySelectorAll(".status").forEach((s) => s.classList.add("is-live"));
     }
   } else {

@@ -1,4 +1,4 @@
-import { createDemoPlayer } from "./demos.js?v=11";
+import { createDemoPlayer } from "./demos.js?v=14";
 
 // The skills tank: an aquarium where each skill is something living or sunk in it.
 // Objects differ in size and depth (a hazy back row, a front row, things floating

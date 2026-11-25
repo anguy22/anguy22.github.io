@@ -1,7 +1,7 @@
-import { nameSVG, wordPath } from "./script-name.js?v=11";
-import { initTank } from "./tank.js?v=11";
-import { createFish } from "./fish.js?v=11";
-import { initChess } from "./chess.js?v=11";
+import { nameSVG, wordPath } from "./script-name.js?v=14";
+import { initTank } from "./tank.js?v=14";
+import { createFish } from "./fish.js?v=14";
+import { initChess } from "./chess.js?v=14";
 
 const EMAIL = "nguy1051@purdue.edu";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
